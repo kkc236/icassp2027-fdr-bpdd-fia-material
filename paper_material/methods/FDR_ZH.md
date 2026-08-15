@@ -1,4 +1,4 @@
-# FDR：RT-DETR-L 的分布式定位回归适配
+# FDR：RT-DETR-L 的细粒度分布细化适配
 
 ## 问题与模块位置
 
@@ -34,18 +34,25 @@ FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两
 \mathcal L_{FGL}=w_{IoU}\left(w_L\,CE(z,k)+w_R\,CE(z,k+1)\right).
 \]
 
-正式配置的 FGL 权重为 0.15。最后一层形成主 FGL 项，前五层求和形成辅助项；stock VFL、L1、GIoU、辅助损失与去噪损失仍由原 criterion 计算。FGL 和 preliminary box 监督复用 stock 已产生的匹配，不把新匹配器引入比较。
+正式配置的 FGL 权重为 0.15。对 normal queries，最后一层形成主 FGL 项，前五层求和形成辅助项；preliminary box 另接收 L1 与 GIoU。若存在 `dn_meta`，实现会把缓存的四边 logits 和 preliminary box 按查询维拆成 normal/DN 两部分，并对 DN queries 追加主/辅助 FGL 以及 preliminary-box L1/GIoU。两侧都复用 stock criterion 已产生的匹配，不引入新匹配器。新增的 FDR 监督可概括为：
+
+\[
+\mathcal L_{FDR}=\mathcal L_{FGL}^{normal}+\mathcal L_{pre}^{normal}
++\mathbf 1_{dn}\left(\mathcal L_{FGL}^{dn}+\mathcal L_{pre}^{dn}\right),
+\]
+
+并与 stock VFL、L1、GIoU、辅助及去噪损失共同优化。
 
 ## 训练与推理
 
-- 训练：保存六层累计四边 logits、共享参考框和 preliminary box；在 stock 损失之后增加 FGL 与可选 preliminary box 定位项。
+- 训练：保存六层累计四边 logits、共享参考框和 preliminary box；在 stock 损失之后，为 normal queries 增加 FGL 与可选 preliminary-box 定位项，并在 `dn_meta` 存在时对 DN queries 增加对应的 FGL 和 preliminary-box L1/GIoU。
 - 推理：分布头、累计细化、Integral 和框解码仍在图中；损失分支不执行，只输出 `eval_idx` 对应的框与类别结果。
 - FDR 会增加解码框头参数和推理计算，不能套用 BPDD 的“零推理参数增量”表述。
 
 ## 可执行来源
 
 - `src/fdr_head.py`：132 维分布头、preliminary box、六层累计细化和训练证据缓存。
-- `src/fdr_loss.py`：FGL、preliminary box 监督以及 stock 匹配复用。
+- `src/fdr_loss.py`：normal/DN 两侧的 FGL、preliminary-box L1/GIoU 监督以及 stock 匹配复用。
 - `src/rtdetr_fdr.py`：模型、训练损失和推理路径集成。
 - `src/fdr_math.py`：固定版本的 D-FINE 非均匀投影、Integral、距离编解码与 FGL 基础算子。
 - `configs/rtdetr-l-fdr.yaml`：正式结构与损失参数。
@@ -53,6 +60,6 @@ FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两
 
 ## 主张边界
 
-允许表述：本工作把固定版本 D-FINE 的分布式框表示、Integral 与 FGL 结构化适配到 Ultralytics RT-DETR-L，在 VisDrone 上完成定位路径替换、损失隔离、声明式配置和统一验证。
+允许表述：本工作把固定版本 D-FINE 的细粒度边界分布表示、Integral 与 FGL 结构化适配到 Ultralytics RT-DETR-L，在 VisDrone 上完成定位路径替换、损失隔离、声明式配置和统一验证。
 
 禁止表述：不得声称本工作发明 FDR、FGL、Integral、相邻 bin 软标签或非均匀 weighting；不得把可加载消融 YAML 当作已完成的消融结果；不得在没有实测时宣称零开销、特定延迟或特定参数增幅。

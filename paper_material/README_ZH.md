@@ -4,7 +4,7 @@
 
 ## 阅读顺序
 
-1. 方法基础：[FDR：分布式定位回归](methods/FDR_ZH.md)
+1. 方法基础：[FDR：细粒度分布细化](methods/FDR_ZH.md)
 2. 训练监督：[BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
 3. 特征增强：[FIA：P3 特征增强模块](methods/FIA_ZH.md)
 4. 冻结设置：[实验协议](experiments/PROTOCOL_ZH.md)

@@ -19,11 +19,18 @@
 
 ## 评估设置
 
-在严格评估器支持相应选项时，统一使用：
+严格 val 复评设置冻结如下；评估器支持相应选项时必须显式使用这些值，不得静默改写：
 
+- `split=val`；
+- `imgsz=640`；
+- `batch=8`；
+- `workers=8`；
 - `conf=0.001`；
 - `max_det=300`；
-- `nms=false`；
+- `nms=False`；
+- `cache=False`；
+- `half=False`；
+- `rect=False`；
 - 同一 548 图 VisDrone val、同一图像预处理、同一类别映射和同一指标实现。
 
 主表报告 Precision、Recall、AP50、AP75 和 mAP50–95。若某来源没有导出 AP75，必须标记“不可用”，不得从其他轮次、截图或相邻模型补值。
