@@ -1,7 +1,9 @@
 {
   "format_version": 1,
   "amends": "strict-control-test-eval.json",
-  "amended_report_sha256": "02F7B6C77E4F1C7934D1ACBFADA3975DF783C04BE53FECBA6C4AAB77338F40FD",
+  "amended_report_artifact": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+  "amended_report_hash_semantics": "sha256_of_canonical_git_blob_payload",
+  "amended_report_sha256": "6E5897C6ADD04926D0A5AFFF47A59A4697BE17EBF6940EFF7B3173787FA56086",
   "reason": "The generic checkpoint helper hard-codes checkpoint.strict_fdr_inference_graph=true even when a custom pure-stock model_factory is supplied.",
   "correction": {
     "path": "checkpoint.strict_fdr_inference_graph",

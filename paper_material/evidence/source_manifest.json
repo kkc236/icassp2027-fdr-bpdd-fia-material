@@ -1,29 +1,150 @@
 {
   "format_version": 1,
+  "hash_semantics": {
+    "canonical_local_artifact_sha256": "SHA-256 of the canonical Git blob payload bytes; working-tree newline conversion is excluded.",
+    "source_artifact_canonical_sha256": "SHA-256 of the source Git blob payload bytes.",
+    "git_blob_oid": "Git object ID naming the exact blob payload."
+  },
   "sources": {
     "strict_control_val": {
-      "commit": "f6fe1365171eceef2ee327e589b14718f3773486",
-      "artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "f6fe1365171eceef2ee327e589b14718f3773486",
+      "source_artifact": {
+        "path": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+        "git_blob_oid": "d1766857ab631375edc740e2e06397122651ffcf",
+        "canonical_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57"
+      },
+      "local_artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "canonical_local_artifact_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57",
       "evidence_level": "strict",
-      "sha256": "a2ad02f8d47ac2a77598d5313bc321914bcb67d9884d4c46bbf5be2359f18887"
+      "transformation": "none"
     },
     "fdr_val": {
-      "commit": "f6fe1365171eceef2ee327e589b14718f3773486",
-      "artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "f6fe1365171eceef2ee327e589b14718f3773486",
+      "source_artifact": {
+        "path": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+        "git_blob_oid": "d1766857ab631375edc740e2e06397122651ffcf",
+        "canonical_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57"
+      },
+      "local_artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "canonical_local_artifact_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57",
       "evidence_level": "strict",
-      "sha256": "a2ad02f8d47ac2a77598d5313bc321914bcb67d9884d4c46bbf5be2359f18887"
+      "transformation": "none"
     },
     "bpdd_val": {
-      "commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
-      "artifact": "paper_material/evidence/bpdd_val_exact.json",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
+      "source_artifact": {
+        "path": "evidence/paper-master-2026-08-10/authority-index.json",
+        "identity": "formal100_independent_bpdd_metrics",
+        "git_blob_oid": "ff2fb73f481c40333e31add616b1b7b33c9e4da3",
+        "canonical_sha256": "d632f76ca06624f6763cfe2de0fcdbf1dd14c3f96b316adb12501c9949acd657"
+      },
+      "local_artifact": "paper_material/evidence/bpdd_val_exact.json",
+      "canonical_local_artifact_sha256": "b2c9d4677347073c12f07fe797858d268facde3a9dbe917455e57cd01922ea29",
       "evidence_level": "cross_authority_exact",
-      "sha256": "b2c9d4677347073c12f07fe797858d268facde3a9dbe917455e57cd01922ea29"
+      "transformation": "extract_exact_metrics_and_add_nonpaired_comparison_warning"
     },
     "fia_terminal_val": {
-      "commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
-      "artifact": "paper_material/assets/fia_terminal_validation.jpg",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
+      "source_commit_role": "code_state_reference_only_not_verified_run_identity",
+      "source_tree_oid": "1f8bf8a026306af4690021b37e2bc482c7115196",
+      "source_artifact": {
+        "identity": "out_of_band_terminal_screenshot",
+        "availability": "not_present_as_a_git_artifact_at_source_commit",
+        "path": null,
+        "git_blob_oid": null,
+        "canonical_sha256": null
+      },
+      "local_artifact": "paper_material/assets/fia_terminal_validation.jpg",
+      "canonical_local_artifact_sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6",
       "evidence_level": "screenshot_rounded",
-      "sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+      "transformation": "byte_exact_copy_of_supplied_screenshot",
+      "identity_verification": {
+        "checkpoint_identity": "unverified",
+        "command_identity": "unavailable",
+        "exact_run_identity": "unavailable"
+      },
+      "data_scope": [
+        {
+          "split": "VisDrone val",
+          "images": 548,
+          "instances": 38759
+        },
+        {
+          "split": "VisDrone test",
+          "images": 1610,
+          "instances": 75102
+        }
+      ]
     }
-  }
+  },
+  "normalizations": [
+    {
+      "id": "strict_control_evaluator_fia_boolean_key",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "evidence/strict-control-test-d97e1eb7/evaluate_strict_control_test.py",
+        "git_blob_oid": "4e5b241a8cce558014adc65c6ef6aa94bed0a159",
+        "canonical_sha256": "e8367b486105ec6d732d5174a550d4805565a69a0ac3b9061dba92831aa7f1d5"
+      },
+      "destination": {
+        "path": "evidence/strict-control-test-d97e1eb7/evaluate_strict_control_test.py",
+        "canonical_sha256": "b5d67c9e20c2547caf666c0597fee64368b8878eeba7d08be928c76483d391d0"
+      },
+      "transformation": "legacy_boolean_key_to_fia_enabled",
+      "reason": "Keep the imported control identity aligned with the repository-wide FIA naming contract without changing metrics."
+    },
+    {
+      "id": "strict_control_report_fia_boolean_key",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+        "git_blob_oid": "1fa38adc334441607b5799aeaf243422bcc7d9ff",
+        "canonical_sha256": "6fe5f2aacbf75cf88c70f57eadbb157a957229e6a253bae236579500c331006b"
+      },
+      "destination": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+        "canonical_sha256": "6e5897c6add04926d0a5afff47a59a4697be17ebf6940eff7b3173787fa56086"
+      },
+      "transformation": "legacy_boolean_key_to_fia_enabled",
+      "reason": "Normalize the method identity field while preserving every evaluation metric and protocol field."
+    },
+    {
+      "id": "strict_control_amendment_fia_and_canonical_binding",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval-amendment.json",
+        "git_blob_oid": "f14bddc8609c27427bf40e09656120e0b84ae1e0",
+        "canonical_sha256": "3cc0ca7e5174b0befb0bc43fe06b92c916479337a47322afba181e6b6ff387e8"
+      },
+      "destination": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval-amendment.json",
+        "canonical_sha256": "e14f23ff8c480f1f89b3a06dd9bd37c9b18a99c2e3f7d56c8de57e6c4ccc5cf7"
+      },
+      "transformation": "legacy_boolean_assertion_to_fia_and_canonical_git_blob_hash_binding",
+      "reason": "Normalize the assertion name and bind the amendment to the named report's canonical Git bytes."
+    },
+    {
+      "id": "historical_snapshot_scope_through_epoch11",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/README.md",
+        "git_blob_oid": "1b84b205dd03f14226ac1b27c46a4b2d2a003269",
+        "canonical_sha256": "b51a885dd391de78f15153135b1d779448c6750c2b7812d3fd2791bac0254932"
+      },
+      "destination": {
+        "path": "research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/README.md",
+        "canonical_sha256": "eeece2b622be50a169c0914e2fd67b20d7a665dd4f0a4b44fa0766eabf492ef4"
+      },
+      "transformation": "correct_historical_snapshot_scope_through_epoch11",
+      "reason": "The directory label is retained for stable references, while the machine-readable records contain completed epochs 1 through 11."
+    }
+  ]
 }
