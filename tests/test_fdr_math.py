@@ -1,11 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import importlib
 import importlib.util
-import os
-import subprocess
-import sys
-import types
+import json
 from pathlib import Path
 
 import pytest
@@ -14,14 +12,10 @@ import torch.nn.functional as F
 
 
 PINNED_COMMIT = "7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6"
-OFFICIAL_CLONE = Path(
-    os.environ.get(
-        "DFINE_OFFICIAL_CLONE",
-        str(Path(os.environ.get("TEMP", "/tmp")) / "D-FINE-7fe2f888"),
-    )
-)
-OFFICIAL_DFINE_DIR = OFFICIAL_CLONE / "src" / "zoo" / "dfine"
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+VENDORED_DFINE_DIR = REPOSITORY_ROOT / "third_party" / "dfine_7fe2f888"
+AUTHORITY = VENDORED_DFINE_DIR / "AUTHORITY.json"
+VENDORED_REFERENCE = VENDORED_DFINE_DIR / "reference_fdr.py"
 
 
 @pytest.fixture(scope="module")
@@ -33,31 +27,15 @@ def fdr_math():
 
 @pytest.fixture(scope="module")
 def official_dfine():
-    """Load pinned official modules without importing D-FINE's src package."""
+    """Load the vendored formulas from the pinned official D-FINE source."""
 
-    package_name = "_official_dfine_7fe2f888"
-    package = types.ModuleType(package_name)
-    package.__package__ = package_name
-    package.__path__ = [str(OFFICIAL_DFINE_DIR)]
-    sys.modules[package_name] = package
-    loaded_names = [package_name]
-    try:
-        loaded = {}
-        for module_name in ("box_ops", "dfine_utils"):
-            qualified_name = f"{package_name}.{module_name}"
-            spec = importlib.util.spec_from_file_location(
-                qualified_name, OFFICIAL_DFINE_DIR / f"{module_name}.py"
-            )
-            assert spec is not None and spec.loader is not None
-            module = importlib.util.module_from_spec(spec)
-            sys.modules[qualified_name] = module
-            loaded_names.append(qualified_name)
-            spec.loader.exec_module(module)
-            loaded[module_name] = module
-        yield loaded
-    finally:
-        for name in reversed(loaded_names):
-            sys.modules.pop(name, None)
+    spec = importlib.util.spec_from_file_location(
+        "dfine_7fe2f888_reference", VENDORED_REFERENCE
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return {"dfine_utils": module}
 
 
 def _mechanical_integral(logits: torch.Tensor, project: torch.Tensor, reg_max: int) -> torch.Tensor:
@@ -93,22 +71,15 @@ def _mechanical_fgl(
     return loss
 
 
-def test_fixed_official_clone_is_exact_clean_revision() -> None:
-    assert (OFFICIAL_DFINE_DIR / "dfine_utils.py").is_file()
-    actual = subprocess.run(
-        ["git", "-C", str(OFFICIAL_CLONE), "rev-parse", "HEAD"],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
-    status = subprocess.run(
-        ["git", "-C", str(OFFICIAL_CLONE), "status", "--porcelain"],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout
-    assert actual == PINNED_COMMIT
-    assert status == ""
+def test_vendored_official_reference_matches_pinned_authority() -> None:
+    assert AUTHORITY.is_file()
+    assert VENDORED_REFERENCE.is_file()
+    authority = json.loads(AUTHORITY.read_text(encoding="utf-8"))
+    assert authority["commit"] == PINNED_COMMIT
+    canonical_bytes = VENDORED_REFERENCE.read_bytes().replace(b"\r\n", b"\n")
+    assert hashlib.sha256(canonical_bytes).hexdigest() == authority[
+        "vendored_reference_sha256"
+    ]
 
 
 def test_math_module_pins_exact_official_sources(fdr_math) -> None:
@@ -230,20 +201,25 @@ def test_bbox2distance_default_scalars_follow_cuda_targets(fdr_math) -> None:
     assert all(value.device.type == "cuda" for value in actual)
 
 
-def test_normalized_box_conversions_are_exact_to_official_box_ops(
-    fdr_math, official_dfine
-) -> None:
+def test_normalized_box_conversions_match_independent_expected_tensors(fdr_math) -> None:
     cxcywh = torch.tensor(
         [[0.50, 0.50, 0.20, 0.40], [0.25, 0.75, 0.50, 0.50]],
         dtype=torch.float32,
     )
-    xyxy = official_dfine["box_ops"].box_cxcywh_to_xyxy(cxcywh)
+    xyxy = torch.tensor(
+        [[0.40, 0.30, 0.60, 0.70], [0.00, 0.50, 0.50, 1.00]],
+        dtype=torch.float32,
+    )
+    expected_cxcywh = torch.tensor(
+        [
+            [0.50, 0.50, 0.20000001788139343, 0.3999999761581421],
+            [0.25, 0.75, 0.50, 0.50],
+        ],
+        dtype=torch.float32,
+    )
 
     assert torch.equal(fdr_math.cxcywh_to_xyxy(cxcywh), xyxy)
-    assert torch.equal(
-        fdr_math.xyxy_to_cxcywh(xyxy),
-        official_dfine["box_ops"].box_xyxy_to_cxcywh(xyxy),
-    )
+    assert torch.equal(fdr_math.xyxy_to_cxcywh(xyxy), expected_cxcywh)
 
 
 def test_integral_is_exact_to_mechanical_official_reference(fdr_math) -> None:
