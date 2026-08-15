@@ -1,0 +1,71 @@
+{
+  "format_version": 1,
+  "split": "VisDrone val",
+  "rows": [
+    {
+      "method": "RT-DETR-L",
+      "fdr": false,
+      "bpdd": false,
+      "fia": false,
+      "precision": 0.46761,
+      "recall": 0.41731,
+      "map50": 0.38663,
+      "map75": 0.21302,
+      "map": 0.21911,
+      "evidence_level": "strict",
+      "source_id": "strict_control_val"
+    },
+    {
+      "method": "RT-DETR-L+FDR",
+      "fdr": true,
+      "bpdd": false,
+      "fia": false,
+      "precision": 0.56911,
+      "recall": 0.49278,
+      "map50": 0.48468,
+      "map75": 0.29253,
+      "map": 0.28966,
+      "evidence_level": "strict",
+      "source_id": "fdr_val"
+    },
+    {
+      "method": "RT-DETR-L+FDR+BPDD",
+      "fdr": true,
+      "bpdd": true,
+      "fia": false,
+      "precision": 0.5706336342276676,
+      "recall": 0.494464137092214,
+      "map50": 0.4864074913692349,
+      "map75": 0.29809564823246976,
+      "map": 0.29225786956881444,
+      "evidence_level": "cross_authority_exact",
+      "source_id": "bpdd_val"
+    },
+    {
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "fdr": true,
+      "bpdd": true,
+      "fia": true,
+      "precision_display": 0.569,
+      "recall_display": 0.499,
+      "map50_display": 0.490,
+      "map75": null,
+      "map_display": 0.296,
+      "evidence_level": "screenshot_rounded",
+      "source_id": "fia_terminal_val"
+    }
+  ],
+  "non_comparable_splits": [
+    {
+      "split": "VisDrone test",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "precision_display": 0.519,
+      "recall_display": 0.436,
+      "map50_display": 0.408,
+      "map_display": 0.234,
+      "evidence_level": "screenshot_rounded",
+      "source_id": "fia_terminal_val",
+      "comparable_to_primary_split": false
+    }
+  ]
+}

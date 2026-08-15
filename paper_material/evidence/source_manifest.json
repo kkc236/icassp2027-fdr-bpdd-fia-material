@@ -1,0 +1,29 @@
+{
+  "format_version": 1,
+  "sources": {
+    "strict_control_val": {
+      "commit": "f6fe1365171eceef2ee327e589b14718f3773486",
+      "artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "evidence_level": "strict",
+      "sha256": "a2ad02f8d47ac2a77598d5313bc321914bcb67d9884d4c46bbf5be2359f18887"
+    },
+    "fdr_val": {
+      "commit": "f6fe1365171eceef2ee327e589b14718f3773486",
+      "artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "evidence_level": "strict",
+      "sha256": "a2ad02f8d47ac2a77598d5313bc321914bcb67d9884d4c46bbf5be2359f18887"
+    },
+    "bpdd_val": {
+      "commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
+      "artifact": "paper_material/evidence/bpdd_val_exact.json",
+      "evidence_level": "cross_authority_exact",
+      "sha256": "b2c9d4677347073c12f07fe797858d268facde3a9dbe917455e57cd01922ea29"
+    },
+    "fia_terminal_val": {
+      "commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
+      "artifact": "paper_material/assets/fia_terminal_validation.jpg",
+      "evidence_level": "screenshot_rounded",
+      "sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+    }
+  }
+}

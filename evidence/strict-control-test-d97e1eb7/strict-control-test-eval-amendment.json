@@ -1,0 +1,21 @@
+{
+  "format_version": 1,
+  "amends": "strict-control-test-eval.json",
+  "amended_report_sha256": "02F7B6C77E4F1C7934D1ACBFADA3975DF783C04BE53FECBA6C4AAB77338F40FD",
+  "reason": "The generic checkpoint helper hard-codes checkpoint.strict_fdr_inference_graph=true even when a custom pure-stock model_factory is supplied.",
+  "correction": {
+    "path": "checkpoint.strict_fdr_inference_graph",
+    "recorded_value": true,
+    "canonical_value": false,
+    "canonical_graph_type": "pure_ultralytics_rtdetr_l_stock"
+  },
+  "supporting_assertions": {
+    "identity_fdr_enabled": false,
+    "identity_bpdd_enabled": false,
+    "identity_fia_enabled": false,
+    "runtime_type_assertion": "type(loaded.model) is RTDETRDetectionModel",
+    "checkpoint_state_loaded_strictly": true
+  },
+  "metric_impact": "none",
+  "rerun_required": false
+}
