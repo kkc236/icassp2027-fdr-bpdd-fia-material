@@ -1,11 +1,11 @@
 import json
 import re
+import subprocess
 from pathlib import Path
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 MATERIAL_ROOT = REPOSITORY_ROOT / "paper_material"
-TEXT_SUFFIXES = {".py", ".md", ".json", ".yaml", ".yml", ".csv", ".txt"}
 
 REQUIRED_MATERIAL_FILES = (
     "README_ZH.md",
@@ -30,16 +30,18 @@ EXPECTED_METHODS = (
 )
 
 
-def _repository_paths():
-    for path in REPOSITORY_ROOT.rglob("*"):
-        relative_path = path.relative_to(REPOSITORY_ROOT)
-        if ".git" not in relative_path.parts:
-            yield path, relative_path
-
-
-def _text_files():
-    for path, relative_path in _repository_paths():
-        if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES:
+def _tracked_files():
+    completed = subprocess.run(
+        ["git", "-C", str(REPOSITORY_ROOT), "ls-files", "-z"],
+        check=True,
+        capture_output=True,
+    )
+    for encoded_path in completed.stdout.split(b"\0"):
+        if not encoded_path:
+            continue
+        relative_path = encoded_path.decode("utf-8", errors="ignore")
+        path = REPOSITORY_ROOT / relative_path
+        if path.is_file():
             yield path, relative_path
 
 
@@ -64,17 +66,22 @@ def test_required_material_files_exist():
 
 
 def test_legacy_third_method_name_is_absent():
-    forbidden = bytes((105, 114, 97)).decode("ascii")
+    forbidden = bytes((105, 114, 97))
+    forbidden_pattern = re.compile(
+        rb"(?<![A-Za-z])" + re.escape(forbidden) + rb"(?![A-Za-z])",
+        re.IGNORECASE,
+    )
     offenders = set()
 
-    for path, relative_path in _repository_paths():
-        display_path = relative_path.as_posix()
-        if forbidden in display_path.lower():
-            offenders.add(f"{display_path} (filename)")
-        if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES:
-            content = path.read_text(encoding="utf-8", errors="ignore")
-            if forbidden in content.lower():
-                offenders.add(f"{display_path} (content)")
+    for path, relative_path in _tracked_files():
+        encoded_path = relative_path.encode("utf-8")
+        redacted_path = forbidden_pattern.sub(b"<legacy>", encoded_path).decode(
+            "utf-8", errors="ignore"
+        )
+        if forbidden_pattern.search(encoded_path):
+            offenders.add(f"{redacted_path} (filename)")
+        if forbidden_pattern.search(path.read_bytes()):
+            offenders.add(f"{redacted_path} (content)")
 
     assert not offenders, f"legacy third-method token found in: {sorted(offenders)}"
 
@@ -102,14 +109,13 @@ def test_main_results_are_bound_to_manifest():
 
 
 def test_repository_contains_no_github_pat():
-    marker = "github" + "_pat_"
-    pat_shaped_value = re.compile(re.escape(marker) + r"[A-Za-z0-9_]{20,}")
+    marker = ("github" + "_pat_").encode("ascii")
+    pat_shaped_value = re.compile(re.escape(marker) + rb"[A-Za-z0-9_]{20,}")
     offenders = []
 
-    for path, relative_path in _text_files():
-        content = path.read_text(encoding="utf-8", errors="ignore")
-        if pat_shaped_value.search(content):
-            offenders.append(relative_path.as_posix())
+    for path, relative_path in _tracked_files():
+        if pat_shaped_value.search(path.read_bytes()):
+            offenders.append(relative_path)
 
     assert not offenders, f"GitHub PAT-shaped values found in: {sorted(offenders)}"
 
