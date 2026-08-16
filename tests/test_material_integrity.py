@@ -1,4 +1,5 @@
 import hashlib
+import csv
 import json
 import re
 import subprocess
@@ -22,6 +23,11 @@ REQUIRED_MATERIAL_FILES = (
     "results/FDR_BPDD_FIA_DETAILED_ZH.md",
     "results/fdr_bpdd_fia_val_class_results.csv",
     "results/fdr_bpdd_fia_val_scale_results.csv",
+    "results/SPLIT_GAIN_COMPARISON_ZH.md",
+    "results/split_gain_comparison.json",
+    "results/split_overall_results.csv",
+    "results/split_scale_results.csv",
+    "results/split_class_results.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
     "assets/fia_terminal_validation.jpg",
@@ -201,3 +207,78 @@ def test_main_table_mentions_all_methods_and_evidence_levels():
     assert not missing_evidence_levels, (
         f"main table is missing evidence levels: {missing_evidence_levels}"
     )
+
+
+def test_split_gain_comparison_covers_every_module_combination_without_fabrication():
+    comparison = _load_required_json("results/split_gain_comparison.json")
+    manifest = _load_required_json("evidence/source_manifest.json")
+
+    assert comparison["format_version"] == 1
+    combinations = {
+        (row["fdr"], row["bpdd"], row["fia"]): row
+        for row in comparison["combination_matrix"]
+    }
+    assert len(combinations) == 8
+    assert combinations[(False, True, False)]["status"] == "invalid_dependency"
+    assert combinations[(False, True, True)]["status"] == "invalid_dependency"
+    assert combinations[(False, False, True)]["status"] == "not_trained"
+    assert combinations[(True, False, True)]["status"] == "not_trained"
+
+    rows = {
+        (row["split"], row["method"]): row
+        for row in comparison["overall_rows"]
+    }
+    assert rows[("val", "RT-DETR-L+FDR+BPDD+FIA")]["metrics"]["map"] == (
+        0.28995286433682393
+    )
+    assert rows[("test", "RT-DETR-L+FDR+BPDD")]["metrics"]["map"] == (
+        0.23165906438722952
+    )
+    assert rows[("test", "RT-DETR-L+FDR+BPDD+FIA")]["status"] == (
+        "exact_evaluation_pending"
+    )
+    assert rows[("test", "RT-DETR-L+FDR+BPDD+FIA")]["metrics"] is None
+    assert all(
+        row["source_id"] in manifest["sources"]
+        for row in comparison["overall_rows"]
+        if row["source_id"] is not None
+    )
+
+
+def test_readme_links_split_comparison_outputs():
+    readme = _read_required_text("README_ZH.md")
+    for relative_path in (
+        "results/SPLIT_GAIN_COMPARISON_ZH.md",
+        "results/split_gain_comparison.json",
+        "results/split_overall_results.csv",
+        "results/split_scale_results.csv",
+        "results/split_class_results.csv",
+    ):
+        assert relative_path in readme
+
+
+def test_split_detail_csvs_have_expected_exact_coverage():
+    expected_counts = {
+        "results/split_overall_results.csv": 8,
+        "results/split_scale_results.csv": 28,
+        "results/split_class_results.csv": 70,
+    }
+
+    for relative_path, expected_count in expected_counts.items():
+        path = MATERIAL_ROOT / relative_path
+        with path.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        assert len(rows) == expected_count, relative_path
+
+    with (MATERIAL_ROOT / "results/split_overall_results.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        overall_rows = list(csv.DictReader(handle))
+    pending = next(
+        row
+        for row in overall_rows
+        if row["split"] == "test"
+        and row["method"] == "RT-DETR-L+FDR+BPDD+FIA"
+    )
+    assert pending["map"] == ""
+    assert pending["status"] == "exact_evaluation_pending"

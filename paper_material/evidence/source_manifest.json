@@ -63,6 +63,45 @@
       "strict_paired": false,
       "transformation": "extract_exact_metrics_and_normalize_historical_third_method_identifiers_to_fia"
     },
+    "strict_control_test_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+      "source_artifact": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+        "git_blob_oid": "e2e37444f8d88c2f0f81590ded205302fb03f488",
+        "canonical_sha256": "6e5897c6add04926d0a5afff47a59a4697be17ebf6940eff7b3173787fa56086"
+      },
+      "local_artifact": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+      "canonical_local_artifact_sha256": "6e5897c6add04926d0a5afff47a59a4697be17ebf6940eff7b3173787fa56086",
+      "evidence_level": "exact_single_arm",
+      "transformation": "normalize_legacy_third_method_boolean_key_to_fia_only"
+    },
+    "fdr_test_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+      "source_artifact": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-fdr-test-eval.json",
+        "git_blob_oid": "b52b3abcc2e39e16dcc8e8bfa74b7ab54a9e6086",
+        "canonical_sha256": "630c29806466262ed7cde12d66c891c78430d298800420041dcaac7b55e2a661"
+      },
+      "local_artifact": "evidence/strict-control-test-d97e1eb7/strict-fdr-test-eval.json",
+      "canonical_local_artifact_sha256": "630c29806466262ed7cde12d66c891c78430d298800420041dcaac7b55e2a661",
+      "evidence_level": "exact_single_arm",
+      "transformation": "none"
+    },
+    "fdr_bpdd_test_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+      "source_artifact": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-fdr-bpdd-test-eval.json",
+        "git_blob_oid": "e8d9c0d167d8d68acd994e26b1227834116b98b9",
+        "canonical_sha256": "3e0695a81218145aa0936ba34a2162a66c0f54e857239fe0bc8961ef71fb55a6"
+      },
+      "local_artifact": "evidence/strict-control-test-d97e1eb7/strict-fdr-bpdd-test-eval.json",
+      "canonical_local_artifact_sha256": "3e0695a81218145aa0936ba34a2162a66c0f54e857239fe0bc8961ef71fb55a6",
+      "evidence_level": "cross_authority_exact",
+      "transformation": "none"
+    },
     "fia_terminal_val": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",

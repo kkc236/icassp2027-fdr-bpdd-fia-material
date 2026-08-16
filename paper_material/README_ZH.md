@@ -9,9 +9,10 @@
 3. 特征增强：[FIA：P3 特征增强模块](methods/FIA_ZH.md)
 4. 冻结设置：[实验协议](experiments/PROTOCOL_ZH.md)
 5. 可引用数值：[主结果表](results/MAIN_TABLE_ZH.md)
-6. 三模块细节：[FDR+BPDD+FIA Formal100 详细结果](results/FDR_BPDD_FIA_DETAILED_ZH.md)
-7. 论文组织：[ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
-8. 绘图交接：[四图规划](figures/FIGURE_PLAN_ZH.md)
+6. val/test 涨点：[各模块与组合的完整对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
+7. 三模块细节：[FDR+BPDD+FIA Formal100 详细结果](results/FDR_BPDD_FIA_DETAILED_ZH.md)
+8. 论文组织：[ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+9. 绘图交接：[四图规划](figures/FIGURE_PLAN_ZH.md)
 
 ## 机器可读证据
 
@@ -19,6 +20,10 @@
 - [来源清单](evidence/source_manifest.json)：结果行与源码提交、原始证据的绑定关系。
 - [BPDD 精确验证结果](evidence/bpdd_val_exact.json)：BPDD 行的结构化精确指标。
 - [三模块 Formal100 精确结果](evidence/fdr_bpdd_fia_val_exact.json)：总体、尺度、类别、效率、checkpoint 与来源绑定。
+- [val/test 组合状态与总体指标](results/split_gain_comparison.json)：覆盖全部 8 种开关组合，缺失项不以截图补值。
+- [val/test 总体 CSV](results/split_overall_results.csv)：总体指标与逐步涨点。
+- [val/test 尺度 CSV](results/split_scale_results.csv)：全部已完成模型的四尺度精确值。
+- [val/test 类别 CSV](results/split_class_results.csv)：全部已完成模型的十类别精确值。
 
 以上 JSON 由证据整合阶段提供；Markdown 不替代其中的来源标识与精度信息。
 

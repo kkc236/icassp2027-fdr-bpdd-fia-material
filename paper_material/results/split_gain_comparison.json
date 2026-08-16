@@ -1,0 +1,255 @@
+{
+  "format_version": 1,
+  "metric_unit": "raw_0_to_1",
+  "delta_unit": "percentage_points",
+  "combination_matrix": [
+    {
+      "method": "RT-DETR-L",
+      "fdr": false,
+      "bpdd": false,
+      "fia": false,
+      "status": "exact_val_and_test"
+    },
+    {
+      "method": "RT-DETR-L+FDR",
+      "fdr": true,
+      "bpdd": false,
+      "fia": false,
+      "status": "exact_val_and_test"
+    },
+    {
+      "method": "RT-DETR-L+BPDD",
+      "fdr": false,
+      "bpdd": true,
+      "fia": false,
+      "status": "invalid_dependency",
+      "reason": "BPDD consumes FDR edge distributions and is not a standalone inference model."
+    },
+    {
+      "method": "RT-DETR-L+FIA",
+      "fdr": false,
+      "bpdd": false,
+      "fia": true,
+      "status": "not_trained",
+      "reason": "No completed Formal100 checkpoint or exact evaluation is registered."
+    },
+    {
+      "method": "RT-DETR-L+FDR+BPDD",
+      "fdr": true,
+      "bpdd": true,
+      "fia": false,
+      "status": "exact_val_and_test"
+    },
+    {
+      "method": "RT-DETR-L+FDR+FIA",
+      "fdr": true,
+      "bpdd": false,
+      "fia": true,
+      "status": "not_trained",
+      "reason": "No completed Formal100 checkpoint or exact evaluation is registered."
+    },
+    {
+      "method": "RT-DETR-L+BPDD+FIA",
+      "fdr": false,
+      "bpdd": true,
+      "fia": true,
+      "status": "invalid_dependency",
+      "reason": "BPDD requires FDR even when FIA is present."
+    },
+    {
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "fdr": true,
+      "bpdd": true,
+      "fia": true,
+      "status": "exact_val_test_pending"
+    }
+  ],
+  "overall_rows": [
+    {
+      "split": "val",
+      "method": "RT-DETR-L",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.46761,
+        "recall": 0.41731,
+        "f1": 0.43657,
+        "map50": 0.38663,
+        "map75": 0.21302,
+        "map": 0.21911
+      },
+      "f1_definition": "evaluator_reported",
+      "delta_from_previous_pp": null,
+      "evidence_level": "strict",
+      "source_id": "strict_control_val"
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5691126151072722,
+        "recall": 0.49277710639408445,
+        "f1": 0.52484,
+        "map50": 0.48468375790335755,
+        "map75": 0.29252552290080275,
+        "map": 0.289659749097641
+      },
+      "f1_definition": "evaluator_reported",
+      "delta_from_previous_pp": {
+        "precision": 10.15026151072722,
+        "recall": 7.546710639408444,
+        "f1": 8.827,
+        "map50": 9.805375790335757,
+        "map75": 7.950552290080276,
+        "map": 7.054974909764097
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_strict_paired": true,
+      "evidence_level": "strict",
+      "source_id": "fdr_val"
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR+BPDD",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5706336342276676,
+        "recall": 0.494464137092214,
+        "f1": 0.5298252895497555,
+        "map50": 0.4864074913692349,
+        "map75": 0.29809564823246976,
+        "map": 0.29225786956881444
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": 0.152101912039537,
+        "recall": 0.168703069812953,
+        "f1": null,
+        "map50": 0.172373346587734,
+        "map75": 0.557012533166701,
+        "map": 0.259812047117347
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_strict_paired": false,
+      "evidence_level": "cross_authority_exact",
+      "source_id": "bpdd_val"
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5557616181420737,
+        "recall": 0.4983437446164801,
+        "f1": 0.525488885047014,
+        "map50": 0.4812409327058466,
+        "map75": 0.295103629855508,
+        "map": 0.28995286433682393
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": -1.48720160855939,
+        "recall": 0.387960752426609,
+        "f1": -0.43364045027415,
+        "map50": -0.51665586633883,
+        "map75": -0.299201837696176,
+        "map": -0.230500523199051
+      },
+      "delta_reference": "RT-DETR-L+FDR+BPDD",
+      "delta_strict_paired": false,
+      "evidence_level": "exact_single_arm",
+      "source_id": "fia_formal100_val_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.4179784854691559,
+        "recall": 0.37301321245245467,
+        "f1": 0.39421778511842925,
+        "map50": 0.3222076270254717,
+        "map75": 0.17550263960372106,
+        "map": 0.1774164316787175
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": null,
+      "evidence_level": "exact_single_arm",
+      "source_id": "strict_control_test_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5034013232722852,
+        "recall": 0.4316771784011883,
+        "f1": 0.4647884909014567,
+        "map50": 0.3983397033621551,
+        "map75": 0.2289027217475196,
+        "map": 0.2280010020468384
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": 8.54228378031293,
+        "recall": 5.86639659487336,
+        "f1": 7.05707057830275,
+        "map50": 7.61320763366834,
+        "map75": 5.34000821437985,
+        "map": 5.05845703681209
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_strict_paired": true,
+      "evidence_level": "exact_single_arm",
+      "source_id": "fdr_test_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR+BPDD",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5226717397324412,
+        "recall": 0.4261372182455518,
+        "f1": 0.4694936306246628,
+        "map50": 0.40368789074912337,
+        "map75": 0.23264724419839888,
+        "map": 0.23165906438722952
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": 1.9270416460156,
+        "recall": -0.553996015563651,
+        "f1": 0.47051397232061,
+        "map50": 0.534818738696826,
+        "map75": 0.374452245087927,
+        "map": 0.365806234039112
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_strict_paired": false,
+      "evidence_level": "cross_authority_exact",
+      "source_id": "fdr_bpdd_test_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "status": "exact_evaluation_pending",
+      "metrics": null,
+      "delta_from_previous_pp": null,
+      "evidence_level": "pending",
+      "source_id": null,
+      "blocking_reason": "The registered Formal100 checkpoint has exact val evidence, but the experiment server currently closes SSH before key exchange, so exact test evaluation cannot be completed."
+    }
+  ],
+  "supplementary_observation": {
+    "split": "test",
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "precision_display": 0.519,
+    "recall_display": 0.436,
+    "map50_display": 0.408,
+    "map75": null,
+    "map_display": 0.234,
+    "evidence_level": "screenshot_rounded",
+    "formal_delta_allowed": false
+  },
+  "claim_boundary": "Only exact rows are included in formal arithmetic. Val BPDD and FIA increments are cross-authority or cross-run arithmetic, not strict paired causal effects. The rounded screenshot is supplementary and never fills the pending exact test row."
+}
