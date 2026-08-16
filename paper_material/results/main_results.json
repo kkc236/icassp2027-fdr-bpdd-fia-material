@@ -46,16 +46,32 @@
       "fdr": true,
       "bpdd": true,
       "fia": true,
+      "precision": 0.5557616181420737,
+      "recall": 0.4983437446164801,
+      "f1": 0.525488885047014,
+      "map50": 0.4812409327058466,
+      "map75": 0.295103629855508,
+      "map": 0.28995286433682393,
+      "evidence_level": "exact_single_arm",
+      "comparison_scope": "preliminary_cross_run",
+      "strict_paired": false,
+      "source_id": "fia_formal100_val_exact"
+    }
+  ],
+  "supplementary_unverified_observations": [
+    {
+      "split": "VisDrone val",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
       "precision_display": 0.569,
       "recall_display": 0.499,
       "map50_display": 0.490,
       "map75": null,
       "map_display": 0.296,
       "evidence_level": "screenshot_rounded",
-      "source_id": "fia_terminal_val"
-    }
-  ],
-  "non_comparable_splits": [
+      "source_id": "fia_terminal_val",
+      "comparable_to_primary_split": false,
+      "reason": "checkpoint, command, and exact run identity are unavailable"
+    },
     {
       "split": "VisDrone test",
       "method": "RT-DETR-L+FDR+BPDD+FIA",
@@ -65,7 +81,8 @@
       "map_display": 0.234,
       "evidence_level": "screenshot_rounded",
       "source_id": "fia_terminal_val",
-      "comparable_to_primary_split": false
+      "comparable_to_primary_split": false,
+      "reason": "checkpoint, command, and exact run identity are unavailable"
     }
   ]
 }

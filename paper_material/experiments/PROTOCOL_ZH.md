@@ -41,9 +41,10 @@
 |---|---|---|
 | `strict` | 数据划分、训练 authority、评估器和比较合同满足严格配对要求 | 可报告同等级配对行的有符号差值 |
 | `cross_authority_exact` | 指标保存为结构化精确数值，但与参照行不属于同一完整 authority | 可报告绝对值；跨行差只能称算术差，不能称严格配对增益 |
+| `exact_single_arm` | checkpoint、协议和独立评估绝对值完整，但没有同 authority 配对对照 | 可报告该臂精确总体、尺度、类别和效率；不得把历史参考差写成因果增益 |
 | `screenshot_rounded` | 仅有终端截图中的舍入显示值 | 使用 `≈`；不可恢复更多小数、缺失指标或精确差值 |
 
-证据绑定以 `paper_material/evidence/source_manifest.json` 为准；表格机器值以 `paper_material/results/main_results.json` 为准；BPDD 的精确来源另见 `paper_material/evidence/bpdd_val_exact.json`。
+证据绑定以 `paper_material/evidence/source_manifest.json` 为准；表格机器值以 `paper_material/results/main_results.json` 为准；BPDD 与三模块的精确来源分别见 `paper_material/evidence/bpdd_val_exact.json` 和 `paper_material/evidence/fdr_bpdd_fia_val_exact.json`。
 
 ## 禁止混用
 

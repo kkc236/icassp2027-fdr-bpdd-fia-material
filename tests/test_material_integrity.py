@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 import subprocess
@@ -17,6 +18,10 @@ REQUIRED_MATERIAL_FILES = (
     "results/MAIN_TABLE_ZH.md",
     "evidence/source_manifest.json",
     "evidence/bpdd_val_exact.json",
+    "evidence/fdr_bpdd_fia_val_exact.json",
+    "results/FDR_BPDD_FIA_DETAILED_ZH.md",
+    "results/fdr_bpdd_fia_val_class_results.csv",
+    "results/fdr_bpdd_fia_val_scale_results.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
     "assets/fia_terminal_validation.jpg",
@@ -104,8 +109,44 @@ def test_main_results_are_bound_to_manifest():
     assert rows["RT-DETR-L+FDR+BPDD"]["map"] == 0.29225786956881444
 
     full_model = rows["RT-DETR-L+FDR+BPDD+FIA"]
-    assert full_model["map_display"] == 0.296
-    assert full_model["evidence_level"] == "screenshot_rounded"
+    assert full_model["precision"] == 0.5557616181420737
+    assert full_model["recall"] == 0.4983437446164801
+    assert full_model["map50"] == 0.4812409327058466
+    assert full_model["map75"] == 0.295103629855508
+    assert full_model["map"] == 0.28995286433682393
+    assert full_model["evidence_level"] == "exact_single_arm"
+    assert full_model["source_id"] == "fia_formal100_val_exact"
+
+
+def test_fia_formal100_detailed_evidence_is_complete_and_bound():
+    evidence_path = MATERIAL_ROOT / "evidence" / "fdr_bpdd_fia_val_exact.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    manifest = _load_required_json("evidence/source_manifest.json")
+
+    assert evidence["method"] == "RT-DETR-L+FDR+BPDD+FIA"
+    assert evidence["split"] == "VisDrone val"
+    assert evidence["metrics"]["map"] == 0.28995286433682393
+    assert evidence["checkpoint"]["sha256"] == (
+        "3EA6CD138C20AD38A35EF652407B6D77C423379A06E669028F771517843E069F"
+    )
+    assert set(evidence["scale_details"]) == {"tiny", "small", "medium", "large"}
+    assert len(evidence["class_details"]) == 10
+    assert evidence["provenance"]["source_sha256"] == (
+        "5AE8CA9AC71FA49D7C754E69CDFF87934D44B02FE7992754A89AE2151701FC5F"
+    )
+    assert evidence["provenance"]["third_method_name_normalized_to_fia"] is True
+
+    source = manifest["sources"]["fia_formal100_val_exact"]
+    assert source["local_artifact"] == (
+        "paper_material/evidence/fdr_bpdd_fia_val_exact.json"
+    )
+    canonical_bytes = subprocess.run(
+        ["git", "-C", str(REPOSITORY_ROOT), "show", f":{source['local_artifact']}"],
+        check=True,
+        capture_output=True,
+    ).stdout
+    actual_sha256 = hashlib.sha256(canonical_bytes).hexdigest()
+    assert source["canonical_local_artifact_sha256"] == actual_sha256
 
 
 def test_repository_contains_no_github_pat():

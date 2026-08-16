@@ -25,7 +25,7 @@
 
 ## 图 4：结果比较
 
-- 目的：并列呈现四个模型的 mAP50–95，并在独立子图呈现前三个有值模型的 AP75。
-- 必须标注：每根柱或点的模块组合、数值、`strict`/`cross_authority_exact`/`screenshot_rounded`；完整模型 mAP 使用 `≈`，AP75 显示 unavailable 而不是零值。
-- 数据依据：`paper_material/results/main_results.json`、`paper_material/results/MAIN_TABLE_ZH.md`、`paper_material/evidence/source_manifest.json`、`paper_material/evidence/bpdd_val_exact.json`。
-- 禁止标签：paired BPDD gain、paired FIA gain、statistically significant、multi-seed mean、test-set result、exact full-model score；不得补造完整模型 AP75、误差条或显著性符号。
+- 目的：并列呈现四个模型的 mAP50–95，并在独立子图呈现四个模型的 AP75。
+- 必须标注：每根柱或点的模块组合、精确绝对值及 `strict`/`cross_authority_exact`/`exact_single_arm`；证据等级使用文字或纹理而不只依赖颜色。
+- 数据依据：`paper_material/results/main_results.json`、`paper_material/results/MAIN_TABLE_ZH.md`、`paper_material/evidence/source_manifest.json`、`paper_material/evidence/bpdd_val_exact.json`、`paper_material/evidence/fdr_bpdd_fia_val_exact.json`。
+- 禁止标签：paired BPDD gain、paired FIA gain、statistically significant、multi-seed mean、test-set result；不得把完整模型与历史参考的算术差标成严格 FIA 增益，也不得补造误差条或显著性符号。

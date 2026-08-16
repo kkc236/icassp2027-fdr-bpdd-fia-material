@@ -46,6 +46,23 @@
       "evidence_level": "cross_authority_exact",
       "transformation": "extract_exact_metrics_and_add_nonpaired_comparison_warning"
     },
+    "fia_formal100_val_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
+      "training_source_commit": "756e025efc28088402cdbaf806ac06d4b93ee5eb",
+      "fia_rename_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
+      "source_artifact": {
+        "identity": "formal100_independent_three_module_metrics",
+        "git_blob_oid": "c3011eeaf71d1e95550bf885a762a5228064295f",
+        "canonical_sha256": "5ae8ca9ac71fa49d7c754e69cdff87934d44b02fe7992754a89ae2151701fc5f"
+      },
+      "local_artifact": "paper_material/evidence/fdr_bpdd_fia_val_exact.json",
+      "canonical_local_artifact_sha256": "9bce0658dcf51fa28b6c1ebaa5c72f9ce1b81102a696bd944ddd70b694c79912",
+      "evidence_level": "exact_single_arm",
+      "comparison_scope": "preliminary_cross_run",
+      "strict_paired": false,
+      "transformation": "extract_exact_metrics_and_normalize_historical_third_method_identifiers_to_fia"
+    },
     "fia_terminal_val": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
@@ -82,6 +99,21 @@
     }
   },
   "normalizations": [
+    {
+      "id": "formal100_three_module_fia_identity_projection",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
+        "git_blob_oid": "c3011eeaf71d1e95550bf885a762a5228064295f",
+        "canonical_sha256": "5ae8ca9ac71fa49d7c754e69cdff87934d44b02fe7992754a89ae2151701fc5f"
+      },
+      "destination": {
+        "path": "paper_material/evidence/fdr_bpdd_fia_val_exact.json",
+        "canonical_sha256": "9bce0658dcf51fa28b6c1ebaa5c72f9ce1b81102a696bd944ddd70b694c79912"
+      },
+      "transformation": "project_historical_third_method_identifiers_to_current_fia_names_and_extract_detailed_metrics",
+      "reason": "Preserve exact values and source hashes while enforcing the repository-wide FIA naming contract."
+    },
     {
       "id": "strict_control_evaluator_fia_boolean_key",
       "source": {
