@@ -18,6 +18,7 @@ REQUIRED_MATERIAL_FILES = (
     "evidence/fia_results_status.json",
     "evidence/fia_existing_best_evaluation.json",
     "results/FIA_RESULTS_STATUS_ZH.md",
+    "results/RESULTS_ZH.md",
     "results/main_results.json",
     "results/MAIN_TABLE_ZH.md",
     "evidence/source_manifest.json",
@@ -153,6 +154,17 @@ def test_existing_best_fia_evaluations_are_registered():
         "map75": 0.23587873005461435,
         "map": 0.23464538660213996,
     }
+    status = _load_required_json("evidence/fia_results_status.json")
+    status_arms = status["updated_standalone_results"]
+    for variant in ("fia_only", "fdr_fia"):
+        source = manifest["sources"][arms[variant]["source_id"]]
+        assert status_arms[variant]["val_metrics"]["f1"] == (
+            arms[variant]["val"]["metrics"]["f1"]
+        )
+        assert source["metrics"]["f1"] == arms[variant]["val"]["metrics"]["f1"]
+        assert source["evaluation_protocol"]["f1_definition"] == (
+            "mean_per_class_result.box.f1"
+        )
     assert arms["fia_only"]["val"]["delta_map_pp"] == (
         arms["fia_only"]["val"]["metrics"]["map"] - 0.21911
     ) * 100
@@ -512,6 +524,7 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
 def test_readme_links_split_comparison_outputs():
     readme = _read_required_text("README_ZH.md")
     for relative_path in (
+        "results/RESULTS_ZH.md",
         "results/SPLIT_GAIN_COMPARISON_ZH.md",
         "results/split_gain_comparison.json",
         "results/split_overall_results.csv",
@@ -526,6 +539,33 @@ def test_readme_links_split_comparison_outputs():
         "results/fia_existing_best_test_results.csv",
     ):
         assert relative_path in readme
+
+
+def test_consolidated_results_page_covers_exact_fia_val_test_and_boundaries():
+    page = _read_required_text("results/RESULTS_ZH.md")
+
+    for required_text in (
+        "RT-DETR-L+FDR+BPDD",
+        "0.292258",
+        "FIA-only",
+        "0.216795",
+        "0.177176",
+        "FDR+FIA",
+        "0.294940",
+        "0.234645",
+        "0.171613",
+        "0.235879",
+        "best_checkpoint_independent_test_exact",
+        "逐类别 F1 的均值",
+        "published cascading",
+        "P3-only",
+        "0.29618",
+        "非严格",
+        "fia_existing_best_test_results.csv",
+    ):
+        assert required_text in page
+
+    assert "三模块 test 已完成" not in page
 
 
 def test_split_detail_csvs_have_expected_exact_coverage():

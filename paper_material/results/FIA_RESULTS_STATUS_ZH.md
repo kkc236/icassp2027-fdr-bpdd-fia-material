@@ -2,7 +2,7 @@
 
 ## 当前裁定
 
-按当前论文材料决策，FIA-only 与 FDR+FIA 不再等待 standalone 重训，直接采用 GitHub Release `DFR-BDPP-FIA` 中各自已发布的 `best.pt`。两份 checkpoint 已在冻结 evaluator 下完成独立 val 复评，因此可作为现有 best 的 standalone 消融证据。
+按当前论文材料决策，FIA-only 与 FDR+FIA 不再等待 standalone 重训，直接采用 GitHub Release `DFR-BDPP-FIA` 中各自已发布的 `best.pt`。两份 checkpoint 已在冻结 evaluator 下完成独立 exact val 与 exact test 复评，因此可作为现有 best 的 standalone 消融证据。
 
 这两份 checkpoint 的计算图均为发布版 cascading topology：`model[23].f = -1`，不是后续采用的 P3-only topology。报告时必须明确这一身份，不能把两条 standalone 结果写成 P3-only 结果，也不能与三模块 P3-only checkpoint 混称为同一严格拓扑消融系列。
 
@@ -48,4 +48,4 @@
 - FDR+FIA 的 +0.5280 pp 和三模块的 +0.3922 pp 都不是 strict paired 因果增益。
 - 三模块仍按 P3-only checkpoint 单独登记，不用 standalone cascading 结果替代。
 
-机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)；独立 val 总体 CSV 见 [`fia_existing_best_val_results.csv`](fia_existing_best_val_results.csv)，独立 exact test 总体与逐类 CSV 见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。
+论文写作统一结果页见 [`RESULTS_ZH.md`](RESULTS_ZH.md)。机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)；独立 val 总体 CSV 见 [`fia_existing_best_val_results.csv`](fia_existing_best_val_results.csv)，独立 exact test 总体与逐类 CSV 见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。

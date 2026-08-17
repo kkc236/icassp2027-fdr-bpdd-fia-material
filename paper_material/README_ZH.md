@@ -9,12 +9,13 @@
 3. [FIA：高分辨率特征增强](methods/FIA_ZH.md)
 4. [冻结实验协议](experiments/PROTOCOL_ZH.md)
 5. [FIA 消融实验入口](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
-6. [FIA 发布版 best.pt 结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
-7. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
-8. [val 主结果表](results/MAIN_TABLE_ZH.md)
-9. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
-10. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
-11. [四图规划](figures/FIGURE_PLAN_ZH.md)
+6. [论文结果统一汇总](results/RESULTS_ZH.md)
+7. [FIA 发布版 best.pt 结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
+8. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
+9. [val 主结果表](results/MAIN_TABLE_ZH.md)
+10. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
+11. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+12. [四图规划](figures/FIGURE_PLAN_ZH.md)
 
 ## 当前结果口径
 

@@ -24,7 +24,7 @@
 
 ## FIA 行状态
 
-- FIA-only、FDR+FIA：按当前实验决策直接采用 Release 中各自的 `best.pt`，在冻结 VisDrone val evaluator 下完成独立复评；两者是已发布 cascading standalone 拓扑，不称为 P3-only。
+- FIA-only、FDR+FIA：按当前实验决策直接采用 Release 中各自的 `best.pt`，已在冻结 VisDrone evaluator 下完成独立 exact val/test；两者是已发布 cascading standalone 拓扑，不称为 P3-only。
 - FDR+BPDD+FIA：已定位正确 P3-only 新 checkpoint；best-val 记录为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。
 - 新三模块仍缺 AP75、test 和冻结 evaluator 独立复评，所以只在状态区登记，不进入上方正式表，也不写成严格配对 FIA 因果增益。
 
@@ -36,5 +36,7 @@
 | RT-DETR-L+FDR+FIA | 0.577524 | 0.490889 | 0.486314 | 0.299724 | 0.294940 | RT-DETR-L+FDR | +0.528 pp | best checkpoint independent val exact |
 
 这里的差值是当前登记对照的算术差，不是严格配对因果增益。结论是：FIA-only 略有负增益，FDR+FIA 呈正增益；论文主线使用 FIA 与 FDR 的兼容组合，不以 FIA-only 作为性能主张。
+
+同一批 `best.pt` 的 independent exact test 已补齐 AP75 和逐类别 F1：FIA-only / FDR+FIA 的 test mAP50–95 分别为 `0.177176` / `0.234645`，AP75 分别为 `0.171613` / `0.235879`。完整 test 表和逐类别明细见 [论文结果统一汇总](RESULTS_ZH.md)。
 
 最新状态与导入条件见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。
