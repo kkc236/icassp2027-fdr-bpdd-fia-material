@@ -313,6 +313,79 @@ def test_execute_writes_no_passed_report_when_cuda_gate_fails(tmp_path: Path) ->
     assert not output.exists()
 
 
+def test_cuda_gate_does_not_revalidate_optimizer_evidence_after_first_step(
+    tmp_path: Path, monkeypatch
+) -> None:
+    module = _load_module()
+    import torch
+
+    class CheckpointSaved(RuntimeError):
+        pass
+
+    class FakeModel:
+        last_bpdd_statistics = {}
+        last_fdr_evidence = object()
+
+        def train(self):
+            return self
+
+        def state_dict(self):
+            return {}
+
+        def eval(self):
+            raise CheckpointSaved
+
+    class FakeStateful:
+        def state_dict(self):
+            return {}
+
+    output = tmp_path / "preflight.json"
+    context = module.PreflightContext(
+        protocol_manifest=tmp_path / "protocol.json",
+        initial_state=tmp_path / "initial-state.pt",
+        dataset_root=tmp_path / "VisDrone",
+        output=output,
+        repository_root=ROOT,
+    )
+
+    def one_step(*_args, optimizer_evidence_path: Path, **_kwargs):
+        optimizer_evidence_path.write_text('{"optimizer_attempt":1}\n', encoding="utf-8")
+        return torch.tensor(1.0), {}
+
+    module._validate_artifact_paths(context)
+    monkeypatch.setattr(module.torch.cuda, "is_available", lambda: True)
+    monkeypatch.setattr(
+        module.torch.cuda,
+        "get_device_name",
+        lambda _index: "NVIDIA GeForce RTX 4090",
+    )
+    monkeypatch.setattr(
+        module,
+        "_runtime_environment",
+        lambda: dict(module.ACR_BPDD_PROTOCOL["environment"]),
+    )
+    monkeypatch.setattr(
+        module,
+        "_loader",
+        lambda _context: [{"img": torch.zeros(8, 1)}],
+    )
+    monkeypatch.setattr(module, "_move_batch", lambda batch, _device: batch)
+    monkeypatch.setattr(module, "_load_model", lambda _context, _device: FakeModel())
+    monkeypatch.setattr(module, "_formal_musgd", lambda _model: FakeStateful())
+    monkeypatch.setattr(
+        module.torch.amp,
+        "GradScaler",
+        lambda *_args, **_kwargs: FakeStateful(),
+    )
+    monkeypatch.setattr(module, "_one_step", one_step)
+
+    with pytest.raises(CheckpointSaved):
+        module.run_cuda_gate(context)
+
+    assert module._optimizer_evidence_path(context).is_file()
+    assert module._preflight_checkpoint_path(context).is_file()
+
+
 def test_execute_rejects_artifact_path_collision_before_cuda(tmp_path: Path) -> None:
     module = _load_module()
     manifest_path, state, dataset, manifest = _write_authorities(module, tmp_path)

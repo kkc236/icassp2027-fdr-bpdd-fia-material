@@ -400,7 +400,7 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
     if evidence is None:
         raise RuntimeError("ACR-BPDD preflight lost FDR evidence")
 
-    checkpoint = _validate_artifact_paths(context)
+    checkpoint = _preflight_checkpoint_path(context)
     optimizer_state_sha256 = _torch_state_sha256(optimizer.state_dict())
     scaler_state_sha256 = _torch_state_sha256(scaler.state_dict())
     payload = {
