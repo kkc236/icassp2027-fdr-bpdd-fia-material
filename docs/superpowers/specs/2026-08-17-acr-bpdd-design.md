@@ -23,11 +23,11 @@ For reliability-weighted KL terms `r_i * KL_i`, use
 
 where `N` is the number of eligible terms and `rho=0.5`. The floor limits the maximum scale amplification to 2x relative to BPDD v1. The reliability mass is detached and therefore cannot be optimized to manipulate the denominator. Empty or inactive batches remain exactly zero and finite.
 
-### Common-gradient firewall
+### Common-gradient firewall by detached head replay
 
-The forward loss and stock/FDR losses are unchanged. During each accumulation micro-batch, compute the BPDD-only gradient for common model parameters and accumulate it in FP32. Immediately after AMP unscaling and before clipping, subtract this BPDD-only contribution from common parameters. BPDD gradients remain on the FDR distribution box heads. This targets localization while preserving shared decoder/classification learning.
+The stock/FDR forward and losses are unchanged. During the real decoder forward, temporary pre-hooks capture the actual input of each of the six FDR distribution heads and immediately detach it. The hooks are removed before the forward returns. BPDD then replays only the six small distribution MLPs on these detached inputs and reconstructs the same cumulative corner logits.
 
-The firewall is training-only and must not add checkpoint parameters or alter the inference graph.
+The replayed values must match the original cumulative logits within `1e-6`. Its graph remains connected to the distribution-head parameters but has no path to Backbone, Encoder, shared Decoder, classification heads, Query selection, or preliminary-box features. This provides the intended firewall without a second shared-network backward pass. The replay is training-only, owns no parameters, leaves no persistent hooks, and cannot alter the inference graph or checkpoint state.
 
 ## Compatibility and ablation contract
 
@@ -47,4 +47,3 @@ The firewall is training-only and must not add checkpoint parameters or alter th
 ## Formal run
 
 After all gates pass, run full VisDrone train, seed 0, 100 epochs directly. Publish immutable per-epoch evidence and checkpoints asynchronously. Compare the final independent evaluation with mature FDR100 as `preliminary_cross_run`; reserve `strict_paired` claims for the later complete ablation rerun.
-
