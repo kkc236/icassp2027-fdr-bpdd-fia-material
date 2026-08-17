@@ -25,8 +25,19 @@ class BPDDOptions:
     temperature: float = 0.5
     margin: float = 0.02
     eps: float = 1e-6
+    normalization: str = "eligible_edges"
+    reliability_floor: float = 0.5
 
     def __post_init__(self) -> None:
+        if self.normalization not in {"eligible_edges", "reliability_mass"}:
+            raise ValueError(
+                "BPDD normalization must be eligible_edges or reliability_mass"
+            )
+        if (
+            not math.isfinite(float(self.reliability_floor))
+            or not 0 < self.reliability_floor <= 1
+        ):
+            raise ValueError("BPDD reliability_floor must be finite and in (0, 1]")
         numeric = {
             "weight": self.weight,
             "temperature": self.temperature,
@@ -250,6 +261,9 @@ def _zero_result(corner_logits: Tensor, matched_queries: int) -> BPDDResult:
             "eligible_edges": torch.tensor(
                 0, dtype=torch.long, device=corner_logits.device
             ),
+            "denominator": scalar_zero,
+            "reliability_mass": scalar_zero,
+            "normalization_gain": scalar_zero,
         },
     )
 
@@ -323,7 +337,18 @@ def bpdd_distribution_loss(
     mixture_advantage_tensor = torch.stack(mixture_advantages)
     term_tensor = torch.stack(weighted_terms)
     eligible_edges = int(term_tensor.numel())
-    loss = term_tensor.sum() * options.weight / max(eligible_edges, 1)
+    reliability_mass = reliability_tensor.detach().sum()
+    eligible_edges_tensor = term_tensor.new_tensor(float(eligible_edges))
+    if options.normalization == "eligible_edges":
+        denominator = eligible_edges_tensor
+    else:
+        denominator = torch.maximum(
+            reliability_mass,
+            eligible_edges_tensor * options.reliability_floor,
+        )
+    denominator = denominator.detach()
+    normalization_gain = (eligible_edges_tensor / denominator).detach()
+    loss = term_tensor.sum() * options.weight / denominator
     active = reliability_tensor > 0
     return BPDDResult(
         loss=loss,
@@ -341,6 +366,9 @@ def bpdd_distribution_loss(
             "eligible_edges": torch.tensor(
                 eligible_edges, dtype=torch.long, device=corner_logits.device
             ),
+            "denominator": denominator,
+            "reliability_mass": reliability_mass.detach(),
+            "normalization_gain": normalization_gain,
         },
     )
 
