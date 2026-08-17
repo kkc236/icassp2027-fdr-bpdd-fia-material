@@ -1,6 +1,13 @@
 {
   "format_version": 1,
   "split": "VisDrone val",
+  "standard_ablation_display": [
+    {"id": "A", "model": "RT-DETR-L Baseline", "fdr": false, "bpdd": false, "fia": false, "precision_display": "0.46761", "recall_display": "0.41731", "map50_display": "0.38663", "map75_display": "0.21302", "map_display": "0.21911", "delta_display": "—", "source_id": "strict_control_val"},
+    {"id": "B", "model": "RT-DETR-L + FDR", "fdr": true, "bpdd": false, "fia": false, "precision_display": "0.56911", "recall_display": "0.49278", "map50_display": "0.48468", "map75_display": "0.29253", "map_display": "0.28966", "delta_display": "+7.055 pp", "source_id": "fdr_val"},
+    {"id": "C", "model": "RT-DETR-L + FDR + BPDD", "fdr": true, "bpdd": true, "fia": false, "precision_display": "0.57063", "recall_display": "0.49446", "map50_display": "0.48641", "map75_display": "0.29810", "map_display": "0.29226", "delta_display": "+0.260 pp", "source_id": "bpdd_val"},
+    {"id": "D", "model": "RT-DETR-L + FDR + FIA", "fdr": true, "bpdd": false, "fia": true, "precision_display": "待整理", "recall_display": "待整理", "map50_display": "待整理", "map75_display": "待整理", "map_display": "待整理", "delta_display": "FIA 独立增量", "source_id": null},
+    {"id": "E", "model": "RT-DETR-L + FDR + BPDD + FIA", "fdr": true, "bpdd": true, "fia": true, "precision_display": "≈0.569", "recall_display": "≈0.499", "map50_display": "≈0.490", "map75_display": "待补", "map_display": "≈0.296", "delta_display": "约 +0.37 pp", "source_id": "fia_updated_three_module_terminal_val"}
+  ],
   "rows": [
     {
       "method": "RT-DETR-L",
@@ -95,6 +102,26 @@
       "map": 0.29618,
       "evidence_level": "checkpoint_embedded_best_val",
       "source_id": "fia_updated_three_module_checkpoint_best_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "VisDrone test",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "fdr": true,
+      "bpdd": true,
+      "fia": true,
+      "status": "updated_terminal_test_available",
+      "precision": 0.519,
+      "recall": 0.436,
+      "f1": null,
+      "map50": 0.408,
+      "map75": null,
+      "map": 0.234,
+      "delta_reference": "RT-DETR-L+FDR+BPDD",
+      "delta_map_pp": 0.23409356127704894,
+      "delta_strict_paired": false,
+      "evidence_level": "terminal_screenshot_rounded",
+      "source_id": "fia_updated_three_module_terminal_test",
       "formal_delta_allowed": false
     }
   ]

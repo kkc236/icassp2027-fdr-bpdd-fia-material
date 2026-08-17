@@ -288,6 +288,7 @@ def test_main_results_are_bound_to_manifest():
         "fia_existing_best_independent_val",
         "fdr_fia_existing_best_independent_val",
         "fia_updated_three_module_checkpoint_best_val",
+        "fia_updated_three_module_terminal_test",
     }
     assert all(
         row["source_id"] in sources
@@ -338,12 +339,14 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
 
     assert status["format_version"] == 1
     assert status["status"] == (
-        "existing_best_standalone_exact_val_test_three_module_available"
+        "standalone_exact_val_test_three_module_positive_val_and_rounded_test_available"
     )
     assert status["valid_fia_result_source_ids"] == [
         "fia_existing_best_independent_val",
         "fdr_fia_existing_best_independent_val",
-        "fia_updated_three_module_checkpoint_best_val"
+        "fia_updated_three_module_checkpoint_best_val",
+        "fia_updated_three_module_terminal_val",
+        "fia_updated_three_module_terminal_test",
     ]
     assert status["user_reported_updated_result_direction"] == (
         "superseded_by_direct_best_checkpoint_evaluation"
@@ -453,10 +456,13 @@ def test_main_table_mentions_all_methods_and_evidence_levels():
     table = _read_required_text("results/MAIN_TABLE_ZH.md")
     results = _load_required_json("results/main_results.json")
 
+    paper_names = {
+        "RT-DETR-L": "RT-DETR-L Baseline",
+        "RT-DETR-L+FDR": "RT-DETR-L + FDR",
+        "RT-DETR-L+FDR+BPDD": "RT-DETR-L + FDR + BPDD",
+    }
     missing_methods = [
-        method
-        for method in EXPECTED_METHODS
-        if re.search(rf"\|\s*{re.escape(method)}\s*\|", table) is None
+        method for method in EXPECTED_METHODS if paper_names[method] not in table
     ]
     evidence_levels = sorted({row["evidence_level"] for row in results["rows"]})
     missing_evidence_levels = [level for level in evidence_levels if level not in table]
@@ -465,6 +471,38 @@ def test_main_table_mentions_all_methods_and_evidence_levels():
     assert not missing_evidence_levels, (
         f"main table is missing evidence levels: {missing_evidence_levels}"
     )
+
+
+def test_main_table_matches_user_standard_a_to_e_display():
+    table = _read_required_text("results/MAIN_TABLE_ZH.md")
+    expected_rows = (
+        "| A | RT-DETR-L Baseline | — | — | — | 0.46761 | 0.41731 | 0.38663 | 0.21302 | 0.21911 | — |",
+        "| B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp |",
+        "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp |",
+        "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 待整理 | 待整理 | 待整理 | 待整理 | 待整理 | FIA 独立增量 |",
+        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.569 | ≈0.499 | ≈0.490 | 待补 | ≈0.296 | 约 +0.37 pp |",
+    )
+    for row in expected_rows:
+        assert row in table
+    assert "PPDD" not in table
+
+    results = _load_required_json("results/main_results.json")
+    display = results["standard_ablation_display"]
+    assert [row["id"] for row in display] == ["A", "B", "C", "D", "E"]
+    assert display[-1]["map_display"] == "≈0.296"
+    assert display[-1]["delta_display"] == "约 +0.37 pp"
+    assert display[-1]["source_id"] == "fia_updated_three_module_terminal_val"
+
+    manifest = _load_required_json("evidence/source_manifest.json")
+    standard_source = manifest["sources"][display[-1]["source_id"]]
+    assert standard_source["rounded_val_metrics"] == {
+        "precision": 0.569,
+        "recall": 0.499,
+        "map50": 0.490,
+        "map75": None,
+        "map": 0.296,
+    }
+    assert standard_source["evidence_level"] == "terminal_screenshot_rounded"
 
 
 def test_split_gain_comparison_covers_every_module_combination_without_fabrication():
@@ -482,7 +520,7 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert combinations[(False, False, True)]["status"] == "existing_best_evaluated"
     assert combinations[(True, False, True)]["status"] == "existing_best_evaluated"
     assert combinations[(True, True, True)]["status"] == (
-        "updated_checkpoint_best_val_available"
+        "updated_positive_val_and_rounded_test_available"
     )
 
     rows = {
@@ -566,6 +604,54 @@ def test_consolidated_results_page_covers_exact_fia_val_test_and_boundaries():
         assert required_text in page
 
     assert "三模块 test 已完成" not in page
+
+
+def test_three_module_positive_terminal_test_observation_is_registered():
+    status = _load_required_json("evidence/fia_results_status.json")
+    manifest = _load_required_json("evidence/source_manifest.json")
+    comparison = _load_required_json("results/split_gain_comparison.json")
+
+    source_id = "fia_updated_three_module_terminal_test"
+    assert source_id in status["valid_fia_result_source_ids"]
+    observation = status["updated_three_module_test_observation"]
+    assert observation["source_id"] == source_id
+    assert observation["metrics"] == {
+        "precision": 0.519,
+        "recall": 0.436,
+        "f1": None,
+        "map50": 0.408,
+        "map75": None,
+        "map": 0.234,
+    }
+    assert observation["delta_from_bpdd_map_pp"] > 0
+    assert observation["evidence_level"] == "terminal_screenshot_rounded"
+
+    source = manifest["sources"][source_id]
+    assert source["historical_git_artifact"]["commit"] == (
+        "963daf6e47df2b5532d29abaf42008cc701bb38e"
+    )
+    assert source["historical_git_artifact"]["git_blob_oid"] == (
+        "029baf9ad67d6ed592e48583c6c6e20085b5d309"
+    )
+    assert source["historical_git_artifact"]["sha256"] == (
+        "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+    )
+
+    rows = [
+        row
+        for row in comparison["supplementary_updated_fia_observations"]
+        if row["split"] == "test"
+        and row["method"] == "RT-DETR-L+FDR+BPDD+FIA"
+    ]
+    assert len(rows) == 1
+    assert rows[0]["metrics"] == observation["metrics"]
+    assert rows[0]["delta_map_pp"] == observation["delta_from_bpdd_map_pp"]
+    assert rows[0]["delta_map_pp"] > 0
+
+    page = _read_required_text("results/RESULTS_ZH.md")
+    assert "≈0.234" in page
+    assert "≈+0.234 pp" in page
+    assert "terminal_screenshot_rounded" in page
 
 
 def test_split_detail_csvs_have_expected_exact_coverage():

@@ -263,6 +263,86 @@
       "formal_main_table_allowed": false,
       "transformation": "inspect checkpoint metadata and graph identity without copying the checkpoint into this repository"
     },
+    "fia_updated_three_module_terminal_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_context": "out-of-band terminal evaluation from the corrected three-module working directory",
+      "historical_git_artifact": {
+        "repository": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material.git",
+        "commit": "963daf6e47df2b5532d29abaf42008cc701bb38e",
+        "path": "paper_material/assets/fia_terminal_validation.jpg",
+        "git_blob_oid": "029baf9ad67d6ed592e48583c6c6e20085b5d309",
+        "sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+      },
+      "scope": {
+        "split": "VisDrone val",
+        "images": 548,
+        "instances": 38759
+      },
+      "rounded_val_metrics": {
+        "precision": 0.569,
+        "recall": 0.499,
+        "map50": 0.490,
+        "map75": null,
+        "map": 0.296
+      },
+      "standard_ablation_row": "E",
+      "delta_from_displayed_bpdd_map_pp": 0.374,
+      "evidence_level": "terminal_screenshot_rounded",
+      "strict_paired": false,
+      "formal_main_table_allowed": true,
+      "transformation": "bind the standard A-E table row E directly to the rounded val panel; do not substitute checkpoint-embedded precision or recall"
+    },
+    "fia_updated_three_module_terminal_test": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_context": "out-of-band terminal evaluation from the three-module working directory",
+      "release_tag": "DFR-BDPP-FIA",
+      "checkpoint_release_asset": "DFR-BDPP-FIA-best.pt",
+      "checkpoint_release_asset_sha256": "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+      "historical_git_artifact": {
+        "repository": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material.git",
+        "commit": "963daf6e47df2b5532d29abaf42008cc701bb38e",
+        "path": "paper_material/assets/fia_terminal_validation.jpg",
+        "git_blob_oid": "029baf9ad67d6ed592e48583c6c6e20085b5d309",
+        "sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+      },
+      "identity_binding": {
+        "working_directory": "/home/ubuntu/uav-bpdd-fia",
+        "paired_val_display_map": 0.296,
+        "current_checkpoint_embedded_best_val_map": 0.29618,
+        "graph_identity": "corrected_p3_only_three_module",
+        "binding_level": "context_and_metric_match_not_byte_embedded_in_screenshot"
+      },
+      "test_scope": {
+        "split": "VisDrone test",
+        "images": 1610,
+        "instances": 75102
+      },
+      "rounded_test_metrics": {
+        "precision": 0.519,
+        "recall": 0.436,
+        "f1": null,
+        "map50": 0.408,
+        "map75": null,
+        "map": 0.234
+      },
+      "per_class_rounded": [
+        {"class": "pedestrian", "precision": 0.595, "recall": 0.380, "map50": 0.393, "map": 0.161},
+        {"class": "people", "precision": 0.599, "recall": 0.273, "map50": 0.285, "map": 0.103},
+        {"class": "bicycle", "precision": 0.359, "recall": 0.205, "map50": 0.177, "map": 0.0748},
+        {"class": "car", "precision": 0.755, "recall": 0.791, "map50": 0.792, "map": 0.510},
+        {"class": "van", "precision": 0.392, "recall": 0.526, "map50": 0.423, "map": 0.292},
+        {"class": "truck", "precision": 0.516, "recall": 0.493, "map50": 0.463, "map": 0.301},
+        {"class": "tricycle", "precision": 0.321, "recall": 0.353, "map50": 0.275, "map": 0.147},
+        {"class": "awning-tricycle", "precision": 0.441, "recall": 0.272, "map50": 0.239, "map": 0.140},
+        {"class": "bus", "precision": 0.675, "recall": 0.587, "map50": 0.606, "map": 0.427},
+        {"class": "motor", "precision": 0.535, "recall": 0.481, "map50": 0.427, "map": 0.182}
+      ],
+      "evidence_level": "terminal_screenshot_rounded",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "supplementary_ablation_allowed": true,
+      "transformation": "reclassify the archived screenshot test panel as a positive rounded observation for the corrected three-module result; do not infer AP75 or F1"
+    },
     "fia_ablation_scaffold_1d083140": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_branch": "fdr-bdpp-fia",

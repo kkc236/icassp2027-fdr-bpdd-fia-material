@@ -26,7 +26,7 @@
 - 正式子图：展示 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD 三条核心结果，并明确证据等级。
 - 消融附图：可加入现有 best.pt 的 FIA-only `0.216795` 与 FDR+FIA `0.294940` 独立 val，分别标注相对 baseline `−0.231 pp`、相对 FDR `+0.528 pp`。
 - test 附图：可加入 FIA-only / FDR+FIA 的 mAP50–95 `0.177176` / `0.234645` 与 AP75 `0.171613` / `0.235879`，或使用 10 类 mAP 对比；明确证据为 independent exact test。
-- 三模块标记：正确 P3-only checkpoint 的 mAP50–95=0.29618，作为 best-val 观察，不与 exact 独立复评混成同一证据等级。
+- 三模块标记：正确 P3-only checkpoint 的 val mAP50–95=0.29618（+0.3922 pp），归档 test≈0.234（≈+0.234 pp）；两者均为正增长，test 用虚线或 `≈` 标明截图舍入等级。
 - 禁止内容：把 standalone best.pt 标成 P3-only、混写 val/test、伪造误差条或显著性符号、把算术差写成严格配对因果结果。
 
 FIA 图与结果图的启用条件见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。

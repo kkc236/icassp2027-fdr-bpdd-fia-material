@@ -33,7 +33,8 @@
 ### 4. Experiments
 
 - 4.1 Dataset and Protocol：VisDrone、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
-- 4.2 Main Results：正式核心表放 baseline、FDR 和 FDR+BPDD；三模块 P3-only best-val 作为补充观察。
+- 4.2 Main Results：正式 exact 核心表放 baseline、FDR 和 FDR+BPDD；三模块 P3-only 的正向 val/test 作为补充观察。
+- 论文 A–E 主消融表的 E 行逐项绑定终端 val 面板 `≈0.569/≈0.499/≈0.490/≈0.296/约+0.37 pp`；checkpoint 的 `0.29618/+0.3922 pp` 作为另一条补充正向记录，避免跨证据拼接 P/R。
 - 4.3 Ablation Studies：分开报告现有 best.pt 的 FIA-only 与 FDR+FIA exact val/test；val ΔmAP 为 −0.2315/+0.5280 pp，test ΔmAP 为 −0.0240/+0.6644 pp，且均不是严格配对、不是 P3-only。
 - 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA standalone 的总体、AP75 和 10 类 test 结果；尺度分析仅使用已有核心行，不为 FIA 反推缺失值。
 
@@ -47,7 +48,7 @@
 - BPDD 是依赖 FDR 边界分布的训练期、无参数蒸馏，不增加推理图或参数。
 - 现有 standalone best.pt 独立 val 中，FIA-only mAP50–95=0.216795（相对 baseline −0.2315 pp），FDR+FIA=0.294940（相对 FDR +0.5280 pp）；independent exact test 分别为 0.177176（−0.0240 pp）与 0.234645（+0.6644 pp），且 AP75 与 10 类明细已补齐。这支持“FIA 与 FDR 组合兼容”，不支持“FIA 单独稳定增益”。
 - 已确认正确 P3-only 新三模块 checkpoint 的 best-val 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。
-- 该三模块观察仍缺 AP75、test 和冻结 evaluator 独立复评。
+- 三模块归档 test 为 P≈0.519、R≈0.436、AP50≈0.408、mAP50–95≈0.234，相对 BPDD test 为约 +0.234 pp；因此三模块 val/test 均为正增长。test 为终端截图舍入值，AP75/F1 未显示。
 
 ## 当前禁止主张
 

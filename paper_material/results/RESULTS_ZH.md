@@ -4,6 +4,8 @@
 
 ## 1. 正式核心结果
 
+论文 A–E 主消融表以 [val 主消融表](MAIN_TABLE_ZH.md) 为准。E 行直接取终端 val 面板的舍入值 `P≈0.569、R≈0.499、AP50≈0.490、mAP≈0.296、约 +0.37 pp`。checkpoint 的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不用于替换该行 P/R。
+
 ### val
 
 | 方法 | P | R | AP50 | AP75 | mAP50–95 | 证据 |
@@ -65,13 +67,20 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 
 正确 P3-only 的 FDR+BPDD+FIA checkpoint 已确认 `model[23].f=21`。checkpoint 内嵌 best-val 为 P=`0.56996`、R=`0.49848`、AP50=`0.48982`、mAP50–95=`0.29618`；相对当前 FDR+BPDD val 数值为 `+0.3922 pp` 的非严格观察。
 
-该 checkpoint 尚未完成冻结 evaluator 独立 val/test 复评，AP75、test、尺度和类别结果仍为空。因此不能把 standalone test 数值填到三模块，也不能把本行写成严格因果增益。
+旧材料仓的归档终端截图同时保存了该三模块的 test 面板：
+
+| split | P | R | F1 | AP50 | AP75 | mAP50–95 | ΔmAP vs. FDR+BPDD | 证据 |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| val | 0.56996 | 0.49848 | — | 0.48982 | — | **0.29618** | **+0.3922 pp** | checkpoint_embedded_best_val |
+| test | ≈0.519 | ≈0.436 | — | ≈0.408 | — | **≈0.234** | **≈+0.234 pp** | terminal_screenshot_rounded |
+
+因此三模块在 val/test 上都是正增长。test 面板覆盖 1,610 images / 75,102 instances，但只显示三位小数且没有 AP75/F1；这些字段保持为空，不从 standalone 或其他指标反推。冻结 evaluator 独立 exact 复评仍可补强证据，当前已有的三模块 test 整体结果则予以保留。
 
 ## 4. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
 - BPDD 在 FDR 基础上继续提供小幅正向结果；正式写作中将其表述为训练期渐进分布蒸馏，并保留跨 authority 边界。
 - FIA-only 在 val 略低于 baseline，test 基本持平；FDR+FIA 在 val 和 test 均高于对应 FDR 参照，支持“FIA 与 FDR 兼容并呈正向互补”，不支持“FIA 单独稳定提升”。
-- 三模块当前只有 P3-only best-val 正向观察，待独立复评后才能进入完整主表。
+- 三模块 P3-only 在 val/test 均有正向观察；正文消融可使用 `0.29618（+0.3922 pp）` 和 `≈0.234（≈+0.234 pp）`，同时注明 test 为截图舍入值。
 
 完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)。

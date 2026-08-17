@@ -10,7 +10,7 @@
 |---|---|---|
 | FIA-only | 发布版 `best.pt`；cascading，`model[23].f=-1` | 已完成独立 exact val 与 exact test |
 | FDR+FIA | 发布版 `best.pt`；cascading，`model[23].f=-1` | 已完成独立 exact val 与 exact test |
-| FDR+BPDD+FIA | `DFR-BDPP-FIA-best.pt`；P3-only，`model[23].f=21` | checkpoint 内 best-val 正向观察已登记；独立复评待补 |
+| FDR+BPDD+FIA | `DFR-BDPP-FIA-best.pt`；P3-only，`model[23].f=21` | best-val 与归档 test 均为正向；test 为截图舍入，独立 exact 待补 |
 
 ## 现有 best 的独立 val 结果
 
@@ -39,13 +39,15 @@
 - FIA-only 与 FDR+FIA：FIA 位于层 22，层 23 继续读取 FIA 输出（`model[23].f=-1`），decoder 输入为 `[22,25,28]`，拓扑标签为 `published_cascading_standalone`。
 - FDR+BPDD+FIA：FIA 层 22 读取原始 P3（层 21），层 23 同样读取原始 P3（`model[23].f=21`），decoder 输入为 `[22,25,28]`，属于 P3-only。
 
-三模块 P3-only checkpoint 的嵌入式 best-validation 记录保持不变：P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对当前 FDR+BPDD val 绝对值为 +0.3922 pp 的非严格配对算术观察。AP75、test 与冻结 evaluator 独立复评仍待补。
+三模块 P3-only checkpoint 的嵌入式 best-validation 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对 FDR+BPDD val 为 +0.3922 pp。旧材料仓归档的同组三模块终端面板还包含 VisDrone test（1,610 images / 75,102 instances）：P≈0.519、R≈0.436、AP50≈0.408、mAP50–95≈0.234，相对 FDR+BPDD test `0.231659` 为约 +0.234 pp。由此当前三模块在 val/test 上均为正增长。
+
+test 证据等级为 `terminal_screenshot_rounded`，不是 exact JSON；截图没有显示 AP75 和 F1，因此两项继续留空，冻结 evaluator 的独立 exact 复评仍可作为后续增强证据，但不再把“三模块 test 完全缺失”写入材料。
 
 ## 当前引用规则
 
 - FIA-only 与 FDR+FIA 可引用本页的独立 exact val/test 结果，但必须同时注明发布版 cascading topology。
 - FIA-only 的 val 结果应如实报告为轻微负向，不能沿用“standalone 均为正增益”的口述结论。
-- FDR+FIA 的 +0.5280 pp 和三模块的 +0.3922 pp 都不是 strict paired 因果增益。
+- FDR+FIA 的 +0.5280 pp、三模块 val 的 +0.3922 pp 以及三模块 test 的约 +0.234 pp 都是正向算术观察，不表述为 strict paired 因果增益。
 - 三模块仍按 P3-only checkpoint 单独登记，不用 standalone cascading 结果替代。
 
 论文写作统一结果页见 [`RESULTS_ZH.md`](RESULTS_ZH.md)。机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)；独立 val 总体 CSV 见 [`fia_existing_best_val_results.csv`](fia_existing_best_val_results.csv)，独立 exact test 总体与逐类 CSV 见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。

@@ -24,7 +24,7 @@
 - FIA-only 相对 baseline 为 `−0.2315 pp`；FDR+FIA 相对 FDR 为 `+0.5280 pp`。两者是非严格配对算术差。
 - 两个 standalone checkpoint 均为 published cascading topology（`model[23].f=-1`），不能称为 P3-only。
 - 两个 standalone `best.pt` 均已在 VisDrone test（1,610 images / 75,102 instances）完成 exact 独立复评；FIA-only / FDR+FIA 的 AP75 分别为 `0.1716130742` / `0.2358787301`。val 与 test 结果分别报告；对既有对照的任何 test 算术差也不是 strict paired 因果增益。
-- FDR+BPDD+FIA 使用另一个正确 P3-only checkpoint，嵌入式 best-val mAP50–95 为 `0.29618`，相对 FDR+BPDD 为 `+0.3922 pp` 的非严格观察。
+- FDR+BPDD+FIA 的论文 A–E 主表直接绑定终端 val 面板：`P≈0.569、R≈0.499、AP50≈0.490、mAP≈0.296、约 +0.37 pp`。checkpoint 内的 `0.29618/+0.3922 pp` 作为独立补充正向记录；同一终端证据的 test 为 `≈0.234`（`≈+0.234 pp`）。
 
 ## 机器可读材料
 
