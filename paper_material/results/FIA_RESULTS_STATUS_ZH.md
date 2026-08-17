@@ -8,9 +8,19 @@
 
 | 实验臂 | 当前状态 | 正式数值状态 |
 |---|---|---|
-| FIA-only | 用户报告新版为正增益；GitHub 当前可见内容中未找到可确认的新版资产 | 待导入，不填数 |
-| FDR+FIA | 用户报告新版为正增益；GitHub 当前可见内容中未找到可确认的新版资产 | 待导入，不填数 |
+| FIA-only | 网页已有模型与 log，但内部图为修改前 cascading；修改后 P3-only 资产未找到 | 待导入，不填数 |
+| FDR+FIA | 网页已有模型与 log，但内部图为修改前 cascading；修改后 P3-only 资产未找到 | 待导入，不填数 |
 | FDR+BPDD+FIA | 正确 P3-only 新 checkpoint 已定位 | best-val 正向观察已登记；独立复评待补 |
+
+## 网页附件为何不能直接使用
+
+已展开并审计 GitHub Release `DFR-BDPP-FIA` 的全部附件。网页显示 10 项，其中 8 项为自定义附件，2 项为 GitHub 自动生成的源码归档，没有隐藏的另一组新版 standalone 文件。
+
+- FIA-only ZIP 内 best checkpoint：`model[23].f = -1`；
+- FDR+FIA ZIP 内 best checkpoint：`model[23].f = -1`；
+- 修改后 P3-only standalone 的必要指纹：`model[23].f = 21`。
+
+因此，网页上的 `log1.log`、`log2.log` 以及两个 standalone ZIP 均属于修改前实验，继续作废。网页上的 `DFR-BDPP-FIA-best.pt` 则满足 `model[23].f = 21`，属于正确三模块新图，两类附件不能混为一批。
 
 ## 已确认的新三模块 checkpoint
 

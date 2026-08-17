@@ -23,7 +23,7 @@
 - RT-DETR-L baseline：已有登记的 val/test 结果。
 - RT-DETR-L+FDR：已有登记的 val/test 结果；同协议部分可与 baseline 作严格差值。
 - RT-DETR-L+FDR+BPDD：已有登记的 val/test 精确绝对值；跨 authority 差值必须明确标注边界。
-- FIA-only 与 FDR+FIA：修改后正式数值待导入，不得从仓库中仍可能残留的旧 JSON、CSV、截图或旧报告取值。
+- FIA-only 与 FDR+FIA：网页模型与 log 已审计，但现有 standalone checkpoint 均为修改前 cascading 拓扑；修改后 P3-only 正式数值仍待导入，不得从旧附件取值。
 - FDR+BPDD+FIA：正确 P3-only 新 checkpoint 已定位，best-val 记录为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。AP75、test 和独立复评仍待补，因此不进入正式主表。
 
 修改后 FIA 的人类可读结果入口为 [FIA 消融新版结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)，机器状态与导入条件以 [FIA 结果状态](results/FIA_RESULTS_STATUS_ZH.md) 为准。旧 FIA 内容或附件即使可从 Git 历史找回，也不具有任何证据效力。
