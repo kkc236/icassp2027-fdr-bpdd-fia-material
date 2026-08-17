@@ -36,4 +36,4 @@
 
 三模块 checkpoint 的嵌入式 best-validation 记录保持为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618。相对 FDR+BPDD val mAP50–95 `0.29225786956881444` 的算术观察为 +0.3922 pp；严格配对状态为否。该 checkpoint 的 AP75、test 与冻结 evaluator 独立复评仍待补，因此与上表两条已独立复评的 standalone val 结果分开呈现。
 
-完整机器证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)，统一边界见 [`FIA_RESULTS_STATUS_ZH.md`](FIA_RESULTS_STATUS_ZH.md)。
+完整机器证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)，test 总体与逐类机器表见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)，统一边界见 [`FIA_RESULTS_STATUS_ZH.md`](FIA_RESULTS_STATUS_ZH.md)。

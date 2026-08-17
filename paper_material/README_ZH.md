@@ -33,6 +33,7 @@
 - [尺度 CSV](results/split_scale_results.csv)
 - [类别 CSV](results/split_class_results.csv)
 - [FIA standalone exact val CSV](results/fia_existing_best_val_results.csv)
+- [FIA standalone rounded test CSV（总体 + 逐类）](results/fia_existing_best_test_results.csv)
 - [FIA best.pt 完整证据](evidence/fia_existing_best_evaluation.json)
 - [FIA 状态机](evidence/fia_results_status.json)
 - [来源清单](evidence/source_manifest.json)

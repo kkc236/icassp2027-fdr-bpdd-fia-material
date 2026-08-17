@@ -28,6 +28,7 @@ REQUIRED_MATERIAL_FILES = (
     "results/split_scale_results.csv",
     "results/split_class_results.csv",
     "results/fia_existing_best_val_results.csv",
+    "results/fia_existing_best_test_results.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
 )
@@ -134,6 +135,66 @@ def test_existing_best_fia_evaluations_are_registered():
         "fia_existing_best_independent_val",
         "fdr_fia_existing_best_independent_val",
     }
+
+
+def test_existing_best_fia_test_csv_matches_rounded_evidence():
+    evidence = _load_required_json("evidence/fia_existing_best_evaluation.json")
+    evidence_arms = {arm["source_id"]: arm for arm in evidence["arms"]}
+    expected_counts = {
+        "pedestrian": (1197, 21006),
+        "people": (797, 6376),
+        "bicycle": (377, 1302),
+        "car": (1530, 28074),
+        "van": (1168, 5771),
+        "truck": (750, 2659),
+        "tricycle": (245, 530),
+        "awning-tricycle": (233, 599),
+        "bus": (838, 2940),
+        "motor": (794, 5845),
+    }
+
+    csv_path = MATERIAL_ROOT / "results/fia_existing_best_test_results.csv"
+    with csv_path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+
+    assert len(rows) == 22
+    assert {row["source_id"] for row in rows} == set(evidence_arms)
+    assert all(row["split"] == "test" for row in rows)
+    assert all(
+        row["evidence_level"] == "best_checkpoint_screenshot_rounded"
+        for row in rows
+    )
+    assert all(row["map75"] == "" for row in rows)
+
+    for source_id, arm in evidence_arms.items():
+        arm_rows = [row for row in rows if row["source_id"] == source_id]
+        overall_rows = [row for row in arm_rows if row["scope"] == "overall"]
+        class_rows = [row for row in arm_rows if row["scope"] == "class"]
+        assert len(overall_rows) == 1
+        assert len(class_rows) == 10
+
+        overall = overall_rows[0]
+        assert overall["method"] == arm["method"]
+        assert overall["class"] == "all"
+        assert int(overall["images"]) == arm["test"]["images"]
+        assert int(overall["instances"]) == arm["test"]["instances"]
+        for metric in ("precision", "recall", "f1", "map50", "map"):
+            assert float(overall[metric]) == arm["test"]["metrics"][metric]
+
+        evidence_classes = {
+            class_row["class"]: class_row
+            for class_row in arm["test"]["per_class"]
+        }
+        assert {row["class"] for row in class_rows} == set(expected_counts)
+        for row in class_rows:
+            class_name = row["class"]
+            expected = evidence_classes[class_name]
+            assert (int(row["images"]), int(row["instances"])) == expected_counts[
+                class_name
+            ]
+            assert row["f1"] == ""
+            for metric in ("precision", "recall", "map50", "map"):
+                assert float(row[metric]) == expected[metric]
 
 
 def test_legacy_third_method_name_is_absent():
@@ -399,6 +460,7 @@ def test_readme_links_split_comparison_outputs():
         "evidence/fia_results_status.json",
         "evidence/fia_existing_best_evaluation.json",
         "results/fia_existing_best_val_results.csv",
+        "results/fia_existing_best_test_results.csv",
     ):
         assert relative_path in readme
 

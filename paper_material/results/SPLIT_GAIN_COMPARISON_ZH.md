@@ -78,4 +78,4 @@
 - FIA-only 只相对 baseline 陈述，FDR+FIA 只相对 FDR 陈述，三模块只相对 FDR+BPDD 陈述。
 - 新三模块在源码提交、配置、checkpoint、数据集身份、评估命令以及结构化 val/test 输出全部绑定后，才进入正式总体、尺度和类别表。
 
-状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。机器 JSON/CSV 已同步登记现有 best.pt 的独立 val 与截图舍入 test 证据。
+状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。机器 JSON/CSV 已同步登记现有 best.pt 的独立 val，以及 test 总体与 10 类截图舍入证据；test 明细见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。

@@ -48,4 +48,4 @@ test 截图覆盖 1,610 images / 75,102 instances；截图仅提供舍入后的�
 - FDR+FIA 的 +0.5280 pp 和三模块的 +0.3922 pp 都不是 strict paired 因果增益。
 - 三模块仍按 P3-only checkpoint 单独登记，不用 standalone cascading 结果替代。
 
-机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)，汇总 CSV 见 [`fia_existing_best_val_results.csv`](fia_existing_best_val_results.csv)。
+机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)；独立 val 总体 CSV 见 [`fia_existing_best_val_results.csv`](fia_existing_best_val_results.csv)，test 总体与逐类 CSV 见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。
