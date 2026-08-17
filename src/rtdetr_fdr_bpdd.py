@@ -27,6 +27,9 @@ _BPDD_OPTION_KEYS = {
     "eps",
     "matched_layer",
     "include_dn",
+    "normalization",
+    "reliability_floor",
+    "common_gradient_firewall",
 }
 
 
@@ -44,6 +47,8 @@ def _parse_bpdd_options(payload: dict[str, Any]) -> BPDDOptions:
         temperature=float(payload.get("temperature", 0.5)),
         margin=float(payload.get("margin", 0.02)),
         eps=float(payload.get("eps", 1e-6)),
+        normalization=str(payload.get("normalization", "eligible_edges")),
+        reliability_floor=float(payload.get("reliability_floor", 0.5)),
     )
 
 
