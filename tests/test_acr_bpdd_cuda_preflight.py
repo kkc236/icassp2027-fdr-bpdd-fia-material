@@ -58,6 +58,10 @@ def _measurements() -> dict:
         "active_edge_ratio": 0.5,
         "reliability_mass": 7.5,
         "replay_max_abs_diff": 0.0,
+        "replay_tolerance": 1.0e-6,
+        "liveness_step": 7,
+        "liveness_max_steps": 16,
+        "bpdd_gradient_scale": 128.0,
         "normal_queries": 300,
         "dn_queries": 80,
         "common_parameter_tensors": 100,
@@ -86,7 +90,7 @@ def _checks() -> dict[str, bool]:
         "bbox_bpdd_grad_nonzero": True,
         "bbox_bpdd_grads_finite": True,
         "total_grads_finite": True,
-        "replay_max_diff_le_1e_6": True,
+        "replay_within_dtype_tolerance": True,
         "normal_queries_300": True,
         "dn_nonempty": True,
         "forward": True,
@@ -114,7 +118,10 @@ def _evidence(module, tmp_path: Path) -> dict:
     )
     optimizer_evidence = tmp_path / "optimizer-evidence.jsonl"
     optimizer_evidence.write_text(
-        '{"optimizer_attempt":1}\n{"optimizer_attempt":2}\n',
+        "".join(
+            json.dumps({"optimizer_attempt": attempt}) + "\n"
+            for attempt in range(1, 9)
+        ),
         encoding="utf-8",
     )
     return {
@@ -324,7 +331,10 @@ def test_cuda_gate_does_not_revalidate_optimizer_evidence_after_first_step(
         pass
 
     class FakeModel:
-        last_bpdd_statistics = {}
+        last_bpdd_statistics = {
+            "active_edge_ratio": torch.tensor(0.5),
+            "reliability_mass": torch.tensor(1.0),
+        }
         last_fdr_evidence = object()
 
         def train(self):
@@ -351,7 +361,12 @@ def test_cuda_gate_does_not_revalidate_optimizer_evidence_after_first_step(
 
     def one_step(*_args, optimizer_evidence_path: Path, **_kwargs):
         optimizer_evidence_path.write_text('{"optimizer_attempt":1}\n', encoding="utf-8")
-        return torch.tensor(1.0), {}
+        return torch.tensor(1.0), {
+            "bpdd": torch.tensor(0.25),
+            "private": {"nonzero_tensors": 1, "finite": True},
+            "common": {"gradient_tensors": 0},
+            "optimizer_evidence_attempt": 1,
+        }
 
     module._validate_artifact_paths(context)
     monkeypatch.setattr(module.torch.cuda, "is_available", lambda: True)
@@ -394,6 +409,31 @@ def test_cuda_gate_reload_eval_keeps_cached_tensors_trainable() -> None:
 
     assert reload_eval.count("with torch.no_grad(), torch.autocast(") == 2
     assert "torch.inference_mode()" not in reload_eval
+
+
+def test_one_step_probes_bpdd_gradient_at_the_frozen_amp_scale() -> None:
+    module = _load_module()
+    source = inspect.getsource(module._one_step)
+
+    assert "scaler.scale(bpdd)" in source
+
+
+def test_liveness_requires_positive_signal_and_private_gradient() -> None:
+    module = _load_module()
+    active = {
+        "bpdd": module.torch.tensor(1.0e-5),
+        "private": {"nonzero_tensors": 1, "finite": True},
+        "common": {"gradient_tensors": 0},
+    }
+    stats = {
+        "active_edge_ratio": module.torch.tensor(0.1),
+        "reliability_mass": module.torch.tensor(1.0),
+    }
+
+    assert module._bpdd_step_is_live(active, stats) is True
+    inactive = deepcopy(active)
+    inactive["private"] = {"nonzero_tensors": 0, "finite": True}
+    assert module._bpdd_step_is_live(inactive, stats) is False
 
 
 def test_execute_rejects_artifact_path_collision_before_cuda(tmp_path: Path) -> None:

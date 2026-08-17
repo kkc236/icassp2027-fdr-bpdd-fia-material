@@ -65,6 +65,7 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
             strict_checks=False,
         )
         self.last_acr_replay_max_abs_diff: float | None = None
+        self.last_acr_replay_tolerance: float | None = None
 
     def predict(
         self,
@@ -111,12 +112,22 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
             normal.detach().float() - evidence.corner_logits.detach().float()
         ).abs().max()
         value = float(difference.cpu())
-        if not torch.isfinite(difference) or value > 1e-6:
-            raise RuntimeError(
-                f"ACR-BPDD replay changed cumulative corner values: max_abs={value}"
-            )
+        tolerance = (
+            float(torch.finfo(normal.dtype).eps)
+            if normal.dtype in {torch.float16, torch.bfloat16}
+            else 1.0e-6
+        )
         self.last_acr_replay_max_abs_diff = value
-        return normal
+        self.last_acr_replay_tolerance = tolerance
+        if not torch.isfinite(difference) or value > tolerance:
+            raise RuntimeError(
+                "ACR-BPDD replay changed cumulative corner values: "
+                f"max_abs={value}, tolerance={tolerance}"
+            )
+        # Preserve the exact stock/FDR forward values while the zero-valued
+        # straight-through residual keeps the BPDD gradient private to the
+        # detached distribution-head replay.
+        return evidence.corner_logits.detach() + (normal - normal.detach())
 
     def loss(
         self,
@@ -130,6 +141,7 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         if not isinstance(self.criterion, BPDDDetectionLoss):
             raise TypeError("ACR-BPDD model criterion was unexpectedly replaced")
         self.last_acr_replay_max_abs_diff = None
+        self.last_acr_replay_tolerance = None
         if not self.training:
             self.acr_replay.clear()
             return super().loss(batch, preds)

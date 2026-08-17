@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from copy import deepcopy
 import io
+from types import SimpleNamespace
 
 import pytest
 import torch
@@ -123,8 +124,48 @@ def test_acr_training_bpdd_graph_reaches_only_distribution_heads(
     assert acr.last_fdr_evidence.dn_corner_logits.shape[2] > 0
     assert acr.last_fdr_evidence.corner_logits.shape[2] == 300
     assert acr.last_acr_replay_max_abs_diff is not None
-    assert acr.last_acr_replay_max_abs_diff <= 1e-6
+    assert acr.last_acr_replay_tolerance is not None
+    assert acr.last_acr_replay_max_abs_diff <= acr.last_acr_replay_tolerance
     assert acr.acr_replay.cached_layer_count == 0
+
+
+def test_acr_amp_replay_uses_original_values_with_private_straight_through(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_704)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    retained = torch.tensor([[[[1.0]]]], dtype=torch.float16)
+    replayed = torch.tensor([[[[1.0009765625]]]], dtype=torch.float16, requires_grad=True)
+    acr.last_fdr_evidence = SimpleNamespace(corner_logits=retained)
+    monkeypatch.setattr(acr.acr_replay, "replay", lambda **_kwargs: replayed)
+
+    aligned = acr._normal_replayed_corners()
+
+    torch.testing.assert_close(aligned.detach(), retained, rtol=0, atol=0)
+    aligned.float().sum().backward()
+    torch.testing.assert_close(replayed.grad, torch.ones_like(replayed), rtol=0, atol=0)
+    assert acr.last_acr_replay_max_abs_diff == pytest.approx(
+        torch.finfo(torch.float16).eps
+    )
+    assert acr.last_acr_replay_tolerance == pytest.approx(
+        torch.finfo(torch.float16).eps
+    )
+
+
+def test_acr_fp32_replay_still_rejects_drift_above_one_e_minus_six(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_705)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    retained = torch.tensor([[[[1.0]]]], dtype=torch.float32)
+    replayed = torch.tensor([[[[1.00001]]]], dtype=torch.float32, requires_grad=True)
+    acr.last_fdr_evidence = SimpleNamespace(corner_logits=retained)
+    monkeypatch.setattr(acr.acr_replay, "replay", lambda **_kwargs: replayed)
+
+    with pytest.raises(RuntimeError, match="max_abs"):
+        acr._normal_replayed_corners()
 
 
 def test_acr_loss_failure_always_clears_transient_hooks(

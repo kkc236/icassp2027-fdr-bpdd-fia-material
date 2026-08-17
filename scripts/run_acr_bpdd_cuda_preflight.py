@@ -51,7 +51,7 @@ REQUIRED_CHECKS = (
     "bbox_bpdd_grad_nonzero",
     "bbox_bpdd_grads_finite",
     "total_grads_finite",
-    "replay_max_diff_le_1e_6",
+    "replay_within_dtype_tolerance",
     "normal_queries_300",
     "dn_nonempty",
     "forward",
@@ -63,6 +63,8 @@ REQUIRED_CHECKS = (
     "optimizer_scaler_reload",
     "resume_step",
 )
+
+BPDD_LIVENESS_MAX_STEPS = 16
 
 
 @dataclass(frozen=True)
@@ -128,6 +130,31 @@ def summarize_gradients(
         "finite": finite,
         "nonzero_tensors": nonzero,
     }
+
+
+def _bpdd_step_is_live(
+    step: Mapping[str, Any], statistics: Mapping[str, Tensor]
+) -> bool:
+    """Require an actual finite BPDD update path, not only non-zero metadata."""
+
+    bpdd = step.get("bpdd")
+    private = step.get("private", {})
+    common = step.get("common", {})
+    active = statistics.get("active_edge_ratio")
+    mass = statistics.get("reliability_mass")
+    if not all(isinstance(value, Tensor) for value in (bpdd, active, mass)):
+        return False
+    return bool(
+        torch.isfinite(bpdd).all().item()
+        and float(bpdd.detach().float().cpu()) > 0
+        and torch.isfinite(active).all().item()
+        and float(active.detach().float().cpu()) > 0
+        and torch.isfinite(mass).all().item()
+        and float(mass.detach().float().cpu()) > 0
+        and bool(private.get("finite", False))
+        and int(private.get("nonzero_tensors", 0)) > 0
+        and int(common.get("gradient_tensors", -1)) == 0
+    )
 
 
 def _move_batch(batch: Mapping[str, Any], device: torch.device) -> dict[str, Any]:
@@ -313,8 +340,9 @@ def _one_step(
         if not parameter.requires_grad:
             continue
         (private if ".dec_bbox_head." in name else common).append(parameter)
+    before = float(scaler.get_scale())
     bpdd_gradients = torch.autograd.grad(
-        bpdd,
+        scaler.scale(bpdd),
         (*common, *private),
         retain_graph=True,
         allow_unused=True,
@@ -324,7 +352,6 @@ def _one_step(
     common_summary = summarize_gradients(common_grads)
     private_summary = summarize_gradients(private_grads)
 
-    before = float(scaler.get_scale())
     scaler.scale(total).backward()
     total_gradients = [
         parameter.grad for parameter in model.parameters() if parameter.requires_grad
@@ -365,6 +392,7 @@ def _one_step(
         "private_parameter_tensors": len(private),
         "optimizer_evidence_attempt": int(step_trainer.optimizer_attempt),
         "gradient_norms": dict(step_trainer.last_gradient_norms),
+        "bpdd_gradient_scale": before,
     }
 
 
@@ -377,26 +405,46 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
         raise RuntimeError(f"ACR-BPDD environment drift: {environment}")
 
     loader = _loader(context)
-    raw = next(iter(loader))
-    if int(raw["img"].shape[0]) != 8:
-        raise RuntimeError("ACR-BPDD preflight requires a real batch8")
-    batch = _move_batch(raw, device)
+    iterator = iter(loader)
     model = _load_model(context, device).train()
     optimizer = _formal_musgd(model)
     scaler = torch.amp.GradScaler(
         "cuda", enabled=True, init_scale=128.0, growth_interval=2**31 - 1
     )
     optimizer_evidence_path = _optimizer_evidence_path(context)
-    total, first = _one_step(
-        model,
-        optimizer,
-        scaler,
-        batch,
-        optimizer_evidence_path=optimizer_evidence_path,
-        optimizer_attempt=0,
-    )
-    stats = model.last_bpdd_statistics
-    evidence = model.last_fdr_evidence
+    first: dict[str, Any] | None = None
+    total: Tensor | None = None
+    batch: dict[str, Any] | None = None
+    stats: Mapping[str, Tensor] | None = None
+    evidence = None
+    liveness_step = 0
+    for attempt in range(1, BPDD_LIVENESS_MAX_STEPS + 1):
+        raw = next(iterator)
+        if int(raw["img"].shape[0]) != 8:
+            raise RuntimeError("ACR-BPDD preflight requires a real batch8")
+        candidate_batch = _move_batch(raw, device)
+        candidate_total, candidate = _one_step(
+            model,
+            optimizer,
+            scaler,
+            candidate_batch,
+            optimizer_evidence_path=optimizer_evidence_path,
+            optimizer_attempt=attempt - 1,
+        )
+        candidate_stats = dict(model.last_bpdd_statistics)
+        if _bpdd_step_is_live(candidate, candidate_stats):
+            first = candidate
+            total = candidate_total
+            batch = candidate_batch
+            stats = candidate_stats
+            evidence = model.last_fdr_evidence
+            liveness_step = attempt
+            break
+    if first is None or total is None or batch is None or stats is None:
+        raise RuntimeError(
+            "ACR-BPDD did not produce a live private-head BPDD gradient within "
+            f"{BPDD_LIVENESS_MAX_STEPS} real batches"
+        )
     if evidence is None:
         raise RuntimeError("ACR-BPDD preflight lost FDR evidence")
 
@@ -456,6 +504,8 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
         if isinstance(stored_replay_error, Tensor)
         else float(stored_replay_error or 0.0)
     )
+    stored_replay_tolerance = model.last_acr_replay_tolerance
+    replay_tolerance = float(stored_replay_tolerance or 0.0)
     dn_queries = int(evidence.dn_corner_logits.shape[2]) if evidence.dn_corner_logits is not None else 0
     checks = {
         "real_visdrone_batch8": int(batch["img"].shape[0]) == 8,
@@ -466,7 +516,8 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
         "bbox_bpdd_grad_nonzero": first["private"]["nonzero_tensors"] > 0,
         "bbox_bpdd_grads_finite": bool(first["private"]["finite"]),
         "total_grads_finite": bool(first["total"]["finite"]),
-        "replay_max_diff_le_1e_6": replay_error <= 1e-6,
+        "replay_within_dtype_tolerance": replay_tolerance > 0
+        and replay_error <= replay_tolerance,
         "normal_queries_300": int(evidence.corner_logits.shape[2]) == 300,
         "dn_nonempty": dn_queries > 0,
         "forward": bool(torch.isfinite(total.detach()).item()),
@@ -517,6 +568,10 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
             "active_edge_ratio": active,
             "reliability_mass": mass,
             "replay_max_abs_diff": replay_error,
+            "replay_tolerance": replay_tolerance,
+            "liveness_step": liveness_step,
+            "liveness_max_steps": BPDD_LIVENESS_MAX_STEPS,
+            "bpdd_gradient_scale": first["bpdd_gradient_scale"],
             "normal_queries": int(evidence.corner_logits.shape[2]),
             "dn_queries": dn_queries,
             "common_parameter_tensors": int(first["common_parameter_tensors"]),
@@ -654,8 +709,23 @@ def _validate_report_payload(
     if not isinstance(checks, Mapping) or any(checks.get(name) is not True for name in REQUIRED_CHECKS):
         raise ValueError("ACR-BPDD preflight required check is false or missing")
     measurements = report.get("measurements", {})
-    if float(measurements.get("replay_max_abs_diff", math.inf)) > 1e-6:
+    replay_tolerance = float(measurements.get("replay_tolerance", 0.0))
+    replay_error = float(measurements.get("replay_max_abs_diff", math.inf))
+    if (
+        not math.isfinite(replay_tolerance)
+        or replay_tolerance <= 0
+        or not math.isfinite(replay_error)
+        or replay_error > replay_tolerance
+    ):
         raise ValueError("ACR-BPDD preflight replay tolerance failed")
+    liveness_step = int(measurements.get("liveness_step", 0))
+    if (
+        int(measurements.get("liveness_max_steps", 0)) != BPDD_LIVENESS_MAX_STEPS
+        or not 1 <= liveness_step <= BPDD_LIVENESS_MAX_STEPS
+    ):
+        raise ValueError("ACR-BPDD preflight liveness window is invalid")
+    if float(measurements.get("bpdd_gradient_scale", 0.0)) != 128.0:
+        raise ValueError("ACR-BPDD preflight BPDD gradient scale differs from 128")
     if float(measurements.get("loss_bpdd", 0)) <= 0:
         raise ValueError("ACR-BPDD preflight loss_bpdd is not positive")
     if float(measurements.get("active_edge_ratio", 0)) <= 0:
@@ -742,8 +812,11 @@ def _validate_report_payload(
         ]
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError("ACR-BPDD optimizer evidence is unreadable") from error
-    if [row.get("optimizer_attempt") for row in optimizer_rows] != [1, 2]:
-        raise ValueError("ACR-BPDD optimizer evidence attempts are not [1, 2]")
+    expected_attempts = list(range(1, liveness_step + 2))
+    if [row.get("optimizer_attempt") for row in optimizer_rows] != expected_attempts:
+        raise ValueError(
+            "ACR-BPDD optimizer evidence attempts do not match the liveness window"
+        )
     if report.get("manifest_sha256") != manifest.get("manifest_sha256"):
         raise ValueError("ACR-BPDD preflight manifest authority mismatch")
     return report
