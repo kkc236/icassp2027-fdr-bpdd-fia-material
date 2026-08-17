@@ -1,65 +1,60 @@
 # ICASSP 2027 写作提纲
 
-## 论文定位
+## 论文主线
 
-基线为 Ultralytics RT-DETR-L，目标任务为 VisDrone 小目标与密集目标检测。核心问题分成三层：连续四维框回归缺少显式边界分布；早期解码层未充分利用后续层的更优分布；高分辨率 P3 特征仍需受控的局部与注意力增强。
+建议主线为“细粒度分布细化基础—训练期渐进蒸馏—高分辨率特征增强”。FDR 是从固定版本 D-FINE 适配而来的结构基础，不是本文发明；BPDD 和 FIA 在 RT-DETR-L/VisDrone 系统中分别处理优化监督与高分辨率表征。
 
-建议将论文主线写为“细粒度分布细化基础—训练期渐进蒸馏—高分辨率特征增强”。FDR 是从固定版本 D-FINE 适配而来的结构基础，不是本文发明；BPDD 和 FIA 在该 RT-DETR-L/VisDrone 系统中分别处理优化监督与 P3 表征。
+## 贡献组织
 
-## 三项贡献
+1. 将 FDR 的边界分布表示和相关监督稳定适配到 Ultralytics RT-DETR-L。
+2. 构建依赖 FDR 逐边分布的训练期 BPDD，不增加推理分支。
+3. 集成修改后的 FIA 高分辨率特征增强模块，并以独立消融验证其与 FDR、BPDD 的兼容性。
 
-1. 将 D-FINE 的四边分布表示、累计细化、Integral 与 FGL 结构化适配到 Ultralytics RT-DETR-L，保留分类、匹配及主要解码器合同，并提供可隔离配置与训练证据。
-2. 构建 BPDD：从未来解码层按目标误差 softmin 形成停止梯度教师，仅在教师优于当前层时蒸馏；该监督训练期有效、无参数，最小宿主为 FDR。
-3. 构建 FIA：只增强 P3 的两个局部深度卷积细化块和通道/空间注意力，通过零初始化残差缩放保持训练起点恒等，并在推理期保留。
+第三点的方法细节必须在最新 FIA 源码完成绑定后定稿，不能从旧实现或旧实验反推。
 
 ## 章节结构
 
 ### 1. Introduction
 
-- 说明 VisDrone 小目标密集、边界定位敏感的任务特征。
-- 指出 RT-DETR-L 连续框回归、早期层监督和 P3 表征三个具体缺口。
-- 用三项贡献收束，不在引言中写未验证的实时性、显著性或多种子结论。
+围绕无人机场景小目标、遮挡和定位不确定性展开问题，说明定位分布、训练监督和高分辨率表征三个层面的互补性。
 
 ### 2. Related Work
 
-- 实时端到端检测与 RT-DETR。
-- 细粒度边界分布回归与 D-FINE；明确 FDR/FGL/Integral 的先验来源。
-- 深层监督、自蒸馏与未来层教师。
-- 局部卷积、通道注意力和空间注意力。
+覆盖 transformer detector、分布式框回归、蒸馏和小目标特征增强；明确 FDR/FGL/Integral 的来源。
 
 ### 3. Method
 
-- 3.1 Overall Architecture：RT-DETR-L baseline、P3 FIA、FDR decoder 与训练期 BPDD 的关系。
-- 3.2 Structured FDR Adaptation：preliminary box、四边 33-bin 表示、六层累计 logits、Integral、FGL 与 stock 损失隔离。
-- 3.3 Best-Progressive Distribution Distillation：未来层 softmin 教师、相邻 bin 目标误差、better-only 可靠性与 KL 项。
-- 3.4 P3 Feature Interaction and Attention：两级局部细化、通道/空间门、`Y=X+alpha(F(X)-X)` 与私有初始化。
-- 3.5 Training Objective and Inference：总损失、BPDD 仅训练期、FDR/FIA 推理期保留。
+- 3.1 Overall Architecture：RT-DETR-L baseline、FDR decoder、训练期 BPDD 与修改后 FIA 的关系。
+- 3.2 Fine-grained Distribution Refinement：分布表示与解码。
+- 3.3 Boundary Progressive Distribution Distillation：教师构造、激活条件和损失。
+- 3.4 FIA：在最新源码绑定后描述结构和插入位置。
+- 3.5 Training Objective and Inference：总损失、BPDD 仅训练期、FDR/FIA 推理期角色。
 
 ### 4. Experiments
 
-- 4.1 Dataset and Protocol：VisDrone 6,471/548、10 类、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
-- 4.2 Main Results：先呈现四行绝对值，再只对 strict 行报告配对差值；明确另外两种证据等级。
-- 4.3 Ablation Studies：FDR 单因素已有独立训练；FIA-only 与 FDR+FIA 的历史 Release 训练包和结果已登记，可作为补充观察，但因 topology、源码身份与 evaluator 合同不一致不能进入正式消融表。下一步按当前 P3-only 配置完成 Formal100 与 exact 独立复评。BPDD 单独不成立。
-- 4.4 Analysis：BPDD 活跃边比例与教师改善；三模块 exact val 的四尺度、十类别、参数量和单臂效率。效率不与缺少同协议结果的其他模型作差。
+- 4.1 Dataset and Protocol：VisDrone、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
+- 4.2 Main Results：当前正式表只放 baseline、FDR 和 FDR+BPDD。
+- 4.3 Ablation Studies：FIA-only、FDR+FIA 和三模块在新版证据完成后加入；不得引用修改前 FIA 数据。
+- 4.4 Analysis：先呈现 FDR/BPDD 的现有可审计分析；FIA 的总体、尺度、类别和效率分析待新版独立复评补齐。
 
 ### 5. Conclusion
 
-总结三部分在同一 RT-DETR-L 框架中的职责与现有证据。把跨 authority 和截图结果写成阶段性验证，并将严格 BPDD/FIA 配对消融列为后续工作。
+总结三部分的职责，但最终效果结论必须以完整新版 FIA 证据为准。
 
-## 允许主张
+## 当前允许主张
 
-- strict 证据下，FDR 相对 RT-DETR-L 的 mAP50–95 为 `+0.07055`，AP75 为 `+0.07951`。
+- strict 证据下，FDR 相对 RT-DETR-L 的 mAP50–95 为 +0.07055，AP75 为 +0.07951。
 - BPDD 是依赖 FDR 边界分布的训练期、无参数蒸馏，不增加推理图或参数。
-- FIA 只插入 P3，保持张量形状，`alpha` 零初始化，C=256 时约 301,476 个参数，推理期有效。
-- 三模块 Formal100 的 exact val mAP50–95 为 `0.2899528643`、AP75 为 `0.2951036299`；该行是 `exact_single_arm`，不是严格 FIA 增益证据。
-- BPDD 与完整模型可报告现有绝对值，但必须同时显示各自证据等级和比较边界。
-- FIA-only 与 FDR+FIA 的 Release 结果可带 `release topology` 标签作为阶段性观察：val 分别为训练日志 best mAP50–95 `0.21671` 与 `0.29408`，test 分别为截图舍入 `≈0.177` 与 `≈0.235`；不得报告为正式增益。
+- 已确认正确 P3-only 新三模块 checkpoint 的 best-val 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。
+- 该三模块观察仍缺 AP75、test 和冻结 evaluator 独立复评。
 
-## 禁止主张
+## 当前禁止主张
 
+- 任何修改前 FIA 指标、截图或旧方向性结论仍可作为参考。
+- 单 FIA 与 FDR+FIA 的正式数值已经取得；目前只有用户报告新版均为正增益，尚无可审计资产。
+- 新三模块 best-val 观察是严格配对因果增益、完整评估或最终论文主表结果。
 - “本文发明 FDR、FGL、Integral、非均匀积分或相邻 bin 监督”。
 - “BPDD 可脱离 FDR 单独使用”或“BPDD 具有推理期零总开销”。
-- “FIA 零参数、零计算、推理期移除”或“FIA 单独增益已证实”。
-- 把 `cross_authority_exact` 或 `exact_single_arm` 写成严格配对增益，或把 `screenshot_rounded` 写成精确值。
-- 把历史 Release graph 当成当前 P3-only topology，或把 Release target commit 当成已经验证的 training source commit；用训练日志 val 替代冻结 evaluator 独立复评，或补写缺失的 AP75。
-- 混用 val/test、不同 checkpoint、不同 evaluator 或不同源码 authority；宣称多种子均值、显著性、GFLOPs、FPS、延迟、显存及分尺度收益而没有对应证据。
+- 混用 val/test、不同 checkpoint、不同 evaluator 或不同源码 authority。
+
+FIA 证据状态以 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md) 为准。

@@ -54,6 +54,8 @@ def test_fia_ablation_validators_accept_weights_and_use_test_split():
         source = _read(relative_path)
         compile(source, relative_path, "exec")
         assert '"--weights"' in source
+        assert "required=True" in source
+        assert "20260815" not in source
         assert 'split="test"' in source
 
 

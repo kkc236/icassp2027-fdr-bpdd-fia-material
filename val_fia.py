@@ -32,11 +32,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--weights",
         type=Path,
-        default=ROOT
-        / "runs"
-        / "fia-seed0-20260815-211156"
-        / "weights"
-        / "best.pt",
+        required=True,
+        help="Updated P3-only FIA checkpoint; pre-revision checkpoints are invalid.",
     )
     args = parser.parse_args()
 

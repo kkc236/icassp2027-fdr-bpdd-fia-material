@@ -1,4 +1,3 @@
-import hashlib
 import csv
 import json
 import re
@@ -16,34 +15,25 @@ REQUIRED_MATERIAL_FILES = (
     "methods/FIA_ZH.md",
     "experiments/PROTOCOL_ZH.md",
     "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
-    "evidence/fia_ablation_release_evidence.json",
+    "evidence/fia_results_status.json",
+    "results/FIA_RESULTS_STATUS_ZH.md",
     "results/main_results.json",
     "results/MAIN_TABLE_ZH.md",
     "evidence/source_manifest.json",
     "evidence/bpdd_val_exact.json",
-    "evidence/fdr_bpdd_fia_val_exact.json",
-    "results/FDR_BPDD_FIA_DETAILED_ZH.md",
-    "results/fdr_bpdd_fia_val_class_results.csv",
-    "results/fdr_bpdd_fia_val_scale_results.csv",
     "results/SPLIT_GAIN_COMPARISON_ZH.md",
-    "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
-    "results/fia_ablation_release_test_class_results.csv",
     "results/split_gain_comparison.json",
     "results/split_overall_results.csv",
     "results/split_scale_results.csv",
     "results/split_class_results.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
-    "assets/fia_terminal_validation.jpg",
-    "assets/fia_only_test_release.png",
-    "assets/fdr_fia_test_release.png",
 )
 
 EXPECTED_METHODS = (
     "RT-DETR-L",
     "RT-DETR-L+FDR",
     "RT-DETR-L+FDR+BPDD",
-    "RT-DETR-L+FDR+BPDD+FIA",
 )
 
 
@@ -120,45 +110,8 @@ def test_main_results_are_bound_to_manifest():
     assert rows["RT-DETR-L+FDR"]["map"] == 0.28966
     assert rows["RT-DETR-L+FDR+BPDD"]["map"] == 0.29225786956881444
 
-    full_model = rows["RT-DETR-L+FDR+BPDD+FIA"]
-    assert full_model["precision"] == 0.5557616181420737
-    assert full_model["recall"] == 0.4983437446164801
-    assert full_model["map50"] == 0.4812409327058466
-    assert full_model["map75"] == 0.295103629855508
-    assert full_model["map"] == 0.28995286433682393
-    assert full_model["evidence_level"] == "exact_single_arm"
-    assert full_model["source_id"] == "fia_formal100_val_exact"
-
-
-def test_fia_formal100_detailed_evidence_is_complete_and_bound():
-    evidence_path = MATERIAL_ROOT / "evidence" / "fdr_bpdd_fia_val_exact.json"
-    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-    manifest = _load_required_json("evidence/source_manifest.json")
-
-    assert evidence["method"] == "RT-DETR-L+FDR+BPDD+FIA"
-    assert evidence["split"] == "VisDrone val"
-    assert evidence["metrics"]["map"] == 0.28995286433682393
-    assert evidence["checkpoint"]["sha256"] == (
-        "3EA6CD138C20AD38A35EF652407B6D77C423379A06E669028F771517843E069F"
-    )
-    assert set(evidence["scale_details"]) == {"tiny", "small", "medium", "large"}
-    assert len(evidence["class_details"]) == 10
-    assert evidence["provenance"]["source_sha256"] == (
-        "5AE8CA9AC71FA49D7C754E69CDFF87934D44B02FE7992754A89AE2151701FC5F"
-    )
-    assert evidence["provenance"]["third_method_name_normalized_to_fia"] is True
-
-    source = manifest["sources"]["fia_formal100_val_exact"]
-    assert source["local_artifact"] == (
-        "paper_material/evidence/fdr_bpdd_fia_val_exact.json"
-    )
-    canonical_bytes = subprocess.run(
-        ["git", "-C", str(REPOSITORY_ROOT), "show", f":{source['local_artifact']}"],
-        check=True,
-        capture_output=True,
-    ).stdout
-    actual_sha256 = hashlib.sha256(canonical_bytes).hexdigest()
-    assert source["canonical_local_artifact_sha256"] == actual_sha256
+    assert all(row["fia"] is False for row in results["rows"])
+    assert "supplementary_unverified_observations" not in results
 
 
 def test_repository_contains_no_github_pat():
@@ -197,35 +150,57 @@ def test_source_manifest_has_sha256_for_local_artifacts():
     )
 
 
-def test_fia_ablation_manifest_records_p3_only_config_normalization():
+def test_pre_revision_fia_results_are_revoked_and_absent():
+    status = _load_required_json("evidence/fia_results_status.json")
     manifest = _load_required_json("evidence/source_manifest.json")
-    source = manifest["sources"]["fia_ablation_scaffold_1d083140"]
-    artifacts = {artifact["path"]: artifact for artifact in source["artifacts"]}
 
-    for relative_path in (
-        "configs/rtdetr-l-fia.yaml",
-        "configs/rtdetr-l-fdr-fia.yaml",
-    ):
-        artifact = artifacts[relative_path]
-        actual_oid = subprocess.run(
-            [
-                "git",
-                "-C",
-                str(REPOSITORY_ROOT),
-                "hash-object",
-                f"--path={relative_path}",
-                relative_path,
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        assert artifact["local_git_blob_oid"] == actual_oid
-        assert artifact["local_git_blob_oid"] != artifact["git_blob_oid"]
-        assert re.fullmatch(
-            r"[0-9a-f]{64}", artifact["local_canonical_sha256"]
-        )
-        assert artifact["normalization"] == "preserve_p3_only_fia_topology"
+    assert status["format_version"] == 1
+    assert status["status"] == "updated_three_module_available_standalone_pending"
+    assert status["valid_fia_result_source_ids"] == [
+        "fia_updated_three_module_checkpoint_best_val"
+    ]
+    assert status["user_reported_updated_result_direction"] == "all_positive"
+    assert status["user_report_is_formal_numeric_evidence"] is False
+
+    revoked_source_ids = {
+        "fia_formal100_val_exact",
+        "fia_ablation_release_dfr_bdpp_fia",
+        "fia_terminal_val",
+    }
+    assert revoked_source_ids == set(status["revoked_source_ids"])
+    assert revoked_source_ids.isdisjoint(manifest["sources"])
+    assert status["valid_fia_result_source_ids"][0] in manifest["sources"]
+    updated = status["updated_three_module_observation"]
+    source = manifest["sources"][status["valid_fia_result_source_ids"][0]]
+    assert updated["graph"]["p3_only"] is True
+    assert updated["graph"]["layer_23_from"] == 21
+    assert updated["metrics"]["map"] == 0.29618
+    assert updated["metrics"]["map75"] is None
+    assert updated["delta_from_bpdd_map_pp"] > 0
+    assert source["release_asset_sha256"] == (
+        "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c"
+    )
+    assert source["graph_identity"] == updated["graph"]
+    assert source["checkpoint_embedded_best_val"]["map"] == 0.29618
+    assert source["formal_main_table_allowed"] is False
+    assert all(
+        item["id"] != "formal100_three_module_fia_identity_projection"
+        for item in manifest.get("normalizations", [])
+    )
+
+    removed_paths = (
+        "evidence/fdr_bpdd_fia_val_exact.json",
+        "evidence/fia_ablation_release_evidence.json",
+        "results/FDR_BPDD_FIA_DETAILED_ZH.md",
+        "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
+        "results/fdr_bpdd_fia_val_class_results.csv",
+        "results/fdr_bpdd_fia_val_scale_results.csv",
+        "results/fia_ablation_release_test_class_results.csv",
+        "assets/fia_terminal_validation.jpg",
+        "assets/fia_only_test_release.png",
+        "assets/fdr_fia_test_release.png",
+    )
+    assert all(not (MATERIAL_ROOT / path).exists() for path in removed_paths)
 
 
 def test_main_table_mentions_all_methods_and_evidence_levels():
@@ -259,28 +234,25 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert combinations[(False, True, False)]["status"] == "invalid_dependency"
     assert combinations[(False, True, True)]["status"] == "invalid_dependency"
     assert combinations[(False, False, True)]["status"] == (
-        "release_evidence_available_noncomparable"
+        "revoked_pending_updated_evidence"
     )
     assert combinations[(True, False, True)]["status"] == (
-        "release_evidence_available_noncomparable"
+        "revoked_pending_updated_evidence"
     )
-    assert "fia_ablation_scaffold_1d083140" in manifest["sources"]
-    assert "fia_ablation_release_dfr_bdpp_fia" in manifest["sources"]
+    assert combinations[(True, True, True)]["status"] == (
+        "updated_checkpoint_best_val_available"
+    )
 
     rows = {
         (row["split"], row["method"]): row
         for row in comparison["overall_rows"]
     }
-    assert rows[("val", "RT-DETR-L+FDR+BPDD+FIA")]["metrics"]["map"] == (
-        0.28995286433682393
-    )
     assert rows[("test", "RT-DETR-L+FDR+BPDD")]["metrics"]["map"] == (
         0.23165906438722952
     )
-    assert rows[("test", "RT-DETR-L+FDR+BPDD+FIA")]["status"] == (
-        "exact_evaluation_pending"
-    )
-    assert rows[("test", "RT-DETR-L+FDR+BPDD+FIA")]["metrics"] is None
+    assert all("FIA" not in row["method"] for row in comparison["overall_rows"])
+    assert "supplementary_observation" not in comparison
+    assert "supplementary_release_ablation_rows" not in comparison
     assert all(
         row["source_id"] in manifest["sources"]
         for row in comparison["overall_rows"]
@@ -297,82 +269,17 @@ def test_readme_links_split_comparison_outputs():
         "results/split_scale_results.csv",
         "results/split_class_results.csv",
         "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
-        "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
-        "evidence/fia_ablation_release_evidence.json",
+        "results/FIA_RESULTS_STATUS_ZH.md",
+        "evidence/fia_results_status.json",
     ):
         assert relative_path in readme
 
 
-def test_fia_ablation_release_evidence_preserves_values_and_boundaries():
-    evidence = _load_required_json("evidence/fia_ablation_release_evidence.json")
-
-    assert evidence["format_version"] == 1
-    assert evidence["release"]["tag"] == "DFR-BDPP-FIA"
-    assert evidence["release"]["target_commit"] == (
-        "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40"
-    )
-    assert evidence["training_source_commit"] == "unverified"
-
-    runs = evidence["runs"]
-    fia = runs["fia_only"]
-    assert fia["train_val_best"]["epoch"] == 88
-    assert fia["train_val_best"]["metrics"]["map"] == 0.21671
-    assert fia["test_screenshot"]["metrics_display"]["map"] == 0.177
-    assert fia["test_screenshot"]["metrics_display"]["map75"] is None
-    assert fia["graph"]["canonical_p3_only_compatible"] is False
-
-    fdr_fia = runs["fdr_fia"]
-    assert fdr_fia["train_val_best"]["epoch"] == 97
-    assert fdr_fia["train_val_best"]["metrics"]["map"] == 0.29408
-    assert fdr_fia["test_screenshot"]["metrics_display"]["map"] == 0.235
-    assert fdr_fia["test_screenshot"]["metrics_display"]["map75"] is None
-    assert fdr_fia["graph"]["canonical_p3_only_compatible"] is False
-
-    assert evidence["claim_boundary"]["formal_main_table_allowed"] is False
-
-
-def test_fia_ablation_release_screenshots_match_manifest_hashes():
-    evidence = _load_required_json("evidence/fia_ablation_release_evidence.json")
-    expected = {
-        "fia_only": (
-            "assets/fia_only_test_release.png",
-            "39e64e657336dda20d2de4c79cafd248f2d598748bf72c45654adf81b613193b",
-        ),
-        "fdr_fia": (
-            "assets/fdr_fia_test_release.png",
-            "30dd7c12e80962645a2acc4cc7f7b836890a7751f73534c85c284767b27dfb8f",
-        ),
-    }
-
-    for run_id, (relative_path, sha256) in expected.items():
-        path = MATERIAL_ROOT / relative_path
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == sha256
-        assert evidence["runs"][run_id]["test_screenshot"]["sha256"] == sha256
-        assert evidence["runs"][run_id]["test_screenshot"]["local_artifact"] == (
-            f"paper_material/{relative_path}"
-        )
-
-
-def test_fia_ablation_release_class_csv_keeps_rounded_test_scope():
-    path = MATERIAL_ROOT / "results/fia_ablation_release_test_class_results.csv"
-    with path.open(encoding="utf-8", newline="") as handle:
-        rows = list(csv.DictReader(handle))
-
-    assert len(rows) == 20
-    assert {row["method"] for row in rows} == {
-        "RT-DETR-L+FIA (release topology)",
-        "RT-DETR-L+FDR+FIA (release topology)",
-    }
-    assert all(row["split"] == "test" for row in rows)
-    assert all(row["map75"] == "" for row in rows)
-    assert all(row["evidence_level"] == "screenshot_rounded" for row in rows)
-
-
 def test_split_detail_csvs_have_expected_exact_coverage():
     expected_counts = {
-        "results/split_overall_results.csv": 8,
-        "results/split_scale_results.csv": 28,
-        "results/split_class_results.csv": 70,
+        "results/split_overall_results.csv": 6,
+        "results/split_scale_results.csv": 24,
+        "results/split_class_results.csv": 60,
     }
 
     for relative_path, expected_count in expected_counts.items():
@@ -381,15 +288,9 @@ def test_split_detail_csvs_have_expected_exact_coverage():
             rows = list(csv.DictReader(handle))
         assert len(rows) == expected_count, relative_path
 
-    with (MATERIAL_ROOT / "results/split_overall_results.csv").open(
-        encoding="utf-8", newline=""
-    ) as handle:
-        overall_rows = list(csv.DictReader(handle))
-    pending = next(
-        row
-        for row in overall_rows
-        if row["split"] == "test"
-        and row["method"] == "RT-DETR-L+FDR+BPDD+FIA"
-    )
-    assert pending["map"] == ""
-    assert pending["status"] == "exact_evaluation_pending"
+    for relative_path in expected_counts:
+        path = MATERIAL_ROOT / relative_path
+        with path.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        assert all(row.get("fia", "false") != "true" for row in rows)
+        assert all("FIA" not in row["method"] for row in rows)

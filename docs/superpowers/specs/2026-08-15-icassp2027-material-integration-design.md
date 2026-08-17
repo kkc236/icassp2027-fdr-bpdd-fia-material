@@ -2,80 +2,57 @@
 
 ## Objective
 
-Create a new private GitHub repository that consolidates the existing FDR, BPDD, and FIA implementation and all usable paper-writing material. This is a migration and normalization task, not an algorithm redesign.
+Maintain one private repository containing the runnable FDR, BPDD, and modified FIA implementation together with evidence-safe ICASSP writing material. This is a migration, correction, and evidence-binding task rather than an algorithm redesign.
 
-## Repository
+## Repository Scope
 
-- Proposed repository: `kkc236/icassp2027-fdr-bpdd-fia-material`
-- Visibility: private
-- Code base: current `fdr-bdpp-fia` tree
-- Default branch: `main`
-- The existing repository remains unchanged.
+- Private repository: kkc236/icassp2027-fdr-bpdd-fia-material.
+- Executable configurations for stock RT-DETR-L, FDR, FIA, FDR+BPDD, FDR+FIA, and FDR+BPDD+FIA.
+- Training, evaluation, checkpoint, and reproducibility scripts.
+- Method descriptions, experiment protocol, tables, evidence mapping, writing outline, and figure plan.
 
-## Included Content
+BPDD consumes FDR boundary distributions, so BPDD without FDR is not a valid model arm.
 
-1. Runnable FDR, BPDD, and FIA source code.
-2. Standalone or minimum-valid method configurations:
-   - stock RT-DETR-L;
-   - FDR;
-   - FIA;
-   - FDR + BPDD, because BPDD consumes FDR boundary distributions;
-   - FDR + FIA;
-   - FDR + BPDD + FIA.
-3. Training, evaluation, checkpoint, and reproducibility scripts.
-4. Unit and integration tests for each method and the complete model.
-5. Authoritative FDR and BPDD experiment evidence.
-6. Available FIA validation evidence, including the reported VisDrone validation and test metrics.
-7. A `paper_material/` package containing method descriptions, experiment protocol, tables, evidence mapping, claim boundaries, and an ICASSP writing outline.
+## FIA Evidence Correction
 
-## Normalized Structure
+All results produced before the FIA modification are revoked. They must not remain available as historical observations, supplementary trends, approximate evidence, or paper-ready values.
 
-```text
-configs/
-src/
-scripts/
-tests/
-third_party/
-paper_material/
-  README_ZH.md
-  methods/
-  experiments/
-  results/
-  evidence/
-  writing/
-  figures/
-```
+The revoked scope includes old standalone FIA results, old FDR+FIA results, old screenshots, old result packages, and every table or conclusion derived from them.
 
-## Naming Contract
+A correct P3-only modified-FIA three-module checkpoint has been located. Its best-validation record is P=0.56996, R=0.49848, AP50=0.48982, and mAP50–95=0.29618. The arithmetic observation relative to the current BPDD validation absolute value is +0.3922 percentage points. AP75, test results, and a frozen-evaluator independent reevaluation are still unavailable, so this record remains provisional and cannot occupy a formal exact main-table row.
 
-- FIA is the only accepted name for the third method.
-- Filenames, directories, Python identifiers, configuration keys, command-line options, result keys, and prose use `FIA` or `fia` consistently.
-- Imported historical material is normalized before inclusion.
-- A repository-wide test rejects legacy third-method identifiers.
+The user reports that the rerun standalone FIA and FDR+FIA experiments are positive, but auditable values have not been obtained and no confirmable updated assets have been found in the currently visible GitHub content.
 
 ## Evidence Contract
 
-- Every imported result records its source commit SHA and available artifact checksum.
-- Strict RT-DETR-L, FDR, and FDR + BPDD values come from committed structured evidence.
-- The currently available complete-model terminal result is recorded at its displayed precision and marked as screenshot-level evidence until an exact JSON or CSV is available.
-- Values from different dataset splits or evaluation authorities are not subtracted from one another.
-- Unsupported AP75, latency, multi-seed, and significance claims remain explicitly unavailable.
+- Formal numeric tables retain only RT-DETR-L, FDR, and FDR+BPDD until updated FIA evidence is imported.
+- Every imported FIA result must bind the modified source commit, model configuration, checkpoint digest, dataset identity, evaluation command, and structured output.
+- Validation and test results remain separate.
+- Training-log best values do not replace frozen-evaluator independent reevaluation.
+- Values from different authorities may be shown only as explicitly labeled arithmetic observations.
+- Missing AP75, scale, class, latency, multi-seed, and significance results remain unavailable.
+
+## Documentation Contract
+
+- FIA_RESULTS_STATUS_ZH.md is the single current status page for FIA evidence.
+- No active document links to revoked FIA screenshots or result reports as evidence.
+- No active paper table reproduces revoked FIA numbers, hashes, or run identities.
+- Method and figure descriptions do not freeze FIA internals until the modified implementation is source-bound.
 
 ## Verification
 
-The repository is ready only when:
+The corrected repository is ready when:
 
-1. the naming scan passes;
-2. each method entry point imports successfully;
-3. all declared YAML configurations parse and build;
-4. relevant unit and integration tests pass;
-5. paper tables agree with the evidence index;
-6. no secret or credential is present;
-7. the new GitHub repository is confirmed private after push.
+1. revoked FIA values and source IDs are absent from active tables and prose;
+2. the three non-FIA result rows agree with their evidence;
+3. the provisional modified-FIA three-module checkpoint is clearly separated from formal exact results;
+4. updated standalone FIA assets, when found, are bound to the modified source;
+5. relevant code, configuration, integrity, naming, and credential tests pass;
+6. the private remote matches the verified local state.
 
 ## Out of Scope
 
-- New training runs.
-- Algorithm redesign or hyperparameter tuning.
-- Fabricating missing exact metrics from rounded terminal output.
-- Changing or deleting the existing GitHub repository.
+- Fabricating missing exact metrics.
+- Treating user-reported positivity as a substitute for artifacts.
+- Reusing revoked checkpoints or screenshots.
+- Claiming strict paired FIA gains before paired independent evaluation.

@@ -9,52 +9,46 @@
 | 验证集 | 548 张图像 |
 | 类别数 | 10 |
 | 基线 | Ultralytics RT-DETR-L |
-| 初始化 | `pretrained=False`，从零训练 |
-| 输入尺寸 | `imgsz=640` |
+| 初始化 | pretrained=False，从零训练 |
+| 输入尺寸 | imgsz=640 |
 | 查询数 / 解码层数 | 300 / 6 |
-| 随机种子 | `seed=0` |
+| 随机种子 | seed=0 |
 | 正式训练轮数 | 100 epochs |
 
-数据配置入口为 `configs/VisDrone.yaml`，其数据根现为仓库相对路径 `VisDrone`。FDR、FDR+BPDD 和 FDR+BPDD+FIA 分别使用 `configs/rtdetr-l-fdr.yaml`、`configs/rtdetr-l-fdr-bpdd.yaml` 和 `configs/rtdetr-l-fdr-bpdd-fia.yaml`。训练冻结值由 `scripts/train_rtdetr_fdr.py` 继承到 `scripts/train_rtdetr_bpdd.py` 与 `scripts/train_rtdetr_bpdd_fia.py`；数据集的 10 类设置在建模时覆盖模型 YAML 的通用 `nc` 占位值。
-
-源码提交 `1d083140` 另补齐 FIA-only 与 FDR+FIA 的配置和入口，详见 [FIA 消融实验脚手架](FIA_ABLATION_SCAFFOLD_ZH.md)。GitHub Release 已上传两项历史训练的 100 epoch 训练包和结果，但 Release target commit `7b20c610` 早于配置提交，精确 training source commit 未验证；而且 Release topology 让 FIA 输出同时参与 decoder P3 和 P4/P5 重建，不等同于当前规范化的 P3-only 配置。这些入口及 Release 结果均不能自动升级为本页冻结合同下的正式消融。
+数据配置入口为 configs/VisDrone.yaml。FDR、FDR+BPDD 和 FDR+BPDD+FIA 分别使用各自独立配置与训练入口。任何包含 FIA 的结果必须额外绑定修改后 FIA 的源码身份，不能仅凭相同模型名、文件名或目录名认定实验兼容。
 
 ## 评估设置
 
-严格 val 复评设置冻结如下；评估器支持相应选项时必须显式使用这些值，不得静默改写：
+严格 val/test 复评应显式固定：
 
-- `split=val`；
-- `imgsz=640`；
-- `batch=8`；
-- `workers=8`；
-- `conf=0.001`；
-- `max_det=300`；
-- `nms=False`；
-- `cache=False`；
-- `half=False`；
-- `rect=False`；
-- 同一 548 图 VisDrone val、同一图像预处理、同一类别映射和同一指标实现。
+- imgsz=640；
+- batch=8；
+- workers=8；
+- conf=0.001；
+- max_det=300；
+- NMS=False；
+- cache=False；
+- half=False；
+- rect=False；
+- 单次 prediction pass；
+- 同一数据集 YAML、类别映射和 evaluator 版本。
 
-主表报告 Precision、Recall、AP50、AP75 和 mAP50–95。若某来源没有导出 AP75，必须标记“不可用”，不得从其他轮次、截图或相邻模型补值。
+val 与 test 必须分别报告，不得跨 split 计算涨点。训练日志 best-val 只能描述 checkpoint 选择过程，不能替代冻结 evaluator 的独立复评。
 
-## 证据等级
+## 当前证据合同
 
-| 等级 | 含义 | 允许的论文用法 |
-|---|---|---|
-| `strict` | 数据划分、训练 authority、评估器和比较合同满足严格配对要求 | 可报告同等级配对行的有符号差值 |
-| `cross_authority_exact` | 指标保存为结构化精确数值，但与参照行不属于同一完整 authority | 可报告绝对值；跨行差只能称算术差，不能称严格配对增益 |
-| `exact_single_arm` | checkpoint、协议和独立评估绝对值完整，但没有同 authority 配对对照 | 可报告该臂精确总体、尺度、类别和效率；不得把历史参考差写成因果增益 |
-| `training_log_exact` | 训练过程日志保存了精确显示值，但未按冻结 evaluator 独立复评 | 只能注明 epoch 和日志来源报告单臂观察；不可与主表行作正式差值 |
-| `screenshot_rounded` | 仅有终端截图中的舍入显示值 | 使用 `≈`；不可恢复更多小数、缺失指标或精确差值 |
+- RT-DETR-L、FDR、FDR+BPDD：保留现有可审计结果及各自证据等级。
+- 旧 standalone FIA 与旧 FDR+FIA：属于模块修改前实验，证据全部撤销。
+- 新 standalone FIA 与新 FDR+FIA：用户报告均为正增益，但尚未取得可审计数值，GitHub 当前可见内容中未找到可确认的新版资产。
+- 新 FDR+BPDD+FIA：已定位正确 P3-only checkpoint；best-val 记录为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。AP75、test 和冻结 evaluator 独立复评仍待补。
 
-证据绑定以 `paper_material/evidence/source_manifest.json` 为准；表格机器值以 `paper_material/results/main_results.json` 为准；BPDD 与三模块的精确来源分别见 `paper_material/evidence/bpdd_val_exact.json` 和 `paper_material/evidence/fdr_bpdd_fia_val_exact.json`。FIA-only/FDR+FIA 的历史 Release 证据见 `paper_material/evidence/fia_ablation_release_evidence.json`，其中 val 属于 `training_log_exact`，test 属于 `screenshot_rounded`，两者均缺失 AP75。
+## FIA 新结果的最低导入条件
 
-## 禁止混用
+1. 修改后 FIA 源码提交与配置 blob；
+2. checkpoint 文件及其 SHA-256；
+3. 数据集身份、环境版本和完整评估命令；
+4. val/test 分开的结构化总体指标；
+5. AP75、四尺度和十类别结果；
+6. 对照臂身份与严格配对状态。
 
-- 禁止将 val 与 test、development 子集与完整 val、不同图像数的划分相减。
-- 禁止将不同源码提交、初始状态、训练协议、checkpoint 或 evaluator 的结果写成严格配对增益。
-- 禁止用训练日志末轮指标替代统一独立评估，再与另一行相减。
-- 禁止把精确绝对值自动解释成配对证据；数值精度与 authority 可比性是两个独立维度。
-- 禁止从三位小数截图反推更多小数或统计显著性。
-
-若后续补实验，必须先冻结 split、source commit、initial state、seed、checkpoint SHA-256、evaluator commit 与参数，再登记原始预测和指标 JSON。只有 authority 全部一致的行才能升级为 `strict`。
+在满足这些条件前，新三模块记录只能作为正向 checkpoint 观察；单 FIA 与 FDR+FIA 不得填数。统一状态见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。

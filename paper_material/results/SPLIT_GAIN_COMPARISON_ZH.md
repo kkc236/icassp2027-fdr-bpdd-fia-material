@@ -1,105 +1,63 @@
 # FDR、BPDD、FIA 的 val/test 涨点总对比
 
-## 组合覆盖状态
+## 证据状态
 
-三模块共有 8 个开关组合，但 BPDD 依赖 FDR 的逐边分布，因此两种不含 FDR 的 BPDD 组合在结构上无效。FIA-only 与 FDR+FIA 的 GitHub Release 训练包、日志、checkpoint 和 test 截图现已登记；不过它们采用历史 release topology，尚不能替代当前规范化 P3-only 配置下的 Formal100 独立复评结果。
+修改前 FIA 的全部实验结果、截图和派生涨点已经撤销，不得继续作为历史补充。正式对比表只保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD 三条不含 FIA 的可审计结果。用户报告新版 standalone FIA 相关实验均为正增益，但 GitHub 当前可见内容中未找到可确认的新版 standalone 资产。正确 P3-only 新三模块 checkpoint 已定位，其 best-val 正向观察单独登记，尚不进入正式表。
+
+## 组合覆盖状态
 
 | FDR | BPDD | FIA | 模型 | val | test | 状态 |
 |---:|---:|---:|---|---|---|---|
 | 0 | 0 | 0 | RT-DETR-L | exact | exact | 已完成 |
 | 1 | 0 | 0 | RT-DETR-L+FDR | exact | exact | 已完成 |
 | 0 | 1 | 0 | RT-DETR-L+BPDD | — | — | 结构无效：BPDD 必须依赖 FDR |
-| 0 | 0 | 1 | RT-DETR-L+FIA | 训练日志 exact | 截图舍入 | Release 证据已登记；非严格可比 |
+| 0 | 0 | 1 | RT-DETR-L+FIA | 待导入 | 待导入 | 新版正增益由用户报告，正式证据待取得 |
 | 1 | 1 | 0 | RT-DETR-L+FDR+BPDD | exact | exact | 已完成 |
-| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | 训练日志 exact | 截图舍入 | Release 证据已登记；非严格可比 |
+| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | 待导入 | 待导入 | 新版正增益由用户报告，正式证据待取得 |
 | 0 | 1 | 1 | RT-DETR-L+BPDD+FIA | — | — | 结构无效：BPDD 必须依赖 FDR |
-| 1 | 1 | 1 | RT-DETR-L+FDR+BPDD+FIA | exact | 待 exact 补评 | val 已完成；test 服务器暂不可达 |
-
-## Release 消融补充观察（非正式主表）
-
-| 方法 | val 来源 | P | R | AP50 | AP75 | mAP50–95 | test P | test R | test AP50 | test AP75 | test mAP50–95 |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| FIA-only（release topology） | best 训练日志，epoch 88 | 0.48004 | 0.41463 | 0.38605 | 不可用 | 0.21671 | ≈0.424 | ≈0.370 | ≈0.325 | 不可用 | ≈0.177 |
-| FDR+FIA（release topology） | best 训练日志，epoch 97 | 0.57750 | 0.49042 | 0.48591 | 不可用 | 0.29408 | ≈0.519 | ≈0.431 | ≈0.407 | 不可用 | ≈0.235 |
-
-这两行只能作为补充观察：Release target commit `7b20c610` 早于后来登记两份配置的 `1d083140`，精确 training source commit 无法验证；Release graph 还把 FIA 输出同时用于 decoder P3 与 P4/P5 重建，不等同于本仓库规范化后的 P3-only topology。val 是训练过程日志的 best epoch，并非冻结 evaluator 的独立复评；test 仅有截图舍入值，且两种 split 都缺少 AP75。因此不得把它们与现有 strict 行计算正式增益。完整审计见 [FIA-only 与 FDR+FIA Release 结果](FIA_ABLATION_RELEASE_RESULTS_ZH.md)。
+| 1 | 1 | 1 | RT-DETR-L+FDR+BPDD+FIA | best-val 已定位 | 待独立复评 | 正确 P3-only checkpoint 已确认；AP75/test 待补 |
 
 ## val 总体结果
 
-| 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 相对上一行 ΔmAP | 证据 |
+| 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 相对上一有效行 ΔmAP | 证据 |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | RT-DETR-L | 0.467610 | 0.417310 | 0.436570 | 0.386630 | 0.213020 | 0.219110 | — | strict |
-| +FDR | 0.569113 | 0.492777 | 0.524840 | 0.484684 | 0.292526 | 0.289660 | **+7.055 pp** | strict |
-| +FDR+BPDD | 0.570634 | 0.494464 | 0.529825* | 0.486407 | 0.298096 | 0.292258 | **+0.260 pp** | cross_authority_exact |
-| +FDR+BPDD+FIA | 0.555762 | 0.498344 | 0.525489* | 0.481241 | 0.295104 | 0.289953 | **−0.231 pp** | exact_single_arm |
+| +FDR | 0.569113 | 0.492777 | 0.524840 | 0.484684 | 0.292526 | 0.289660 | +7.055 pp | strict |
+| +FDR+BPDD | 0.570634 | 0.494464 | 0.529825* | 0.486407 | 0.298096 | 0.292258 | +0.260 pp | cross_authority_exact |
 
-`*` BPDD 与三模块行的 F1 是聚合 P/R 的调和均值；前两行是历史评估器报告值，因此 BPDD 相对 FDR 的 F1 不作为正式涨点。后三行增量不是同一新鲜配对训练，只能写“跨 authority/跨运行算术差”。
-
-val 逐步涨点（百分点）：
+星号表示 F1 由聚合 P/R 计算。BPDD 相对 FDR 的数值差是跨 authority 算术差，不是严格配对因果增益。
 
 | 增量 | ΔP | ΔR | ΔF1 | ΔAP50 | ΔAP75 | ΔmAP50–95 |
 |---|---:|---:|---:|---:|---:|---:|
-| FDR − Baseline | +10.150 | +7.547 | +8.827 | +9.805 | +7.951 | **+7.055** |
-| BPDD − FDR | +0.152 | +0.169 | 不跨定义比较 | +0.172 | +0.557 | **+0.260** |
-| FIA 三模块 − FDR+BPDD | −1.487 | +0.388 | −0.434 | −0.517 | −0.299 | **−0.231** |
+| FDR − Baseline | +10.150 | +7.547 | +8.827 | +9.805 | +7.951 | +7.055 |
+| BPDD − FDR | +0.152 | +0.169 | 不跨定义比较 | +0.172 | +0.557 | +0.260 |
 
 ## test 总体结果
 
-| 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 相对上一行 ΔmAP | 证据 |
+| 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 相对上一有效行 ΔmAP | 证据 |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | RT-DETR-L | 0.417978 | 0.373013 | 0.394218 | 0.322208 | 0.175503 | 0.177416 | — | exact |
-| +FDR | 0.503401 | 0.431677 | 0.464788 | 0.398340 | 0.228903 | 0.228001 | **+5.058 pp** | exact |
-| +FDR+BPDD | 0.522672 | 0.426137 | 0.469494 | 0.403688 | 0.232647 | 0.231659 | **+0.366 pp** | exact |
-| +FDR+BPDD+FIA | 待补评 | 待补评 | 待补评 | 待补评 | 待补评 | 待补评 | — | exact_evaluation_pending |
-
-test 逐步涨点（百分点）：
+| +FDR | 0.503401 | 0.431677 | 0.464788 | 0.398340 | 0.228903 | 0.228001 | +5.058 pp | exact |
+| +FDR+BPDD | 0.522672 | 0.426137 | 0.469494 | 0.403688 | 0.232647 | 0.231659 | +0.366 pp | exact |
 
 | 增量 | ΔP | ΔR | ΔF1 | ΔAP50 | ΔAP75 | ΔmAP50–95 |
 |---|---:|---:|---:|---:|---:|---:|
-| FDR − Baseline | +8.542 | +5.866 | +7.057 | +7.613 | +5.340 | **+5.058** |
-| BPDD − FDR | +1.927 | −0.554 | +0.471 | +0.535 | +0.374 | **+0.366** |
+| FDR − Baseline | +8.542 | +5.866 | +7.057 | +7.613 | +5.340 | +5.058 |
+| BPDD − FDR | +1.927 | −0.554 | +0.471 | +0.535 | +0.374 | +0.366 |
 
-终端截图曾显示三模块 test 约 `P=0.519`、`R=0.436`、`AP50=0.408`、`mAP=0.234`，但没有 checkpoint、命令与精确运行身份，且 AP75 缺失，因此不填入 exact 表，也不计算正式涨点。
+## 新三模块 checkpoint 观察
 
-## 分尺度 mAP50–95 涨点
+| 方法 | P | R | AP50 | AP75 | mAP50–95 | 相对当前 BPDD val | 状态 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| FDR+BPDD+FIA | 0.56996 | 0.49848 | 0.48982 | 待补 | 0.29618 | +0.3922 pp | 正确 P3-only checkpoint 的 best-val；独立复评待补 |
 
-| split | 尺度 | FDR − Baseline | BPDD − FDR | FIA 三模块 − FDR+BPDD |
-|---|---|---:|---:|---:|
-| val | tiny | +5.796 | −0.016 | +0.168 |
-| val | small | +7.214 | +0.778 | −0.421 |
-| val | medium | +7.131 | +0.036 | −1.122 |
-| val | large | +6.786 | −0.923 | +2.917 |
-| test | tiny | +4.000 | −0.029 | 待补评 |
-| test | small | +6.071 | +0.473 | 待补评 |
-| test | medium | +5.019 | −0.281 | 待补评 |
-| test | large | +1.639 | −4.075 | 待补评 |
+该行是修改后 FIA 的正向 checkpoint 观察，不是冻结 evaluator 的正式 exact 行，也不是严格配对因果涨点。test、AP75、尺度和类别结果均待补。
 
-BPDD 的总体正增益主要由 val 的 small、medium 和 test 的 small 尺度支撑；large 样本很少（val 130、test 306），负波动不能单独用于强结论。三模块 val 的 large、tiny 上升，但 small、medium 下降，与总体 `−0.231 pp` 一致地表明 FIA 尚未形成稳定增益证据。
+## FIA 导入边界
 
-## 十类别 mAP50–95 涨点
+- 不展示、转述或比较任何修改前 FIA 数值。
+- 不用截图、训练日志峰值或旧 checkpoint 填补 FIA 行。
+- 新版 FIA-only 必须与同协议 baseline 配对；新版 FDR+FIA 必须与同协议 FDR 配对；新版三模块必须与同协议 FDR+BPDD 配对。
+- 新三模块在源码提交、配置、checkpoint、数据集身份、评估命令以及结构化 val/test 输出全部绑定后，才进入正式总体、尺度和类别表。
 
-| 类别 | val FDR − Base | val BPDD − FDR | val FIA − BPDD | test FDR − Base | test BPDD − FDR |
-|---|---:|---:|---:|---:|---:|
-| pedestrian | +9.639 | +0.041 | −0.008 | +5.178 | −0.004 |
-| people | +7.884 | +0.280 | −0.266 | +3.791 | +0.369 |
-| bicycle | +5.912 | −0.517 | +0.445 | +3.532 | −0.055 |
-| car | +6.145 | +0.377 | −0.051 | +5.079 | +0.405 |
-| van | +6.514 | −0.649 | +0.937 | +4.638 | +0.914 |
-| truck | +5.126 | +1.021 | −1.871 | +6.871 | +1.317 |
-| tricycle | +7.759 | +0.293 | −0.215 | +5.174 | −0.825 |
-| awning-tricycle | +2.588 | +0.682 | −0.778 | +3.353 | +0.654 |
-| bus | +9.341 | +0.988 | −0.601 | +6.928 | +0.519 |
-| motor | +9.647 | +0.083 | +0.105 | +6.039 | +0.363 |
-
-FDR 在 val/test 的全部 10 类均为正增益，是当前最稳定主效应。BPDD 在 test 的 `truck`、`van`、`awning-tricycle`、`bus` 上较明显，但 `tricycle` 退化；FIA 三模块在 val 的类别改善与退化并存，不能声称稳定提升。
-
-## 文件入口与写作边界
-
-- 总体机器表：[`split_overall_results.csv`](split_overall_results.csv)
-- 全尺度精确值：[`split_scale_results.csv`](split_scale_results.csv)
-- 全类别精确值：[`split_class_results.csv`](split_class_results.csv)
-- 组合状态与精确总体 JSON：[`split_gain_comparison.json`](split_gain_comparison.json)
-- FIA 消融入口与协议差异：[`../experiments/FIA_ABLATION_SCAFFOLD_ZH.md`](../experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
-- FIA-only/FDR+FIA Release 结果审计：[`FIA_ABLATION_RELEASE_RESULTS_ZH.md`](FIA_ABLATION_RELEASE_RESULTS_ZH.md)
-
-论文主表可采用现有可审计 exact 绝对值；只有 strict 配对行可以作因果涨点表述。FIA-only、FDR+FIA 与三模块的截图结果都只能使用 `≈` 作补充观察，不能当成最终 exact 结果。
+状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。机器 JSON/CSV 在完成相同清理前不得覆盖本页状态。

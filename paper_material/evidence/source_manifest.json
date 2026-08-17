@@ -46,23 +46,6 @@
       "evidence_level": "cross_authority_exact",
       "transformation": "extract_exact_metrics_and_add_nonpaired_comparison_warning"
     },
-    "fia_formal100_val_exact": {
-      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
-      "source_commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
-      "training_source_commit": "756e025efc28088402cdbaf806ac06d4b93ee5eb",
-      "fia_rename_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
-      "source_artifact": {
-        "identity": "formal100_independent_three_module_metrics",
-        "git_blob_oid": "c3011eeaf71d1e95550bf885a762a5228064295f",
-        "canonical_sha256": "5ae8ca9ac71fa49d7c754e69cdff87934d44b02fe7992754a89ae2151701fc5f"
-      },
-      "local_artifact": "paper_material/evidence/fdr_bpdd_fia_val_exact.json",
-      "canonical_local_artifact_sha256": "9bce0658dcf51fa28b6c1ebaa5c72f9ce1b81102a696bd944ddd70b694c79912",
-      "evidence_level": "exact_single_arm",
-      "comparison_scope": "preliminary_cross_run",
-      "strict_paired": false,
-      "transformation": "extract_exact_metrics_and_normalize_historical_third_method_identifiers_to_fia"
-    },
     "strict_control_test_exact": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
@@ -102,12 +85,57 @@
       "evidence_level": "cross_authority_exact",
       "transformation": "none"
     },
+    "fia_updated_three_module_checkpoint_best_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "release_tag": "DFR-BDPP-FIA",
+      "release_asset": "DFR-BDPP-FIA-best.pt",
+      "release_asset_size": 67871120,
+      "release_asset_updated_at": "2026-08-15T10:54:52Z",
+      "release_asset_sha256": "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+      "checkpoint_date": "2026-08-15T12:19:54.663646",
+      "checkpoint_model_type": "src.rtdetr_fdr_bpdd_fia.FDRBPDDFIADetectionModel",
+      "checkpoint_training_source_commit": null,
+      "checkpoint_training_source_commit_verified": false,
+      "training": {
+        "epochs": 100,
+        "seed": 0,
+        "deterministic": true,
+        "pretrained": false,
+        "optimizer": "MuSGD",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 4,
+        "split": "val"
+      },
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": 21,
+        "layer_23_from": 21,
+        "decoder_from": [22, 25, 28]
+      },
+      "checkpoint_embedded_best_val": {
+        "epoch": 96,
+        "precision": 0.56996,
+        "recall": 0.49848,
+        "map50": 0.48982,
+        "map75": null,
+        "map": 0.29618
+      },
+      "evidence_level": "checkpoint_embedded_best_val",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "transformation": "inspect checkpoint metadata and graph identity without copying the checkpoint into this repository"
+    },
     "fia_ablation_scaffold_1d083140": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_branch": "fdr-bdpp-fia",
       "source_commit": "1d0831402e15f6d039510b79eb477b5c34abb42c",
-      "evidence_level": "experiment_scaffold_only",
+      "evidence_level": "implementation_scaffold_revision_unverified",
       "result_evidence_available": false,
+      "updated_standalone_topology_verified": true,
+      "updated_result_identity_verified": false,
+      "allowed_as_result_identity": false,
       "artifacts": [
         {
           "path": "configs/VisDrone.yaml",
@@ -151,122 +179,20 @@
           "canonical_sha256": "5636fdbcc99628ff429a4d3e5588568f5b0c2d03bb58c6fa0bebf9190a710538"
         }
       ],
-      "transformation": "cherry-picked source commit, then normalized both ablation YAML downsample branches to preserve the already validated P3-only FIA topology"
-    },
-    "fia_ablation_release_dfr_bdpp_fia": {
-      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
-      "release_tag": "DFR-BDPP-FIA",
-      "release_target_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
-      "release_target_role": "tag_target_only_not_verified_training_source",
-      "training_source_commit": "unverified",
-      "training_source_commit_verified": false,
-      "published_at": "2026-08-15T10:53:52Z",
-      "assets_updated_at": "2026-08-17T02:39:01Z",
-      "evidence_level": "mixed_training_log_exact_and_screenshot_rounded",
-      "comparison_scope": "historical_release_topology_noncomparable",
-      "strict_paired": false,
-      "canonical_p3_only_compatible": false,
-      "local_evidence": "paper_material/evidence/fia_ablation_release_evidence.json",
-      "local_report": "paper_material/results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
-      "local_class_csv": "paper_material/results/fia_ablation_release_test_class_results.csv",
-      "release_assets": [
-        {
-          "run": "fia_only",
-          "name": "fia-seed0-20260815-211156.zip",
-          "size": 133758801,
-          "sha256": "17eb96a577f20a99370f87f6a33374a7f402a9989a4d692f8961dce0fd9aab0a"
-        },
-        {
-          "run": "fdr_fia",
-          "name": "fdr-fia-seed0-20260815-211203.zip",
-          "size": 135876425,
-          "sha256": "30fc5c418a4f24b8e8c6ee3a44ddc88d94ba236225f178e689cfe81540afc900"
-        },
-        {
-          "run": "fia_only",
-          "name": "log1.log",
-          "size": 12649251,
-          "sha256": "e97cc9908e1dc9e7045cc156b8a6a5277e720bfc720308844c366b935c5239fe"
-        },
-        {
-          "run": "fdr_fia",
-          "name": "log2.log",
-          "size": 12648102,
-          "sha256": "5adc7d357b0514652f98390a267441e36f8e961314d8c75f6fa9395448b7d5fd"
-        },
-        {
-          "run": "fia_only",
-          "name": "FIA.png",
-          "size": 39285,
-          "sha256": "39e64e657336dda20d2de4c79cafd248f2d598748bf72c45654adf81b613193b",
-          "local_artifact": "paper_material/assets/fia_only_test_release.png"
-        },
-        {
-          "run": "fdr_fia",
-          "name": "FDR-FIA.png",
-          "size": 39017,
-          "sha256": "30dd7c12e80962645a2acc4cc7f7b836890a7751f73534c85c284767b27dfb8f",
-          "local_artifact": "paper_material/assets/fdr_fia_test_release.png"
-        }
-      ],
-      "claim_boundary": {
-        "formal_main_table_allowed": false,
-        "allowed": "Report FIA-only and FDR+FIA as historical release-topology observations with exact values copied from the training logs and rounded values copied from the test screenshots.",
-        "forbidden": "Treat these runs as canonical P3-only FIA ablations, strict paired gains, exact test metrics, or verified products of a named training source commit."
-      },
-      "transformation": "register release assets by SHA-256 and copy the two test screenshots byte-exactly; retain the release-topology and unverified-training-source boundaries"
-    },
-    "fia_terminal_val": {
-      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
-      "source_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
-      "source_commit_role": "code_state_reference_only_not_verified_run_identity",
-      "source_tree_oid": "1f8bf8a026306af4690021b37e2bc482c7115196",
-      "source_artifact": {
-        "identity": "out_of_band_terminal_screenshot",
-        "availability": "not_present_as_a_git_artifact_at_source_commit",
-        "path": null,
-        "git_blob_oid": null,
-        "canonical_sha256": null
-      },
-      "local_artifact": "paper_material/assets/fia_terminal_validation.jpg",
-      "canonical_local_artifact_sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6",
-      "evidence_level": "screenshot_rounded",
-      "transformation": "byte_exact_copy_of_supplied_screenshot",
-      "identity_verification": {
-        "checkpoint_identity": "unverified",
-        "command_identity": "unavailable",
-        "exact_run_identity": "unavailable"
-      },
-      "data_scope": [
-        {
-          "split": "VisDrone val",
-          "images": 548,
-          "instances": 38759
-        },
-        {
-          "split": "VisDrone test",
-          "images": 1610,
-          "instances": 75102
-        }
-      ]
+      "transformation": "cherry-picked source commit and normalized the standalone YAML downsample branches; this scaffold is retained only for audit and must be re-bound to the updated FIA source before reuse"
     }
   },
-  "normalizations": [
+  "revocations": [
     {
-      "id": "formal100_three_module_fia_identity_projection",
-      "source": {
-        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
-        "commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
-        "git_blob_oid": "c3011eeaf71d1e95550bf885a762a5228064295f",
-        "canonical_sha256": "5ae8ca9ac71fa49d7c754e69cdff87934d44b02fe7992754a89ae2151701fc5f"
-      },
-      "destination": {
-        "path": "paper_material/evidence/fdr_bpdd_fia_val_exact.json",
-        "canonical_sha256": "9bce0658dcf51fa28b6c1ebaa5c72f9ce1b81102a696bd944ddd70b694c79912"
-      },
-      "transformation": "project_historical_third_method_identifiers_to_current_fia_names_and_extract_detailed_metrics",
-      "reason": "Preserve exact values and source hashes while enforcing the repository-wide FIA naming contract."
-    },
+      "id": "pre_revision_fia_results_20260817",
+      "status": "revoked",
+      "scope": "all FIA-containing result rows, detailed metrics, screenshots, checkpoints, and derived comparisons imported before the updated FIA run identity is verified",
+      "replacement_status": "pending_updated_artifacts",
+      "formal_numeric_use_allowed": false,
+      "record": "paper_material/evidence/fia_results_status.json"
+    }
+  ],
+  "normalizations": [
     {
       "id": "strict_control_evaluator_fia_boolean_key",
       "source": {
