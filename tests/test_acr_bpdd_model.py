@@ -149,7 +149,31 @@ def test_acr_amp_replay_uses_original_values_with_private_straight_through(
         torch.finfo(torch.float16).eps
     )
     assert acr.last_acr_replay_tolerance == pytest.approx(
-        torch.finfo(torch.float16).eps
+        2.0 * torch.finfo(torch.float16).eps
+    )
+
+
+def test_acr_amp_replay_accepts_one_relative_ulp_at_larger_magnitude(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_706)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    retained = torch.tensor([[[[2.0]]]], dtype=torch.float16)
+    replayed = torch.tensor([[[[2.001953125]]]], dtype=torch.float16, requires_grad=True)
+    acr.last_fdr_evidence = SimpleNamespace(corner_logits=retained)
+    monkeypatch.setattr(acr.acr_replay, "replay", lambda **_kwargs: replayed)
+
+    aligned = acr._normal_replayed_corners()
+
+    torch.testing.assert_close(aligned.detach(), retained, rtol=0, atol=0)
+    aligned.float().sum().backward()
+    torch.testing.assert_close(replayed.grad, torch.ones_like(replayed), rtol=0, atol=0)
+    assert acr.last_acr_replay_max_abs_diff == pytest.approx(
+        2.0 * torch.finfo(torch.float16).eps
+    )
+    assert acr.last_acr_replay_tolerance == pytest.approx(
+        3.0 * torch.finfo(torch.float16).eps
     )
 
 

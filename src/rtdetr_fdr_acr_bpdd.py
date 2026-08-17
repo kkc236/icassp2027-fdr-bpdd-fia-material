@@ -108,18 +108,22 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         normal = replayed
         if normal.shape != evidence.corner_logits.shape:
             raise RuntimeError("ACR-BPDD replay/FDR corner shapes differ")
-        difference = (
-            normal.detach().float() - evidence.corner_logits.detach().float()
-        ).abs().max()
+        retained = evidence.corner_logits.detach().float()
+        absolute_error = (normal.detach().float() - retained).abs()
+        difference = absolute_error.max()
+        if normal.dtype in {torch.float16, torch.bfloat16}:
+            epsilon = float(torch.finfo(normal.dtype).eps)
+            allowed_error = epsilon + epsilon * retained.abs()
+        else:
+            allowed_error = torch.full_like(absolute_error, 1.0e-6)
         value = float(difference.cpu())
-        tolerance = (
-            float(torch.finfo(normal.dtype).eps)
-            if normal.dtype in {torch.float16, torch.bfloat16}
-            else 1.0e-6
-        )
+        tolerance = float(allowed_error.max().cpu())
         self.last_acr_replay_max_abs_diff = value
         self.last_acr_replay_tolerance = tolerance
-        if not torch.isfinite(difference) or value > tolerance:
+        if (
+            not bool(torch.isfinite(absolute_error).all().item())
+            or bool((absolute_error > allowed_error).any().item())
+        ):
             raise RuntimeError(
                 "ACR-BPDD replay changed cumulative corner values: "
                 f"max_abs={value}, tolerance={tolerance}"
