@@ -1,6 +1,6 @@
 # VisDrone val 主结果表
 
-下表只展示当前仍有效、可审计且不包含 FIA 的 VisDrone val 绝对指标。修改前 FIA 的全部结果已撤销，因此任何含 FIA 的模型都不在本表中占据数值行。
+下表展示当前正式核心行。FIA 相关结果因 checkpoint 拓扑和配对等级不同，单列在后续消融观察表中，避免与严格主线混排。
 
 | 方法 | FDR | BPDD | FIA | Precision | Recall | AP50 | AP75 | mAP50–95 | 证据等级 | 可安全表述 |
 |---|:---:|:---:|:---:|---:|---:|---:|---:|---:|---|---|
@@ -24,8 +24,17 @@
 
 ## FIA 行状态
 
-- FIA-only、FDR+FIA：修改前实验全部作废，不得以历史结果、截图观察或非严格比较的形式回填。用户报告新版均为正增益，但 GitHub 当前可见内容中未找到可确认的新版 standalone 资产，因此仍待导入。
+- FIA-only、FDR+FIA：按当前实验决策直接采用 Release 中各自的 `best.pt`，在冻结 VisDrone val evaluator 下完成独立复评；两者是已发布 cascading standalone 拓扑，不称为 P3-only。
 - FDR+BPDD+FIA：已定位正确 P3-only 新 checkpoint；best-val 记录为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。
 - 新三模块仍缺 AP75、test 和冻结 evaluator 独立复评，所以只在状态区登记，不进入上方正式表，也不写成严格配对 FIA 因果增益。
+
+### 现有 best.pt standalone 消融（独立 val）
+
+| 方法 | P | R | AP50 | AP75 | mAP50–95 | 参照 | ΔmAP | 证据 |
+|---|---:|---:|---:|---:|---:|---|---:|---|
+| RT-DETR-L+FIA | 0.479433 | 0.414194 | 0.385675 | 0.209674 | 0.216795 | RT-DETR-L | −0.231 pp | best checkpoint independent val exact |
+| RT-DETR-L+FDR+FIA | 0.577524 | 0.490889 | 0.486314 | 0.299724 | 0.294940 | RT-DETR-L+FDR | +0.528 pp | best checkpoint independent val exact |
+
+这里的差值是当前登记对照的算术差，不是严格配对因果增益。结论是：FIA-only 略有负增益，FDR+FIA 呈正增益；论文主线使用 FIA 与 FDR 的兼容组合，不以 FIA-only 作为性能主张。
 
 最新状态与导入条件见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。

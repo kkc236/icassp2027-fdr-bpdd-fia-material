@@ -1,54 +1,41 @@
 # 冻结实验协议
 
-## 数据与模型
+## 数据与训练
 
 | 项目 | 冻结值 |
 |---|---:|
 | 数据集 | VisDrone |
-| 训练集 | 6,471 张图像 |
-| 验证集 | 548 张图像 |
+| 训练集 / 验证集 | 6,471 / 548 张图像 |
 | 类别数 | 10 |
 | 基线 | Ultralytics RT-DETR-L |
-| 初始化 | pretrained=False，从零训练 |
-| 输入尺寸 | imgsz=640 |
+| 初始化 | pretrained=False |
+| 输入尺寸 | 640 |
 | 查询数 / 解码层数 | 300 / 6 |
-| 随机种子 | seed=0 |
-| 正式训练轮数 | 100 epochs |
+| seed | 0 |
+| 正式训练 | 100 epochs |
 
-数据配置入口为 configs/VisDrone.yaml。FDR、FDR+BPDD 和 FDR+BPDD+FIA 分别使用各自独立配置与训练入口。任何包含 FIA 的结果必须额外绑定修改后 FIA 的源码身份，不能仅凭相同模型名、文件名或目录名认定实验兼容。
+FDR、FDR+BPDD 与三模块使用各自独立配置。BPDD 必须依赖 FDR。FIA checkpoint 必须同时登记计算图身份，不能只按文件名判断。
 
-## 评估设置
+## 统一评估器
 
-严格 val/test 复评应显式固定：
+独立 val 复评显式固定：
 
-- imgsz=640；
-- batch=8；
-- workers=8；
-- conf=0.001；
-- max_det=300；
-- NMS=False；
-- cache=False；
-- half=False；
-- rect=False；
-- 单次 prediction pass；
-- 同一数据集 YAML、类别映射和 evaluator 版本。
+- `split=val`、`imgsz=640`、`batch=8`、`workers=8`；
+- `conf=0.001`、`max_det=300`、`nms=False`；
+- `cache=False`、`half=False`、`rect=False`；
+- 同一 VisDrone YAML、10 类映射与 Ultralytics 8.4.90；
+- checkpoint 统一选择 `best.pt`。
 
-val 与 test 必须分别报告，不得跨 split 计算涨点。训练日志 best-val 只能描述 checkpoint 选择过程，不能替代冻结 evaluator 的独立复评。
+FIA-only 与 FDR+FIA 的 exact val 均按此协议从现有发布版 best checkpoint 独立得到。test 仅有 Release 截图舍入值，未提供 AP75，因此不得当作 exact 输出或与 val 混算。
 
-## 当前证据合同
+## FIA 证据合同
 
-- RT-DETR-L、FDR、FDR+BPDD：保留现有可审计结果及各自证据等级。
-- 旧 standalone FIA 与旧 FDR+FIA：属于模块修改前实验，证据全部撤销。
-- 新 standalone FIA 与新 FDR+FIA：用户报告均为正增益，但尚未取得可审计数值，GitHub 当前可见内容中未找到可确认的新版资产。
-- 新 FDR+BPDD+FIA：已定位正确 P3-only checkpoint；best-val 记录为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。AP75、test 和冻结 evaluator 独立复评仍待补。
+| 实验臂 | 拓扑 | val | test |
+|---|---|---|---|
+| FIA-only | cascading，`model[23].f=-1` | exact independent best.pt val | screenshot rounded |
+| FDR+FIA | cascading，`model[23].f=-1` | exact independent best.pt val | screenshot rounded |
+| FDR+BPDD+FIA | P3-only，`model[23].f=21` | checkpoint embedded best-val | 待补 |
 
-## FIA 新结果的最低导入条件
+standalone 不再重训。其 val 算术差可用于普通消融描述，但不是 strict paired 因果效应。三模块的 P3-only 观察与 standalone cascading 结果分开标注。
 
-1. 修改后 FIA 源码提交与配置 blob；
-2. checkpoint 文件及其 SHA-256；
-3. 数据集身份、环境版本和完整评估命令；
-4. val/test 分开的结构化总体指标；
-5. AP75、四尺度和十类别结果；
-6. 对照臂身份与严格配对状态。
-
-在满足这些条件前，新三模块记录只能作为正向 checkpoint 观察；单 FIA 与 FDR+FIA 不得填数。统一状态见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。
+完整状态见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)，机器协议与逐类别值见 [FIA best.pt 证据](../evidence/fia_existing_best_evaluation.json)。

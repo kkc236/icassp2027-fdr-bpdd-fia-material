@@ -2,28 +2,29 @@
 
 ## 定位
 
-FIA 面向 RT-DETR-L 的高分辨率特征路径，用于在进入 decoder 前增强小目标相关表征。论文中的模块结构、插入位置和参数统计必须以修改后 FIA 的源码与配置为准；修改前实现及其所有实验结果不再具有证据效力。
+FIA 位于 RT-DETR-L 的高分辨率特征路径，用于在 decoder 前增强小目标相关表征。它是推理图中的特征模块，不是 BPDD 的辅助损失。
 
-当前私密仓库中的 src/fia.py、相关 YAML 和训练入口可用于代码定位，但在完成与最新修改提交的逐文件绑定前，本页不冻结更细的内部算子公式、层索引或复杂度数值，避免把旧实现细节误写成最终方法。
+## 与另外两模块的关系
 
-## 运行角色
+- FIA-only 检查相对 stock baseline 的独立贡献。
+- FDR+FIA 检查 FIA 与细粒度分布定位表示的兼容性。
+- FDR+BPDD+FIA 检查完整组合；其中 BPDD 仍只在训练期工作。
 
-- FIA 是推理图中的特征模块，不是 BPDD 的辅助损失。
-- FIA-only 用于检验其相对 stock baseline 的独立贡献。
-- FDR+FIA 用于检验其与定位分布细化的兼容性。
-- FDR+BPDD+FIA 用于检验三模块整体组合；BPDD 仍只在训练期工作。
+## 两种已登记拓扑
 
-## 当前实验状态
+| 身份 | 连接 | 使用范围 |
+|---|---|---|
+| published cascading standalone | FIA 位于层 22，层 23 使用 `f=-1`，P4/P5 延续 FIA 输出 | 现有 FIA-only、FDR+FIA best.pt 消融 |
+| P3-only three-module | FIA 增强 decoder P3，层 23 显式回到原始 P3（`f=21`） | FDR+BPDD+FIA checkpoint 观察 |
 
-- 修改前 FIA-only 和 FDR+FIA 数据全部撤销，不能作为历史补充。
-- 用户报告修改后的 standalone FIA 与 FDR+FIA 均为正增益，但新版可审计资产尚未找到，因此不写具体数值。
-- 已确认 DFR-BDPP-FIA-best.pt 是修改后、正确 P3-only 拓扑的三模块 checkpoint。其 best-val 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对当前 BPDD val 绝对值是 +0.3922 pp 的算术观察。
-- 上述三模块 checkpoint 尚缺 AP75、test 和冻结 evaluator 独立复评，不能写成严格配对的 FIA 因果增益。
+因此不能把 standalone 的结果标成 P3-only，也不能把两个拓扑拼成严格成对实验。
 
-## 论文表述边界
+## 当前证据结论
 
-允许表述：FIA 是高分辨率特征增强模块；新版三模块 checkpoint 已显示正向 best-val 观察，但完整独立复评仍待补。
+- FIA-only exact val mAP50–95 为 `0.2167954534`，相对 baseline `−0.2315 pp`，说明 FIA 单独并未稳定涨点。
+- FDR+FIA exact val mAP50–95 为 `0.2949403207`，相对 FDR `+0.5280 pp`，支持 FIA 与 FDR 的互补兼容性。
+- FDR+BPDD+FIA P3-only checkpoint best-val mAP50–95 为 `0.29618`，相对 FDR+BPDD 为 `+0.3922 pp` 的非严格观察。
 
-禁止表述：修改前 FIA 数值仍有参考价值；旧截图可以补充证明趋势；单 FIA 或 FDR+FIA 的正式涨点已经取得；三模块 best-val 观察等同于严格配对、完整指标或最终论文结果。
+论文应把 FIA 的贡献表述为“面向高分辨率特征的增强设计，并在 FDR 组合中显示正向兼容性”，不能声称 FIA-only 一定提升，也不能把算术差写成严格因果收益。
 
-状态与导入清单见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。
+证据详情见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。

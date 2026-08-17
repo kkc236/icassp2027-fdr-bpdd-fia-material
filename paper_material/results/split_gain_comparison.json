@@ -30,8 +30,8 @@
       "fdr": false,
       "bpdd": false,
       "fia": true,
-      "status": "revoked_pending_updated_evidence",
-      "reason": "All previously registered FIA results are revoked. Updated runs are reported as positive, but no auditable updated artifact is currently available."
+      "status": "existing_best_evaluated",
+      "reason": "The published best.pt was independently evaluated on VisDrone val. It is a cascading standalone checkpoint, not a revised P3-only run."
     },
     {
       "method": "RT-DETR-L+FDR+BPDD",
@@ -45,8 +45,8 @@
       "fdr": true,
       "bpdd": false,
       "fia": true,
-      "status": "revoked_pending_updated_evidence",
-      "reason": "All previously registered FIA results are revoked. Updated runs are reported as positive, but no auditable updated artifact is currently available."
+      "status": "existing_best_evaluated",
+      "reason": "The published best.pt was independently evaluated on VisDrone val. It is a cascading standalone checkpoint, not a revised P3-only run."
     },
     {
       "method": "RT-DETR-L+BPDD+FIA",
@@ -208,6 +208,76 @@
   "supplementary_updated_fia_observations": [
     {
       "split": "val",
+      "method": "RT-DETR-L+FIA",
+      "status": "existing_best_independent_val_exact",
+      "metrics": {
+        "precision": 0.4794334980185041,
+        "recall": 0.4141938299458384,
+        "f1": 0.44443223821449405,
+        "map50": 0.38567545133764725,
+        "map75": 0.2096736111592438,
+        "map": 0.21679545343355132
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_map_pp": -0.23145465664486664,
+      "delta_strict_paired": false,
+      "evidence_level": "best_checkpoint_independent_val_exact",
+      "source_id": "fia_existing_best_independent_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FIA",
+      "status": "existing_best_screenshot_rounded",
+      "metrics": {
+        "precision": 0.424,
+        "recall": 0.37,
+        "f1": 0.3946,
+        "map50": 0.325,
+        "map75": null,
+        "map": 0.177
+      },
+      "evidence_level": "best_checkpoint_screenshot_rounded",
+      "source_id": "fia_existing_best_independent_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR+FIA",
+      "status": "existing_best_independent_val_exact",
+      "metrics": {
+        "precision": 0.5775238641748943,
+        "recall": 0.4908887926435492,
+        "f1": 0.530693811231827,
+        "map50": 0.486314064615312,
+        "map75": 0.29972392008500426,
+        "map": 0.29494032070762063
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_map_pp": 0.5280571609979634,
+      "delta_strict_paired": false,
+      "evidence_level": "best_checkpoint_independent_val_exact",
+      "source_id": "fdr_fia_existing_best_independent_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR+FIA",
+      "status": "existing_best_screenshot_rounded",
+      "metrics": {
+        "precision": 0.519,
+        "recall": 0.431,
+        "f1": 0.4709,
+        "map50": 0.407,
+        "map75": null,
+        "map": 0.235
+      },
+      "evidence_level": "best_checkpoint_screenshot_rounded",
+      "source_id": "fdr_fia_existing_best_independent_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "val",
       "method": "RT-DETR-L+FDR+BPDD+FIA",
       "status": "updated_checkpoint_best_val_available",
       "metrics": {
@@ -222,5 +292,5 @@
       "formal_delta_allowed": false
     }
   ],
-  "claim_boundary": "Only baseline, FDR, and FDR+BPDD rows remain eligible for formal arithmetic. The corrected P3-only three-module checkpoint provides a supplementary embedded best-val observation, but no formal paired delta is allowed. The user reports positive updated FIA-only and FDR+FIA runs, but no auditable updated assets for those two arms have been located, so their metrics remain unpopulated."
+  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal core rows. The two published standalone best.pt checkpoints now have exact independent-val supplementary rows: FIA-only is slightly negative versus baseline and FDR+FIA is positive versus FDR. Their test rows are screenshot-rounded and have no AP75. The corrected P3-only three-module checkpoint remains a separate embedded best-val observation. None of the supplementary arithmetic deltas is a strict paired causal gain."
 }

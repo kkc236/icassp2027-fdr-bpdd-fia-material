@@ -16,6 +16,7 @@ REQUIRED_MATERIAL_FILES = (
     "experiments/PROTOCOL_ZH.md",
     "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
     "evidence/fia_results_status.json",
+    "evidence/fia_existing_best_evaluation.json",
     "results/FIA_RESULTS_STATUS_ZH.md",
     "results/main_results.json",
     "results/MAIN_TABLE_ZH.md",
@@ -26,6 +27,7 @@ REQUIRED_MATERIAL_FILES = (
     "results/split_overall_results.csv",
     "results/split_scale_results.csv",
     "results/split_class_results.csv",
+    "results/fia_existing_best_val_results.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
 )
@@ -72,6 +74,68 @@ def test_required_material_files_exist():
     assert not missing, f"missing required material files: {missing}"
 
 
+def test_existing_best_fia_evaluations_are_registered():
+    evidence = _load_required_json("evidence/fia_existing_best_evaluation.json")
+    manifest = _load_required_json("evidence/source_manifest.json")
+
+    assert evidence["format_version"] == 1
+    assert evidence["dataset"] == {
+        "name": "VisDrone",
+        "split": "val",
+        "images": 548,
+        "instances": 38759,
+        "data_yaml_sha256": "6cabb57ba5336c1b8a9e43ef376117f06e90d83f998f1e4fe7d1b8c5b2435a71",
+    }
+    assert evidence["evaluation_protocol"] == {
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": False,
+        "cache": False,
+        "half": False,
+        "rect": False,
+        "checkpoint_selection": "best.pt",
+    }
+
+    arms = {arm["variant"]: arm for arm in evidence["arms"]}
+    assert set(arms) == {"fia_only", "fdr_fia"}
+    assert arms["fia_only"]["checkpoint_sha256"] == (
+        "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9"
+    )
+    assert arms["fdr_fia"]["checkpoint_sha256"] == (
+        "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1"
+    )
+    for arm in arms.values():
+        assert arm["graph_identity"]["p3_only"] is False
+        assert arm["graph_identity"]["layer_23_from"] == -1
+        assert arm["graph_identity"]["decoder_from"] == [22, 25, 28]
+        assert arm["val"]["evidence_level"] == "best_checkpoint_independent_val_exact"
+        assert len(arm["val"]["per_class"]) == 10
+        assert arm["test"]["evidence_level"] == "best_checkpoint_screenshot_rounded"
+        assert arm["test"]["metrics"]["map75"] is None
+        assert arm["source_id"] in manifest["sources"]
+
+    assert arms["fia_only"]["val"]["metrics"]["map"] == 0.21679545343355132
+    assert arms["fdr_fia"]["val"]["metrics"]["map"] == 0.29494032070762063
+    assert arms["fia_only"]["val"]["delta_map_pp"] == (
+        arms["fia_only"]["val"]["metrics"]["map"] - 0.21911
+    ) * 100
+    assert arms["fdr_fia"]["val"]["delta_map_pp"] == (
+        arms["fdr_fia"]["val"]["metrics"]["map"] - 0.289659749097641
+    ) * 100
+
+    csv_path = MATERIAL_ROOT / "results/fia_existing_best_val_results.csv"
+    with csv_path.open(encoding="utf-8", newline="") as handle:
+        csv_rows = list(csv.DictReader(handle))
+    assert len(csv_rows) == 2
+    assert {row["source_id"] for row in csv_rows} == {
+        "fia_existing_best_independent_val",
+        "fdr_fia_existing_best_independent_val",
+    }
+
+
 def test_legacy_third_method_name_is_absent():
     forbidden = bytes((105, 114, 97))
     forbidden_pattern = re.compile(
@@ -111,6 +175,18 @@ def test_main_results_are_bound_to_manifest():
     assert rows["RT-DETR-L+FDR+BPDD"]["map"] == 0.29225786956881444
 
     assert all(row["fia"] is False for row in results["rows"])
+    assert {
+        row["source_id"]
+        for row in results["supplementary_updated_fia_observations"]
+    } == {
+        "fia_existing_best_independent_val",
+        "fdr_fia_existing_best_independent_val",
+        "fia_updated_three_module_checkpoint_best_val",
+    }
+    assert all(
+        row["source_id"] in sources
+        for row in results["supplementary_updated_fia_observations"]
+    )
     assert "supplementary_unverified_observations" not in results
 
 
@@ -150,16 +226,22 @@ def test_source_manifest_has_sha256_for_local_artifacts():
     )
 
 
-def test_pre_revision_fia_results_are_revoked_and_absent():
+def test_pre_revision_fia_results_are_scope_limited_and_replaced():
     status = _load_required_json("evidence/fia_results_status.json")
     manifest = _load_required_json("evidence/source_manifest.json")
 
     assert status["format_version"] == 1
-    assert status["status"] == "updated_three_module_available_standalone_pending"
+    assert status["status"] == (
+        "existing_best_standalone_evaluated_three_module_available"
+    )
     assert status["valid_fia_result_source_ids"] == [
+        "fia_existing_best_independent_val",
+        "fdr_fia_existing_best_independent_val",
         "fia_updated_three_module_checkpoint_best_val"
     ]
-    assert status["user_reported_updated_result_direction"] == "all_positive"
+    assert status["user_reported_updated_result_direction"] == (
+        "superseded_by_direct_best_checkpoint_evaluation"
+    )
     assert status["user_report_is_formal_numeric_evidence"] is False
 
     revoked_source_ids = {
@@ -169,9 +251,12 @@ def test_pre_revision_fia_results_are_revoked_and_absent():
     }
     assert revoked_source_ids == set(status["revoked_source_ids"])
     assert revoked_source_ids.isdisjoint(manifest["sources"])
-    assert status["valid_fia_result_source_ids"][0] in manifest["sources"]
+    assert all(
+        source_id in manifest["sources"]
+        for source_id in status["valid_fia_result_source_ids"]
+    )
     updated = status["updated_three_module_observation"]
-    source = manifest["sources"][status["valid_fia_result_source_ids"][0]]
+    source = manifest["sources"]["fia_updated_three_module_checkpoint_best_val"]
     assert updated["graph"]["p3_only"] is True
     assert updated["graph"]["layer_23_from"] == 21
     assert updated["metrics"]["map"] == 0.29618
@@ -200,7 +285,10 @@ def test_pre_revision_fia_results_are_revoked_and_absent():
         assert candidate["web_assets_present"] is True
         assert candidate["observed_checkpoint_layer_23_from"] == -1
         assert candidate["required_updated_checkpoint_layer_23_from"] == 21
-        assert candidate["decision"] == "pre_revision_cascading_revoked"
+        assert candidate["decision"] == (
+            "accepted_as_existing_published_best_not_p3_only"
+        )
+        assert candidate["numeric_use_allowed"] is True
 
     removed_paths = (
         "evidence/fdr_bpdd_fia_val_exact.json",
@@ -218,22 +306,24 @@ def test_pre_revision_fia_results_are_revoked_and_absent():
     restored_page = _read_required_text("results/FIA_ABLATION_RELEASE_RESULTS_ZH.md")
     for required_text in (
         "P3-only",
-        "checkpoint_embedded_best_val",
-        "网页附件已找到",
-        "model[23].f = -1",
-        "model[23].f = 21",
+        "best_checkpoint_independent_val_exact",
+        "best_checkpoint_screenshot_rounded",
+        "model[23].f=-1",
+        "model[23].f=21",
         "0.56996",
         "0.49848",
         "0.48982",
         "0.29618",
+        "0.216795",
+        "0.294940",
+        "-0.2315",
+        "+0.5280",
         "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
     ):
         assert required_text in restored_page
     for revoked_text in (
         "0.21671",
         "0.29408",
-        "fia-seed0-20260815-211156",
-        "fdr-fia-seed0-20260815-211203",
     ):
         assert revoked_text not in restored_page
 
@@ -268,12 +358,8 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert len(combinations) == 8
     assert combinations[(False, True, False)]["status"] == "invalid_dependency"
     assert combinations[(False, True, True)]["status"] == "invalid_dependency"
-    assert combinations[(False, False, True)]["status"] == (
-        "revoked_pending_updated_evidence"
-    )
-    assert combinations[(True, False, True)]["status"] == (
-        "revoked_pending_updated_evidence"
-    )
+    assert combinations[(False, False, True)]["status"] == "existing_best_evaluated"
+    assert combinations[(True, False, True)]["status"] == "existing_best_evaluated"
     assert combinations[(True, True, True)]["status"] == (
         "updated_checkpoint_best_val_available"
     )
@@ -293,6 +379,10 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
         for row in comparison["overall_rows"]
         if row["source_id"] is not None
     )
+    assert all(
+        row["source_id"] in manifest["sources"]
+        for row in comparison["supplementary_updated_fia_observations"]
+    )
 
 
 def test_readme_links_split_comparison_outputs():
@@ -307,6 +397,8 @@ def test_readme_links_split_comparison_outputs():
         "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
         "results/FIA_RESULTS_STATUS_ZH.md",
         "evidence/fia_results_status.json",
+        "evidence/fia_existing_best_evaluation.json",
+        "results/fia_existing_best_val_results.csv",
     ):
         assert relative_path in readme
 

@@ -33,8 +33,8 @@
 ### 4. Experiments
 
 - 4.1 Dataset and Protocol：VisDrone、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
-- 4.2 Main Results：当前正式表只放 baseline、FDR 和 FDR+BPDD。
-- 4.3 Ablation Studies：FIA-only、FDR+FIA 和三模块在新版证据完成后加入；不得引用修改前 FIA 数据。
+- 4.2 Main Results：正式核心表放 baseline、FDR 和 FDR+BPDD；三模块 P3-only best-val 作为补充观察。
+- 4.3 Ablation Studies：报告现有 best.pt 的 FIA-only 与 FDR+FIA 独立 val；明确 FIA-only 为 −0.231 pp、FDR+FIA 为 +0.528 pp，且两者不是严格配对、不是 P3-only。
 - 4.4 Analysis：先呈现 FDR/BPDD 的现有可审计分析；FIA 的总体、尺度、类别和效率分析待新版独立复评补齐。
 
 ### 5. Conclusion
@@ -45,13 +45,14 @@
 
 - strict 证据下，FDR 相对 RT-DETR-L 的 mAP50–95 为 +0.07055，AP75 为 +0.07951。
 - BPDD 是依赖 FDR 边界分布的训练期、无参数蒸馏，不增加推理图或参数。
+- 现有 standalone best.pt 独立 val 中，FIA-only mAP50–95=0.216795（相对 baseline −0.231 pp），FDR+FIA=0.294940（相对 FDR +0.528 pp）。这支持“FIA 与 FDR 组合兼容”，不支持“FIA 单独稳定增益”。
 - 已确认正确 P3-only 新三模块 checkpoint 的 best-val 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对当前 BPDD val 绝对值为 +0.3922 pp 的算术观察。
 - 该三模块观察仍缺 AP75、test 和冻结 evaluator 独立复评。
 
 ## 当前禁止主张
 
-- 任何修改前 FIA 指标、截图或旧方向性结论仍可作为参考。
-- 单 FIA 与 FDR+FIA 的正式数值已经取得；目前只有用户报告新版均为正增益，尚无可审计资产。
+- 把 standalone best.pt 结果称为 P3-only 或严格配对因果增益。
+- 宣称 FIA-only 正增益；当前直接复评显示其 val mAP 略低于 baseline。
 - 新三模块 best-val 观察是严格配对因果增益、完整评估或最终论文主表结果。
 - “本文发明 FDR、FGL、Integral、非均匀积分或相邻 bin 监督”。
 - “BPDD 可脱离 FDR 单独使用”或“BPDD 具有推理期零总开销”。
