@@ -9,11 +9,12 @@
 3. 特征增强：[FIA：P3 特征增强模块](methods/FIA_ZH.md)
 4. 冻结设置：[实验协议](experiments/PROTOCOL_ZH.md)
 5. 消融入口：[FIA-only 与 FDR+FIA 实验脚手架](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
-6. 可引用数值：[主结果表](results/MAIN_TABLE_ZH.md)
-7. val/test 涨点：[各模块与组合的完整对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
-8. 三模块细节：[FDR+BPDD+FIA Formal100 详细结果](results/FDR_BPDD_FIA_DETAILED_ZH.md)
-9. 论文组织：[ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
-10. 绘图交接：[四图规划](figures/FIGURE_PLAN_ZH.md)
+6. Release 消融审计：[FIA-only 与 FDR+FIA 历史拓扑结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
+7. 可引用数值：[主结果表](results/MAIN_TABLE_ZH.md)
+8. val/test 涨点：[各模块与组合的完整对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
+9. 三模块细节：[FDR+BPDD+FIA Formal100 详细结果](results/FDR_BPDD_FIA_DETAILED_ZH.md)
+10. 论文组织：[ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+11. 绘图交接：[四图规划](figures/FIGURE_PLAN_ZH.md)
 
 ## 机器可读证据
 
@@ -21,6 +22,8 @@
 - [来源清单](evidence/source_manifest.json)：结果行与源码提交、原始证据的绑定关系。
 - [BPDD 精确验证结果](evidence/bpdd_val_exact.json)：BPDD 行的结构化精确指标。
 - [三模块 Formal100 精确结果](evidence/fdr_bpdd_fia_val_exact.json)：总体、尺度、类别、效率、checkpoint 与来源绑定。
+- [FIA 消融 Release 证据](evidence/fia_ablation_release_evidence.json)：绑定 `DFR-BDPP-FIA` 的 FIA-only/FDR+FIA 压缩包、日志、checkpoint 与截图哈希；训练源码 commit 未验证。
+- [FIA 消融 Release test 类别 CSV](results/fia_ablation_release_test_class_results.csv)：保留两个历史 Release 拓扑运行的截图舍入类别值。
 - [val/test 组合状态与总体指标](results/split_gain_comparison.json)：覆盖全部 8 种开关组合，缺失项不以截图补值。
 - [val/test 总体 CSV](results/split_overall_results.csv)：总体指标与逐步涨点。
 - [val/test 尺度 CSV](results/split_scale_results.csv)：全部已完成模型的四尺度精确值。
@@ -33,5 +36,6 @@
 - FDR 是定位表示基础，替换 RT-DETR-L 解码器的连续四维框回归路径。
 - BPDD 消费 FDR 的逐层四边分布，因此最小有效宿主是 FDR；“BPDD 单独”不是合法模型行。
 - FIA 位于高分辨率 P3 路径，训练和推理均参与前向计算。
+- `DFR-BDPP-FIA` Release 中的 FIA-only/FDR+FIA 运行使用历史 Release topology，与当前规范 P3-only FIA 图不同；其训练源码 commit 未验证，因此只能作非严格可比的补充观察。
 - 只有 `strict` 行之间才可写严格配对差值；`cross_authority_exact` 表示精确数值来自不同完整 authority；`exact_single_arm` 表示单臂身份和绝对指标精确、但没有严格配对对照；`screenshot_rounded` 只能作为补充观察。
 - FDR/FGL/Integral 及非均匀积分来自固定版本的 D-FINE 先验。本项目的可主张贡献是面向 Ultralytics RT-DETR-L 与 VisDrone 的结构化适配、隔离集成和验证，不是这些基础机制的发明。

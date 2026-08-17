@@ -31,8 +31,8 @@
 
 ## 必补消融
 
-- FIA 单独：配置、训练入口和 test 评估入口已在 `1d083140` 登记，用于区分 FIA 对 stock RT-DETR-L 的独立作用；当前仍没有可写入主表的精确证据。
-- FDR+FIA：配置、训练入口和 test 评估入口已在 `1d083140` 登记，用于在不启用 BPDD 时隔离 FIA 与 FDR 的交互；当前仍没有可写入主表的精确证据。
+- FIA 单独：Release 已登记 val 训练日志 exact 记录与 test 截图舍入结果，但该运行属于历史 topology，且 training source commit 未验证、AP75 缺失，不能写入正式主表。当前 P3-only 配置仍需按冻结协议重新训练和独立复评。
+- FDR+FIA：Release 已登记 val 训练日志 exact 记录与 test 截图舍入结果，但同样不满足严格可比合同；只能作为 FIA 与 FDR 可能互补的阶段性观察，不能报告正式交互增益。
 - BPDD 单独：不应设置，因为 BPDD 消费 FDR 的逐层四边分布，缺少 FDR 时方法定义不成立。
 
-以上未来行必须按同一冻结协议独立训练并由同一 evaluator 复评，不能用现有组合行反推。
+Release target commit `7b20c610` 早于配置提交 `1d083140`；Release graph 还让 FIA 输出参与 P4/P5 重建，而当前规范化配置为 P3-only。其 val 来自训练日志 best epoch，test 来自三位小数截图，AP75 未导出。以上未来正式行必须按同一冻结协议独立训练并由同一 evaluator 复评，不能用 Release 或现有组合行反推。完整边界见 [FIA-only 与 FDR+FIA Release 结果审计](FIA_ABLATION_RELEASE_RESULTS_ZH.md)。

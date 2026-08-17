@@ -4,7 +4,7 @@
 
 源码仓库 `uav-detection-baselines` 的 `fdr-bdpp-fia` 分支在提交 `1d0831402e15f6d039510b79eb477b5c34abb42c` 补齐两种缺失消融的配置、训练入口和 test 评估入口。本私密仓库引入该提交，并对两份 YAML 做一次有登记的拓扑规范化。
 
-该提交提供的是“实验可运行入口”，不是结果证据：提交树中没有对应 checkpoint、训练日志、精确 val/test JSON 或完整运行身份。训练脚本默认路径中出现的时间戳目录只能视为路径模板，不能据此认定训练已完成。
+GitHub Release `DFR-BDPP-FIA` 后续上传了 FIA-only 与 FDR+FIA 的 100 epoch 训练包、日志、checkpoint 和 test 截图，因此这两项已不再是“没有结果”。但 Release target commit 为 `7b20c610`，早于上述配置提交；运行名虽然与后来配置一致，精确 training source commit 仍无法验证。该批结果应登记为历史 Release 证据，而不是当前规范化拓扑的正式消融结果。
 
 ## 文件矩阵
 
@@ -14,6 +14,8 @@
 | FDR+FIA | `configs/rtdetr-l-fdr-fia.yaml` | `train_fdr_fia.py` | `val_fdr_fia.py` | `FDRRTDETRDecoder` |
 
 两种配置都把 `FIA(256)` 插在 P3 head 路径的第二个 `RepC3` 后。源提交继续用 `-1` 从 FIA 输出重建 P4/P5，这与已验证三模块配置的 P3-only 连接不一致。私密仓库已将两份配置的 P4/P5 重建分支改为显式读取原始 P3（层 21、23/25/26 索引链），decoder 仍读取 FIA 输出层 22；因此 FIA 的拓扑与三模块配置一致，避免消融比较同时改变 P4/P5。
+
+已上传 Release checkpoint 对应的是规范化前的历史 topology：FIA 输出不仅送入 decoder P3，还参与 P4/P5 重建。它与本仓库 P3-only YAML 不是同一计算图，不能改名后作为规范化配置的 checkpoint 使用。
 
 FIA-only 使用 `FDRControlTrainer` 保留 stock decoder；FDR+FIA 使用 `FDRTrainer` 和 FDR loss。两者均不启用 BPDD，从而可分别隔离 FIA 主效应以及 FIA 与 FDR 的交互。源 blob 与规范化后本地 blob 的 OID/SHA-256 均登记在 `source_manifest.json`。
 
@@ -45,8 +47,8 @@ FIA-only 使用 `FDRControlTrainer` 保留 stock decoder；FDR+FIA 使用 `FDRTr
 
 ## 当前状态
 
-- FIA-only：`experiment_scaffold_available`，没有登记的 exact 结果。
-- FDR+FIA：`experiment_scaffold_available`，没有登记的 exact 结果。
+- FIA-only：Release 证据已登记；val 为训练日志 best epoch 的 exact 记录（epoch 88，mAP50–95 `0.21671`），test 为截图舍入值（mAP50–95 `≈0.177`），AP75 缺失；状态为非严格可比。
+- FDR+FIA：Release 证据已登记；val 为训练日志 best epoch 的 exact 记录（epoch 97，mAP50–95 `0.29408`），test 为截图舍入值（mAP50–95 `≈0.235`），AP75 缺失；状态为非严格可比。
 - 三模块：已有 exact val 单臂结果；exact test 仍待补评。
 
-在新证据进入 `source_manifest.json` 前，主表继续保留四条已有结果，不新增 FIA-only 或 FDR+FIA 数值行。
+Release 证据的完整 SHA-256、训练参数与指标边界见 [`../results/FIA_ABLATION_RELEASE_RESULTS_ZH.md`](../results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)。由于历史 topology、未验证的 training source commit 和非冻结 evaluator 合同，主表继续保留四条已有结果，不把 FIA-only 或 FDR+FIA 的 Release 数值并入正式主表；若要证明当前 P3-only FIA，仍需使用规范化 YAML 重新训练并统一复评。

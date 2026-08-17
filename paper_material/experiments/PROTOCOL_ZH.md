@@ -17,7 +17,7 @@
 
 数据配置入口为 `configs/VisDrone.yaml`，其数据根现为仓库相对路径 `VisDrone`。FDR、FDR+BPDD 和 FDR+BPDD+FIA 分别使用 `configs/rtdetr-l-fdr.yaml`、`configs/rtdetr-l-fdr-bpdd.yaml` 和 `configs/rtdetr-l-fdr-bpdd-fia.yaml`。训练冻结值由 `scripts/train_rtdetr_fdr.py` 继承到 `scripts/train_rtdetr_bpdd.py` 与 `scripts/train_rtdetr_bpdd_fia.py`；数据集的 10 类设置在建模时覆盖模型 YAML 的通用 `nc` 占位值。
 
-源码提交 `1d083140` 另补齐 FIA-only 与 FDR+FIA 的配置和入口，详见 [FIA 消融实验脚手架](FIA_ABLATION_SCAFFOLD_ZH.md)。这些入口证明消融拓扑可配置，但其默认 `workers=4`、分设备训练和 `split=test,batch=4` 验证参数不是本页冻结的最终论文比较合同；产生主表结果前必须显式对齐本页协议。
+源码提交 `1d083140` 另补齐 FIA-only 与 FDR+FIA 的配置和入口，详见 [FIA 消融实验脚手架](FIA_ABLATION_SCAFFOLD_ZH.md)。GitHub Release 已上传两项历史训练的 100 epoch 训练包和结果，但 Release target commit `7b20c610` 早于配置提交，精确 training source commit 未验证；而且 Release topology 让 FIA 输出同时参与 decoder P3 和 P4/P5 重建，不等同于当前规范化的 P3-only 配置。这些入口及 Release 结果均不能自动升级为本页冻结合同下的正式消融。
 
 ## 评估设置
 
@@ -44,9 +44,10 @@
 | `strict` | 数据划分、训练 authority、评估器和比较合同满足严格配对要求 | 可报告同等级配对行的有符号差值 |
 | `cross_authority_exact` | 指标保存为结构化精确数值，但与参照行不属于同一完整 authority | 可报告绝对值；跨行差只能称算术差，不能称严格配对增益 |
 | `exact_single_arm` | checkpoint、协议和独立评估绝对值完整，但没有同 authority 配对对照 | 可报告该臂精确总体、尺度、类别和效率；不得把历史参考差写成因果增益 |
+| `training_log_exact` | 训练过程日志保存了精确显示值，但未按冻结 evaluator 独立复评 | 只能注明 epoch 和日志来源报告单臂观察；不可与主表行作正式差值 |
 | `screenshot_rounded` | 仅有终端截图中的舍入显示值 | 使用 `≈`；不可恢复更多小数、缺失指标或精确差值 |
 
-证据绑定以 `paper_material/evidence/source_manifest.json` 为准；表格机器值以 `paper_material/results/main_results.json` 为准；BPDD 与三模块的精确来源分别见 `paper_material/evidence/bpdd_val_exact.json` 和 `paper_material/evidence/fdr_bpdd_fia_val_exact.json`。
+证据绑定以 `paper_material/evidence/source_manifest.json` 为准；表格机器值以 `paper_material/results/main_results.json` 为准；BPDD 与三模块的精确来源分别见 `paper_material/evidence/bpdd_val_exact.json` 和 `paper_material/evidence/fdr_bpdd_fia_val_exact.json`。FIA-only/FDR+FIA 的历史 Release 证据见 `paper_material/evidence/fia_ablation_release_evidence.json`，其中 val 属于 `training_log_exact`，test 属于 `screenshot_rounded`，两者均缺失 AP75。
 
 ## 禁止混用
 

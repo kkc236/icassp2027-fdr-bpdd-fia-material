@@ -16,6 +16,7 @@ REQUIRED_MATERIAL_FILES = (
     "methods/FIA_ZH.md",
     "experiments/PROTOCOL_ZH.md",
     "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
+    "evidence/fia_ablation_release_evidence.json",
     "results/main_results.json",
     "results/MAIN_TABLE_ZH.md",
     "evidence/source_manifest.json",
@@ -25,6 +26,8 @@ REQUIRED_MATERIAL_FILES = (
     "results/fdr_bpdd_fia_val_class_results.csv",
     "results/fdr_bpdd_fia_val_scale_results.csv",
     "results/SPLIT_GAIN_COMPARISON_ZH.md",
+    "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
+    "results/fia_ablation_release_test_class_results.csv",
     "results/split_gain_comparison.json",
     "results/split_overall_results.csv",
     "results/split_scale_results.csv",
@@ -32,6 +35,8 @@ REQUIRED_MATERIAL_FILES = (
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
     "assets/fia_terminal_validation.jpg",
+    "assets/fia_only_test_release.png",
+    "assets/fdr_fia_test_release.png",
 )
 
 EXPECTED_METHODS = (
@@ -254,12 +259,13 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert combinations[(False, True, False)]["status"] == "invalid_dependency"
     assert combinations[(False, True, True)]["status"] == "invalid_dependency"
     assert combinations[(False, False, True)]["status"] == (
-        "experiment_scaffold_available"
+        "release_evidence_available_noncomparable"
     )
     assert combinations[(True, False, True)]["status"] == (
-        "experiment_scaffold_available"
+        "release_evidence_available_noncomparable"
     )
     assert "fia_ablation_scaffold_1d083140" in manifest["sources"]
+    assert "fia_ablation_release_dfr_bdpp_fia" in manifest["sources"]
 
     rows = {
         (row["split"], row["method"]): row
@@ -291,8 +297,75 @@ def test_readme_links_split_comparison_outputs():
         "results/split_scale_results.csv",
         "results/split_class_results.csv",
         "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
+        "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
+        "evidence/fia_ablation_release_evidence.json",
     ):
         assert relative_path in readme
+
+
+def test_fia_ablation_release_evidence_preserves_values_and_boundaries():
+    evidence = _load_required_json("evidence/fia_ablation_release_evidence.json")
+
+    assert evidence["format_version"] == 1
+    assert evidence["release"]["tag"] == "DFR-BDPP-FIA"
+    assert evidence["release"]["target_commit"] == (
+        "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40"
+    )
+    assert evidence["training_source_commit"] == "unverified"
+
+    runs = evidence["runs"]
+    fia = runs["fia_only"]
+    assert fia["train_val_best"]["epoch"] == 88
+    assert fia["train_val_best"]["metrics"]["map"] == 0.21671
+    assert fia["test_screenshot"]["metrics_display"]["map"] == 0.177
+    assert fia["test_screenshot"]["metrics_display"]["map75"] is None
+    assert fia["graph"]["canonical_p3_only_compatible"] is False
+
+    fdr_fia = runs["fdr_fia"]
+    assert fdr_fia["train_val_best"]["epoch"] == 97
+    assert fdr_fia["train_val_best"]["metrics"]["map"] == 0.29408
+    assert fdr_fia["test_screenshot"]["metrics_display"]["map"] == 0.235
+    assert fdr_fia["test_screenshot"]["metrics_display"]["map75"] is None
+    assert fdr_fia["graph"]["canonical_p3_only_compatible"] is False
+
+    assert evidence["claim_boundary"]["formal_main_table_allowed"] is False
+
+
+def test_fia_ablation_release_screenshots_match_manifest_hashes():
+    evidence = _load_required_json("evidence/fia_ablation_release_evidence.json")
+    expected = {
+        "fia_only": (
+            "assets/fia_only_test_release.png",
+            "39e64e657336dda20d2de4c79cafd248f2d598748bf72c45654adf81b613193b",
+        ),
+        "fdr_fia": (
+            "assets/fdr_fia_test_release.png",
+            "30dd7c12e80962645a2acc4cc7f7b836890a7751f73534c85c284767b27dfb8f",
+        ),
+    }
+
+    for run_id, (relative_path, sha256) in expected.items():
+        path = MATERIAL_ROOT / relative_path
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == sha256
+        assert evidence["runs"][run_id]["test_screenshot"]["sha256"] == sha256
+        assert evidence["runs"][run_id]["test_screenshot"]["local_artifact"] == (
+            f"paper_material/{relative_path}"
+        )
+
+
+def test_fia_ablation_release_class_csv_keeps_rounded_test_scope():
+    path = MATERIAL_ROOT / "results/fia_ablation_release_test_class_results.csv"
+    with path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+
+    assert len(rows) == 20
+    assert {row["method"] for row in rows} == {
+        "RT-DETR-L+FIA (release topology)",
+        "RT-DETR-L+FDR+FIA (release topology)",
+    }
+    assert all(row["split"] == "test" for row in rows)
+    assert all(row["map75"] == "" for row in rows)
+    assert all(row["evidence_level"] == "screenshot_rounded" for row in rows)
 
 
 def test_split_detail_csvs_have_expected_exact_coverage():

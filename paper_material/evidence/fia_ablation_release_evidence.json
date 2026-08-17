@@ -1,0 +1,220 @@
+{
+  "format_version": 1,
+  "release": {
+    "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+    "tag": "DFR-BDPP-FIA",
+    "target_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",
+    "published_at": "2026-08-15T10:53:52Z",
+    "assets_updated_at": "2026-08-17T02:39:01Z"
+  },
+  "training_source_commit": "unverified",
+  "training_source_commit_reason": "The release target predates the committed FIA-only and FDR+FIA configs. The later config commit is consistent with the run names but cannot be proven to be the exact training source state.",
+  "dataset": {
+    "name": "VisDrone",
+    "train_images": 6471,
+    "val_images": 548,
+    "test_images": 1610,
+    "test_instances": 75102,
+    "classes": 10
+  },
+  "release_assets": {
+    "fia_zip": {
+      "name": "fia-seed0-20260815-211156.zip",
+      "size": 133758801,
+      "sha256": "17eb96a577f20a99370f87f6a33374a7f402a9989a4d692f8961dce0fd9aab0a",
+      "updated_at": "2026-08-17T02:29:38Z"
+    },
+    "fdr_fia_zip": {
+      "name": "fdr-fia-seed0-20260815-211203.zip",
+      "size": 135876425,
+      "sha256": "30fc5c418a4f24b8e8c6ee3a44ddc88d94ba236225f178e689cfe81540afc900",
+      "updated_at": "2026-08-17T02:29:56Z"
+    },
+    "fia_log": {
+      "name": "log1.log",
+      "size": 12649251,
+      "sha256": "e97cc9908e1dc9e7045cc156b8a6a5277e720bfc720308844c366b935c5239fe"
+    },
+    "fdr_fia_log": {
+      "name": "log2.log",
+      "size": 12648102,
+      "sha256": "5adc7d357b0514652f98390a267441e36f8e961314d8c75f6fa9395448b7d5fd"
+    }
+  },
+  "runs": {
+    "fia_only": {
+      "method": "RT-DETR-L+FIA (release topology)",
+      "run_id": "fia-seed0-20260815-211156",
+      "graph": {
+        "declared_nc": 10,
+        "fia_output_feeds_decoder_p3": true,
+        "fia_output_feeds_rebuilt_p4_p5": true,
+        "canonical_p3_only_compatible": false,
+        "parameters_display": 32305766,
+        "gflops_display": 108.8
+      },
+      "training": {
+        "epochs": 100,
+        "seed": 0,
+        "deterministic": true,
+        "pretrained": false,
+        "optimizer": "MuSGD",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 4,
+        "device": "0",
+        "amp": true,
+        "completed": true,
+        "duration_hours_display": 14.145
+      },
+      "archive_entry_sha256": {
+        "args_yaml": "33557c55f070001977f558e219712f72377e0fc979e8848db1d66febcffe56b6",
+        "results_csv": "7552eced6e132afbcc8fcb3da06d27b2999fb3089988e2aa13870bfbc9b7f34c",
+        "optimizer_evidence_jsonl": "dc26de4945cddb1b6edc22a48462b06c35c4f349e37a816a0a740edc8fa37138",
+        "best_checkpoint": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
+        "last_checkpoint": "aaf1fc36cb4378f180284c609802c73967754fe348d21954cc6ff6047601030a"
+      },
+      "train_val_best": {
+        "epoch": 88,
+        "evidence_level": "training_log_exact",
+        "independent_evaluation": false,
+        "metrics": {
+          "precision": 0.48004,
+          "recall": 0.41463,
+          "map50": 0.38605,
+          "map75": null,
+          "map": 0.21671
+        }
+      },
+      "train_val_final": {
+        "epoch": 100,
+        "evidence_level": "training_log_exact",
+        "metrics": {
+          "precision": 0.39857,
+          "recall": 0.29966,
+          "map50": 0.2585,
+          "map75": null,
+          "map": 0.12375
+        }
+      },
+      "test_screenshot": {
+        "evidence_level": "screenshot_rounded",
+        "checkpoint_kind": "best.pt",
+        "local_artifact": "paper_material/assets/fia_only_test_release.png",
+        "sha256": "39e64e657336dda20d2de4c79cafd248f2d598748bf72c45654adf81b613193b",
+        "metrics_display": {
+          "precision": 0.424,
+          "recall": 0.37,
+          "map50": 0.325,
+          "map75": null,
+          "map": 0.177
+        },
+        "class_details_display": [
+          {"name": "pedestrian", "precision": 0.467, "recall": 0.284, "map50": 0.265, "map": 0.0963},
+          {"name": "people", "precision": 0.445, "recall": 0.187, "map50": 0.176, "map": 0.0587},
+          {"name": "bicycle", "precision": 0.266, "recall": 0.116, "map50": 0.101, "map": 0.0368},
+          {"name": "car", "precision": 0.694, "recall": 0.759, "map50": 0.742, "map": 0.451},
+          {"name": "van", "precision": 0.325, "recall": 0.513, "map50": 0.386, "map": 0.246},
+          {"name": "truck", "precision": 0.406, "recall": 0.442, "map50": 0.377, "map": 0.231},
+          {"name": "tricycle", "precision": 0.252, "recall": 0.266, "map50": 0.177, "map": 0.0886},
+          {"name": "awning-tricycle", "precision": 0.357, "recall": 0.211, "map50": 0.186, "map": 0.095},
+          {"name": "bus", "precision": 0.603, "recall": 0.555, "map50": 0.546, "map": 0.358},
+          {"name": "motor", "precision": 0.425, "recall": 0.363, "map50": 0.295, "map": 0.11}
+        ]
+      }
+    },
+    "fdr_fia": {
+      "method": "RT-DETR-L+FDR+FIA (release topology)",
+      "run_id": "fdr-fia-seed0-20260815-211203",
+      "graph": {
+        "declared_nc": 10,
+        "fia_output_feeds_decoder_p3": true,
+        "fia_output_feeds_rebuilt_p4_p5": true,
+        "canonical_p3_only_compatible": false,
+        "parameters_display": 32635754,
+        "gflops_display": 109.0
+      },
+      "training": {
+        "epochs": 100,
+        "seed": 0,
+        "deterministic": true,
+        "pretrained": false,
+        "optimizer": "MuSGD",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 4,
+        "device": "1",
+        "amp": true,
+        "completed": true,
+        "duration_hours_display": 15.493
+      },
+      "archive_entry_sha256": {
+        "args_yaml": "68b228634e6c3e2956a922d34f591170f00b168964c513e98bc4e8a4859f9568",
+        "results_csv": "5b4b55ec0476d8690d9851fac3105b6cd7ed3265a2cdb705ee661c999319f8a2",
+        "optimizer_evidence_jsonl": "f5e31f066b9ec307e420b3424789ea1adb04f4b358fc4df1b7e3d33c78605652",
+        "best_checkpoint": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
+        "last_checkpoint": "370fd672057c95add90b370a3d6d44bca48104e75c40feb2fef62ea1eed5e07e"
+      },
+      "train_val_best": {
+        "epoch": 97,
+        "evidence_level": "training_log_exact",
+        "independent_evaluation": false,
+        "metrics": {
+          "precision": 0.5775,
+          "recall": 0.49042,
+          "map50": 0.48591,
+          "map75": null,
+          "map": 0.29408
+        }
+      },
+      "train_val_final": {
+        "epoch": 100,
+        "evidence_level": "training_log_exact",
+        "metrics": {
+          "precision": 0.57435,
+          "recall": 0.49151,
+          "map50": 0.48582,
+          "map75": null,
+          "map": 0.29335
+        }
+      },
+      "test_screenshot": {
+        "evidence_level": "screenshot_rounded",
+        "checkpoint_kind": "best.pt",
+        "local_artifact": "paper_material/assets/fdr_fia_test_release.png",
+        "sha256": "30dd7c12e80962645a2acc4cc7f7b836890a7751f73534c85c284767b27dfb8f",
+        "metrics_display": {
+          "precision": 0.519,
+          "recall": 0.431,
+          "map50": 0.407,
+          "map75": null,
+          "map": 0.235
+        },
+        "class_details_display": [
+          {"name": "pedestrian", "precision": 0.589, "recall": 0.38, "map50": 0.391, "map": 0.159},
+          {"name": "people", "precision": 0.596, "recall": 0.276, "map50": 0.287, "map": 0.101},
+          {"name": "bicycle", "precision": 0.372, "recall": 0.209, "map50": 0.186, "map": 0.0815},
+          {"name": "car", "precision": 0.761, "recall": 0.786, "map50": 0.794, "map": 0.512},
+          {"name": "van", "precision": 0.412, "recall": 0.525, "map50": 0.437, "map": 0.302},
+          {"name": "truck", "precision": 0.497, "recall": 0.489, "map50": 0.453, "map": 0.295},
+          {"name": "tricycle", "precision": 0.317, "recall": 0.36, "map50": 0.274, "map": 0.152},
+          {"name": "awning-tricycle", "precision": 0.434, "recall": 0.239, "map50": 0.22, "map": 0.131},
+          {"name": "bus", "precision": 0.673, "recall": 0.579, "map50": 0.607, "map": 0.431},
+          {"name": "motor", "precision": 0.538, "recall": 0.473, "map50": 0.425, "map": 0.182}
+        ]
+      }
+    }
+  },
+  "arithmetic_observations": {
+    "fia_only_train_val_best_minus_strict_baseline_map_pp": -0.24,
+    "fia_only_test_display_minus_exact_baseline_map_pp": -0.04164316787175,
+    "fdr_fia_train_val_best_minus_strict_fdr_map_pp": 0.4420250902359,
+    "fdr_fia_test_display_minus_exact_fdr_map_pp": 0.69989979531616,
+    "strict_or_causal": false
+  },
+  "claim_boundary": {
+    "formal_main_table_allowed": false,
+    "allowed": "Report exact training-log val rows and rounded test observations with their release-topology label and limitations.",
+    "forbidden": "Treat the release runs as canonical P3-only FIA ablations, strict paired gains, exact test metrics, or AP75 evidence."
+  }
+}

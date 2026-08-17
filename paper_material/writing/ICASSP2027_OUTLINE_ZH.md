@@ -39,7 +39,7 @@
 
 - 4.1 Dataset and Protocol：VisDrone 6,471/548、10 类、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
 - 4.2 Main Results：先呈现四行绝对值，再只对 strict 行报告配对差值；明确另外两种证据等级。
-- 4.3 Ablation Studies：FDR 单因素已有独立训练；FIA 单独与 FDR+FIA 的配置、训练和 test 入口已补齐，下一步按冻结协议完成 Formal100 与 exact 复评。BPDD 单独不成立。
+- 4.3 Ablation Studies：FDR 单因素已有独立训练；FIA-only 与 FDR+FIA 的历史 Release 训练包和结果已登记，可作为补充观察，但因 topology、源码身份与 evaluator 合同不一致不能进入正式消融表。下一步按当前 P3-only 配置完成 Formal100 与 exact 独立复评。BPDD 单独不成立。
 - 4.4 Analysis：BPDD 活跃边比例与教师改善；三模块 exact val 的四尺度、十类别、参数量和单臂效率。效率不与缺少同协议结果的其他模型作差。
 
 ### 5. Conclusion
@@ -53,6 +53,7 @@
 - FIA 只插入 P3，保持张量形状，`alpha` 零初始化，C=256 时约 301,476 个参数，推理期有效。
 - 三模块 Formal100 的 exact val mAP50–95 为 `0.2899528643`、AP75 为 `0.2951036299`；该行是 `exact_single_arm`，不是严格 FIA 增益证据。
 - BPDD 与完整模型可报告现有绝对值，但必须同时显示各自证据等级和比较边界。
+- FIA-only 与 FDR+FIA 的 Release 结果可带 `release topology` 标签作为阶段性观察：val 分别为训练日志 best mAP50–95 `0.21671` 与 `0.29408`，test 分别为截图舍入 `≈0.177` 与 `≈0.235`；不得报告为正式增益。
 
 ## 禁止主张
 
@@ -60,4 +61,5 @@
 - “BPDD 可脱离 FDR 单独使用”或“BPDD 具有推理期零总开销”。
 - “FIA 零参数、零计算、推理期移除”或“FIA 单独增益已证实”。
 - 把 `cross_authority_exact` 或 `exact_single_arm` 写成严格配对增益，或把 `screenshot_rounded` 写成精确值。
+- 把历史 Release graph 当成当前 P3-only topology，或把 Release target commit 当成已经验证的 training source commit；用训练日志 val 替代冻结 evaluator 独立复评，或补写缺失的 AP75。
 - 混用 val/test、不同 checkpoint、不同 evaluator 或不同源码 authority；宣称多种子均值、显著性、GFLOPs、FPS、延迟、显存及分尺度收益而没有对应证据。

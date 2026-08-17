@@ -2,18 +2,27 @@
 
 ## 组合覆盖状态
 
-三模块共有 8 个开关组合，但 BPDD 依赖 FDR 的逐边分布，因此两种不含 FDR 的 BPDD 组合在结构上无效。FIA 单独和 FDR+FIA 已在源码提交 `1d083140` 补齐训练配置、训练入口和 test 评估入口，但尚无登记的 Formal100 checkpoint 或 exact 指标。
+三模块共有 8 个开关组合，但 BPDD 依赖 FDR 的逐边分布，因此两种不含 FDR 的 BPDD 组合在结构上无效。FIA-only 与 FDR+FIA 的 GitHub Release 训练包、日志、checkpoint 和 test 截图现已登记；不过它们采用历史 release topology，尚不能替代当前规范化 P3-only 配置下的 Formal100 独立复评结果。
 
 | FDR | BPDD | FIA | 模型 | val | test | 状态 |
 |---:|---:|---:|---|---|---|---|
 | 0 | 0 | 0 | RT-DETR-L | exact | exact | 已完成 |
 | 1 | 0 | 0 | RT-DETR-L+FDR | exact | exact | 已完成 |
 | 0 | 1 | 0 | RT-DETR-L+BPDD | — | — | 结构无效：BPDD 必须依赖 FDR |
-| 0 | 0 | 1 | RT-DETR-L+FIA | — | — | 实验脚手架已就绪；结果未登记 |
+| 0 | 0 | 1 | RT-DETR-L+FIA | 训练日志 exact | 截图舍入 | Release 证据已登记；非严格可比 |
 | 1 | 1 | 0 | RT-DETR-L+FDR+BPDD | exact | exact | 已完成 |
-| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | — | — | 实验脚手架已就绪；结果未登记 |
+| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | 训练日志 exact | 截图舍入 | Release 证据已登记；非严格可比 |
 | 0 | 1 | 1 | RT-DETR-L+BPDD+FIA | — | — | 结构无效：BPDD 必须依赖 FDR |
 | 1 | 1 | 1 | RT-DETR-L+FDR+BPDD+FIA | exact | 待 exact 补评 | val 已完成；test 服务器暂不可达 |
+
+## Release 消融补充观察（非正式主表）
+
+| 方法 | val 来源 | P | R | AP50 | AP75 | mAP50–95 | test P | test R | test AP50 | test AP75 | test mAP50–95 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| FIA-only（release topology） | best 训练日志，epoch 88 | 0.48004 | 0.41463 | 0.38605 | 不可用 | 0.21671 | ≈0.424 | ≈0.370 | ≈0.325 | 不可用 | ≈0.177 |
+| FDR+FIA（release topology） | best 训练日志，epoch 97 | 0.57750 | 0.49042 | 0.48591 | 不可用 | 0.29408 | ≈0.519 | ≈0.431 | ≈0.407 | 不可用 | ≈0.235 |
+
+这两行只能作为补充观察：Release target commit `7b20c610` 早于后来登记两份配置的 `1d083140`，精确 training source commit 无法验证；Release graph 还把 FIA 输出同时用于 decoder P3 与 P4/P5 重建，不等同于本仓库规范化后的 P3-only topology。val 是训练过程日志的 best epoch，并非冻结 evaluator 的独立复评；test 仅有截图舍入值，且两种 split 都缺少 AP75。因此不得把它们与现有 strict 行计算正式增益。完整审计见 [FIA-only 与 FDR+FIA Release 结果](FIA_ABLATION_RELEASE_RESULTS_ZH.md)。
 
 ## val 总体结果
 
@@ -91,5 +100,6 @@ FDR 在 val/test 的全部 10 类均为正增益，是当前最稳定主效应�
 - 全类别精确值：[`split_class_results.csv`](split_class_results.csv)
 - 组合状态与精确总体 JSON：[`split_gain_comparison.json`](split_gain_comparison.json)
 - FIA 消融入口与协议差异：[`../experiments/FIA_ABLATION_SCAFFOLD_ZH.md`](../experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
+- FIA-only/FDR+FIA Release 结果审计：[`FIA_ABLATION_RELEASE_RESULTS_ZH.md`](FIA_ABLATION_RELEASE_RESULTS_ZH.md)
 
-论文主表可采用现有 exact 绝对值；只有 strict 配对行可以作因果涨点表述。三模块 test exact 补齐前，不能把截图约 `0.234` 当成最终结果。
+论文主表可采用现有可审计 exact 绝对值；只有 strict 配对行可以作因果涨点表述。FIA-only、FDR+FIA 与三模块的截图结果都只能使用 `≈` 作补充观察，不能当成最终 exact 结果。
