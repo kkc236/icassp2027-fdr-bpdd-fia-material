@@ -36,6 +36,7 @@ def _load_module():
 def _args(tmp_path: Path, **changes):
     values = {
         "protocol_manifest": tmp_path / "protocol.json",
+        "preflight_report": tmp_path / "preflight.json",
         "initial_state": tmp_path / "initial-state.pt",
         "dataset_root": tmp_path / "VisDrone",
         "output_root": tmp_path / "runs",
@@ -139,6 +140,7 @@ def test_cli_is_formal100_seed0_single_arm_only() -> None:
     assert result.returncode == 0, result.stderr
     for allowed in (
         "--protocol-manifest",
+        "--preflight-report",
         "--initial-state",
         "--dataset-root",
         "--output-root",
@@ -162,6 +164,22 @@ def test_cli_is_formal100_seed0_single_arm_only() -> None:
         "--reliability-floor",
     ):
         assert forbidden not in result.stdout
+
+
+def test_freeze_preflight_file_binds_validated_payload_to_exact_bytes(tmp_path: Path) -> None:
+    module = _load_module()
+    report = {"format_version": 1, "status": "passed"}
+    path = tmp_path / "preflight.json"
+    expected = module.canonical_json_bytes(report) + b"\n"
+    path.write_bytes(expected)
+
+    assert module._freeze_preflight_file(path, report) == hashlib.sha256(
+        expected
+    ).hexdigest().upper()
+
+    path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    with pytest.raises(ValueError, match="changed during validation"):
+        module._freeze_preflight_file(path, report)
 
 
 def test_settings_exactly_reuse_fdr_authority_and_acr_model(tmp_path: Path) -> None:
@@ -338,6 +356,7 @@ def test_publication_queue_binds_exact_epoch_checkpoint_and_artifacts(tmp_path: 
 def test_runtime_manifest_marks_preliminary_cross_run_and_is_create_only(tmp_path: Path) -> None:
     module = _load_module()
     args = _args(tmp_path)
+    args.preflight_report.write_text("preflight-authority", encoding="utf-8")
     trainer = SimpleNamespace(save_dir=tmp_path / "run")
     manifest = _manifest(module, args.initial_state)
     identity = manifest["run_identities"]["fdr_acr_bpdd_formal"]
@@ -348,6 +367,7 @@ def test_runtime_manifest_marks_preliminary_cross_run_and_is_create_only(tmp_pat
         manifest=manifest,
         run_identity=identity,
         data_yaml=data_yaml,
+        preflight_file_sha256=module._file_sha256(args.preflight_report),
     )
     runtime_path = trainer.save_dir / "acr-bpdd-run.json"
     payload = json.loads(runtime_path.read_text(encoding="utf-8"))
@@ -361,6 +381,7 @@ def test_runtime_manifest_marks_preliminary_cross_run_and_is_create_only(tmp_pat
         manifest=manifest,
         run_identity=identity,
         data_yaml=data_yaml,
+        preflight_file_sha256=module._file_sha256(args.preflight_report),
     )
     payload["comparison"]["strict_paired"] = True
     runtime_path.write_text(json.dumps(payload), encoding="utf-8")
@@ -371,12 +392,14 @@ def test_runtime_manifest_marks_preliminary_cross_run_and_is_create_only(tmp_pat
             manifest=manifest,
             run_identity=identity,
             data_yaml=data_yaml,
+            preflight_file_sha256=module._file_sha256(args.preflight_report),
         )
 
 
 def test_dry_run_builds_no_model_and_writes_no_run_directory(tmp_path: Path, monkeypatch) -> None:
     module = _load_module()
     args = _args(tmp_path, dry_run=True)
+    args.preflight_report.write_text("preflight-authority", encoding="utf-8")
     manifest = _manifest(module, args.initial_state)
     monkeypatch.setattr(module, "load_authority", lambda _path: manifest)
     monkeypatch.setattr(module, "validate_source_authority", lambda _manifest: _source())
@@ -385,6 +408,17 @@ def test_dry_run_builds_no_model_and_writes_no_run_directory(tmp_path: Path, mon
         "validate_initial_state_file",
         lambda _path, _manifest: {"status": "valid"},
     )
+    monkeypatch.setattr(
+        module,
+        "validate_cuda_preflight_report",
+        lambda **_kwargs: {"status": "passed"},
+    )
+    monkeypatch.setattr(
+        module,
+        "validate_launch_environment",
+        lambda _report: {"gpu": "NVIDIA GeForce RTX 4090"},
+    )
+    monkeypatch.setattr(module, "_freeze_preflight_file", lambda *_args: "B" * 64)
     monkeypatch.setattr(
         module,
         "create_trainer",
@@ -400,4 +434,74 @@ def test_dry_run_builds_no_model_and_writes_no_run_directory(tmp_path: Path, mon
     assert summary["status"] == "dry-run-passed"
     assert summary["variant"] == "fdr_acr_bpdd"
     assert summary["stage"] == "formal"
+    assert summary["preflight"]["status"] == "passed"
     assert not args.output_root.exists()
+
+
+def test_formal_runner_requires_preflight_report_before_dry_run_or_model(
+    tmp_path: Path, monkeypatch
+) -> None:
+    module = _load_module()
+    args = _args(tmp_path, dry_run=True)
+    manifest = _manifest(module, args.initial_state)
+    monkeypatch.setattr(module, "load_authority", lambda _path: manifest)
+    monkeypatch.setattr(module, "validate_source_authority", lambda _manifest: _source())
+    monkeypatch.setattr(
+        module,
+        "validate_initial_state_file",
+        lambda _path, _manifest: {"status": "valid"},
+    )
+    monkeypatch.setattr(
+        module,
+        "create_trainer",
+        lambda *_args, **_kwargs: pytest.fail("missing preflight constructed a model"),
+    )
+
+    with pytest.raises(FileNotFoundError, match="preflight"):
+        module.execute(args)
+
+
+def test_formal_runner_passes_all_authorities_to_preflight_validator(
+    tmp_path: Path, monkeypatch
+) -> None:
+    module = _load_module()
+    args = _args(tmp_path, dry_run=True)
+    args.preflight_report.write_text("{}", encoding="utf-8")
+    manifest = _manifest(module, args.initial_state)
+    source = _source()
+    calls: list[dict] = []
+    monkeypatch.setattr(module, "load_authority", lambda _path: manifest)
+    monkeypatch.setattr(module, "validate_source_authority", lambda _manifest: source)
+    monkeypatch.setattr(
+        module,
+        "validate_initial_state_file",
+        lambda _path, _manifest: {"status": "valid"},
+    )
+
+    def validate(**kwargs):
+        calls.append(kwargs)
+        return {"status": "passed", "report_sha256": "A" * 64}
+
+    monkeypatch.setattr(module, "validate_cuda_preflight_report", validate)
+    monkeypatch.setattr(
+        module,
+        "validate_launch_environment",
+        lambda _report: {"gpu": "NVIDIA GeForce RTX 4090"},
+    )
+    monkeypatch.setattr(module, "_freeze_preflight_file", lambda *_args: "B" * 64)
+    summary = module.execute(args)
+
+    assert calls == [
+        {
+            "path": args.preflight_report.resolve(),
+            "manifest": manifest,
+            "source": source,
+            "initial_state": args.initial_state.resolve(),
+            "dataset_root": args.dataset_root.resolve(),
+        }
+    ]
+    assert summary["preflight"] == {
+        "status": "passed",
+        "report_sha256": "A" * 64,
+    }
+    assert summary["launch_environment"] == {"gpu": "NVIDIA GeForce RTX 4090"}

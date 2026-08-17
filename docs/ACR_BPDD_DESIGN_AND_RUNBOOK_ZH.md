@@ -93,13 +93,44 @@ ACR-BPDD 改为：
 - eval 推理输出逐元素一致；
 - 临时 hook 在每次前向后清空；
 - deepcopy、checkpoint pickle、resume authority 和逐 epoch 不可变证据契约；
-- 定向 ACR/BPDD/FDR 回归测试 80/80 通过；训练入口扩展回归 104/104 通过。
+- Formal100 入口强制绑定不可变 CUDA preflight 报告，dry-run 也不能绕过；
+- preflight 报告具有自哈希并绑定源码、协议、FDR 初始状态、数据集路径及运行环境；
+- 当前 ACR/BPDD/FDR 定向回归为 `109 passed, 1 skipped`；跳过项是 Windows 当前账户无创建 symlink 权限。真实 RTX4090 preflight 是独立强制命令，尚未在本会话执行，不能由本地 pytest 结果替代。
 
 完整历史仓库测试为 1862 passed、7 skipped、25 failed；25 项均来自当前基线分支缺失旧 IBER/ITBER 资产、旧 authority 哈希漂移或缺失历史 evidence，不涉及 ACR 文件和定向测试。不能将其表述为全仓库全绿。
 
 ## 6. 运行和判定建议
 
-部署前仍需在目标 4090 上执行一次真实 `batch=8 + MuSGD + AMP128` CUDA preflight，验证 forward/backward、有限梯度、checkpoint reload、replay 误差和峰值显存。当前会话不占用服务器。
+部署前必须先提交最终源码并据其生成不可变 protocol manifest，然后在目标 4090 上执行真实 `batch=8 + MuSGD + AMP128` CUDA preflight。它会检查真实 VisDrone batch、BPDD 正损失、有效边、共享梯度严格为 `None`、分布头非零有限梯度、replay 误差、DN/normal Query，并直接复用 `FDRACRBPDDTrainer.build_optimizer()` 与 `optimizer_step()` 检查正式 MuSGD 分组裁剪和参数更新；此外还检查预检 step-state 中模型/优化器/scaler 精确回载、第二步继续更新和 eval 输出一致性。Formal100 入口必须显式接收通过的报告，并在启动瞬间重新核验当前 GPU/驱动/Python/PyTorch/Torchvision/CUDA/Ultralytics 环境，不能跳过。
+
+这里的 step-state roundtrip 不冒充 Ultralytics `last.pt` 的完整中断恢复实测；`last.pt` 的 run identity、publication ledger 和 resume 路径由训练入口契约测试保护，若 Formal100 实际发生中断，仍须先对目标 `last.pt` 做独立恢复审计再续跑。
+
+推荐执行顺序如下；尖括号内容由部署会话替换为绝对路径或最终提交标识：
+
+```bash
+python scripts/prepare_acr_bpdd_protocol.py \
+  --source-commit <FINAL_COMMIT> \
+  --source-tree-sha256 <FINAL_TREE_SHA256> \
+  --initial-state <INITIAL_STATE_PT> \
+  --output <PROTOCOL_JSON>
+
+python scripts/run_acr_bpdd_cuda_preflight.py \
+  --protocol-manifest <PROTOCOL_JSON> \
+  --initial-state <INITIAL_STATE_PT> \
+  --dataset-root <VISDRONE_ROOT> \
+  --output <PREFLIGHT_JSON>
+
+python scripts/train_rtdetr_acr_bpdd.py \
+  --protocol-manifest <PROTOCOL_JSON> \
+  --preflight-report <PREFLIGHT_JSON> \
+  --initial-state <INITIAL_STATE_PT> \
+  --dataset-root <VISDRONE_ROOT> \
+  --output-root <FORMAL_RUN_ROOT> \
+  --publication-queue <PUBLICATION_QUEUE_JSONL> \
+  --dry-run
+```
+
+只有 dry-run 返回 `dry-run-passed` 后，才移除最后一行的 `--dry-run` 启动正式训练。当前会话不占用服务器。
 
 Formal100 结束后优先比较：
 
@@ -132,4 +163,3 @@ Formal100 结束后优先比较：
 - replay 不等价或恢复失败：判定为工程失败，不进入训练，不调整科学阈值。
 
 禁止的首轮操作包括：直接增大 BPDD weight、粗暴 tiny/small 加权、引入 FIA/GLGM、修改 Query/匹配、打开 DN-BPDD 或同时加入多个新变量。
-

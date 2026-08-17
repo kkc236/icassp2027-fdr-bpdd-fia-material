@@ -22,6 +22,10 @@ sys.path.insert(0, str(ROOT))
 
 from scripts import train_rtdetr_bpdd as bpdd_cli  # noqa: E402
 from scripts import train_rtdetr_fdr as fdr_cli  # noqa: E402
+from scripts.run_acr_bpdd_cuda_preflight import (  # noqa: E402
+    validate_launch_environment,
+    validate_preflight_report as validate_cuda_preflight_report,
+)
 from scripts.sync_experiment_checkpoint import write_json_atomic  # noqa: E402
 from src.acr_bpdd_protocol import (  # noqa: E402
     ACR_BPDD_PROTOCOL,
@@ -57,6 +61,7 @@ EVIDENCE_FIELDS = (
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--protocol-manifest", type=Path, required=True)
+    parser.add_argument("--preflight-report", type=Path, required=True)
     parser.add_argument("--initial-state", type=Path, required=True)
     parser.add_argument("--dataset-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
@@ -73,6 +78,19 @@ def _file_sha256(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest().upper()
+
+
+def _freeze_preflight_file(path: Path, report: Mapping[str, Any]) -> str:
+    """Bind the validated payload and byte-level authority in one read."""
+
+    unresolved = Path(path)
+    if unresolved.is_symlink():
+        raise ValueError("ACR-BPDD preflight report must not be a symlink")
+    expected = canonical_json_bytes(report) + b"\n"
+    actual = unresolved.resolve().read_bytes()
+    if actual != expected:
+        raise ValueError("ACR-BPDD preflight report changed during validation")
+    return hashlib.sha256(actual).hexdigest().upper()
 
 
 def _atomic_text(path: Path, content: str) -> None:
@@ -401,6 +419,7 @@ def _runtime_manifest(
     manifest: Mapping[str, Any],
     run_identity: Mapping[str, Any],
     data_yaml: Path,
+    preflight_file_sha256: str,
 ) -> None:
     destination = Path(trainer.save_dir).resolve() / "acr-bpdd-run.json"
     queue = (
@@ -408,6 +427,11 @@ def _runtime_manifest(
         if args.publication_queue is not None
         else destination.parent / "publication-queue.jsonl"
     )
+    preflight_path = Path(args.preflight_report).resolve()
+    if Path(args.preflight_report).is_symlink() or _file_sha256(
+        preflight_path
+    ) != preflight_file_sha256:
+        raise ValueError("ACR-BPDD preflight report changed after validation")
     payload = {
         "format_version": 1,
         "protocol_sha256": ACR_BPDD_PROTOCOL_SHA256,
@@ -417,6 +441,10 @@ def _runtime_manifest(
         "initial_state": {
             "path": str(Path(args.initial_state).resolve()),
             "sha256": FDR_INITIAL_STATE_SHA256,
+        },
+        "preflight": {
+            "path": str(preflight_path),
+            "sha256": preflight_file_sha256,
         },
         "data": str(Path(data_yaml).resolve()),
         "publication_queue": str(queue.resolve()),
@@ -431,6 +459,7 @@ def _runtime_manifest(
 
 def execute(args: argparse.Namespace) -> dict[str, Any]:
     args.protocol_manifest = Path(args.protocol_manifest).resolve()
+    args.preflight_report = Path(args.preflight_report).resolve()
     args.initial_state = Path(args.initial_state).resolve()
     args.dataset_root = Path(args.dataset_root).resolve()
     args.output_root = Path(args.output_root).resolve()
@@ -440,8 +469,19 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
         args.resume = Path(args.resume).resolve()
 
     manifest = load_authority(args.protocol_manifest)
-    validate_source_authority(manifest)
+    source = validate_source_authority(manifest)
     state = validate_initial_state_file(args.initial_state, manifest)
+    preflight = validate_cuda_preflight_report(
+        path=args.preflight_report,
+        manifest=manifest,
+        source=source,
+        initial_state=args.initial_state,
+        dataset_root=args.dataset_root,
+    )
+    preflight_file_sha256 = _freeze_preflight_file(
+        args.preflight_report, preflight
+    )
+    launch_environment = validate_launch_environment(preflight)
     identity = manifest["run_identities"]["fdr_acr_bpdd_formal"]
     if args.resume is not None:
         validate_resume_checkpoint(args.resume, identity)
@@ -454,6 +494,9 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
         "stage": STAGE,
         "run_identity": identity,
         "initial_state": state,
+        "preflight": preflight,
+        "preflight_file_sha256": preflight_file_sha256,
+        "launch_environment": launch_environment,
         "settings": settings,
         "comparison": dict(COMPARISON_AUTHORITY),
         "publication_queue": (
@@ -485,6 +528,7 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
             manifest=manifest,
             run_identity=identity,
             data_yaml=data_yaml,
+            preflight_file_sha256=preflight_file_sha256,
         ),
     )
     trainer.add_callback("on_train_epoch_start", reset_peak_memory)
