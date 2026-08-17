@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import sys
 from copy import deepcopy
@@ -384,6 +385,15 @@ def test_cuda_gate_does_not_revalidate_optimizer_evidence_after_first_step(
 
     assert module._optimizer_evidence_path(context).is_file()
     assert module._preflight_checkpoint_path(context).is_file()
+
+
+def test_cuda_gate_reload_eval_keeps_cached_tensors_trainable() -> None:
+    module = _load_module()
+    source = inspect.getsource(module.run_cuda_gate)
+    reload_eval = source[source.index("model.eval()") : source.index("restored.train()")]
+
+    assert reload_eval.count("with torch.no_grad(), torch.autocast(") == 2
+    assert "torch.inference_mode()" not in reload_eval
 
 
 def test_execute_rejects_artifact_path_collision_before_cuda(tmp_path: Path) -> None:

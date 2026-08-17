@@ -411,7 +411,7 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
     _save_checkpoint_create_only(checkpoint, payload)
 
     model.eval()
-    with torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16):
+    with torch.no_grad(), torch.autocast("cuda", dtype=torch.float16):
         before_reload = model.predict(batch["img"])
     restored = _load_model(context, device)
     artifact = torch.load(checkpoint, map_location=device, weights_only=False)
@@ -421,7 +421,7 @@ def run_cuda_gate(context: PreflightContext) -> dict[str, Any]:
         for name, value in artifact["model"].items()
     )
     restored.eval()
-    with torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16):
+    with torch.no_grad(), torch.autocast("cuda", dtype=torch.float16):
         after_reload = restored.predict(batch["img"])
     eval_error = _nested_max_abs(before_reload, after_reload)
 
