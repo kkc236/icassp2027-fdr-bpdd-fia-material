@@ -10,7 +10,7 @@
 |---|---|---|
 | FIA-only | 发布版 `best.pt`；cascading，`model[23].f=-1` | 已完成独立 exact val 与 exact test |
 | FDR+FIA | 发布版 `best.pt`；cascading，`model[23].f=-1` | 已完成独立 exact val 与 exact test |
-| FDR+BPDD+FIA | `DFR-BDPP-FIA-best.pt`；P3-only，`model[23].f=21` | best-val 与归档 test 均为正向；test 为截图舍入，独立 exact 待补 |
+| FDR+BPDD+FIA | `DFR-BDPP-FIA-best.pt`；P3-only，`model[23].f=21` | 四位小数 val/test 文本已补齐，并与 checkpoint/截图互证 |
 
 ## 现有 best 的独立 val 结果
 
@@ -39,15 +39,15 @@
 - FIA-only 与 FDR+FIA：FIA 位于层 22，层 23 继续读取 FIA 输出（`model[23].f=-1`），decoder 输入为 `[22,25,28]`，拓扑标签为 `published_cascading_standalone`。
 - FDR+BPDD+FIA：FIA 层 22 读取原始 P3（层 21），层 23 同样读取原始 P3（`model[23].f=21`），decoder 输入为 `[22,25,28]`，属于 P3-only。
 
-三模块 P3-only checkpoint 的嵌入式 best-validation 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618；相对 FDR+BPDD val 为 +0.3922 pp。旧材料仓归档的同组三模块终端面板还包含 VisDrone test（1,610 images / 75,102 instances）：P≈0.519、R≈0.436、AP50≈0.408、mAP50–95≈0.234，相对 FDR+BPDD test `0.231659` 为约 +0.234 pp。由此当前三模块在 val/test 上均为正增长。
+三模块 P3-only 的四位小数 val 文本为 P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP50–95=0.2961；相对 FDR+BPDD val 为 +0.384 pp。对应 VisDrone test（1,610 images / 75,102 instances）为 P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP50–95=0.2337，相对 FDR+BPDD test `0.231659` 为 +0.204 pp。由此当前三模块在 val/test 上均为正增长。
 
-test 证据等级为 `terminal_screenshot_rounded`，不是 exact JSON；截图没有显示 AP75 和 F1，因此两项继续留空，冻结 evaluator 的独立 exact 复评仍可作为后续增强证据，但不再把“三模块 test 完全缺失”写入材料。
+三模块证据等级为 `user_supplied_text_report_4dp`。两份原始文本均给出总体与十类 P/R/F1/AP50/AP75/mAP；旧终端截图的三位小数结果与文本吻合，作为交叉核验。文本未提供超过四位小数的原始 evaluator JSON，因此不宣称更高数值精度。
 
 ## 当前引用规则
 
 - FIA-only 与 FDR+FIA 可引用本页的独立 exact val/test 结果，但必须同时注明发布版 cascading topology。
 - FIA-only 的 val 结果应如实报告为轻微负向，不能沿用“standalone 均为正增益”的口述结论。
-- FDR+FIA 的 +0.5280 pp、三模块 val 的 +0.3922 pp 以及三模块 test 的约 +0.234 pp 都是正向算术观察，不表述为 strict paired 因果增益。
+- FDR+FIA 的 +0.5280 pp、三模块 val 的 +0.384 pp 以及三模块 test 的 +0.204 pp 都是正向算术观察，不表述为 strict paired 因果增益。
 - 三模块仍按 P3-only checkpoint 单独登记，不用 standalone cascading 结果替代。
 
-论文写作统一结果页见 [`RESULTS_ZH.md`](RESULTS_ZH.md)。机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)；独立 val 总体 CSV 见 [`fia_existing_best_val_results.csv`](fia_existing_best_val_results.csv)，独立 exact test 总体与逐类 CSV 见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。
+论文写作统一结果页见 [`RESULTS_ZH.md`](RESULTS_ZH.md)。standalone 机器可读证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)；三模块原始记录见 [`../evidence/fdr_bpdd_fia_val.txt`](../evidence/fdr_bpdd_fia_val.txt) 与 [`../evidence/fdr_bpdd_fia_test.txt`](../evidence/fdr_bpdd_fia_test.txt)，总体与逐类 CSV 见 [`fdr_bpdd_fia_text_report_class_results.csv`](fdr_bpdd_fia_text_report_class_results.csv)。

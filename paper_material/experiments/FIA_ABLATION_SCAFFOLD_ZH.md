@@ -18,11 +18,11 @@ standalone 消融不再从头训练，直接采用 GitHub Release `DFR-BDPP-FIA`
 |---|---:|---:|---|
 | FIA-only | 0.2167954534 | −0.2315 pp | 略有负增益，不作为独立性能主张 |
 | FDR+FIA | 0.2949403207 | +0.5280 pp | 与 FDR 组合呈正向兼容 |
-| FDR+BPDD+FIA | 0.29618 | +0.3922 pp | P3-only checkpoint best-val 正向观察 |
+| FDR+BPDD+FIA | 0.2961 | +0.384 pp | P3-only 四位小数 val 文本；checkpoint 0.29618 互证 |
 
-同一三模块结果的归档终端 test 面板显示 mAP50–95 `≈0.234`、AP50 `≈0.408`，相对 FDR+BPDD test mAP `0.231659` 为 `≈+0.234 pp`，同样是正增长。该 test 行为截图舍入证据，AP75/F1 未显示。
+同一三模块的四位小数 test 文本为 P=`0.5189`、R=`0.4361`、F1=`0.4634`、AP50=`0.4081`、AP75=`0.2327`、mAP50–95=`0.2337`，相对 FDR+BPDD test mAP `0.231659` 为 `+0.204 pp`，同样是正增长。原始 val/test 文本和结构化十类结果均已归档。
 
-前两行是 published cascading standalone（`model[23].f=-1`）的独立 exact val，不是 P3-only。第三行是 P3-only（`model[23].f=21`）的 checkpoint 内嵌观察。所有差值均按各自指定参照计算，除 FDR 核心严格实验外，不写成 strict paired 因果增益。
+前两行是 published cascading standalone（`model[23].f=-1`）的独立 exact val，不是 P3-only。第三行是 P3-only（`model[23].f=21`）的四位小数文本结果。所有差值均按各自指定参照计算，除 FDR 核心严格实验外，不写成 strict paired 因果增益。
 
 test 已用相同两个 `best.pt` 完成独立精确复评：FIA-only 的 AP75 / mAP50–95 为 `0.1716130742` / `0.1771764568`，FDR+FIA 为 `0.2358787301` / `0.2346453866`；逐类别 F1 与 AP75 均已进入机器 CSV。test 与 val 分开报告。
 

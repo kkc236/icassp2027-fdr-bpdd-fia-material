@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import re
 import subprocess
@@ -17,6 +18,8 @@ REQUIRED_MATERIAL_FILES = (
     "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
     "evidence/fia_results_status.json",
     "evidence/fia_existing_best_evaluation.json",
+    "evidence/fdr_bpdd_fia_val.txt",
+    "evidence/fdr_bpdd_fia_test.txt",
     "results/FIA_RESULTS_STATUS_ZH.md",
     "results/RESULTS_ZH.md",
     "results/main_results.json",
@@ -30,6 +33,7 @@ REQUIRED_MATERIAL_FILES = (
     "results/split_class_results.csv",
     "results/fia_existing_best_val_results.csv",
     "results/fia_existing_best_test_results.csv",
+    "results/fdr_bpdd_fia_text_report_class_results.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
 )
@@ -287,8 +291,8 @@ def test_main_results_are_bound_to_manifest():
     } == {
         "fia_existing_best_independent_val",
         "fdr_fia_existing_best_independent_val",
-        "fia_updated_three_module_checkpoint_best_val",
-        "fia_updated_three_module_terminal_test",
+        "fia_updated_three_module_text_val",
+        "fia_updated_three_module_text_test",
     }
     assert all(
         row["source_id"] in sources
@@ -339,7 +343,7 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
 
     assert status["format_version"] == 1
     assert status["status"] == (
-        "standalone_exact_val_test_three_module_positive_val_and_rounded_test_available"
+        "standalone_exact_val_test_three_module_four_decimal_val_test_available"
     )
     assert status["valid_fia_result_source_ids"] == [
         "fia_existing_best_independent_val",
@@ -347,6 +351,8 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
         "fia_updated_three_module_checkpoint_best_val",
         "fia_updated_three_module_terminal_val",
         "fia_updated_three_module_terminal_test",
+        "fia_updated_three_module_text_val",
+        "fia_updated_three_module_text_test",
     ]
     assert status["user_reported_updated_result_direction"] == (
         "superseded_by_direct_best_checkpoint_evaluation"
@@ -480,7 +486,7 @@ def test_main_table_matches_user_standard_a_to_e_display():
         "| B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp |",
         "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp |",
         "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 待整理 | 待整理 | 待整理 | 待整理 | 待整理 | FIA 独立增量 |",
-        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.569 | ≈0.499 | ≈0.490 | 待补 | ≈0.296 | 约 +0.37 pp |",
+        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5693 | 0.4991 | 0.4898 | 0.3042 | 0.2961 | +0.384 pp |",
     )
     for row in expected_rows:
         assert row in table
@@ -489,20 +495,21 @@ def test_main_table_matches_user_standard_a_to_e_display():
     results = _load_required_json("results/main_results.json")
     display = results["standard_ablation_display"]
     assert [row["id"] for row in display] == ["A", "B", "C", "D", "E"]
-    assert display[-1]["map_display"] == "≈0.296"
-    assert display[-1]["delta_display"] == "约 +0.37 pp"
-    assert display[-1]["source_id"] == "fia_updated_three_module_terminal_val"
+    assert display[-1]["map_display"] == "0.2961"
+    assert display[-1]["delta_display"] == "+0.384 pp"
+    assert display[-1]["source_id"] == "fia_updated_three_module_text_val"
 
     manifest = _load_required_json("evidence/source_manifest.json")
     standard_source = manifest["sources"][display[-1]["source_id"]]
-    assert standard_source["rounded_val_metrics"] == {
-        "precision": 0.569,
-        "recall": 0.499,
-        "map50": 0.490,
-        "map75": None,
-        "map": 0.296,
+    assert standard_source["metrics"] == {
+        "precision": 0.5693,
+        "recall": 0.4991,
+        "f1": 0.5285,
+        "map50": 0.4898,
+        "map75": 0.3042,
+        "map": 0.2961,
     }
-    assert standard_source["evidence_level"] == "terminal_screenshot_rounded"
+    assert standard_source["evidence_level"] == "user_supplied_text_report_4dp"
 
 
 def test_split_gain_comparison_covers_every_module_combination_without_fabrication():
@@ -520,7 +527,7 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert combinations[(False, False, True)]["status"] == "existing_best_evaluated"
     assert combinations[(True, False, True)]["status"] == "existing_best_evaluated"
     assert combinations[(True, True, True)]["status"] == (
-        "updated_positive_val_and_rounded_test_available"
+        "updated_four_decimal_val_test_available"
     )
 
     rows = {
@@ -575,6 +582,9 @@ def test_readme_links_split_comparison_outputs():
         "evidence/fia_existing_best_evaluation.json",
         "results/fia_existing_best_val_results.csv",
         "results/fia_existing_best_test_results.csv",
+        "evidence/fdr_bpdd_fia_val.txt",
+        "evidence/fdr_bpdd_fia_test.txt",
+        "results/fdr_bpdd_fia_text_report_class_results.csv",
     ):
         assert relative_path in readme
 
@@ -614,66 +624,93 @@ def test_consolidated_results_page_contains_complete_a_to_e_val_and_test_tables(
         "| B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp vs A |",
         "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp vs B |",
         "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.57752 | 0.49089 | 0.48631 | 0.29972 | 0.29494 | +0.528 pp vs B |",
-        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.569 | ≈0.499 | ≈0.490 | 待补 | ≈0.296 | 约 +0.37 pp vs C |",
+        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5693 | 0.4991 | 0.4898 | 0.3042 | 0.2961 | +0.384 pp vs C |",
     )
     expected_test_rows = (
         "| A | RT-DETR-L Baseline | — | — | — | 0.41798 | 0.37301 | 0.32221 | 0.17550 | 0.17742 | — |",
         "| B | RT-DETR-L + FDR | ✓ | — | — | 0.50340 | 0.43168 | 0.39834 | 0.22890 | 0.22800 | +5.058 pp vs A |",
         "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.52267 | 0.42614 | 0.40369 | 0.23265 | 0.23166 | +0.366 pp vs B |",
         "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.51897 | 0.43166 | 0.40744 | 0.23588 | 0.23465 | +0.664 pp vs B |",
-        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.519 | ≈0.436 | ≈0.408 | 待补 | ≈0.234 | ≈+0.234 pp vs C |",
+        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5189 | 0.4361 | 0.4081 | 0.2327 | 0.2337 | +0.204 pp vs C |",
     )
 
     for expected_row in (*expected_val_rows, *expected_test_rows):
         assert expected_row in page
 
 
-def test_three_module_positive_terminal_test_observation_is_registered():
+def test_three_module_text_reports_are_canonical_and_complete():
     status = _load_required_json("evidence/fia_results_status.json")
     manifest = _load_required_json("evidence/source_manifest.json")
     comparison = _load_required_json("results/split_gain_comparison.json")
 
-    source_id = "fia_updated_three_module_terminal_test"
-    assert source_id in status["valid_fia_result_source_ids"]
-    observation = status["updated_three_module_test_observation"]
-    assert observation["source_id"] == source_id
-    assert observation["metrics"] == {
-        "precision": 0.519,
-        "recall": 0.436,
-        "f1": None,
-        "map50": 0.408,
-        "map75": None,
-        "map": 0.234,
+    expected = {
+        "val": {
+            "source_id": "fia_updated_three_module_text_val",
+            "metrics": {
+                "precision": 0.5693,
+                "recall": 0.4991,
+                "f1": 0.5285,
+                "map50": 0.4898,
+                "map75": 0.3042,
+                "map": 0.2961,
+            },
+            "artifact": "paper_material/evidence/fdr_bpdd_fia_val.txt",
+            "original_sha256": "24b799cb57ef8a12338d7086c699ccf02101cfd529e5785a82e3dc71bf3ac8ef",
+        },
+        "test": {
+            "source_id": "fia_updated_three_module_text_test",
+            "metrics": {
+                "precision": 0.5189,
+                "recall": 0.4361,
+                "f1": 0.4634,
+                "map50": 0.4081,
+                "map75": 0.2327,
+                "map": 0.2337,
+            },
+            "artifact": "paper_material/evidence/fdr_bpdd_fia_test.txt",
+            "original_sha256": "e2b81acb63e5ff704ae8635200d595ea24884ccf88a4cab7195010dffbe51480",
+        },
     }
-    assert observation["delta_from_bpdd_map_pp"] > 0
-    assert observation["evidence_level"] == "terminal_screenshot_rounded"
 
-    source = manifest["sources"][source_id]
-    assert source["historical_git_artifact"]["commit"] == (
-        "963daf6e47df2b5532d29abaf42008cc701bb38e"
-    )
-    assert source["historical_git_artifact"]["git_blob_oid"] == (
-        "029baf9ad67d6ed592e48583c6c6e20085b5d309"
-    )
-    assert source["historical_git_artifact"]["sha256"] == (
-        "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
-    )
+    for split, item in expected.items():
+        source_id = item["source_id"]
+        assert source_id in status["valid_fia_result_source_ids"]
+        observation = status[f"updated_three_module_text_{split}_observation"]
+        assert observation["source_id"] == source_id
+        assert observation["metrics"] == item["metrics"]
+        assert observation["evidence_level"] == "user_supplied_text_report_4dp"
+        assert observation["delta_from_bpdd_map_pp"] > 0
 
-    rows = [
-        row
-        for row in comparison["supplementary_updated_fia_observations"]
-        if row["split"] == "test"
-        and row["method"] == "RT-DETR-L+FDR+BPDD+FIA"
-    ]
-    assert len(rows) == 1
-    assert rows[0]["metrics"] == observation["metrics"]
-    assert rows[0]["delta_map_pp"] == observation["delta_from_bpdd_map_pp"]
-    assert rows[0]["delta_map_pp"] > 0
+        source = manifest["sources"][source_id]
+        assert source["metrics"] == item["metrics"]
+        assert source["artifact"] == item["artifact"]
+        assert source["original_artifact"]["sha256"] == item["original_sha256"]
+        assert len(source["per_class"]) == 10
+        artifact = REPOSITORY_ROOT / source["artifact"]
+        assert artifact.is_file()
+        assert hashlib.sha256(artifact.read_bytes()).hexdigest() == source["sha256"]
+
+        rows = [
+            row
+            for row in comparison["supplementary_updated_fia_observations"]
+            if row["split"] == split
+            and row["method"] == "RT-DETR-L+FDR+BPDD+FIA"
+        ]
+        assert len(rows) == 1
+        assert rows[0]["metrics"] == item["metrics"]
+        assert rows[0]["source_id"] == source_id
+
+    csv_path = MATERIAL_ROOT / "results/fdr_bpdd_fia_text_report_class_results.csv"
+    with csv_path.open(encoding="utf-8", newline="") as handle:
+        csv_rows = list(csv.DictReader(handle))
+    assert len(csv_rows) == 22
+    assert {row["split"] for row in csv_rows} == {"val", "test"}
+    assert all(row["f1"] and row["map75"] for row in csv_rows)
 
     page = _read_required_text("results/RESULTS_ZH.md")
-    assert "≈0.234" in page
-    assert "≈+0.234 pp" in page
-    assert "terminal_screenshot_rounded" in page
+    assert "0.2961" in page
+    assert "0.2337" in page
+    assert "user_supplied_text_report_4dp" in page
 
 
 def test_split_detail_csvs_have_expected_exact_coverage():

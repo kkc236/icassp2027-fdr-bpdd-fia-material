@@ -4,7 +4,7 @@
 
 ## 1. 正式核心结果
 
-论文 A–E 主消融表以 [val 主消融表](MAIN_TABLE_ZH.md) 为准。E 行直接取终端 val 面板的舍入值 `P≈0.569、R≈0.499、AP50≈0.490、mAP≈0.296、约 +0.37 pp`。checkpoint 的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不用于替换该行 P/R。
+论文 A–E 主消融表以 [val 主消融表](MAIN_TABLE_ZH.md) 为准。E 行采用与终端截图对应的四位小数文本记录：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`。checkpoint 的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不用于替换该行 P/R。
 
 ### val
 
@@ -14,9 +14,9 @@
 | B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp vs A |
 | C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp vs B |
 | D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.57752 | 0.49089 | 0.48631 | 0.29972 | 0.29494 | +0.528 pp vs B |
-| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.569 | ≈0.499 | ≈0.490 | 待补 | ≈0.296 | 约 +0.37 pp vs C |
+| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5693 | 0.4991 | 0.4898 | 0.3042 | 0.2961 | +0.384 pp vs C |
 
-FDR 相对 baseline 的 strict val mAP50–95 提升为 `+7.055 pp`。C、D、E 的增量分别以表中标明的 B、B、C 为参照；它们是已登记结果之间的算术差，不表述为严格配对因果增益。C 行 `RT-DETR-L+FDR+BPDD` 的底层精确 mAP50–95 为 `0.292258`。E 行直接采用同一张终端截图的 val 面板舍入值；checkpoint 内嵌的 `0.29618/+0.3922 pp` 作为另一条补充正向记录保留，不替换本行 P/R/AP50。
+FDR 相对 baseline 的 strict val mAP50–95 提升为 `+7.055 pp`。C、D、E 的增量分别以表中标明的 B、B、C 为参照；它们是已登记结果之间的算术差，不表述为严格配对因果增益。C 行 `RT-DETR-L+FDR+BPDD` 的底层精确 mAP50–95 为 `0.292258`。E 行直接采用四位小数 val 文本记录；checkpoint 内嵌的 `0.29618/+0.3922 pp` 作为另一条补充正向记录保留。
 
 ### test
 
@@ -26,9 +26,9 @@ FDR 相对 baseline 的 strict val mAP50–95 提升为 `+7.055 pp`。C、D、E 
 | B | RT-DETR-L + FDR | ✓ | — | — | 0.50340 | 0.43168 | 0.39834 | 0.22890 | 0.22800 | +5.058 pp vs A |
 | C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.52267 | 0.42614 | 0.40369 | 0.23265 | 0.23166 | +0.366 pp vs B |
 | D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.51897 | 0.43166 | 0.40744 | 0.23588 | 0.23465 | +0.664 pp vs B |
-| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.519 | ≈0.436 | ≈0.408 | 待补 | ≈0.234 | ≈+0.234 pp vs C |
+| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5189 | 0.4361 | 0.4081 | 0.2327 | 0.2337 | +0.204 pp vs C |
 
-test 中 A、B、C、D 为已登记 exact 结果；E 来自终端截图的三位小数显示，因此整行和相对 C 的增量均保留 `≈`。E 的 AP75 未显示，保持为空，不使用 D 或其他分支的数据补齐。
+test 中 A、B、C、D 为已登记 exact 结果；E 来自与截图对应的四位小数文本记录，并已补齐 AP75、F1 和十类明细。E 相对 C 的 `+0.204 pp` 是跨记录算术差，不写成严格配对因果增益。
 
 ## 2. FIA standalone 消融
 
@@ -73,20 +73,20 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 
 正确 P3-only 的 FDR+BPDD+FIA checkpoint 已确认 `model[23].f=21`。checkpoint 内嵌 best-val 为 P=`0.56996`、R=`0.49848`、AP50=`0.48982`、mAP50–95=`0.29618`；相对当前 FDR+BPDD val 数值为 `+0.3922 pp` 的非严格观察。
 
-旧材料仓的归档终端截图同时保存了该三模块的 test 面板：
+用户提供的 val/test 文本记录与旧材料仓归档终端截图逐项对应：
 
 | split | P | R | F1 | AP50 | AP75 | mAP50–95 | ΔmAP vs. FDR+BPDD | 证据 |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| val | 0.56996 | 0.49848 | — | 0.48982 | — | **0.29618** | **+0.3922 pp** | checkpoint_embedded_best_val |
-| test | ≈0.519 | ≈0.436 | — | ≈0.408 | — | **≈0.234** | **≈+0.234 pp** | terminal_screenshot_rounded |
+| val | 0.5693 | 0.4991 | 0.5285 | 0.4898 | 0.3042 | **0.2961** | **+0.384 pp** | user_supplied_text_report_4dp |
+| test | 0.5189 | 0.4361 | 0.4634 | 0.4081 | 0.2327 | **0.2337** | **+0.204 pp** | user_supplied_text_report_4dp |
 
-因此三模块在 val/test 上都是正增长。test 面板覆盖 1,610 images / 75,102 instances，但只显示三位小数且没有 AP75/F1；这些字段保持为空，不从 standalone 或其他指标反推。冻结 evaluator 独立 exact 复评仍可补强证据，当前已有的三模块 test 整体结果则予以保留。
+因此三模块在 val/test 上都是正增长。test 覆盖 1,610 images / 75,102 instances；四位小数文本已经补齐 AP75、F1 和十类结果，截图作为三位小数交叉核验。原始文本见 [`../evidence/fdr_bpdd_fia_val.txt`](../evidence/fdr_bpdd_fia_val.txt) 与 [`../evidence/fdr_bpdd_fia_test.txt`](../evidence/fdr_bpdd_fia_test.txt)，结构化明细见 [`fdr_bpdd_fia_text_report_class_results.csv`](fdr_bpdd_fia_text_report_class_results.csv)。
 
 ## 4. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
 - BPDD 在 FDR 基础上继续提供小幅正向结果；正式写作中将其表述为训练期渐进分布蒸馏，并保留跨 authority 边界。
 - FIA-only 在 val 略低于 baseline，test 基本持平；FDR+FIA 在 val 和 test 均高于对应 FDR 参照，支持“FIA 与 FDR 兼容并呈正向互补”，不支持“FIA 单独稳定提升”。
-- 三模块 P3-only 在 val/test 均有正向观察；正文消融可使用 `0.29618（+0.3922 pp）` 和 `≈0.234（≈+0.234 pp）`，同时注明 test 为截图舍入值。
+- 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 
 完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)。

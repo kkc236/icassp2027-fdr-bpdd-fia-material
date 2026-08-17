@@ -35,8 +35,8 @@ FIA-only 与 FDR+FIA 的 exact val/test 均按此协议从现有发布版 best c
 |---|---|---|---|
 | FIA-only | cascading，`model[23].f=-1` | exact independent best.pt val | exact independent best.pt test |
 | FDR+FIA | cascading，`model[23].f=-1` | exact independent best.pt val | exact independent best.pt test |
-| FDR+BPDD+FIA | P3-only，`model[23].f=21` | checkpoint embedded best-val | 归档终端截图舍入结果；独立 exact 待补 |
+| FDR+BPDD+FIA | P3-only，`model[23].f=21` | 四位小数 val 文本 + checkpoint/截图互证 | 四位小数 test 文本 + 截图互证 |
 
-standalone 不再重训。其 val/test 算术差可用于普通消融描述，但不是 strict paired 因果效应。三模块的 P3-only val/test 正向观察与 standalone cascading 结果分开标注；三模块 test 只使用截图显示的 P/R/AP50/mAP，不反推 AP75 或 F1。
+standalone 不再重训。其 val/test 算术差可用于普通消融描述，但不是 strict paired 因果效应。三模块的 P3-only val/test 正向观察与 standalone cascading 结果分开标注；三模块四位小数文本已直接提供 P/R/F1/AP50/AP75/mAP 和十类结果，不再从截图反推缺失项。
 
-完整状态见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)，机器协议与逐类别值见 [FIA best.pt 证据](../evidence/fia_existing_best_evaluation.json)。
+完整状态见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)，standalone 机器协议见 [FIA best.pt 证据](../evidence/fia_existing_best_evaluation.json)，三模块原始记录见 [val 文本](../evidence/fdr_bpdd_fia_val.txt) 与 [test 文本](../evidence/fdr_bpdd_fia_test.txt)。

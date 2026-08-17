@@ -32,8 +32,8 @@ Y = X + \alpha\bigl(\mathcal{F}(X)-X\bigr),
 - FIA-only exact val mAP50–95 为 `0.2167954534`，相对 baseline `−0.2315 pp`，说明 FIA 单独并未稳定涨点。
 - FDR+FIA exact val mAP50–95 为 `0.2949403207`，相对 FDR `+0.5280 pp`，支持 FIA 与 FDR 的互补兼容性。
 - independent exact test 中，FIA-only / FDR+FIA 的 mAP50–95 为 `0.1771764568` / `0.2346453866`，AP75 为 `0.1716130742` / `0.2358787301`；相对登记 baseline/FDR 的 mAP 算术差分别为 `−0.0240 pp` / `+0.6644 pp`。
-- FDR+BPDD+FIA P3-only checkpoint best-val mAP50–95 为 `0.29618`，相对 FDR+BPDD 为 `+0.3922 pp` 的非严格观察。
-- 三模块归档 test 面板的 mAP50–95 为 `≈0.234`，相对 FDR+BPDD test 为 `≈+0.234 pp`，说明完整组合在 val/test 两个 split 上均呈正增长；该 test 数值为终端截图舍入值。
+- FDR+BPDD+FIA P3-only 四位小数 val 文本的 mAP50–95 为 `0.2961`，相对 FDR+BPDD 为 `+0.384 pp` 的算术观察；checkpoint best-val `0.29618` 与其一致。
+- 三模块四位小数 test 文本的 P/R/F1/AP50/AP75/mAP50–95 为 `0.5189/0.4361/0.4634/0.4081/0.2327/0.2337`，相对 FDR+BPDD test 为 `+0.204 pp`，说明完整组合在 val/test 两个 split 上均呈正增长。
 
 论文应把 FIA 的贡献表述为“面向高分辨率特征的增强设计，并在 FDR 组合中显示正向兼容性”，不能声称 FIA-only 一定提升，也不能把算术差写成严格因果收益。
 

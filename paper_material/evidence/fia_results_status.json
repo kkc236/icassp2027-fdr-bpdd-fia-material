@@ -1,7 +1,7 @@
 {
   "format_version": 1,
-  "status": "standalone_exact_val_test_three_module_positive_val_and_rounded_test_available",
-  "updated_at": "2026-08-18T00:26:51+08:00",
+  "status": "standalone_exact_val_test_three_module_four_decimal_val_test_available",
+  "updated_at": "2026-08-18T03:20:00+08:00",
   "revoked_source_ids": [
     "fia_formal100_val_exact",
     "fia_ablation_release_dfr_bdpp_fia",
@@ -12,7 +12,9 @@
     "fdr_fia_existing_best_independent_val",
     "fia_updated_three_module_checkpoint_best_val",
     "fia_updated_three_module_terminal_val",
-    "fia_updated_three_module_terminal_test"
+    "fia_updated_three_module_terminal_test",
+    "fia_updated_three_module_text_val",
+    "fia_updated_three_module_text_test"
   ],
   "revocation_scope": "Pre-revision standalone FIA result identities remain withdrawn. The historical terminal screenshot is reclassified only as rounded test evidence for the corrected three-module observation because its paired val panel matches the current positive three-module checkpoint result; it is not reused as standalone evidence.",
   "user_reported_updated_result_direction": "superseded_by_direct_best_checkpoint_evaluation",
@@ -86,6 +88,46 @@
     "source_id": "fia_updated_three_module_terminal_test",
     "claim": "positive_test_observation",
     "rounding_note": "Values are displayed to three or four decimals in the terminal screenshot; AP75 and F1 are not displayed and remain null."
+  },
+  "updated_three_module_text_val_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone val",
+    "metrics": {
+      "precision": 0.5693,
+      "recall": 0.4991,
+      "f1": 0.5285,
+      "map50": 0.4898,
+      "map75": 0.3042,
+      "map": 0.2961
+    },
+    "delta_reference": "RT-DETR-L+FDR+BPDD",
+    "delta_from_bpdd_map_pp": 0.384213043118556,
+    "delta_strict_paired": false,
+    "evidence_level": "user_supplied_text_report_4dp",
+    "source_id": "fia_updated_three_module_text_val",
+    "usage": "canonical_source_for_standard_ablation_row_E",
+    "screenshot_crosscheck": "matches the archived val panel after three-decimal display rounding"
+  },
+  "updated_three_module_text_test_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone test",
+    "images": 1610,
+    "instances": 75102,
+    "metrics": {
+      "precision": 0.5189,
+      "recall": 0.4361,
+      "f1": 0.4634,
+      "map50": 0.4081,
+      "map75": 0.2327,
+      "map": 0.2337
+    },
+    "delta_reference": "RT-DETR-L+FDR+BPDD",
+    "delta_from_bpdd_map_pp": 0.20409356127704894,
+    "delta_strict_paired": false,
+    "evidence_level": "user_supplied_text_report_4dp",
+    "source_id": "fia_updated_three_module_text_test",
+    "claim": "positive_test_observation",
+    "screenshot_crosscheck": "matches the archived test panel after three-decimal display rounding"
   },
   "updated_standalone_results": {
     "fia_only": {
@@ -202,7 +244,7 @@
     ]
   },
   "claim_boundary": {
-    "allowed": "Report exact independent val and test metrics obtained directly from the two published standalone best.pt checkpoints. Report the corrected P3-only three-module result as positive on val (0.29618, +0.3922 pp) and positive on test (approximately 0.234, approximately +0.234 pp), with the test row explicitly marked terminal-screenshot rounded.",
-    "forbidden": "Call the standalone checkpoints P3-only, mix val and test comparisons, fill the three-module AP75 or F1 from another arm, or call supplementary arithmetic deltas strict paired causal gains."
+    "allowed": "Report exact independent val and test metrics obtained directly from the two published standalone best.pt checkpoints. Report the corrected P3-only three-module four-decimal text results on val (mAP 0.2961, AP75 0.3042) and test (mAP 0.2337, AP75 0.2327), with the archived terminal screenshot as a matching rounded cross-check.",
+    "forbidden": "Call the standalone checkpoints P3-only, mix val and test comparisons, claim more than four-decimal precision for the text reports, or call supplementary arithmetic deltas strict paired causal gains."
   }
 }

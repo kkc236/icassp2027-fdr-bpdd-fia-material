@@ -36,6 +36,6 @@ test 复评覆盖 1,610 images / 75,102 instances，使用 `split=test`、`imgsz
 
 ## 三模块 P3-only 观察
 
-三模块 checkpoint 的嵌入式 best-validation 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，相对 FDR+BPDD val `0.29225786956881444` 为 +0.3922 pp。归档终端 test 面板显示 P≈0.519、R≈0.436、AP50≈0.408、mAP50–95≈0.234，相对 FDR+BPDD test `0.2316590644` 为约 +0.234 pp。两项均为正增长；test 证据为 `terminal_screenshot_rounded`，AP75/F1 未显示，仍与 standalone exact 结果分开呈现。
+三模块四位小数文本给出的 val 为 P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP50–95=0.2961，相对 FDR+BPDD val `0.29225786956881444` 为 +0.384 pp；test 为 P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP50–95=0.2337，相对 FDR+BPDD test `0.2316590644` 为 +0.204 pp。两项均为正增长，证据等级为 `user_supplied_text_report_4dp`。checkpoint 嵌入式 best-validation P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，与四位小数文本及归档终端截图相互印证。
 
-完整机器证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)，independent exact test 总体与逐类机器表见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)，统一边界见 [`FIA_RESULTS_STATUS_ZH.md`](FIA_RESULTS_STATUS_ZH.md)。
+完整机器证据见 [`../evidence/fia_existing_best_evaluation.json`](../evidence/fia_existing_best_evaluation.json)，standalone independent exact test 总体与逐类机器表见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。三模块见 [`val 原始文本`](../evidence/fdr_bpdd_fia_val.txt)、[`test 原始文本`](../evidence/fdr_bpdd_fia_test.txt)及[总体/逐类 CSV](fdr_bpdd_fia_text_report_class_results.csv)，统一边界见 [`FIA_RESULTS_STATUS_ZH.md`](FIA_RESULTS_STATUS_ZH.md)。

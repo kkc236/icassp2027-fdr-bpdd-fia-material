@@ -343,6 +343,105 @@
       "supplementary_ablation_allowed": true,
       "transformation": "reclassify the archived screenshot test panel as a positive rounded observation for the corrected three-module result; do not infer AP75 or F1"
     },
+    "fia_updated_three_module_text_val": {
+      "artifact": "paper_material/evidence/fdr_bpdd_fia_val.txt",
+      "sha256": "27ebf878db256a86ddb99bf6a3837a42313542af783cec1f1cc597d074f1c734",
+      "original_artifact": {
+        "filename": "fdr-bdpp-fia-val.txt",
+        "sha256": "24b799cb57ef8a12338d7086c699ccf02101cfd529e5785a82e3dc71bf3ac8ef",
+        "size_bytes": 2409,
+        "transformation": "destination filename normalized from BDPP to BPDD and one final LF appended; report text and numeric content unchanged"
+      },
+      "source_context": "user-supplied four-decimal evaluation text corresponding to the archived three-module val screenshot panel",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "split": "VisDrone val",
+      "metrics": {
+        "precision": 0.5693,
+        "recall": 0.4991,
+        "f1": 0.5285,
+        "map50": 0.4898,
+        "map75": 0.3042,
+        "map": 0.2961
+      },
+      "per_class": [
+        {"class": "pedestrian", "precision": 0.6800, "recall": 0.5282, "f1": 0.5945, "map50": 0.5672, "map75": 0.2246, "map": 0.2733},
+        {"class": "people", "precision": 0.6405, "recall": 0.4972, "f1": 0.5598, "map50": 0.5023, "map75": 0.1454, "map": 0.2160},
+        {"class": "bicycle", "precision": 0.3718, "recall": 0.2874, "f1": 0.3242, "map50": 0.2449, "map75": 0.0853, "map": 0.1140},
+        {"class": "car", "precision": 0.8004, "recall": 0.8452, "f1": 0.8222, "map50": 0.8542, "map75": 0.6916, "map": 0.6130},
+        {"class": "van", "precision": 0.5400, "recall": 0.5458, "f1": 0.5429, "map50": 0.5285, "map75": 0.4326, "map": 0.3803},
+        {"class": "truck", "precision": 0.5669, "recall": 0.3892, "f1": 0.4616, "map50": 0.4112, "map75": 0.3073, "map": 0.2781},
+        {"class": "tricycle", "precision": 0.4487, "recall": 0.4258, "f1": 0.4370, "map50": 0.3623, "map75": 0.2168, "map": 0.2053},
+        {"class": "awning-tricycle", "precision": 0.3623, "recall": 0.2312, "f1": 0.2823, "map50": 0.1829, "map75": 0.1241, "map": 0.1168},
+        {"class": "bus", "precision": 0.6759, "recall": 0.6147, "f1": 0.6439, "map50": 0.6324, "map75": 0.5589, "map": 0.4643},
+        {"class": "motor", "precision": 0.6070, "recall": 0.6259, "f1": 0.6163, "map50": 0.6116, "map75": 0.2558, "map": 0.3002}
+      ],
+      "model_info": {
+        "gflops": 109.0,
+        "parameters": 32635754,
+        "preprocess_seconds_per_image": 0.000440,
+        "inference_seconds_per_image": 0.017861,
+        "postprocess_seconds_per_image": 0.000191,
+        "end_to_end_fps": 54.08,
+        "inference_fps": 55.99,
+        "model_file_size_mb": 64.8
+      },
+      "delta_from_bpdd_map_pp": 0.384213043118556,
+      "strict_paired": false,
+      "evidence_level": "user_supplied_text_report_4dp",
+      "screenshot_crosscheck_source_id": "fia_updated_three_module_terminal_val",
+      "formal_main_table_allowed": true
+    },
+    "fia_updated_three_module_text_test": {
+      "artifact": "paper_material/evidence/fdr_bpdd_fia_test.txt",
+      "sha256": "d2fb3d5912fe9ab8c473487177519445d6e0501ee08d71f2abc836acf3b37ec3",
+      "original_artifact": {
+        "filename": "fdr-bdpp-fia-test.txt",
+        "sha256": "e2b81acb63e5ff704ae8635200d595ea24884ccf88a4cab7195010dffbe51480",
+        "size_bytes": 2409,
+        "transformation": "destination filename normalized from BDPP to BPDD and one final LF appended; report text and numeric content unchanged"
+      },
+      "source_context": "user-supplied four-decimal evaluation text corresponding to the archived three-module test screenshot panel",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "split": "VisDrone test",
+      "images": 1610,
+      "instances": 75102,
+      "metrics": {
+        "precision": 0.5189,
+        "recall": 0.4361,
+        "f1": 0.4634,
+        "map50": 0.4081,
+        "map75": 0.2327,
+        "map": 0.2337
+      },
+      "per_class": [
+        {"class": "pedestrian", "precision": 0.5949, "recall": 0.3803, "f1": 0.4640, "map50": 0.3927, "map75": 0.1015, "map": 0.1606},
+        {"class": "people", "precision": 0.5993, "recall": 0.2726, "f1": 0.3747, "map50": 0.2849, "map75": 0.0446, "map": 0.1026},
+        {"class": "bicycle", "precision": 0.3594, "recall": 0.2051, "f1": 0.2611, "map50": 0.1773, "map75": 0.0493, "map": 0.0748},
+        {"class": "car", "precision": 0.7549, "recall": 0.7911, "f1": 0.7726, "map50": 0.7922, "map75": 0.5656, "map": 0.5104},
+        {"class": "van", "precision": 0.3925, "recall": 0.5261, "f1": 0.4496, "map50": 0.4233, "map75": 0.3414, "map": 0.2916},
+        {"class": "truck", "precision": 0.5163, "recall": 0.4930, "f1": 0.5044, "map50": 0.4632, "map75": 0.3391, "map": 0.3006},
+        {"class": "tricycle", "precision": 0.3209, "recall": 0.3531, "f1": 0.3362, "map50": 0.2749, "map75": 0.1317, "map": 0.1473},
+        {"class": "awning-tricycle", "precision": 0.4407, "recall": 0.2721, "f1": 0.3365, "map50": 0.2395, "map75": 0.1545, "map": 0.1403},
+        {"class": "bus", "precision": 0.6746, "recall": 0.5873, "f1": 0.6279, "map50": 0.6057, "map75": 0.4828, "map": 0.4271},
+        {"class": "motor", "precision": 0.5352, "recall": 0.4808, "f1": 0.5065, "map50": 0.4271, "map75": 0.1160, "map": 0.1816}
+      ],
+      "model_info": {
+        "gflops": 109.0,
+        "parameters": 32635754,
+        "preprocess_seconds_per_image": 0.000420,
+        "inference_seconds_per_image": 0.011658,
+        "postprocess_seconds_per_image": 0.000194,
+        "end_to_end_fps": 81.49,
+        "inference_fps": 85.78,
+        "model_file_size_mb": 64.8
+      },
+      "delta_from_bpdd_map_pp": 0.20409356127704894,
+      "strict_paired": false,
+      "evidence_level": "user_supplied_text_report_4dp",
+      "screenshot_crosscheck_source_id": "fia_updated_three_module_terminal_test",
+      "formal_main_table_allowed": false,
+      "supplementary_ablation_allowed": true
+    },
     "fia_ablation_scaffold_1d083140": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_branch": "fdr-bdpp-fia",

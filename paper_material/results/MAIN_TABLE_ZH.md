@@ -1,6 +1,6 @@
 # VisDrone val 主消融表
 
-论文主消融表固定使用以下 A–E 顺序和展示精度。术语统一为 `BPDD`；E 行保持标准截图的舍入口径，精确 checkpoint 数值放在证据说明中。
+论文主消融表固定使用以下 A–E 顺序。术语统一为 `BPDD`；E 行采用与标准截图对应的四位小数 val 文本记录，并补齐 F1、AP75 和逐类别证据。
 
 | 编号 | 模型 | FDR | BPDD | FIA | Precision | Recall | AP50 | AP75 | mAP50–95 | 相对上一有效配置 |
 |---|---|:---:|:---:|:---:|---:|---:|---:|---:|---:|---|
@@ -8,9 +8,9 @@
 | B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp |
 | C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp |
 | D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 待整理 | 待整理 | 待整理 | 待整理 | 待整理 | FIA 独立增量 |
-| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.569 | ≈0.499 | ≈0.490 | 待补 | ≈0.296 | 约 +0.37 pp |
+| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5693 | 0.4991 | 0.4898 | 0.3042 | 0.2961 | +0.384 pp |
 
-证据等级：A/B 为 `strict`；C 为 `cross_authority_exact`。E 行直接绑定归档终端截图的 val 面板，因此 P/R/AP50/mAP 和 `约 +0.37 pp` 都能逐项对上标准表。checkpoint 内的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不作为 E 行 P/R 的“精确展开”。
+证据等级：A/B 为 `strict`；C 为 `cross_authority_exact`；E 为 `user_supplied_text_report_4dp`。E 行文本记录与归档终端截图逐项吻合，截图只是三位小数显示。checkpoint 内的 `0.29618/+0.3922 pp` 仍作为另一条补充正向记录，不替换本行四位小数结果。
 
 ## 差值边界
 
@@ -29,8 +29,8 @@
 ## FIA 行状态
 
 - FIA-only、FDR+FIA：按当前实验决策直接采用 Release 中各自的 `best.pt`，已在冻结 VisDrone evaluator 下完成独立 exact val/test；两者是已发布 cascading standalone 拓扑，不称为 P3-only。
-- FDR+BPDD+FIA：已定位正确 P3-only checkpoint；best-val 为 P=0.56996、R=0.49848、AP50=0.48982、mAP50–95=0.29618，相对 BPDD val 为 +0.3922 pp。归档终端 test 为 P≈0.519、R≈0.436、AP50≈0.408、mAP50–95≈0.234，相对 BPDD test 为约 +0.234 pp；val/test 均为正增长。
-- 三模块 test 为 `terminal_screenshot_rounded`，仍缺 AP75、F1 和冻结 evaluator 独立 exact 复评，所以只在补充消融区登记，不写成严格配对 FIA 因果增益。
+- FDR+BPDD+FIA：四位小数 val 为 P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP50–95=0.2961，相对 BPDD val 为 +0.384 pp。
+- 同一三模块 test 为 P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP50–95=0.2337，相对 BPDD test 为 +0.204 pp；val/test 均为正增长。文本记录和截图互证，但差值仍不写成严格配对 FIA 因果增益。
 
 ### 现有 best.pt standalone 消融（独立 val）
 
