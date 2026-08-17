@@ -30,8 +30,8 @@
       "fdr": false,
       "bpdd": false,
       "fia": true,
-      "status": "not_trained",
-      "reason": "No completed Formal100 checkpoint or exact evaluation is registered."
+      "status": "experiment_scaffold_available",
+      "reason": "Training config and train/test entrypoints are available at source commit 1d083140, but no completed Formal100 checkpoint or exact evaluation is registered."
     },
     {
       "method": "RT-DETR-L+FDR+BPDD",
@@ -45,8 +45,8 @@
       "fdr": true,
       "bpdd": false,
       "fia": true,
-      "status": "not_trained",
-      "reason": "No completed Formal100 checkpoint or exact evaluation is registered."
+      "status": "experiment_scaffold_available",
+      "reason": "Training config and train/test entrypoints are available at source commit 1d083140, but no completed Formal100 checkpoint or exact evaluation is registered."
     },
     {
       "method": "RT-DETR-L+BPDD+FIA",

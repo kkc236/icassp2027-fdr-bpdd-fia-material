@@ -15,7 +15,9 @@
 | 随机种子 | `seed=0` |
 | 正式训练轮数 | 100 epochs |
 
-数据配置入口为 `configs/VisDrone.yaml`。FDR、FDR+BPDD 和 FDR+BPDD+FIA 分别使用 `configs/rtdetr-l-fdr.yaml`、`configs/rtdetr-l-fdr-bpdd.yaml` 和 `configs/rtdetr-l-fdr-bpdd-fia.yaml`。训练冻结值由 `scripts/train_rtdetr_fdr.py` 继承到 `scripts/train_rtdetr_bpdd.py` 与 `scripts/train_rtdetr_bpdd_fia.py`；数据集的 10 类设置在建模时覆盖模型 YAML 的通用 `nc` 占位值。
+数据配置入口为 `configs/VisDrone.yaml`，其数据根现为仓库相对路径 `VisDrone`。FDR、FDR+BPDD 和 FDR+BPDD+FIA 分别使用 `configs/rtdetr-l-fdr.yaml`、`configs/rtdetr-l-fdr-bpdd.yaml` 和 `configs/rtdetr-l-fdr-bpdd-fia.yaml`。训练冻结值由 `scripts/train_rtdetr_fdr.py` 继承到 `scripts/train_rtdetr_bpdd.py` 与 `scripts/train_rtdetr_bpdd_fia.py`；数据集的 10 类设置在建模时覆盖模型 YAML 的通用 `nc` 占位值。
+
+源码提交 `1d083140` 另补齐 FIA-only 与 FDR+FIA 的配置和入口，详见 [FIA 消融实验脚手架](FIA_ABLATION_SCAFFOLD_ZH.md)。这些入口证明消融拓扑可配置，但其默认 `workers=4`、分设备训练和 `split=test,batch=4` 验证参数不是本页冻结的最终论文比较合同；产生主表结果前必须显式对齐本页协议。
 
 ## 评估设置
 

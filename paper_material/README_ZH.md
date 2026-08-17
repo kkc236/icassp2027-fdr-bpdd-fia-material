@@ -8,11 +8,12 @@
 2. 训练监督：[BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
 3. 特征增强：[FIA：P3 特征增强模块](methods/FIA_ZH.md)
 4. 冻结设置：[实验协议](experiments/PROTOCOL_ZH.md)
-5. 可引用数值：[主结果表](results/MAIN_TABLE_ZH.md)
-6. val/test 涨点：[各模块与组合的完整对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
-7. 三模块细节：[FDR+BPDD+FIA Formal100 详细结果](results/FDR_BPDD_FIA_DETAILED_ZH.md)
-8. 论文组织：[ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
-9. 绘图交接：[四图规划](figures/FIGURE_PLAN_ZH.md)
+5. 消融入口：[FIA-only 与 FDR+FIA 实验脚手架](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
+6. 可引用数值：[主结果表](results/MAIN_TABLE_ZH.md)
+7. val/test 涨点：[各模块与组合的完整对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
+8. 三模块细节：[FDR+BPDD+FIA Formal100 详细结果](results/FDR_BPDD_FIA_DETAILED_ZH.md)
+9. 论文组织：[ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+10. 绘图交接：[四图规划](figures/FIGURE_PLAN_ZH.md)
 
 ## 机器可读证据
 

@@ -102,6 +102,57 @@
       "evidence_level": "cross_authority_exact",
       "transformation": "none"
     },
+    "fia_ablation_scaffold_1d083140": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_branch": "fdr-bdpp-fia",
+      "source_commit": "1d0831402e15f6d039510b79eb477b5c34abb42c",
+      "evidence_level": "experiment_scaffold_only",
+      "result_evidence_available": false,
+      "artifacts": [
+        {
+          "path": "configs/VisDrone.yaml",
+          "git_blob_oid": "1faccb3021cb0242a29ffb366443d29e3a05b89b",
+          "canonical_sha256": "12928c9c1fa1e19e1775409110cd66f31d8f6508267e9d07047d786bbaa17f16"
+        },
+        {
+          "path": "configs/rtdetr-l-fdr-fia.yaml",
+          "git_blob_oid": "ce6db7c6c429aa604211e87f147f8382a5d7038b",
+          "canonical_sha256": "d1df935e834ba099b9fefe9e1c689b3c4fc6313779d9f20a493ed6a10e0ba17a",
+          "local_git_blob_oid": "cc50b08db1c9a80e5539eee639e0ca1e25fee1c1",
+          "local_canonical_sha256": "cf183c9d61e03f2bc123087190ce93b9e5f253d84e873ba4fa5f48f6c91dc8ef",
+          "normalization": "preserve_p3_only_fia_topology"
+        },
+        {
+          "path": "configs/rtdetr-l-fia.yaml",
+          "git_blob_oid": "4ca150c824b2d5f8b664658501bae9548d1a28dd",
+          "canonical_sha256": "9592c34048cc5fa00ec990aa7d03c65faaa2d52c97eb01fc4359946ac3324165",
+          "local_git_blob_oid": "62819dda217aa67650ad38d06bb0a3ad3a974cb4",
+          "local_canonical_sha256": "f1575020cfe235cbcdeaaaa3029d582d3f70ab584e0f57b6c62d37df2ef6e9ee",
+          "normalization": "preserve_p3_only_fia_topology"
+        },
+        {
+          "path": "train_fdr_fia.py",
+          "git_blob_oid": "7f0d3ee354dbbff59a30d014e7d5b1787995a484",
+          "canonical_sha256": "ab9dc1f41ca530687205bbc7f7a7fa990046e3bd75cdf886aed80c5d06b40abf"
+        },
+        {
+          "path": "train_fia.py",
+          "git_blob_oid": "d667fd5b5fc88c7042cefacc6c3791a6b56e5409",
+          "canonical_sha256": "5239441027a1e851ddde36e05331e6a1e44d0be80c519433fde9fc006e40d995"
+        },
+        {
+          "path": "val_fdr_fia.py",
+          "git_blob_oid": "4cf8a7a0f9d247ed60b9ff5fa11efef69adcb4a3",
+          "canonical_sha256": "f757818ebd19255e690820d4c10270f52e9a78ae475d81e640c0cb3ceb801e78"
+        },
+        {
+          "path": "val_fia.py",
+          "git_blob_oid": "990dc6c087b15ad54d83bc213559587e89197ee5",
+          "canonical_sha256": "5636fdbcc99628ff429a4d3e5588568f5b0c2d03bb58c6fa0bebf9190a710538"
+        }
+      ],
+      "transformation": "cherry-picked source commit, then normalized both ablation YAML downsample branches to preserve the already validated P3-only FIA topology"
+    },
     "fia_terminal_val": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_commit": "7b20c610f9d2ae1a6899e5fc8ed33348dca90d40",

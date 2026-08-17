@@ -15,6 +15,7 @@ REQUIRED_MATERIAL_FILES = (
     "methods/BPDD_ZH.md",
     "methods/FIA_ZH.md",
     "experiments/PROTOCOL_ZH.md",
+    "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
     "results/main_results.json",
     "results/MAIN_TABLE_ZH.md",
     "evidence/source_manifest.json",
@@ -191,6 +192,37 @@ def test_source_manifest_has_sha256_for_local_artifacts():
     )
 
 
+def test_fia_ablation_manifest_records_p3_only_config_normalization():
+    manifest = _load_required_json("evidence/source_manifest.json")
+    source = manifest["sources"]["fia_ablation_scaffold_1d083140"]
+    artifacts = {artifact["path"]: artifact for artifact in source["artifacts"]}
+
+    for relative_path in (
+        "configs/rtdetr-l-fia.yaml",
+        "configs/rtdetr-l-fdr-fia.yaml",
+    ):
+        artifact = artifacts[relative_path]
+        actual_oid = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(REPOSITORY_ROOT),
+                "hash-object",
+                f"--path={relative_path}",
+                relative_path,
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        assert artifact["local_git_blob_oid"] == actual_oid
+        assert artifact["local_git_blob_oid"] != artifact["git_blob_oid"]
+        assert re.fullmatch(
+            r"[0-9a-f]{64}", artifact["local_canonical_sha256"]
+        )
+        assert artifact["normalization"] == "preserve_p3_only_fia_topology"
+
+
 def test_main_table_mentions_all_methods_and_evidence_levels():
     table = _read_required_text("results/MAIN_TABLE_ZH.md")
     results = _load_required_json("results/main_results.json")
@@ -221,8 +253,13 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert len(combinations) == 8
     assert combinations[(False, True, False)]["status"] == "invalid_dependency"
     assert combinations[(False, True, True)]["status"] == "invalid_dependency"
-    assert combinations[(False, False, True)]["status"] == "not_trained"
-    assert combinations[(True, False, True)]["status"] == "not_trained"
+    assert combinations[(False, False, True)]["status"] == (
+        "experiment_scaffold_available"
+    )
+    assert combinations[(True, False, True)]["status"] == (
+        "experiment_scaffold_available"
+    )
+    assert "fia_ablation_scaffold_1d083140" in manifest["sources"]
 
     rows = {
         (row["split"], row["method"]): row
@@ -253,6 +290,7 @@ def test_readme_links_split_comparison_outputs():
         "results/split_overall_results.csv",
         "results/split_scale_results.csv",
         "results/split_class_results.csv",
+        "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
     ):
         assert relative_path in readme
 

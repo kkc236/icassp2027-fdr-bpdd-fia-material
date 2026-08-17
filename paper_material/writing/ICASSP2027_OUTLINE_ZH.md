@@ -39,7 +39,7 @@
 
 - 4.1 Dataset and Protocol：VisDrone 6,471/548、10 类、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
 - 4.2 Main Results：先呈现四行绝对值，再只对 strict 行报告配对差值；明确另外两种证据等级。
-- 4.3 Ablation Studies：已配置的 FDR 单因素独立训练；未来补充 FIA 单独、FDR+FIA。BPDD 单独不成立。
+- 4.3 Ablation Studies：FDR 单因素已有独立训练；FIA 单独与 FDR+FIA 的配置、训练和 test 入口已补齐，下一步按冻结协议完成 Formal100 与 exact 复评。BPDD 单独不成立。
 - 4.4 Analysis：BPDD 活跃边比例与教师改善；三模块 exact val 的四尺度、十类别、参数量和单臂效率。效率不与缺少同协议结果的其他模型作差。
 
 ### 5. Conclusion

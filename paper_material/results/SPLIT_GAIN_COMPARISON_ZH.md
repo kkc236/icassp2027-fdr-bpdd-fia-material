@@ -2,16 +2,16 @@
 
 ## 组合覆盖状态
 
-三模块共有 8 个开关组合，但 BPDD 依赖 FDR 的逐边分布，因此两种不含 FDR 的 BPDD 组合在结构上无效；FIA 单独和 FDR+FIA 尚无完成的 Formal100 checkpoint。
+三模块共有 8 个开关组合，但 BPDD 依赖 FDR 的逐边分布，因此两种不含 FDR 的 BPDD 组合在结构上无效。FIA 单独和 FDR+FIA 已在源码提交 `1d083140` 补齐训练配置、训练入口和 test 评估入口，但尚无登记的 Formal100 checkpoint 或 exact 指标。
 
 | FDR | BPDD | FIA | 模型 | val | test | 状态 |
 |---:|---:|---:|---|---|---|---|
 | 0 | 0 | 0 | RT-DETR-L | exact | exact | 已完成 |
 | 1 | 0 | 0 | RT-DETR-L+FDR | exact | exact | 已完成 |
 | 0 | 1 | 0 | RT-DETR-L+BPDD | — | — | 结构无效：BPDD 必须依赖 FDR |
-| 0 | 0 | 1 | RT-DETR-L+FIA | — | — | 未训练 |
+| 0 | 0 | 1 | RT-DETR-L+FIA | — | — | 实验脚手架已就绪；结果未登记 |
 | 1 | 1 | 0 | RT-DETR-L+FDR+BPDD | exact | exact | 已完成 |
-| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | — | — | 未训练 |
+| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | — | — | 实验脚手架已就绪；结果未登记 |
 | 0 | 1 | 1 | RT-DETR-L+BPDD+FIA | — | — | 结构无效：BPDD 必须依赖 FDR |
 | 1 | 1 | 1 | RT-DETR-L+FDR+BPDD+FIA | exact | 待 exact 补评 | val 已完成；test 服务器暂不可达 |
 
@@ -90,5 +90,6 @@ FDR 在 val/test 的全部 10 类均为正增益，是当前最稳定主效应�
 - 全尺度精确值：[`split_scale_results.csv`](split_scale_results.csv)
 - 全类别精确值：[`split_class_results.csv`](split_class_results.csv)
 - 组合状态与精确总体 JSON：[`split_gain_comparison.json`](split_gain_comparison.json)
+- FIA 消融入口与协议差异：[`../experiments/FIA_ABLATION_SCAFFOLD_ZH.md`](../experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
 
 论文主表可采用现有 exact 绝对值；只有 strict 配对行可以作因果涨点表述。三模块 test exact 补齐前，不能把截图约 `0.234` 当成最终结果。
