@@ -192,7 +192,6 @@ def test_pre_revision_fia_results_are_revoked_and_absent():
         "evidence/fdr_bpdd_fia_val_exact.json",
         "evidence/fia_ablation_release_evidence.json",
         "results/FDR_BPDD_FIA_DETAILED_ZH.md",
-        "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
         "results/fdr_bpdd_fia_val_class_results.csv",
         "results/fdr_bpdd_fia_val_scale_results.csv",
         "results/fia_ablation_release_test_class_results.csv",
@@ -201,6 +200,25 @@ def test_pre_revision_fia_results_are_revoked_and_absent():
         "assets/fdr_fia_test_release.png",
     )
     assert all(not (MATERIAL_ROOT / path).exists() for path in removed_paths)
+
+    restored_page = _read_required_text("results/FIA_ABLATION_RELEASE_RESULTS_ZH.md")
+    for required_text in (
+        "P3-only",
+        "checkpoint_embedded_best_val",
+        "0.56996",
+        "0.49848",
+        "0.48982",
+        "0.29618",
+        "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+    ):
+        assert required_text in restored_page
+    for revoked_text in (
+        "0.21671",
+        "0.29408",
+        "fia-seed0-20260815-211156",
+        "fdr-fia-seed0-20260815-211203",
+    ):
+        assert revoked_text not in restored_page
 
 
 def test_main_table_mentions_all_methods_and_evidence_levels():
@@ -269,6 +287,7 @@ def test_readme_links_split_comparison_outputs():
         "results/split_scale_results.csv",
         "results/split_class_results.csv",
         "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
+        "results/FIA_ABLATION_RELEASE_RESULTS_ZH.md",
         "results/FIA_RESULTS_STATUS_ZH.md",
         "evidence/fia_results_status.json",
     ):
