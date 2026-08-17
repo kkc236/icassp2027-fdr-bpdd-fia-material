@@ -87,6 +87,14 @@ def test_existing_best_fia_evaluations_are_registered():
         "instances": 38759,
         "data_yaml_sha256": "6cabb57ba5336c1b8a9e43ef376117f06e90d83f998f1e4fe7d1b8c5b2435a71",
     }
+    assert evidence["test_dataset"] == {
+        "name": "VisDrone",
+        "split": "test",
+        "images": 1610,
+        "instances": 75102,
+        "archive_sha256": "b28a94b06dfd9e36ce77ff8155fb82b9d2c030f198a76105933bd56c6ea6a68d",
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae",
+    }
     assert evidence["evaluation_protocol"] == {
         "imgsz": 640,
         "batch": 8,
@@ -114,12 +122,37 @@ def test_existing_best_fia_evaluations_are_registered():
         assert arm["graph_identity"]["decoder_from"] == [22, 25, 28]
         assert arm["val"]["evidence_level"] == "best_checkpoint_independent_val_exact"
         assert len(arm["val"]["per_class"]) == 10
-        assert arm["test"]["evidence_level"] == "best_checkpoint_screenshot_rounded"
-        assert arm["test"]["metrics"]["map75"] is None
+        assert arm["test"]["evidence_level"] == (
+            "best_checkpoint_independent_test_exact"
+        )
+        assert len(arm["test"]["per_class"]) == 10
+        assert all(
+            class_row["f1"] is not None and class_row["map75"] is not None
+            for class_row in arm["test"]["per_class"]
+        )
         assert arm["source_id"] in manifest["sources"]
+        source = manifest["sources"][arm["source_id"]]
+        assert source["test_evaluation_protocol"]["split"] == "test"
+        assert source["independent_test_metrics"] == arm["test"]["metrics"]
 
     assert arms["fia_only"]["val"]["metrics"]["map"] == 0.21679545343355132
     assert arms["fdr_fia"]["val"]["metrics"]["map"] == 0.29494032070762063
+    assert arms["fia_only"]["test"]["metrics"] == {
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921,
+    }
+    assert arms["fdr_fia"]["test"]["metrics"] == {
+        "precision": 0.5189669713045484,
+        "recall": 0.43165506726917735,
+        "f1": 0.46065437704605916,
+        "map50": 0.4074392932750549,
+        "map75": 0.23587873005461435,
+        "map": 0.23464538660213996,
+    }
     assert arms["fia_only"]["val"]["delta_map_pp"] == (
         arms["fia_only"]["val"]["metrics"]["map"] - 0.21911
     ) * 100
@@ -137,7 +170,7 @@ def test_existing_best_fia_evaluations_are_registered():
     }
 
 
-def test_existing_best_fia_test_csv_matches_rounded_evidence():
+def test_existing_best_fia_test_csv_matches_exact_evidence():
     evidence = _load_required_json("evidence/fia_existing_best_evaluation.json")
     evidence_arms = {arm["source_id"]: arm for arm in evidence["arms"]}
     expected_counts = {
@@ -161,10 +194,11 @@ def test_existing_best_fia_test_csv_matches_rounded_evidence():
     assert {row["source_id"] for row in rows} == set(evidence_arms)
     assert all(row["split"] == "test" for row in rows)
     assert all(
-        row["evidence_level"] == "best_checkpoint_screenshot_rounded"
+        row["evidence_level"] == "best_checkpoint_independent_test_exact"
         for row in rows
     )
-    assert all(row["map75"] == "" for row in rows)
+    assert all(row["map75"] != "" for row in rows)
+    assert all(row["f1"] != "" for row in rows)
 
     for source_id, arm in evidence_arms.items():
         arm_rows = [row for row in rows if row["source_id"] == source_id]
@@ -178,7 +212,7 @@ def test_existing_best_fia_test_csv_matches_rounded_evidence():
         assert overall["class"] == "all"
         assert int(overall["images"]) == arm["test"]["images"]
         assert int(overall["instances"]) == arm["test"]["instances"]
-        for metric in ("precision", "recall", "f1", "map50", "map"):
+        for metric in ("precision", "recall", "f1", "map50", "map75", "map"):
             assert float(overall[metric]) == arm["test"]["metrics"][metric]
 
         evidence_classes = {
@@ -192,8 +226,7 @@ def test_existing_best_fia_test_csv_matches_rounded_evidence():
             assert (int(row["images"]), int(row["instances"])) == expected_counts[
                 class_name
             ]
-            assert row["f1"] == ""
-            for metric in ("precision", "recall", "map50", "map"):
+            for metric in ("precision", "recall", "f1", "map50", "map75", "map"):
                 assert float(row[metric]) == expected[metric]
 
 
@@ -293,7 +326,7 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
 
     assert status["format_version"] == 1
     assert status["status"] == (
-        "existing_best_standalone_evaluated_three_module_available"
+        "existing_best_standalone_exact_val_test_three_module_available"
     )
     assert status["valid_fia_result_source_ids"] == [
         "fia_existing_best_independent_val",
@@ -304,6 +337,18 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
         "superseded_by_direct_best_checkpoint_evaluation"
     )
     assert status["user_report_is_formal_numeric_evidence"] is False
+    standalone = status["updated_standalone_results"]
+    assert standalone["fia_only"]["test_metrics"]["map75"] == (
+        0.17161307417237592
+    )
+    assert standalone["fdr_fia"]["test_metrics"]["map75"] == (
+        0.23587873005461435
+    )
+    assert all(
+        standalone[arm]["test_evidence_level"]
+        == "best_checkpoint_independent_test_exact"
+        for arm in ("fia_only", "fdr_fia")
+    )
 
     revoked_source_ids = {
         "fia_formal100_val_exact",
@@ -350,6 +395,9 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
             "accepted_as_existing_published_best_not_p3_only"
         )
         assert candidate["numeric_use_allowed"] is True
+        assert candidate["numeric_use_scope"] == (
+            "independent val and test exact; not revised P3-only evidence"
+        )
 
     removed_paths = (
         "evidence/fdr_bpdd_fia_val_exact.json",
@@ -368,7 +416,7 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
     for required_text in (
         "P3-only",
         "best_checkpoint_independent_val_exact",
-        "best_checkpoint_screenshot_rounded",
+        "best_checkpoint_independent_test_exact",
         "model[23].f=-1",
         "model[23].f=21",
         "0.56996",
@@ -443,6 +491,21 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert all(
         row["source_id"] in manifest["sources"]
         for row in comparison["supplementary_updated_fia_observations"]
+    )
+    supplementary = {
+        (row["split"], row["method"]): row
+        for row in comparison["supplementary_updated_fia_observations"]
+    }
+    assert supplementary[("test", "RT-DETR-L+FIA")]["metrics"]["map75"] == (
+        0.17161307417237592
+    )
+    assert supplementary[("test", "RT-DETR-L+FDR+FIA")]["metrics"][
+        "map75"
+    ] == 0.23587873005461435
+    assert all(
+        supplementary[("test", method)]["evidence_level"]
+        == "best_checkpoint_independent_test_exact"
+        for method in ("RT-DETR-L+FIA", "RT-DETR-L+FDR+FIA")
     )
 
 

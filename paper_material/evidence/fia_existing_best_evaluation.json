@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "generated_at": "2026-08-17T22:42:30+08:00",
+  "generated_at": "2026-08-17T23:45:49+08:00",
   "source_repository": "https://github.com/kkc236/uav-detection-baselines",
   "release_tag": "DFR-BDPP-FIA",
   "decision": "Use the published standalone best.pt checkpoints directly; no standalone retraining is required for the current paper material.",
@@ -10,6 +10,14 @@
     "images": 548,
     "instances": 38759,
     "data_yaml_sha256": "6cabb57ba5336c1b8a9e43ef376117f06e90d83f998f1e4fe7d1b8c5b2435a71"
+  },
+  "test_dataset": {
+    "name": "VisDrone",
+    "split": "test",
+    "images": 1610,
+    "instances": 75102,
+    "archive_sha256": "b28a94b06dfd9e36ce77ff8155fb82b9d2c030f198a76105933bd56c6ea6a68d",
+    "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae"
   },
   "evaluation_protocol": {
     "imgsz": 640,
@@ -75,21 +83,22 @@
         ]
       },
       "test": {
-        "evidence_level": "best_checkpoint_screenshot_rounded",
+        "evidence_level": "best_checkpoint_independent_test_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
         "images": 1610,
         "instances": 75102,
-        "metrics": {"precision": 0.424, "recall": 0.37, "f1": 0.3946, "map50": 0.325, "map75": null, "map": 0.177},
+        "metrics": {"precision": 0.42405399388824083, "recall": 0.3696529891467626, "f1": 0.38186403219771886, "map50": 0.32511085966127234, "map75": 0.17161307417237592, "map": 0.1771764568469921},
         "per_class": [
-          {"class": "pedestrian", "precision": 0.467, "recall": 0.284, "map50": 0.265, "map": 0.0963},
-          {"class": "people", "precision": 0.445, "recall": 0.187, "map50": 0.176, "map": 0.0587},
-          {"class": "bicycle", "precision": 0.266, "recall": 0.116, "map50": 0.101, "map": 0.0368},
-          {"class": "car", "precision": 0.694, "recall": 0.759, "map50": 0.742, "map": 0.451},
-          {"class": "van", "precision": 0.325, "recall": 0.513, "map50": 0.386, "map": 0.246},
-          {"class": "truck", "precision": 0.406, "recall": 0.442, "map50": 0.377, "map": 0.231},
-          {"class": "tricycle", "precision": 0.252, "recall": 0.266, "map50": 0.177, "map": 0.0886},
-          {"class": "awning-tricycle", "precision": 0.357, "recall": 0.211, "map50": 0.186, "map": 0.095},
-          {"class": "bus", "precision": 0.603, "recall": 0.555, "map50": 0.546, "map": 0.358},
-          {"class": "motor", "precision": 0.425, "recall": 0.363, "map50": 0.295, "map": 0.11}
+          {"class": "pedestrian", "precision": 0.4670014247690778, "recall": 0.28425928361050895, "f1": 0.3534045876997235, "map50": 0.26515471650128253, "map75": 0.0466187170004662, "map": 0.09629072979430953},
+          {"class": "people", "precision": 0.444502442573744, "recall": 0.18661849071588715, "f1": 0.262873153391568, "map50": 0.17621673085865325, "map75": 0.01870638122244924, "map": 0.05868730628778016},
+          {"class": "bicycle", "precision": 0.266144703030967, "recall": 0.11597542242703533, "f1": 0.16155257105989135, "map50": 0.10128398296424622, "map75": 0.015816315495255705, "map": 0.036937857005430313},
+          {"class": "car", "precision": 0.6942435636366537, "recall": 0.7593859086699437, "f1": 0.7253551052097603, "map50": 0.7423737204659964, "map75": 0.4881618431169146, "map": 0.45140022746847},
+          {"class": "van", "precision": 0.32539534342072424, "recall": 0.5125628140703518, "f1": 0.39807608868797517, "map50": 0.38575718889027527, "map75": 0.27687716432098186, "map": 0.2456067949965827},
+          {"class": "truck", "precision": 0.40604364392155473, "recall": 0.4422715306506205, "f1": 0.42338401879633614, "map50": 0.377043885144163, "map75": 0.24775645010477898, "map": 0.23106724029106385},
+          {"class": "tricycle", "precision": 0.2514493337874161, "recall": 0.2660377358490566, "f1": 0.25853790506707985, "map50": 0.17717262475539913, "map75": 0.0771273420386677, "map": 0.08866444507431523},
+          {"class": "awning-tricycle", "precision": 0.3569328211870383, "recall": 0.21127132676225802, "f1": 0.26543160928811294, "map50": 0.18551853092348886, "map75": 0.08784483273671967, "map": 0.09509291468236984},
+          {"class": "bus", "precision": 0.6037657337443464, "recall": 0.5551020408163265, "f1": 0.5784121335214617, "map50": 0.5457997554865291, "map75": 0.4005747479655568, "map": 0.3579256381765186},
+          {"class": "motor", "precision": 0.4250609288108862, "recall": 0.3630453378956373, "f1": 0.39161314925527985, "map50": 0.29478746062268996, "map75": 0.05664694772196835, "map": 0.11009141469308086}
         ]
       }
     },
@@ -138,27 +147,28 @@
         ]
       },
       "test": {
-        "evidence_level": "best_checkpoint_screenshot_rounded",
+        "evidence_level": "best_checkpoint_independent_test_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
         "images": 1610,
         "instances": 75102,
-        "metrics": {"precision": 0.519, "recall": 0.431, "f1": 0.4709, "map50": 0.407, "map75": null, "map": 0.235},
+        "metrics": {"precision": 0.5189669713045484, "recall": 0.43165506726917735, "f1": 0.46065437704605916, "map50": 0.4074392932750549, "map75": 0.23587873005461435, "map": 0.23464538660213996},
         "per_class": [
-          {"class": "pedestrian", "precision": 0.589, "recall": 0.38, "map50": 0.391, "map": 0.159},
-          {"class": "people", "precision": 0.596, "recall": 0.276, "map50": 0.287, "map": 0.101},
-          {"class": "bicycle", "precision": 0.372, "recall": 0.209, "map50": 0.186, "map": 0.0815},
-          {"class": "car", "precision": 0.761, "recall": 0.786, "map50": 0.794, "map": 0.512},
-          {"class": "van", "precision": 0.412, "recall": 0.525, "map50": 0.437, "map": 0.302},
-          {"class": "truck", "precision": 0.497, "recall": 0.489, "map50": 0.453, "map": 0.295},
-          {"class": "tricycle", "precision": 0.317, "recall": 0.36, "map50": 0.274, "map": 0.152},
-          {"class": "awning-tricycle", "precision": 0.434, "recall": 0.239, "map50": 0.22, "map": 0.131},
-          {"class": "bus", "precision": 0.673, "recall": 0.579, "map50": 0.607, "map": 0.431},
-          {"class": "motor", "precision": 0.538, "recall": 0.473, "map50": 0.425, "map": 0.182}
+          {"class": "pedestrian", "precision": 0.589068660476478, "recall": 0.3798363252180019, "f1": 0.46186092258798656, "map50": 0.39099039929623386, "map75": 0.10083775544980875, "map": 0.1589649688609142},
+          {"class": "people", "precision": 0.5966229860133907, "recall": 0.27603513174404015, "f1": 0.37744198144617913, "map50": 0.2872454270746849, "map75": 0.042566086366027774, "map": 0.10074802583645312},
+          {"class": "bicycle", "precision": 0.37196491564460515, "recall": 0.20890937019969277, "f1": 0.26755171698037766, "map50": 0.1859206534983412, "map75": 0.05324132465598261, "map": 0.08150519276277439},
+          {"class": "car", "precision": 0.7603599346779487, "recall": 0.7861722590297072, "f1": 0.7730506871484396, "map50": 0.7936802032961457, "map75": 0.5691756667074842, "map": 0.5124816171401984},
+          {"class": "van", "precision": 0.41200855484155735, "recall": 0.5245191474614451, "f1": 0.4615055708462044, "map50": 0.43703095370858513, "map75": 0.35239369841853174, "map": 0.30172862440503356},
+          {"class": "truck", "precision": 0.4971698322588355, "recall": 0.4885295223768334, "f1": 0.49281180828885207, "map50": 0.45329685550606735, "map75": 0.3317018455737363, "map": 0.29547454976699705},
+          {"class": "tricycle", "precision": 0.3181992812445779, "recall": 0.3622641509433962, "f1": 0.33880495849782166, "map50": 0.2741474595525784, "map75": 0.15740134781452658, "map": 0.1517936939164249},
+          {"class": "awning-tricycle", "precision": 0.4330320620774075, "recall": 0.2387312186978297, "f1": 0.30778184778326007, "map50": 0.22033042727914448, "map75": 0.14609993370667146, "map": 0.13128273472687507},
+          {"class": "bus", "precision": 0.6729984515238141, "recall": 0.5789115646258504, "f1": 0.6224194735028763, "map50": 0.6070925123595844, "map75": 0.48808496481218283, "map": 0.43052426343095657},
+          {"class": "motor", "precision": 0.5382450342868691, "recall": 0.4726419823949764, "f1": 0.5033148033785931, "map50": 0.42465804117918377, "map75": 0.11728467704119117, "map": 0.18195019517477237}
         ]
       }
     }
   ],
   "claim_boundary": {
-    "allowed": "Report exact independent-val metrics from the two published best.pt checkpoints and rounded test screenshot observations. State that FIA-only is slightly negative on val mAP, while FDR+FIA is positive relative to FDR.",
-    "forbidden": "Call the standalone checkpoints P3-only, treat screenshot-rounded test values as exact, invent test AP75, or claim the arithmetic deltas are strict paired causal gains."
+    "allowed": "Report exact independent val and test metrics from the two published best.pt checkpoints, including test AP75 and per-class F1. State that FIA-only is slightly negative on val mAP, while FDR+FIA is positive relative to FDR.",
+    "forbidden": "Call the standalone checkpoints P3-only, mix val and test comparisons, or claim the arithmetic deltas are strict paired causal gains."
   }
 }

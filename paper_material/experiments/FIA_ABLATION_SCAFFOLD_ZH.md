@@ -2,7 +2,7 @@
 
 ## 当前执行决策
 
-standalone 消融不再从头训练，直接采用 GitHub Release `DFR-BDPP-FIA` 中 FIA-only 与 FDR+FIA 的 `best.pt`。两份 checkpoint 已在统一 VisDrone val evaluator 下复评，并登记 checkpoint SHA-256、总体指标和十类别指标。
+standalone 消融不再从头训练，直接采用 GitHub Release `DFR-BDPP-FIA` 中 FIA-only 与 FDR+FIA 的 `best.pt`。两份 checkpoint 已在统一 VisDrone val/test evaluator 下完成独立精确复评，并登记 checkpoint SHA-256、总体指标和十类别指标。
 
 ## 文件矩阵
 
@@ -22,6 +22,6 @@ standalone 消融不再从头训练，直接采用 GitHub Release `DFR-BDPP-FIA`
 
 前两行是 published cascading standalone（`model[23].f=-1`）的独立 exact val，不是 P3-only。第三行是 P3-only（`model[23].f=21`）的 checkpoint 内嵌观察。所有差值均按各自指定参照计算，除 FDR 核心严格实验外，不写成 strict paired 因果增益。
 
-test 只使用 Release 截图舍入值：FIA-only mAP50–95=`0.177`，FDR+FIA=`0.235`；AP75 缺失。
+test 已用相同两个 `best.pt` 完成独立精确复评：FIA-only 的 AP75 / mAP50–95 为 `0.1716130742` / `0.1771764568`，FDR+FIA 为 `0.2358787301` / `0.2346453866`；逐类别 F1 与 AP75 均已进入机器 CSV。test 与 val 分开报告。
 
 统一结果见 [FIA 发布版结果](../results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)。

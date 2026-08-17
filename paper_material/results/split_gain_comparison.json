@@ -228,16 +228,16 @@
     {
       "split": "test",
       "method": "RT-DETR-L+FIA",
-      "status": "existing_best_screenshot_rounded",
+      "status": "existing_best_independent_test_exact",
       "metrics": {
-        "precision": 0.424,
-        "recall": 0.37,
-        "f1": 0.3946,
-        "map50": 0.325,
-        "map75": null,
-        "map": 0.177
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921
       },
-      "evidence_level": "best_checkpoint_screenshot_rounded",
+      "evidence_level": "best_checkpoint_independent_test_exact",
       "source_id": "fia_existing_best_independent_val",
       "formal_delta_allowed": false
     },
@@ -263,16 +263,16 @@
     {
       "split": "test",
       "method": "RT-DETR-L+FDR+FIA",
-      "status": "existing_best_screenshot_rounded",
+      "status": "existing_best_independent_test_exact",
       "metrics": {
-        "precision": 0.519,
-        "recall": 0.431,
-        "f1": 0.4709,
-        "map50": 0.407,
-        "map75": null,
-        "map": 0.235
+        "precision": 0.5189669713045484,
+        "recall": 0.43165506726917735,
+        "f1": 0.46065437704605916,
+        "map50": 0.4074392932750549,
+        "map75": 0.23587873005461435,
+        "map": 0.23464538660213996
       },
-      "evidence_level": "best_checkpoint_screenshot_rounded",
+      "evidence_level": "best_checkpoint_independent_test_exact",
       "source_id": "fdr_fia_existing_best_independent_val",
       "formal_delta_allowed": false
     },
@@ -292,5 +292,5 @@
       "formal_delta_allowed": false
     }
   ],
-  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal core rows. The two published standalone best.pt checkpoints now have exact independent-val supplementary rows: FIA-only is slightly negative versus baseline and FDR+FIA is positive versus FDR. Their test rows are screenshot-rounded and have no AP75. The corrected P3-only three-module checkpoint remains a separate embedded best-val observation. None of the supplementary arithmetic deltas is a strict paired causal gain."
+  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal core rows. The two published standalone best.pt checkpoints now have exact independent val and test supplementary rows, including test AP75 and per-class F1: FIA-only is slightly negative versus baseline on val, while FDR+FIA is positive versus FDR on val. The corrected P3-only three-module checkpoint remains a separate embedded best-val observation. None of the supplementary arithmetic deltas is a strict paired causal gain."
 }

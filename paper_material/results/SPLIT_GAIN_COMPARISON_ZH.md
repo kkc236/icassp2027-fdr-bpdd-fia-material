@@ -2,7 +2,7 @@
 
 ## 证据状态
 
-正式核心表保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD。按当前决策，standalone FIA 两个已发布 `best.pt` 已直接完成冻结 evaluator 独立 val：FIA-only 略低于 baseline，FDR+FIA 高于 FDR。它们属于 published cascading topology，作为补充消融登记，不称为 P3-only。正确 P3-only 三模块 checkpoint 仍作为单独 best-val 观察。
+正式核心表保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD。按当前决策，standalone FIA 两个已发布 `best.pt` 已直接完成冻结 evaluator 独立 exact val/test：FIA-only 的 val 略低于 baseline，FDR+FIA 的 val 高于 FDR。它们属于 published cascading topology，作为补充消融登记，不称为 P3-only。正确 P3-only 三模块 checkpoint 仍作为单独 best-val 观察。
 
 ## 组合覆盖状态
 
@@ -11,9 +11,9 @@
 | 0 | 0 | 0 | RT-DETR-L | exact | exact | 已完成 |
 | 1 | 0 | 0 | RT-DETR-L+FDR | exact | exact | 已完成 |
 | 0 | 1 | 0 | RT-DETR-L+BPDD | — | — | 结构无效：BPDD 必须依赖 FDR |
-| 0 | 0 | 1 | RT-DETR-L+FIA | exact best-val | rounded screenshot | 现有 best 直接复评；val 略有负增益 |
+| 0 | 0 | 1 | RT-DETR-L+FIA | exact best-val | exact best-test | 现有 best 直接复评；val 略有负增益 |
 | 1 | 1 | 0 | RT-DETR-L+FDR+BPDD | exact | exact | 已完成 |
-| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | exact best-val | rounded screenshot | 现有 best 直接复评；val 正增益 |
+| 1 | 0 | 1 | RT-DETR-L+FDR+FIA | exact best-val | exact best-test | 现有 best 直接复评；val 正增益 |
 | 0 | 1 | 1 | RT-DETR-L+BPDD+FIA | — | — | 结构无效：BPDD 必须依赖 FDR |
 | 1 | 1 | 1 | RT-DETR-L+FDR+BPDD+FIA | best-val 已定位 | 待独立复评 | 正确 P3-only checkpoint 已确认；AP75/test 待补 |
 
@@ -54,14 +54,14 @@
 | FIA-only | 0.479433 | 0.414194 | 0.444432 | 0.385675 | 0.209674 | 0.216795 | baseline | −0.231 pp |
 | FDR+FIA | 0.577524 | 0.490889 | 0.530694 | 0.486314 | 0.299724 | 0.294940 | FDR | +0.528 pp |
 
-### test（Release 截图舍入）
+### test（best.pt 独立复评，精确）
 
-| 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 证据 |
-|---|---:|---:|---:|---:|---:|---:|---|
-| FIA-only | 0.424 | 0.370 | 0.3946* | 0.325 | — | 0.177 | best checkpoint screenshot rounded |
-| FDR+FIA | 0.519 | 0.431 | 0.4709* | 0.407 | — | 0.235 | best checkpoint screenshot rounded |
+| 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 参照 | ΔmAP |
+|---|---:|---:|---:|---:|---:|---:|---|---:|
+| FIA-only | 0.424054 | 0.369653 | 0.381864* | 0.325111 | 0.171613 | 0.177176 | baseline | −0.0240 pp |
+| FDR+FIA | 0.518967 | 0.431655 | 0.460654* | 0.407439 | 0.235879 | 0.234645 | FDR | +0.6644 pp |
 
-星号表示 F1 由截图中的 P/R 计算。截图未给 AP75，不能推算；test 数值只按显示精度引用。
+星号表示 F1 为 evaluator 逐类别 F1 的均值，不是由总体 P/R 重新计算的调和均值。test 对照差值是跨既有 authority 的算术观察，不是 strict paired 因果增益。
 
 ## 新三模块 checkpoint 观察
 
@@ -74,8 +74,8 @@
 ## FIA 使用边界
 
 - standalone 行来自 Release 现有 `best.pt`；计算图为 cascading，不得标成 P3-only。
-- val 为统一 evaluator 的精确独立复评；test 为截图舍入观察，不能混作同等级 exact 数据。
+- val 与 test 均为统一 evaluator 对 Release `best.pt` 的精确独立复评，但必须按 split 分开报告和比较。
 - FIA-only 只相对 baseline 陈述，FDR+FIA 只相对 FDR 陈述，三模块只相对 FDR+BPDD 陈述。
 - 新三模块在源码提交、配置、checkpoint、数据集身份、评估命令以及结构化 val/test 输出全部绑定后，才进入正式总体、尺度和类别表。
 
-状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。机器 JSON/CSV 已同步登记现有 best.pt 的独立 val，以及 test 总体与 10 类截图舍入证据；test 明细见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。
+状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。机器 JSON/CSV 已同步登记现有 best.pt 的独立 exact val/test；test 总体与 10 类明细见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)。

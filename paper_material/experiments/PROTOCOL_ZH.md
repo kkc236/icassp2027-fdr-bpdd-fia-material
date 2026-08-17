@@ -18,22 +18,23 @@ FDR、FDR+BPDD 与三模块使用各自独立配置。BPDD 必须依赖 FDR。FI
 
 ## 统一评估器
 
-独立 val 复评显式固定：
+standalone `best.pt` 的独立 val/test 复评显式固定：
 
-- `split=val`、`imgsz=640`、`batch=8`、`workers=8`；
+- `split=val` 或 `split=test`，两个 split 分开运行和报告；
+- `imgsz=640`、`batch=8`、`workers=8`；
 - `conf=0.001`、`max_det=300`、`nms=False`；
 - `cache=False`、`half=False`、`rect=False`；
 - 同一 VisDrone YAML、10 类映射与 Ultralytics 8.4.90；
 - checkpoint 统一选择 `best.pt`。
 
-FIA-only 与 FDR+FIA 的 exact val 均按此协议从现有发布版 best checkpoint 独立得到。test 仅有 Release 截图舍入值，未提供 AP75，因此不得当作 exact 输出或与 val 混算。
+FIA-only 与 FDR+FIA 的 exact val/test 均按此协议从现有发布版 best checkpoint 独立得到。val 为 548 images / 38,759 instances；test 为 1,610 images / 75,102 instances。两个 split 不混算，且 standalone 与既有对照之间的算术差均不升级为 strict paired 因果效应。
 
 ## FIA 证据合同
 
 | 实验臂 | 拓扑 | val | test |
 |---|---|---|---|
-| FIA-only | cascading，`model[23].f=-1` | exact independent best.pt val | screenshot rounded |
-| FDR+FIA | cascading，`model[23].f=-1` | exact independent best.pt val | screenshot rounded |
+| FIA-only | cascading，`model[23].f=-1` | exact independent best.pt val | exact independent best.pt test |
+| FDR+FIA | cascading，`model[23].f=-1` | exact independent best.pt val | exact independent best.pt test |
 | FDR+BPDD+FIA | P3-only，`model[23].f=21` | checkpoint embedded best-val | 待补 |
 
 standalone 不再重训。其 val 算术差可用于普通消融描述，但不是 strict paired 因果效应。三模块的 P3-only 观察与 standalone cascading 结果分开标注。

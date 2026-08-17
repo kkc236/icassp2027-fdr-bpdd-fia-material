@@ -1,7 +1,7 @@
 {
   "format_version": 1,
-  "status": "existing_best_standalone_evaluated_three_module_available",
-  "updated_at": "2026-08-17T22:42:30+08:00",
+  "status": "existing_best_standalone_exact_val_test_three_module_available",
+  "updated_at": "2026-08-17T23:45:49+08:00",
   "revoked_source_ids": [
     "fia_formal100_val_exact",
     "fia_ablation_release_dfr_bdpp_fia",
@@ -46,16 +46,25 @@
       "updated_p3_only_artifact_status": "not_required_user_selected_existing_best",
       "source_id": "fia_existing_best_independent_val",
       "checkpoint_sha256": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
-      "metrics": {
+      "val_metrics": {
         "precision": 0.4794334980185041,
         "recall": 0.4141938299458384,
         "map50": 0.38567545133764725,
         "map75": 0.2096736111592438,
         "map": 0.21679545343355132
       },
+      "test_metrics": {
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921
+      },
       "delta_reference": "RT-DETR-L",
       "delta_map_pp": -0.23145465664486664,
-      "evidence_level": "best_checkpoint_independent_val_exact"
+      "val_evidence_level": "best_checkpoint_independent_val_exact",
+      "test_evidence_level": "best_checkpoint_independent_test_exact"
     },
     "fdr_fia": {
       "existing_web_assets_audited": true,
@@ -63,16 +72,25 @@
       "updated_p3_only_artifact_status": "not_required_user_selected_existing_best",
       "source_id": "fdr_fia_existing_best_independent_val",
       "checkpoint_sha256": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
-      "metrics": {
+      "val_metrics": {
         "precision": 0.5775238641748943,
         "recall": 0.4908887926435492,
         "map50": 0.486314064615312,
         "map75": 0.29972392008500426,
         "map": 0.29494032070762063
       },
+      "test_metrics": {
+        "precision": 0.5189669713045484,
+        "recall": 0.43165506726917735,
+        "f1": 0.46065437704605916,
+        "map50": 0.4074392932750549,
+        "map75": 0.23587873005461435,
+        "map": 0.23464538660213996
+      },
       "delta_reference": "RT-DETR-L+FDR",
       "delta_map_pp": 0.5280571609979634,
-      "evidence_level": "best_checkpoint_independent_val_exact"
+      "val_evidence_level": "best_checkpoint_independent_val_exact",
+      "test_evidence_level": "best_checkpoint_independent_test_exact"
     },
     "numeric_values_registered": true,
     "evaluation_artifact": "paper_material/evidence/fia_existing_best_evaluation.json"
@@ -100,7 +118,7 @@
         "required_updated_checkpoint_layer_23_from": 21,
         "decision": "accepted_as_existing_published_best_not_p3_only",
         "numeric_use_allowed": true,
-        "numeric_use_scope": "independent val exact and screenshot-rounded test; not revised P3-only evidence"
+        "numeric_use_scope": "independent val and test exact; not revised P3-only evidence"
       },
       "fdr_fia": {
         "web_assets_present": true,
@@ -114,7 +132,7 @@
         "required_updated_checkpoint_layer_23_from": 21,
         "decision": "accepted_as_existing_published_best_not_p3_only",
         "numeric_use_allowed": true,
-        "numeric_use_scope": "independent val exact and screenshot-rounded test; not revised P3-only evidence"
+        "numeric_use_scope": "independent val and test exact; not revised P3-only evidence"
       }
     }
   },
@@ -134,7 +152,7 @@
     ]
   },
   "claim_boundary": {
-    "allowed": "Report exact independent-val metrics obtained directly from the two published standalone best.pt checkpoints, including that FIA-only is slightly negative and FDR+FIA is positive in val mAP50-95. Report their test screenshots only as rounded observations. Keep the corrected P3-only three-module checkpoint as a separate observation.",
-    "forbidden": "Call the standalone checkpoints P3-only, call their arithmetic deltas strict paired causal gains, treat screenshot-rounded test values as exact, or invent test AP75."
+    "allowed": "Report exact independent val and test metrics obtained directly from the two published standalone best.pt checkpoints, including test AP75 and per-class F1. Keep the corrected P3-only three-module checkpoint as a separate observation.",
+    "forbidden": "Call the standalone checkpoints P3-only, mix val and test comparisons, or call their arithmetic deltas strict paired causal gains."
   }
 }

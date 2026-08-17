@@ -1,6 +1,6 @@
 # ICASSP 2027 论文材料入口
 
-本目录汇总 RT-DETR-L、FDR、BPDD 与 FIA 在 VisDrone 上的方法、协议、结果和证据边界。核心结果与补充消融分开呈现；val/test、exact/rounded、P3-only/cascading 以及 strict/non-paired 不得混写。
+本目录汇总 RT-DETR-L、FDR、BPDD 与 FIA 在 VisDrone 上的方法、协议、结果和证据边界。核心结果与补充消融分开呈现；val/test、P3-only/cascading 以及 strict/non-paired 不得混写。
 
 ## 阅读顺序
 
@@ -19,10 +19,10 @@
 ## 当前结果口径
 
 - RT-DETR-L、FDR、FDR+BPDD 是正式核心行。FDR 相对 baseline 可作严格差值；BPDD 行是跨 authority 精确绝对值，算术差不是严格配对因果增益。
-- FIA-only 与 FDR+FIA 按当前决策直接采用 Release 中各自的 `best.pt`，不再重训。冻结 evaluator 独立 val 的 mAP50–95 分别为 `0.2167954534` 与 `0.2949403207`。
+- FIA-only 与 FDR+FIA 按当前决策直接采用 Release 中各自的 `best.pt`，不再重训。冻结 evaluator 独立 val 的 mAP50–95 分别为 `0.2167954534` 与 `0.2949403207`；独立 test 的 mAP50–95 分别为 `0.1771764568` 与 `0.2346453866`。
 - FIA-only 相对 baseline 为 `−0.2315 pp`；FDR+FIA 相对 FDR 为 `+0.5280 pp`。两者是非严格配对算术差。
 - 两个 standalone checkpoint 均为 published cascading topology（`model[23].f=-1`），不能称为 P3-only。
-- Release test 截图给出 FIA-only `0.177`、FDR+FIA `0.235` 的 mAP50–95 舍入观察；AP75 缺失，不能补造。
+- 两个 standalone `best.pt` 均已在 VisDrone test（1,610 images / 75,102 instances）完成 exact 独立复评；FIA-only / FDR+FIA 的 AP75 分别为 `0.1716130742` / `0.2358787301`。val 与 test 结果分别报告；对既有对照的任何 test 算术差也不是 strict paired 因果增益。
 - FDR+BPDD+FIA 使用另一个正确 P3-only checkpoint，嵌入式 best-val mAP50–95 为 `0.29618`，相对 FDR+BPDD 为 `+0.3922 pp` 的非严格观察。
 
 ## 机器可读材料
@@ -33,7 +33,7 @@
 - [尺度 CSV](results/split_scale_results.csv)
 - [类别 CSV](results/split_class_results.csv)
 - [FIA standalone exact val CSV](results/fia_existing_best_val_results.csv)
-- [FIA standalone rounded test CSV（总体 + 逐类）](results/fia_existing_best_test_results.csv)
+- [FIA standalone exact test CSV（总体 + 逐类）](results/fia_existing_best_test_results.csv)
 - [FIA best.pt 完整证据](evidence/fia_existing_best_evaluation.json)
 - [FIA 状态机](evidence/fia_results_status.json)
 - [来源清单](evidence/source_manifest.json)
