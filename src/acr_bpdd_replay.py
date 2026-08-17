@@ -62,17 +62,6 @@ class ACRBPDDDetachedHeadReplay:
         self._input_device: torch.device | None = None
         self._handles: list[RemovableHandle] = []
 
-        try:
-            for index, head in enumerate(resolved):
-                handle = head.register_forward_pre_hook(self._make_capture_hook(index))
-                self._handles.append(handle)
-        except Exception:
-            for handle in self._handles:
-                handle.remove()
-            self._handles.clear()
-            self._removed = True
-            raise
-
     @property
     def capture_enabled(self) -> bool:
         """Return whether the current training forward is being observed."""
@@ -188,7 +177,15 @@ class ACRBPDDDetachedHeadReplay:
         heads = self._validated_heads()
         if not all(head.training for head in heads):
             return False
-        self._capture_enabled = True
+        try:
+            for index, head in enumerate(heads):
+                self._handles.append(
+                    head.register_forward_pre_hook(self._make_capture_hook(index))
+                )
+            self._capture_enabled = True
+        except BaseException:
+            self.clear()
+            raise
         return True
 
     def replay(self, *, cumulative: bool = True) -> Tensor:
@@ -242,6 +239,9 @@ class ACRBPDDDetachedHeadReplay:
         """Disable capture and discard every transient detached input."""
 
         self._capture_enabled = False
+        for handle in self._handles:
+            handle.remove()
+        self._handles.clear()
         self._cached_inputs = [None] * self._expected_layers
         self._input_shape = None
         self._input_device = None
@@ -252,9 +252,6 @@ class ACRBPDDDetachedHeadReplay:
         self.clear()
         if self._removed:
             return
-        for handle in self._handles:
-            handle.remove()
-        self._handles.clear()
         self._removed = True
 
 

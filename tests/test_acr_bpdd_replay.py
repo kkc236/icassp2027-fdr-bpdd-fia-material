@@ -47,7 +47,9 @@ def test_replay_cumulative_logits_match_the_original_forward() -> None:
     inputs = _inputs()
     replay = ACRBPDDDetachedHeadReplay(heads)
 
+    assert all(not head._forward_pre_hooks for head in heads)
     assert replay.begin_capture() is True
+    assert all(len(head._forward_pre_hooks) == 1 for head in heads)
     original_deltas = _forward_all(heads, inputs)
     original_cumulative = _fdr_cumulative(original_deltas)
 
@@ -57,6 +59,7 @@ def test_replay_cumulative_logits_match_the_original_forward() -> None:
     torch.testing.assert_close(replayed, original_cumulative, rtol=1e-6, atol=1e-7)
     assert replay.capture_enabled is False
     assert replay.cached_layer_count == 0
+    assert all(not head._forward_pre_hooks for head in heads)
 
 
 def test_replay_gradients_reach_heads_but_not_captured_decoder_inputs() -> None:
@@ -194,6 +197,7 @@ def test_incomplete_replay_clears_cache_and_hook_removal_is_idempotent() -> None
         replay.replay()
     assert replay.capture_enabled is False
     assert replay.cached_layer_count == 0
+    assert all(not head._forward_pre_hooks for head in heads)
 
     replay.remove()
     replay.remove()
