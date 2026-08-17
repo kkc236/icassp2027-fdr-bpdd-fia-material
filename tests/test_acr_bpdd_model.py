@@ -15,6 +15,7 @@ from src.rtdetr_fdr_acr_bpdd import (
     FDRACRBPDDDetectionModel,
     FDRACRBPDDTrainer,
 )
+from src.rtdetr_fdr_bpdd import FDRBPDDDetectionModel
 
 
 FDR_CFG = Path(__file__).resolve().parents[1] / "configs" / "rtdetr-l-fdr.yaml"
@@ -58,6 +59,13 @@ def test_acr_model_uses_only_frozen_yaml_controls(
     )
     assert acr.common_gradient_firewall is True
     assert isinstance(acr.acr_replay, ACRBPDDDetachedHeadReplay)
+    assert acr.acr_replay.query_tail == 300
+    assert acr.acr_replay.strict_checks is False
+
+
+def test_plain_bpdd_model_rejects_acr_yaml_fail_closed() -> None:
+    with pytest.raises(ValueError, match="firewall-capable"):
+        FDRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
 
 
 def test_acr_eval_is_bit_exact_to_plain_fdr(
@@ -110,9 +118,43 @@ def test_acr_training_bpdd_graph_reaches_only_distribution_heads(
     assert common_gradient is None
     assert private_gradient is not None
     assert torch.isfinite(private_gradient).all()
+    assert acr.last_fdr_evidence is not None
+    assert acr.last_fdr_evidence.dn_corner_logits is not None
+    assert acr.last_fdr_evidence.dn_corner_logits.shape[2] > 0
+    assert acr.last_fdr_evidence.corner_logits.shape[2] == 300
     assert acr.last_acr_replay_max_abs_diff is not None
     assert acr.last_acr_replay_max_abs_diff <= 1e-6
     assert acr.acr_replay.cached_layer_count == 0
+
+
+def test_acr_loss_failure_always_clears_transient_hooks(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_703)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    acr.train()
+    criterion = acr.init_criterion()
+    acr.criterion = criterion
+
+    def fail_after_forward(*_args, **_kwargs):
+        raise RuntimeError("injected stock criterion failure")
+
+    monkeypatch.setattr(criterion, "stock_plus_fgl", fail_after_forward)
+    batch = {
+        "img": torch.zeros((1, 3, 128, 128)),
+        "cls": torch.tensor([[0.0]]),
+        "bboxes": torch.tensor([[0.5, 0.5, 0.2, 0.2]]),
+        "batch_idx": torch.tensor([0.0]),
+    }
+
+    with pytest.raises(RuntimeError, match="injected"):
+        acr.loss(batch)
+
+    assert acr.acr_replay.capture_enabled is False
+    assert acr.acr_replay.cached_layer_count == 0
+    assert all(not head._forward_pre_hooks for head in acr.model[-1].dec_bbox_head)
+    assert criterion.bpdd_runtime_enabled is True
 
 
 def test_acr_trainer_keeps_fdr_fixed_protocol_and_model_cfg() -> None:

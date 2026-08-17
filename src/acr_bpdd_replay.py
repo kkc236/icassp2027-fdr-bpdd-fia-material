@@ -39,11 +39,17 @@ class ACRBPDDDetachedHeadReplay:
         *,
         expected_layers: int = FDR_REPLAY_LAYERS,
         output_dim: int = FDR_DISTRIBUTION_DIM,
+        query_tail: int | None = None,
+        strict_checks: bool = True,
     ) -> None:
         if int(expected_layers) != FDR_REPLAY_LAYERS:
             raise ValueError("ACR-BPDD replay requires exactly six layers")
         if int(output_dim) <= 0:
             raise ValueError("output_dim must be positive")
+        if query_tail is not None and (
+            not isinstance(query_tail, int) or isinstance(query_tail, bool) or query_tail <= 0
+        ):
+            raise ValueError("query_tail must be a positive integer or None")
 
         self._head_source = heads if isinstance(heads, (list, nn.ModuleList)) else tuple(heads)
         resolved = self._resolve_heads(initial=True)
@@ -53,6 +59,8 @@ class ACRBPDDDetachedHeadReplay:
 
         self._expected_layers = int(expected_layers)
         self._output_dim = int(output_dim)
+        self._query_tail = query_tail
+        self._strict_checks = bool(strict_checks)
         self._head_ids = identifiers
         self._capture_enabled = False
         self._replaying = False
@@ -79,6 +87,14 @@ class ACRBPDDDetachedHeadReplay:
         """Expose detached input identities for lifecycle evidence/tests."""
 
         return tuple(id(value) for value in self._cached_inputs if value is not None)
+
+    @property
+    def query_tail(self) -> int | None:
+        return self._query_tail
+
+    @property
+    def strict_checks(self) -> bool:
+        return self._strict_checks
 
     def _resolve_heads(self, *, initial: bool = False) -> tuple[nn.Module, ...]:
         try:
@@ -144,6 +160,10 @@ class ACRBPDDDetachedHeadReplay:
         value = args[0]
         if value.ndim != 3:
             raise ValueError("ACR-BPDD captured input shape must be [B,Q,C]")
+        if self._query_tail is not None:
+            if value.shape[1] < self._query_tail:
+                raise ValueError("ACR-BPDD captured fewer Queries than query_tail")
+            value = value[:, -self._query_tail :]
         shape = tuple(int(dimension) for dimension in value.shape)
         if self._input_shape is None:
             self._input_shape = shape
@@ -160,7 +180,7 @@ class ACRBPDDDetachedHeadReplay:
             raise RuntimeError("ACR-BPDD head and captured input devices differ")
         if not value.is_floating_point():
             raise TypeError("ACR-BPDD captured inputs must be floating point tensors")
-        if not bool(torch.isfinite(value).all().item()):
+        if self._strict_checks and not bool(torch.isfinite(value).all().item()):
             raise FloatingPointError("non-finite ACR-BPDD captured head input")
 
         detached = value.detach()
@@ -205,7 +225,8 @@ class ACRBPDDDetachedHeadReplay:
 
         self._replaying = True
         try:
-            deltas: list[Tensor] = []
+            outputs: list[Tensor] = []
+            running: Tensor | int = 0
             for index, (head, value) in enumerate(zip(heads, captured, strict=True)):
                 if value is None:  # narrowed above; retained for static type checkers
                     raise RuntimeError("ACR-BPDD replay cache is incomplete")
@@ -217,20 +238,16 @@ class ACRBPDDDetachedHeadReplay:
                     )
                 if delta.device != value.device:
                     raise RuntimeError("ACR-BPDD replay output changed device")
-                deltas.append(delta)
+                if cumulative:
+                    running = delta + running
+                    outputs.append(running)
+                else:
+                    outputs.append(delta)
 
-            raw = torch.stack(deltas)
-            if not bool(torch.isfinite(raw).all().item()):
+            result = torch.stack(outputs)
+            if self._strict_checks and not bool(torch.isfinite(result).all().item()):
                 raise FloatingPointError("non-finite ACR-BPDD replay logits")
-            if not cumulative:
-                return raw
-
-            cumulative_logits: list[Tensor] = []
-            running: Tensor | int = 0
-            for delta in deltas:
-                running = delta + running
-                cumulative_logits.append(running)
-            return torch.stack(cumulative_logits)
+            return result
         finally:
             self._replaying = False
             self.clear()

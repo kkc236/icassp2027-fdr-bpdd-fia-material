@@ -31,6 +31,8 @@ ACR_BPDD_MODEL_CFG = (
 class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
     """FDR+BPDD with active-confidence scaling and a shared-gradient firewall."""
 
+    supports_common_gradient_firewall = True
+
     def __init__(
         self,
         cfg: str | Path | dict = ACR_BPDD_MODEL_CFG,
@@ -58,7 +60,9 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         if not self.common_gradient_firewall:
             raise ValueError("ACR-BPDD requires the common-gradient firewall")
         self.acr_replay = ACRBPDDDetachedHeadReplay(
-            self.model[-1].dec_bbox_head
+            self.model[-1].dec_bbox_head,
+            query_tail=300,
+            strict_checks=False,
         )
         self.last_acr_replay_max_abs_diff: float | None = None
 
@@ -98,9 +102,9 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
             raise RuntimeError("ACR-BPDD requires retained FDR evidence")
         replayed = self.acr_replay.replay(cumulative=True)
         normal_queries = int(evidence.corner_logits.shape[2])
-        if replayed.shape[2] < normal_queries:
-            raise RuntimeError("ACR-BPDD replay has fewer than 300 normal Queries")
-        normal = replayed[:, :, -normal_queries:]
+        if replayed.shape[2] != normal_queries:
+            raise RuntimeError("ACR-BPDD replay does not contain exactly 300 normal Queries")
+        normal = replayed
         if normal.shape != evidence.corner_logits.shape:
             raise RuntimeError("ACR-BPDD replay/FDR corner shapes differ")
         difference = (
@@ -130,13 +134,9 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
             self.acr_replay.clear()
             return super().loss(batch, preds)
 
-        self.criterion.bpdd_runtime_enabled = False
         try:
+            self.criterion.bpdd_runtime_enabled = False
             total, displayed = FDRRTDETRDetectionModel.loss(self, batch, preds)
-        finally:
-            self.criterion.bpdd_runtime_enabled = True
-
-        try:
             private_corners = self._normal_replayed_corners()
             evidence = self.last_fdr_evidence
             if evidence is None:
@@ -158,6 +158,8 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         except BaseException:
             self.acr_replay.clear()
             raise
+        finally:
+            self.criterion.bpdd_runtime_enabled = True
 
         self.last_fdr_losses["loss_bpdd"] = result.loss
         self.last_bpdd_statistics = dict(result.statistics)

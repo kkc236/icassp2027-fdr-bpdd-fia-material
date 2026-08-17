@@ -55,6 +55,8 @@ def _parse_bpdd_options(payload: dict[str, Any]) -> BPDDOptions:
 class FDRBPDDDetectionModel(FDRRTDETRDetectionModel):
     """FDR model whose training criterion adds parameter-free BPDD."""
 
+    supports_common_gradient_firewall = False
+
     def __init__(
         self,
         cfg: str | Path | dict = BPDD_MODEL_CFG,
@@ -74,6 +76,12 @@ class FDRBPDDDetectionModel(FDRRTDETRDetectionModel):
         raw_options = self.yaml.get("bpdd_loss")
         if not isinstance(raw_options, dict):
             raise TypeError("BPDD model YAML requires a bpdd_loss mapping")
+        if bool(raw_options.get("common_gradient_firewall", False)) and not bool(
+            self.supports_common_gradient_firewall
+        ):
+            raise ValueError(
+                "common_gradient_firewall requires a firewall-capable BPDD model class"
+            )
         self.bpdd_options = _parse_bpdd_options(dict(raw_options))
         self.last_bpdd_statistics: dict[str, Tensor] = {}
 

@@ -99,6 +99,23 @@ def test_six_layers_use_true_cumulative_residuals() -> None:
     torch.testing.assert_close(raw[:, 0, 0, 0], torch.arange(1, 7, dtype=raw.dtype))
 
 
+def test_query_tail_replays_only_the_frozen_normal_query_partition() -> None:
+    heads = _heads()
+    inputs = [torch.randn(2, 7, 4, requires_grad=True) for _ in range(6)]
+    replay = ACRBPDDDetachedHeadReplay(heads, query_tail=3, strict_checks=False)
+
+    replay.begin_capture()
+    original = _fdr_cumulative(_forward_all(heads, inputs))[:, :, -3:]
+    actual = replay.replay()
+
+    assert replay.query_tail == 3
+    assert replay.strict_checks is False
+    assert actual.shape == (6, 2, 3, 132)
+    torch.testing.assert_close(actual, original)
+    for value in inputs:
+        assert value.grad is None
+
+
 def test_replay_does_not_recursively_overwrite_captured_inputs() -> None:
     heads = _heads()
     inputs = _inputs()
@@ -156,6 +173,8 @@ def test_identity_layer_count_and_parameter_source_changes_are_rejected() -> Non
     duplicate = nn.Linear(4, 132)
     with pytest.raises(ValueError, match="duplicate"):
         ACRBPDDDetachedHeadReplay(nn.ModuleList([duplicate] * 6))
+    with pytest.raises(ValueError, match="query_tail"):
+        ACRBPDDDetachedHeadReplay(_heads(), query_tail=0)
 
     heads = _heads()
     replay = ACRBPDDDetachedHeadReplay(heads)
