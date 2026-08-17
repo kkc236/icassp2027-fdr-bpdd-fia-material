@@ -38,4 +38,3 @@
 - 与相应对照臂的严格配对判定。
 
 机器可读状态见 [`../evidence/fia_results_status.json`](../evidence/fia_results_status.json)，完整证据边界与导入清单见 [`FIA_RESULTS_STATUS_ZH.md`](FIA_RESULTS_STATUS_ZH.md)。
-

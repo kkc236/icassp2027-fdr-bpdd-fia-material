@@ -81,7 +81,7 @@ Expected: all runnable tests pass; environment-conditional skips are reported ex
 
 Run `git diff --check`, scan the restored page for revoked values/run IDs and high-confidence credentials, and verify all material JSON files parse.
 
-- [ ] **Step 3: Commit and push**
+- [x] **Step 3: Commit and push**
 
 ```powershell
 git add -- paper_material/results/FIA_ABLATION_RELEASE_RESULTS_ZH.md paper_material/README_ZH.md tests/test_material_integrity.py docs/superpowers/plans/2026-08-17-fia-release-results-refresh.md
@@ -89,6 +89,6 @@ git commit -m "docs: refresh FIA release results page"
 git push origin main
 ```
 
-- [ ] **Step 4: Verify remote synchronization**
+- [x] **Step 4: Verify remote synchronization**
 
 Fetch `origin/main`, verify local and remote commit hashes match, confirm repository visibility is `PRIVATE`, and confirm the worktree is clean.
