@@ -606,6 +606,28 @@ def test_consolidated_results_page_covers_exact_fia_val_test_and_boundaries():
     assert "三模块 test 已完成" not in page
 
 
+def test_consolidated_results_page_contains_complete_a_to_e_val_and_test_tables():
+    page = _read_required_text("results/RESULTS_ZH.md")
+
+    expected_val_rows = (
+        "| A | RT-DETR-L Baseline | — | — | — | 0.46761 | 0.41731 | 0.38663 | 0.21302 | 0.21911 | — |",
+        "| B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp vs A |",
+        "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp vs B |",
+        "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.57752 | 0.49089 | 0.48631 | 0.29972 | 0.29494 | +0.528 pp vs B |",
+        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.56996 | 0.49848 | 0.48982 | 待补 | 0.29618 | +0.392 pp vs C |",
+    )
+    expected_test_rows = (
+        "| A | RT-DETR-L Baseline | — | — | — | 0.41798 | 0.37301 | 0.32221 | 0.17550 | 0.17742 | — |",
+        "| B | RT-DETR-L + FDR | ✓ | — | — | 0.50340 | 0.43168 | 0.39834 | 0.22890 | 0.22800 | +5.058 pp vs A |",
+        "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.52267 | 0.42614 | 0.40369 | 0.23265 | 0.23166 | +0.366 pp vs B |",
+        "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.51897 | 0.43166 | 0.40744 | 0.23588 | 0.23465 | +0.664 pp vs B |",
+        "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | ≈0.519 | ≈0.436 | ≈0.408 | 待补 | ≈0.234 | ≈+0.234 pp vs C |",
+    )
+
+    for expected_row in (*expected_val_rows, *expected_test_rows):
+        assert expected_row in page
+
+
 def test_three_module_positive_terminal_test_observation_is_registered():
     status = _load_required_json("evidence/fia_results_status.json")
     manifest = _load_required_json("evidence/source_manifest.json")
