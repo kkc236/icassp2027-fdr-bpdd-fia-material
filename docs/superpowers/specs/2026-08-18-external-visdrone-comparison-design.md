@@ -31,7 +31,20 @@
 
 800 或 1333×800 等非 640 输入方法可以作为补充行，但必须与 640 主组分开；split 未被原论文明确说明的方法不得塞入 val 或 test 排名。
 
-RTX 4090 效率组优先采用原论文在同一 4090 上统一测得的 YOLOv8/YOLOv9/YOLOv10 与 RT-DETR 基线，以及明确报告 4090 推理设置的 UAV 专用 YOLO。FBRT-YOLO 的 AAAI 论文只作为其 Table 1 中统一硬件基线数字的来源，不作为“普通 B 会方法水平”的门槛对标。未同行评审的 LAF-YOLOv10 等预印本不进入正式表。
+RTX 4090 效率组优先采用正式同行评审论文在同一 4090 上统一测得的 YOLOv8/YOLOv9/YOLOv10 与 RT-DETR 基线，以及明确报告 4090 推理设置的 UAV 专用 YOLO。FBRT-YOLO 的 AAAI 论文只作为其 Table 1 中统一硬件基线数字的来源，不作为“普通 B 会方法水平”的门槛对标。LAF-YOLOv10 等预印本既不进入正式表，也不进入补充表或机器 CSV/JSON。
+
+## 可比性优先级
+
+外部行不按绝对 AP 高低优先选取，而按与本项目协议的接近程度排序：
+
+1. 相同 VisDrone split：val 与 val、1,610-image test/test-dev 与 test 对齐。
+2. 相同输入尺寸：优先 `640×640`，其他尺寸放入独立补充组。
+3. 相近模型规模：优先参数量接近本项目 `32.64M` 的方法；主邻域定义为 `25M–40M`，更小/更大模型保留但降级到规模补充组。
+4. 相同训练来源：优先 scratch 对 scratch；使用 ImageNet、COCO 或 Objects365 预训练的行单独标记，不与 scratch 结果写成严格胜负。
+5. 相近评估器：优先 COCO AP、相同类别、`max_det=300` 或明确报告最大检测数的结果；未报告项写为 `not_reported`。
+6. 效率比较再要求 RTX 4090、batch、precision、backend、输入和 latency scope 一致。只有全部一致的行才设置 `fps_comparison_allowed=true`。
+
+每个表先展示“协议/规模最接近组”，再展示“相关但不严格可比组”。论文正文只对最接近组作有限比较，其余方法仅提供领域位置参考。
 
 ## 证据与写作边界
 
@@ -40,6 +53,7 @@ RTX 4090 效率组优先采用原论文在同一 4090 上统一测得的 YOLOv8/
 - val、test-dev/test 和原论文未明确 split 的结果分表或分组。
 - 不同骨干、输入尺寸、预训练、训练周期和 evaluator 的结果不能表述为严格公平比较。
 - FPS 只有在 GPU、输入、batch、精度、推理后端及计时范围一致时才允许直接排序；仅同为 RTX 4090 但 TensorRT/PyTorch、FP16/FP32 或纯 forward/end-to-end 不同的结果，只并列展示。
+- 预印本、ResearchGate-only 手稿和无法确认正式出处的结果不进入任何论文表或机器材料。
 - 不跨表推导原论文未报告的 AP75、参数量、GFLOPs 或 FPS。
 - 不宣称 SOTA；允许表述为“在相同 640 输入的已报告结果范围内具有竞争力”，前提是正文同时披露骨干和训练差异。
 - 所有外部数字必须绑定原论文 URL/DOI、表号、split 和展示精度。
@@ -60,6 +74,7 @@ RTX 4090 效率组优先采用原论文在同一 4090 上统一测得的 YOLOv8/
 - JSON 可解析且 schema 版本固定。
 - CSV 与 JSON 的行数、方法、split、指标和来源一致。
 - 每个外部行都有非空 `source_url` 与 `source_table`。
+- 每个外部行都有正式发表状态；测试拒绝 `preprint`、`arxiv_only`、`researchgate_only` 和 `unverified`。
 - 每个带 FPS 的行都登记 GPU、batch、precision、backend 和 latency scope；未知项显式为 `not_reported`，不得留空。
 - 每个本项目行都绑定现有材料仓 source ID。
 - Markdown 明确出现 `reported_by_original_paper`、`our_run`、val/test 分离和禁止 SOTA 主张。
