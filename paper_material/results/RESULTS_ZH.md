@@ -91,8 +91,8 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 
 完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)。
 
-## 5. 外部 VisDrone 方法与效率位置
+## 5. CCF B 会 VisDrone 外部位置
 
-已补充 [VisDrone 外部方法与 RTX 4090 效率对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)，覆盖 Drone-DETR、UAV-DETR、MCG-RTDETR、VRF-DETR、NRQO、RT-UAV-SOD，以及正式论文中统一测量的 YOLO/RT-DETR baseline。
+已补充 [VisDrone CCF B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 ICASSP、ICRA、ICME、IROS full/regular paper，覆盖 EMA、HIC-YOLOv5、UAV-DETR、NRQO，以及同一 IROS 论文中报告的 YOLOv8 和 RT-DETR 标准基线；顶会、期刊和仅预印本来源已移出正式表。
 
-外部数字均为原论文报告值，不是本项目复跑值。val、test 与 `not_reported` split 分表，跨 split 不计算涨点。参数量、GFLOPs 和 FPS 仅作上下文，不以参数量筛选方法；只有同一篇 WaveUAV-YOLO 论文中的 YOLOv13s/WaveUAV-YOLO 两行满足 RTX 4090、batch=1、640×640、相同 backend 和端到端 latency scope 的直接速度比较条件。本项目 `81.49 FPS` 未绑定 GPU，不与外部速度排序。
+外部数字均为论文报告值，不是本项目复跑值。640-val 中，本项目三模块 `0.2961` 高于表内 RT-DETR-R50 `0.284`、YOLOv8-L `0.261` 与 HIC-YOLOv5 `0.2595`，接近 UAV-DETR-R18 `0.298` 和 EMA `0.304`；test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明 B 会绝对值位置，跨论文不计算严格涨点。参数量、GFLOPs 与 FPS 仅作上下文；当前没有满足 B 会限定且协议完整的 RTX 4090 速度对，故不做外部速度排序。

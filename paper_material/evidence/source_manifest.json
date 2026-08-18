@@ -99,7 +99,11 @@
         "p3_only": false,
         "fia_layer": 22,
         "layer_23_from": -1,
-        "decoder_from": [22, 25, 28],
+        "decoder_from": [
+          22,
+          25,
+          28
+        ],
         "topology_label": "published_cascading_standalone"
       },
       "evaluation_protocol": {
@@ -118,10 +122,10 @@
       "metrics": {
         "precision": 0.4794334980185041,
         "recall": 0.4141938299458384,
-        "f1": 0.44443223821449405,
+        "f1": 0.44443223821449407,
         "map50": 0.38567545133764725,
         "map75": 0.2096736111592438,
-        "map": 0.21679545343355132
+        "map": 0.21679545343355133
       },
       "test_evaluation_protocol": {
         "split": "test",
@@ -167,7 +171,11 @@
         "p3_only": false,
         "fia_layer": 22,
         "layer_23_from": -1,
-        "decoder_from": [22, 25, 28],
+        "decoder_from": [
+          22,
+          25,
+          28
+        ],
         "topology_label": "published_cascading_standalone"
       },
       "evaluation_protocol": {
@@ -189,7 +197,7 @@
         "f1": 0.530693811231827,
         "map50": 0.486314064615312,
         "map75": 0.29972392008500426,
-        "map": 0.29494032070762063
+        "map": 0.2949403207076206
       },
       "test_evaluation_protocol": {
         "split": "test",
@@ -248,7 +256,11 @@
         "fia_layer": 22,
         "fia_layer_from": 21,
         "layer_23_from": 21,
-        "decoder_from": [22, 25, 28]
+        "decoder_from": [
+          22,
+          25,
+          28
+        ]
       },
       "checkpoint_embedded_best_val": {
         "epoch": 96,
@@ -281,7 +293,7 @@
       "rounded_val_metrics": {
         "precision": 0.569,
         "recall": 0.499,
-        "map50": 0.490,
+        "map50": 0.49,
         "map75": null,
         "map": 0.296
       },
@@ -326,16 +338,76 @@
         "map": 0.234
       },
       "per_class_rounded": [
-        {"class": "pedestrian", "precision": 0.595, "recall": 0.380, "map50": 0.393, "map": 0.161},
-        {"class": "people", "precision": 0.599, "recall": 0.273, "map50": 0.285, "map": 0.103},
-        {"class": "bicycle", "precision": 0.359, "recall": 0.205, "map50": 0.177, "map": 0.0748},
-        {"class": "car", "precision": 0.755, "recall": 0.791, "map50": 0.792, "map": 0.510},
-        {"class": "van", "precision": 0.392, "recall": 0.526, "map50": 0.423, "map": 0.292},
-        {"class": "truck", "precision": 0.516, "recall": 0.493, "map50": 0.463, "map": 0.301},
-        {"class": "tricycle", "precision": 0.321, "recall": 0.353, "map50": 0.275, "map": 0.147},
-        {"class": "awning-tricycle", "precision": 0.441, "recall": 0.272, "map50": 0.239, "map": 0.140},
-        {"class": "bus", "precision": 0.675, "recall": 0.587, "map50": 0.606, "map": 0.427},
-        {"class": "motor", "precision": 0.535, "recall": 0.481, "map50": 0.427, "map": 0.182}
+        {
+          "class": "pedestrian",
+          "precision": 0.595,
+          "recall": 0.38,
+          "map50": 0.393,
+          "map": 0.161
+        },
+        {
+          "class": "people",
+          "precision": 0.599,
+          "recall": 0.273,
+          "map50": 0.285,
+          "map": 0.103
+        },
+        {
+          "class": "bicycle",
+          "precision": 0.359,
+          "recall": 0.205,
+          "map50": 0.177,
+          "map": 0.0748
+        },
+        {
+          "class": "car",
+          "precision": 0.755,
+          "recall": 0.791,
+          "map50": 0.792,
+          "map": 0.51
+        },
+        {
+          "class": "van",
+          "precision": 0.392,
+          "recall": 0.526,
+          "map50": 0.423,
+          "map": 0.292
+        },
+        {
+          "class": "truck",
+          "precision": 0.516,
+          "recall": 0.493,
+          "map50": 0.463,
+          "map": 0.301
+        },
+        {
+          "class": "tricycle",
+          "precision": 0.321,
+          "recall": 0.353,
+          "map50": 0.275,
+          "map": 0.147
+        },
+        {
+          "class": "awning-tricycle",
+          "precision": 0.441,
+          "recall": 0.272,
+          "map50": 0.239,
+          "map": 0.14
+        },
+        {
+          "class": "bus",
+          "precision": 0.675,
+          "recall": 0.587,
+          "map50": 0.606,
+          "map": 0.427
+        },
+        {
+          "class": "motor",
+          "precision": 0.535,
+          "recall": 0.481,
+          "map50": 0.427,
+          "map": 0.182
+        }
       ],
       "evidence_level": "terminal_screenshot_rounded",
       "strict_paired": false,
@@ -364,21 +436,101 @@
         "map": 0.2961
       },
       "per_class": [
-        {"class": "pedestrian", "precision": 0.6800, "recall": 0.5282, "f1": 0.5945, "map50": 0.5672, "map75": 0.2246, "map": 0.2733},
-        {"class": "people", "precision": 0.6405, "recall": 0.4972, "f1": 0.5598, "map50": 0.5023, "map75": 0.1454, "map": 0.2160},
-        {"class": "bicycle", "precision": 0.3718, "recall": 0.2874, "f1": 0.3242, "map50": 0.2449, "map75": 0.0853, "map": 0.1140},
-        {"class": "car", "precision": 0.8004, "recall": 0.8452, "f1": 0.8222, "map50": 0.8542, "map75": 0.6916, "map": 0.6130},
-        {"class": "van", "precision": 0.5400, "recall": 0.5458, "f1": 0.5429, "map50": 0.5285, "map75": 0.4326, "map": 0.3803},
-        {"class": "truck", "precision": 0.5669, "recall": 0.3892, "f1": 0.4616, "map50": 0.4112, "map75": 0.3073, "map": 0.2781},
-        {"class": "tricycle", "precision": 0.4487, "recall": 0.4258, "f1": 0.4370, "map50": 0.3623, "map75": 0.2168, "map": 0.2053},
-        {"class": "awning-tricycle", "precision": 0.3623, "recall": 0.2312, "f1": 0.2823, "map50": 0.1829, "map75": 0.1241, "map": 0.1168},
-        {"class": "bus", "precision": 0.6759, "recall": 0.6147, "f1": 0.6439, "map50": 0.6324, "map75": 0.5589, "map": 0.4643},
-        {"class": "motor", "precision": 0.6070, "recall": 0.6259, "f1": 0.6163, "map50": 0.6116, "map75": 0.2558, "map": 0.3002}
+        {
+          "class": "pedestrian",
+          "precision": 0.68,
+          "recall": 0.5282,
+          "f1": 0.5945,
+          "map50": 0.5672,
+          "map75": 0.2246,
+          "map": 0.2733
+        },
+        {
+          "class": "people",
+          "precision": 0.6405,
+          "recall": 0.4972,
+          "f1": 0.5598,
+          "map50": 0.5023,
+          "map75": 0.1454,
+          "map": 0.216
+        },
+        {
+          "class": "bicycle",
+          "precision": 0.3718,
+          "recall": 0.2874,
+          "f1": 0.3242,
+          "map50": 0.2449,
+          "map75": 0.0853,
+          "map": 0.114
+        },
+        {
+          "class": "car",
+          "precision": 0.8004,
+          "recall": 0.8452,
+          "f1": 0.8222,
+          "map50": 0.8542,
+          "map75": 0.6916,
+          "map": 0.613
+        },
+        {
+          "class": "van",
+          "precision": 0.54,
+          "recall": 0.5458,
+          "f1": 0.5429,
+          "map50": 0.5285,
+          "map75": 0.4326,
+          "map": 0.3803
+        },
+        {
+          "class": "truck",
+          "precision": 0.5669,
+          "recall": 0.3892,
+          "f1": 0.4616,
+          "map50": 0.4112,
+          "map75": 0.3073,
+          "map": 0.2781
+        },
+        {
+          "class": "tricycle",
+          "precision": 0.4487,
+          "recall": 0.4258,
+          "f1": 0.437,
+          "map50": 0.3623,
+          "map75": 0.2168,
+          "map": 0.2053
+        },
+        {
+          "class": "awning-tricycle",
+          "precision": 0.3623,
+          "recall": 0.2312,
+          "f1": 0.2823,
+          "map50": 0.1829,
+          "map75": 0.1241,
+          "map": 0.1168
+        },
+        {
+          "class": "bus",
+          "precision": 0.6759,
+          "recall": 0.6147,
+          "f1": 0.6439,
+          "map50": 0.6324,
+          "map75": 0.5589,
+          "map": 0.4643
+        },
+        {
+          "class": "motor",
+          "precision": 0.607,
+          "recall": 0.6259,
+          "f1": 0.6163,
+          "map50": 0.6116,
+          "map75": 0.2558,
+          "map": 0.3002
+        }
       ],
       "model_info": {
-        "gflops": 109.0,
+        "gflops": 109,
         "parameters": 32635754,
-        "preprocess_seconds_per_image": 0.000440,
+        "preprocess_seconds_per_image": 0.00044,
         "inference_seconds_per_image": 0.017861,
         "postprocess_seconds_per_image": 0.000191,
         "end_to_end_fps": 54.08,
@@ -414,28 +566,108 @@
         "map": 0.2337
       },
       "per_class": [
-        {"class": "pedestrian", "precision": 0.5949, "recall": 0.3803, "f1": 0.4640, "map50": 0.3927, "map75": 0.1015, "map": 0.1606},
-        {"class": "people", "precision": 0.5993, "recall": 0.2726, "f1": 0.3747, "map50": 0.2849, "map75": 0.0446, "map": 0.1026},
-        {"class": "bicycle", "precision": 0.3594, "recall": 0.2051, "f1": 0.2611, "map50": 0.1773, "map75": 0.0493, "map": 0.0748},
-        {"class": "car", "precision": 0.7549, "recall": 0.7911, "f1": 0.7726, "map50": 0.7922, "map75": 0.5656, "map": 0.5104},
-        {"class": "van", "precision": 0.3925, "recall": 0.5261, "f1": 0.4496, "map50": 0.4233, "map75": 0.3414, "map": 0.2916},
-        {"class": "truck", "precision": 0.5163, "recall": 0.4930, "f1": 0.5044, "map50": 0.4632, "map75": 0.3391, "map": 0.3006},
-        {"class": "tricycle", "precision": 0.3209, "recall": 0.3531, "f1": 0.3362, "map50": 0.2749, "map75": 0.1317, "map": 0.1473},
-        {"class": "awning-tricycle", "precision": 0.4407, "recall": 0.2721, "f1": 0.3365, "map50": 0.2395, "map75": 0.1545, "map": 0.1403},
-        {"class": "bus", "precision": 0.6746, "recall": 0.5873, "f1": 0.6279, "map50": 0.6057, "map75": 0.4828, "map": 0.4271},
-        {"class": "motor", "precision": 0.5352, "recall": 0.4808, "f1": 0.5065, "map50": 0.4271, "map75": 0.1160, "map": 0.1816}
+        {
+          "class": "pedestrian",
+          "precision": 0.5949,
+          "recall": 0.3803,
+          "f1": 0.464,
+          "map50": 0.3927,
+          "map75": 0.1015,
+          "map": 0.1606
+        },
+        {
+          "class": "people",
+          "precision": 0.5993,
+          "recall": 0.2726,
+          "f1": 0.3747,
+          "map50": 0.2849,
+          "map75": 0.0446,
+          "map": 0.1026
+        },
+        {
+          "class": "bicycle",
+          "precision": 0.3594,
+          "recall": 0.2051,
+          "f1": 0.2611,
+          "map50": 0.1773,
+          "map75": 0.0493,
+          "map": 0.0748
+        },
+        {
+          "class": "car",
+          "precision": 0.7549,
+          "recall": 0.7911,
+          "f1": 0.7726,
+          "map50": 0.7922,
+          "map75": 0.5656,
+          "map": 0.5104
+        },
+        {
+          "class": "van",
+          "precision": 0.3925,
+          "recall": 0.5261,
+          "f1": 0.4496,
+          "map50": 0.4233,
+          "map75": 0.3414,
+          "map": 0.2916
+        },
+        {
+          "class": "truck",
+          "precision": 0.5163,
+          "recall": 0.493,
+          "f1": 0.5044,
+          "map50": 0.4632,
+          "map75": 0.3391,
+          "map": 0.3006
+        },
+        {
+          "class": "tricycle",
+          "precision": 0.3209,
+          "recall": 0.3531,
+          "f1": 0.3362,
+          "map50": 0.2749,
+          "map75": 0.1317,
+          "map": 0.1473
+        },
+        {
+          "class": "awning-tricycle",
+          "precision": 0.4407,
+          "recall": 0.2721,
+          "f1": 0.3365,
+          "map50": 0.2395,
+          "map75": 0.1545,
+          "map": 0.1403
+        },
+        {
+          "class": "bus",
+          "precision": 0.6746,
+          "recall": 0.5873,
+          "f1": 0.6279,
+          "map50": 0.6057,
+          "map75": 0.4828,
+          "map": 0.4271
+        },
+        {
+          "class": "motor",
+          "precision": 0.5352,
+          "recall": 0.4808,
+          "f1": 0.5065,
+          "map50": 0.4271,
+          "map75": 0.116,
+          "map": 0.1816
+        }
       ],
       "model_info": {
-        "gflops": 109.0,
+        "gflops": 109,
         "parameters": 32635754,
-        "preprocess_seconds_per_image": 0.000420,
+        "preprocess_seconds_per_image": 0.00042,
         "inference_seconds_per_image": 0.011658,
         "postprocess_seconds_per_image": 0.000194,
         "end_to_end_fps": 81.49,
         "inference_fps": 85.78,
         "model_file_size_mb": 64.8
       },
-      "delta_from_bpdd_map_pp": 0.20409356127704894,
+      "delta_from_bpdd_map_pp": 0.20409356127704895,
       "strict_paired": false,
       "evidence_level": "user_supplied_text_report_4dp",
       "screenshot_crosscheck_source_id": "fia_updated_three_module_terminal_test",
@@ -496,92 +728,85 @@
       ],
       "transformation": "cherry-picked source commit and normalized the standalone YAML downsample branches; this scaffold is retained only for audit and must be re-bound to the updated FIA source before reuse"
     },
-    "external_drone_detr_sensors_2024": {
-      "title": "Drone-DETR: Efficient Small Object Detection for Remote Sensing Image Using Enhanced RT-DETR Model",
-      "venue": "Sensors 2024",
-      "publication_status": "peer_reviewed_journal",
-      "source_url": "https://doi.org/10.3390/s24175496",
-      "source_tables": ["Table 2", "Table 3"],
-      "evidence_level": "original_formal_publication_reported_value",
-      "transformation": "transcribe VisDrone val and test rows; preserve unavailable metrics as null"
-    },
     "external_uav_detr_iros_2025": {
       "title": "UAV-DETR: Efficient End-to-End Object Detection for Unmanned Aerial Vehicle Imagery",
       "venue": "IROS 2025",
       "publication_status": "peer_reviewed_conference",
       "source_url": "https://doi.org/10.1109/IROS60139.2025.11246176",
-      "source_tables": ["Table I", "real-time comparison table"],
-      "evidence_level": "original_formal_publication_reported_value",
-      "transformation": "transcribe the R18 and R50 VisDrone validation rows"
-    },
-    "external_vrf_detr_remote_sensing_2025": {
-      "title": "An Efficient Aerial Image Detection with Variable Receptive Fields",
-      "venue": "Remote Sensing 2025",
-      "publication_status": "peer_reviewed_journal",
-      "source_url": "https://doi.org/10.3390/rs17152672",
-      "source_tables": ["Table 9", "Table 10"],
-      "evidence_level": "original_formal_publication_reported_value",
-      "transformation": "transcribe separately labeled VisDrone val and test rows"
-    },
-    "external_mcg_rtdetr_remote_sensing_2024": {
-      "title": "MCG-RTDETR: Multi-Convolution and Context-Guided Network with Cascaded Group Attention for Object Detection in Unmanned Aerial Vehicle Imagery",
-      "venue": "Remote Sensing 2024",
-      "publication_status": "peer_reviewed_journal",
-      "source_url": "https://doi.org/10.3390/rs16173169",
-      "source_tables": ["Table 3"],
-      "evidence_level": "original_formal_publication_reported_value_split_unreported",
-      "transformation": "transcribe metrics while retaining the paper's missing evaluated-split identity"
+      "source_tables": [
+        "Table I",
+        "real-time comparison table"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value",
+      "transformation": "transcribe the R18 and R50 VisDrone validation rows",
+      "ccf_class": "B"
     },
     "external_nrqo_icme_2025": {
       "title": "Revisiting DETR for Small Object Detection via Noise-Resilient Query Optimization",
       "venue": "ICME 2025",
       "publication_status": "peer_reviewed_conference",
       "source_url": "https://doi.org/10.1109/ICME59968.2025.11209405",
-      "source_tables": ["Table I"],
-      "evidence_level": "original_formal_publication_reported_value_split_unreported",
-      "transformation": "transcribe metrics while retaining the paper's missing split and input identities"
-    },
-    "external_rt_uav_sod_scientific_reports_2025": {
-      "title": "A Real-Time and Efficient Detector for Small Object in UAV Aerial Images",
-      "venue": "Scientific Reports 2025",
-      "publication_status": "peer_reviewed_journal",
-      "source_url": "https://doi.org/10.1038/s41598-025-22855-w",
-      "source_tables": ["Table 2"],
-      "evidence_level": "original_formal_publication_reported_value",
-      "transformation": "transcribe the explicitly labeled VisDrone2019-DET test row"
-    },
-    "external_fbrt_yolo_aaai_2025": {
-      "title": "FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection",
-      "venue": "AAAI 2025",
-      "publication_status": "peer_reviewed_conference",
-      "source_url": "https://doi.org/10.1609/aaai.v39i8.32937",
-      "source_tables": ["Table 1"],
-      "evidence_level": "formal_publication_unified_standard_baseline_measurement",
-      "scope": "Only standard YOLO and RT-DETR baseline rows are imported; FBRT-YOLO is not used as a method-level venue comparator.",
-      "runtime_boundary": "Experiments used RTX 4090 except that inference speed was measured on a single RTX 3080; split, input, precision, backend, and latency scope are not reported.",
-      "transformation": "transcribe selected standard baseline rows and disallow direct FPS comparison"
-    },
-    "external_waveuav_yolo_remote_sensing_2026": {
-      "title": "WaveUAV-YOLO: A Lightweight Architecture for UAV Object Detection with Frequency-Domain Edge Preservation and Stable Gradient Fusion",
-      "venue": "Remote Sensing 2026",
-      "publication_status": "peer_reviewed_journal",
-      "source_url": "https://doi.org/10.3390/rs18142404",
-      "source_tables": ["Table 1", "Section 4.3 runtime paragraph"],
-      "evidence_level": "original_formal_publication_reported_value_matched_runtime_pair",
-      "runtime_boundary": "YOLOv13s and WaveUAV-YOLO use batch 1, 640x640, RTX 4090, PyTorch 2.2.2, and end-to-end preprocessing plus inference plus NMS latency; inference precision is not reported.",
-      "transformation": "transcribe the controlled VisDrone test and RTX 4090 runtime pair"
+      "source_tables": [
+        "Table I"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value_split_unreported",
+      "transformation": "transcribe metrics while retaining the paper's missing split and input identities",
+      "ccf_class": "B"
     },
     "external_visdrone_comparison_json": {
       "artifact": "paper_material/results/external_visdrone_comparison.json",
-      "sha256": "697835f73c168188c9e82f95f9b13a2c127f5ebb64837f31dea5019dfbe61abf",
-      "evidence_level": "curated_primary_publication_index",
-      "transformation": "normalize primary-paper rows into an explicit split, protocol, metric, and runtime schema"
+      "sha256": "517e1f3fcc6f8285f130ed5a1d69aa78738626a061ab2da2799f47272670592c",
+      "evidence_level": "curated_ccf_b_conference_publication_index",
+      "transformation": "normalize project rows and CCF B conference rows into an explicit split, protocol, metric, and runtime schema"
     },
     "external_visdrone_comparison_csv": {
       "artifact": "paper_material/results/external_visdrone_comparison.csv",
-      "sha256": "5c8a9046f0805719b191b76d9806fdd3831bf555e8cb58ca289c47627aa9952c",
+      "sha256": "d5a07edbd4e17ab59f92dc33cbdb56d6f482aacc183dd299822c17aec3982584",
       "evidence_level": "flattened_view_of_external_visdrone_comparison_json",
       "transformation": "flatten JSON rows without changing values"
+    },
+    "external_hic_yolov5_icra_2024": {
+      "title": "HIC-YOLOv5: Improved YOLOv5 for Small Object Detection",
+      "venue": "ICRA 2024",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICRA57147.2024.10610273",
+      "source_tables": [
+        "Table IV",
+        "Table VI"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value",
+      "transformation": "transcribe separately labeled VisDrone validation and test rows; preserve unavailable AP75 as null"
+    },
+    "external_ema_icassp_2023": {
+      "title": "Efficient Multi-Scale Attention Module with Cross-Spatial Learning",
+      "venue": "ICASSP 2023",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICASSP49357.2023.10096516",
+      "source_tables": [
+        "Table 2",
+        "Section 4.4"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value",
+      "transformation": "transcribe the explicit VisDrone validation row and retain partial-pretraining and batch boundaries"
+    },
+    "external_ccf_b_venue_scope_2026": {
+      "title": "CCF Recommended International Conferences",
+      "publication_status": "official_ranking_directory",
+      "source_urls": [
+        "https://www.ccf.org.cn/Academic_Evaluation/CGAndMT/",
+        "https://www.ccf.org.cn/Academic_Evaluation/AI/"
+      ],
+      "venues": [
+        "ICASSP",
+        "ICME",
+        "ICRA",
+        "IROS"
+      ],
+      "ccf_class": "B",
+      "evidence_level": "official_venue_scope_authority",
+      "transformation": "use only full or regular papers from listed B conferences in the formal external comparison"
     }
   },
   "revocations": [

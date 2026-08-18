@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a paper-ready, primary-source-backed VisDrone comparison package covering DETR/RT-DETR methods and selected RTX 4090 YOLO baselines, while excluding preprints and keeping unlike protocols visibly separated.
+**Goal:** Add a paper-ready, primary-source-backed VisDrone comparison package limited to CCF B conference papers covering DETR/RT-DETR and YOLO methods, while excluding top conferences, journals, preprints, and unlike-protocol deltas.
 
 **Architecture:** Store one canonical JSON dataset, derive a synchronized flat CSV view, and render a Chinese Markdown comparison page from the same audited values. Link the package from the material index, consolidated results, and paper outline; bind local artifacts and source provenance in the evidence manifest. Parameter count remains descriptive metadata and is not an admission or sorting gate.
 
@@ -19,7 +19,7 @@
 - [x] Add tests requiring the new JSON/CSV/Markdown files and their README/results/outline links.
 - [x] Assert formal-publication status, primary-source URL/table provenance, split/input separation, and explicit unavailable values.
 - [x] Assert that preprints, arXiv-only, ResearchGate-only, and unverified rows are absent.
-- [x] Assert RTX 4090 speed rows carry batch, precision, backend, and latency-scope fields; only fully matched rows may enable direct FPS comparison.
+- [x] Assert any speed row carries batch, precision, backend, and latency-scope fields; only fully matched rows may enable direct FPS comparison.
 - [x] Assert parameter count is metadata only and is not used as a filtering/sorting requirement.
 - [x] Run `python -m pytest tests/test_material_integrity.py -q` and confirm failure is caused by the missing comparison package.
 
@@ -33,7 +33,7 @@
 
 - [x] Transcribe only values verified in original formally published papers or the repository's canonical run evidence.
 - [x] Group rows by `val`, `test`, or `not_reported`; record input, backbone, pretraining, evaluator, and metric availability without inference.
-- [x] Add selected standard YOLO/RT-DETR baselines measured in a formally published RTX 4090 study and keep speed comparisons non-direct when runtime fields differ or are unreported.
+- [x] Add selected standard YOLO/RT-DETR baselines reported in the formal IROS comparison table and keep speed comparisons non-direct when runtime fields differ or are unreported.
 - [x] Flatten the JSON rows to CSV with identical values and provenance identifiers.
 - [x] Add local artifact hashes and publication-source metadata to the evidence manifest.
 - [x] Run the focused integrity tests and confirm the machine-readable package passes.
@@ -47,7 +47,7 @@
 - Modify: `paper_material/writing/ICASSP2027_OUTLINE_ZH.md`
 - Test: `tests/test_material_integrity.py`
 
-- [x] Add separate val, test, split-unclear, and RTX 4090 efficiency tables.
+- [x] Add separate val, test, split-unclear, and runtime-boundary sections.
 - [x] State that external numbers are reported values, not reruns; disallow cross-table delta and SOTA claims.
 - [x] Explain that parameter count is retained for context but is not a selection criterion.
 - [x] Link the comparison package from the material index, consolidated results, and ICASSP writing outline.

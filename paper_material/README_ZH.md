@@ -14,7 +14,7 @@
 8. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
 9. [val 主结果表](results/MAIN_TABLE_ZH.md)
 10. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
-11. [VisDrone 外部方法与 RTX 4090 效率对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
+11. [VisDrone CCF B 会外部方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
 12. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
 13. [四图规划](figures/FIGURE_PLAN_ZH.md)
 
@@ -26,7 +26,7 @@
 - 两个 standalone checkpoint 均为 published cascading topology（`model[23].f=-1`），不能称为 P3-only。
 - 两个 standalone `best.pt` 均已在 VisDrone test（1,610 images / 75,102 instances）完成 exact 独立复评；FIA-only / FDR+FIA 的 AP75 分别为 `0.1716130742` / `0.2358787301`。val 与 test 结果分别报告；对既有对照的任何 test 算术差也不是 strict paired 因果增益。
 - FDR+BPDD+FIA 已补入与终端截图对应的四位小数文本记录。val 为 `P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP=0.2961`（相对 BPDD `+0.384 pp`）；test 为 `P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP=0.2337`（`+0.204 pp`）。checkpoint `0.29618` 与终端截图作为互证。
-- 外部 VisDrone 对比只收录正式发表来源，并按 val、test、split 未报告和运行协议分组。参数量保留为普通字段，不再作为方法准入或排序条件；预印本与来源不明结果不进入材料。
+- 外部 VisDrone 正式表只收录 CCF B 类会议 full/regular paper，并按 val、test 与 split 未报告分组。当前覆盖 ICASSP、ICRA、ICME、IROS；参数量仅作描述字段，顶会、期刊、预印本与来源不明结果不进入正式表。
 
 ## 机器可读材料
 

@@ -747,20 +747,20 @@ def test_external_visdrone_comparison_contract_and_source_policy():
     assert comparison["policy"]["parameter_count_is_sort_key"] is False
     assert comparison["policy"]["cross_protocol_delta_allowed"] is False
     assert comparison["policy"]["sota_claim_allowed"] is False
+    assert comparison["policy"]["venue_scope"] == "ccf_b_conference_only"
 
     rows = comparison["rows"]
     assert len(rows) >= 12
     assert {row["split"] for row in rows} >= {"val", "test", "not_reported"}
     assert {row["family"] for row in rows} == {"project", "detr", "yolo"}
     assert {
-        "Drone-DETR",
         "UAV-DETR-R18",
-        "VRF-DETR",
-        "MCG-RTDETR",
+        "UAV-DETR-R50",
         "NRQO",
+        "HIC-YOLOv5",
+        "YOLOv5x + EMA",
         "YOLOv8-M",
         "YOLOv8-L",
-        "YOLOv10-L",
         "RT-DETR-R50",
         "RT-DETR-L + FDR + BPDD + FIA",
     }.issubset({row["method"] for row in rows})
@@ -792,10 +792,19 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         if row["source_id"] is not None:
             assert row["source_id"] in manifest["sources"]
 
+    external_rows = [row for row in rows if row["family"] != "project"]
+    allowed_venues = {"ICASSP 2023", "ICRA 2024", "ICME 2025", "IROS 2025"}
+    allowed_source_ids = {
+        "external_ema_icassp_2023",
+        "external_hic_yolov5_icra_2024",
+        "external_nrqo_icme_2025",
+        "external_uav_detr_iros_2025",
+    }
+    assert {row["venue"] for row in external_rows} <= allowed_venues
+    assert {row["source_id"] for row in external_rows} <= allowed_source_ids
     assert all(
-        row["split"] == "not_reported"
-        for row in rows
-        if row["method"] == "MCG-RTDETR"
+        row["publication_status"] == "peer_reviewed_conference"
+        for row in external_rows
     )
 
 
@@ -824,12 +833,11 @@ def test_external_visdrone_csv_matches_json_rows():
             assert flat[csv_key] == ("" if expected is None else str(expected))
 
 
-def test_external_visdrone_rtx4090_speed_scope_is_explicit():
+def test_external_visdrone_runtime_scope_is_explicit_when_reported():
     comparison = _load_required_json("results/external_visdrone_comparison.json")
     speed_rows = [row for row in comparison["rows"] if row["fps"] is not None]
 
     assert speed_rows
-    assert any(row["hardware"]["gpu"] == "NVIDIA GeForce RTX 4090" for row in speed_rows)
     for row in speed_rows:
         assert set(row["hardware"]) == {
             "gpu",
@@ -862,7 +870,13 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
         "外部论文报告值，不是本项目复跑值",
         "不宣称 SOTA",
         "参数量不是筛选条件",
-        "RTX 4090",
+        "CCF B",
+        "ICASSP",
+        "ICRA",
+        "ICME",
+        "IROS",
         "not_reported",
     ):
         assert required_text in page
+    for forbidden_text in ("AAAI", "Sensors 2024", "Remote Sensing", "Scientific Reports"):
+        assert forbidden_text not in page
