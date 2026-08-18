@@ -15,6 +15,7 @@ REQUIRED_MATERIAL_FILES = (
     "methods/BPDD_ZH.md",
     "methods/FIA_ZH.md",
     "experiments/PROTOCOL_ZH.md",
+    "experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md",
     "experiments/FIA_ABLATION_SCAFFOLD_ZH.md",
     "evidence/fia_results_status.json",
     "evidence/fia_existing_best_evaluation.json",
@@ -24,6 +25,8 @@ REQUIRED_MATERIAL_FILES = (
     "results/RESULTS_ZH.md",
     "results/main_results.json",
     "results/MAIN_TABLE_ZH.md",
+    "results/COMPLEXITY_ZH.md",
+    "results/complexity_results.json",
     "evidence/source_manifest.json",
     "evidence/bpdd_val_exact.json",
     "results/SPLIT_GAIN_COMPARISON_ZH.md",
@@ -488,7 +491,7 @@ def test_main_table_matches_user_standard_a_to_e_display():
         "| A | RT-DETR-L Baseline | — | — | — | 0.46761 | 0.41731 | 0.38663 | 0.21302 | 0.21911 | — |",
         "| B | RT-DETR-L + FDR | ✓ | — | — | 0.56911 | 0.49278 | 0.48468 | 0.29253 | 0.28966 | +7.055 pp |",
         "| C | RT-DETR-L + FDR + BPDD | ✓ | ✓ | — | 0.57063 | 0.49446 | 0.48641 | 0.29810 | 0.29226 | +0.260 pp |",
-        "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 待整理 | 待整理 | 待整理 | 待整理 | 待整理 | FIA 独立增量 |",
+        "| D | RT-DETR-L + FDR + FIA | ✓ | — | ✓ | 0.57752 | 0.49089 | 0.48631 | 0.29972 | 0.29494 | +0.528 pp |",
         "| E | RT-DETR-L + FDR + BPDD + FIA | ✓ | ✓ | ✓ | 0.5693 | 0.4991 | 0.4898 | 0.3042 | 0.2961 | +0.384 pp |",
     )
     for row in expected_rows:
@@ -502,6 +505,37 @@ def test_main_table_matches_user_standard_a_to_e_display():
     assert display[-1]["delta_display"] == "+0.384 pp"
     assert display[-1]["source_id"] == "fia_updated_three_module_text_val"
 
+    d_row = next(row for row in display if row["id"] == "D")
+    assert d_row == {
+        "id": "D",
+        "model": "RT-DETR-L + FDR + FIA",
+        "fdr": True,
+        "bpdd": False,
+        "fia": True,
+        "precision_display": "0.57752",
+        "recall_display": "0.49089",
+        "map50_display": "0.48631",
+        "map75_display": "0.29972",
+        "map_display": "0.29494",
+        "delta_display": "+0.528 pp",
+        "source_id": "fdr_fia_existing_best_independent_val",
+    }
+    supplementary_d = next(
+        row
+        for row in results["supplementary_updated_fia_observations"]
+        if row["split"] == "VisDrone val"
+        and row["method"] == "RT-DETR-L+FDR+FIA"
+    )
+    assert supplementary_d["precision"] == 0.5775238641748943
+    assert supplementary_d["recall"] == 0.4908887926435492
+    assert supplementary_d["map50"] == 0.486314064615312
+    assert supplementary_d["map75"] == 0.29972392008500426
+    assert supplementary_d["map"] == 0.29494032070762063
+    assert supplementary_d["delta_map_pp"] == 0.5280571609979634
+    assert supplementary_d["delta_strict_paired"] is False
+    assert "待整理" not in table
+    assert "待整理" not in json.dumps(display, ensure_ascii=False)
+
     manifest = _load_required_json("evidence/source_manifest.json")
     standard_source = manifest["sources"][display[-1]["source_id"]]
     assert standard_source["metrics"] == {
@@ -513,6 +547,73 @@ def test_main_table_matches_user_standard_a_to_e_display():
         "map": 0.2961,
     }
     assert standard_source["evidence_level"] == "user_supplied_text_report_4dp"
+
+
+def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
+    protocol = _read_required_text("experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md")
+    for required_text in (
+        "唯一新增训练实验",
+        "同一源码提交",
+        "seed=0",
+        "FDR",
+        "FDR+BPDD",
+        "AP75",
+        "+0.557 pp",
+        "训练期",
+        "不增加推理分支",
+        "待执行",
+    ):
+        assert required_text in protocol
+
+    page = _read_required_text("results/COMPLEXITY_ZH.md")
+    for required_text in (
+        "RT-DETR-L Baseline",
+        "RT-DETR-L + FDR",
+        "RT-DETR-L + FDR + BPDD",
+        "RT-DETR-L + FDR + BPDD + FIA",
+        "Params",
+        "FLOPs",
+        "FPS",
+        "Latency",
+        "AP75",
+        "mAP50–95",
+        "待统一实测",
+        "不增加推理分支",
+    ):
+        assert required_text in page
+
+    complexity = _load_required_json("results/complexity_results.json")
+    assert complexity["format_version"] == 1
+    assert complexity["status"] == "pending_unified_measurement"
+    assert complexity["protocol"]["same_hardware_required"] is True
+    assert complexity["protocol"]["imgsz"] == 640
+    assert complexity["protocol"]["batch"] == 1
+    assert complexity["protocol"]["half"] is False
+    rows = {row["method"]: row for row in complexity["rows"]}
+    assert set(rows) == {
+        "RT-DETR-L Baseline",
+        "RT-DETR-L + FDR",
+        "RT-DETR-L + FDR + BPDD",
+        "RT-DETR-L + FDR + BPDD + FIA",
+    }
+    assert all(
+        row[key] is None
+        for row in rows.values()
+        for key in ("params", "gflops", "fps", "latency_ms")
+    )
+    assert rows["RT-DETR-L Baseline"]["ap75"] == 0.21302
+    assert rows["RT-DETR-L + FDR"]["map"] == 0.28966
+    assert rows["RT-DETR-L + FDR + BPDD"]["ap75"] == 0.29810
+    assert rows["RT-DETR-L + FDR + BPDD + FIA"]["map"] == 0.2961
+    assert rows["RT-DETR-L + FDR + BPDD"]["inference_contract"] == (
+        "same_as_fdr_by_construction"
+    )
+
+    manifest = _load_required_json("evidence/source_manifest.json")
+    source = manifest["sources"]["generated_unified_complexity_contract"]
+    assert source["artifact"] == "paper_material/results/complexity_results.json"
+    artifact = REPOSITORY_ROOT / source["artifact"]
+    assert hashlib.sha256(artifact.read_bytes()).hexdigest() == source["sha256"]
 
 
 def test_split_gain_comparison_covers_every_module_combination_without_fabrication():
@@ -779,6 +880,7 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "DM-EFS",
         "UFPMP-Det-R50",
         "DINO-5scale + UGS",
+        "VARDet",
         "YOLOv10-X",
         "RT-DETR-R34",
         "FBRT-YOLO-L",
@@ -831,6 +933,7 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "AAAI 2022",
         "CVPR 2022",
         "ICASSP 2023",
+        "ICASSP 2026",
         "ICRA 2024",
         "AAAI 2025",
         "ICME 2025",
@@ -842,6 +945,7 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "external_ufpmp_aaai_2022",
         "external_querydet_cvpr_2022",
         "external_ema_icassp_2023",
+        "external_vardet_icassp_2026",
         "external_hic_yolov5_icra_2024",
         "external_fbrt_yolo_aaai_2025",
         "external_nrqo_icme_2025",
@@ -884,6 +988,32 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         row["metrics"]["map50_95"] for row in higher
     )
     assert rows.index(lower[-1]) < rows.index(higher[0])
+
+    vardet = next(row for row in rows if row["method"] == "VARDet")
+    assert vardet["venue"] == "ICASSP 2026"
+    assert vardet["venue_rank"] == "B"
+    assert vardet["family"] == "detr"
+    assert vardet["split"] == "val"
+    assert vardet["input_size"] == "1333x800"
+    assert vardet["backbone"] == "ResNet-50"
+    assert vardet["metrics"] == {
+        "precision": None,
+        "recall": None,
+        "ap50": 0.617,
+        "ap75": 0.391,
+        "map50_95": 0.365,
+    }
+    assert vardet["relative_to_project"] == "higher"
+    assert vardet["comparison_scope"] == "external_b_venue_reported_val"
+    assert "unified reimplementation" in vardet["evaluator"]
+    assert "not protocol-matched" in vardet["note"]
+
+    vardet_source = manifest["sources"]["external_vardet_icassp_2026"]
+    assert vardet_source["source_url"] == (
+        "https://doi.org/10.1109/ICASSP55912.2026.11463846"
+    )
+    assert vardet_source["ccf_class"] == "B"
+    assert vardet_source["source_tables"] == ["Table 1"]
 
 
 def test_external_visdrone_csv_matches_json_rows():
@@ -960,8 +1090,13 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
         "ICRA",
         "ICME",
         "IROS",
+        "VARDet",
+        "1333×800",
+        "非严格可比",
         "not_reported",
     ):
         assert required_text in page
+    assert "VARDet" in outline
+    assert "ICASSP 2026" in outline
     for forbidden_text in ("Sensors 2024", "Remote Sensing", "Scientific Reports"):
         assert forbidden_text not in page

@@ -8,29 +8,35 @@
 2. [BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
 3. [FIA：高分辨率特征增强](methods/FIA_ZH.md)
 4. [冻结实验协议](experiments/PROTOCOL_ZH.md)
-5. [FIA 消融实验入口](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
-6. [论文结果统一汇总](results/RESULTS_ZH.md)
-7. [FIA 发布版 best.pt 结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
-8. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
-9. [val 主结果表](results/MAIN_TABLE_ZH.md)
-10. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
-11. [VisDrone CCF A/B 会外部方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
-12. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
-13. [四图规划](figures/FIGURE_PLAN_ZH.md)
+5. [BPDD 严格配对补充实验](experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md)
+6. [FIA 消融实验入口](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
+7. [论文结果统一汇总](results/RESULTS_ZH.md)
+8. [FIA 发布版 best.pt 结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
+9. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
+10. [val 主结果表](results/MAIN_TABLE_ZH.md)
+11. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
+12. [统一复杂度与实时性表](results/COMPLEXITY_ZH.md)
+13. [VisDrone CCF A/B 会外部方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
+14. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+15. [四图规划](figures/FIGURE_PLAN_ZH.md)
 
 ## 当前结果口径
 
 - RT-DETR-L、FDR、FDR+BPDD 是正式核心行。FDR 相对 baseline 可作严格差值；BPDD 行是跨 authority 精确绝对值，算术差不是严格配对因果增益。
+- A–E val 主表的 D 行已与统一结果页对齐：FDR+FIA 为 `P=0.57752、R=0.49089、AP50=0.48631、AP75=0.29972、mAP=0.29494`，相对 FDR 为 `+0.528 pp` 的非严格配对算术差，不再保留“待整理”占位。
 - FIA-only 与 FDR+FIA 按当前决策直接采用 Release 中各自的 `best.pt`，不再重训。冻结 evaluator 独立 val 的 mAP50–95 分别为 `0.2167954534` 与 `0.2949403207`；独立 test 的 mAP50–95 分别为 `0.1771764568` 与 `0.2346453866`。
 - FIA-only 相对 baseline 为 `−0.2315 pp`；FDR+FIA 相对 FDR 为 `+0.5280 pp`。两者是非严格配对算术差。
 - 两个 standalone checkpoint 均为 published cascading topology（`model[23].f=-1`），不能称为 P3-only。
 - 两个 standalone `best.pt` 均已在 VisDrone test（1,610 images / 75,102 instances）完成 exact 独立复评；FIA-only / FDR+FIA 的 AP75 分别为 `0.1716130742` / `0.2358787301`。val 与 test 结果分别报告；对既有对照的任何 test 算术差也不是 strict paired 因果增益。
 - FDR+BPDD+FIA 已补入与终端截图对应的四位小数文本记录。val 为 `P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP=0.2961`（相对 BPDD `+0.384 pp`）；test 为 `P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP=0.2337`（`+0.204 pp`）。checkpoint `0.29618` 与终端截图作为互证。
-- 外部 VisDrone 正式表收录 CCF A/B 类会议 full/regular paper，并标明会议等级与相对本文的绝对 mAP 位置。当前覆盖 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS；同 split 的结果分成“不高于本文/高于本文”，split 或 input 未报告的结果单列为不可排序。期刊、预印本与来源不明结果不进入正式表。
+- 外部 VisDrone 正式表收录 CCF A/B 类会议 full/regular paper，并标明会议等级与相对本文的绝对 mAP 位置。当前覆盖 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS；同 split 的结果分成“不高于本文/高于本文”，split 或 input 未报告的结果单列为不可排序。ICASSP 2026 VARDet 已作为同任务直接竞品登记，但其 ResNet-50、1333×800 统一重实现结果与本文 640 协议非严格可比。期刊、预印本与来源不明结果不进入正式表。
 
 ## 机器可读材料
 
 - [正式 val 主结果](results/main_results.json)
+- [BPDD 严格配对实验合同](experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md)
+- [统一复杂度与实时性说明](results/COMPLEXITY_ZH.md)
+- [统一复杂度机器合同](results/complexity_results.json)
 - [组合状态与总体结果](results/split_gain_comparison.json)
 - [val/test 总体 CSV](results/split_overall_results.csv)
 - [尺度 CSV](results/split_scale_results.csv)
@@ -49,7 +55,7 @@
 
 ## 方法依赖
 
-- FDR 是定位分布表示基础。
-- BPDD 消费 FDR 的逐边分布，只在训练期工作；BPDD-only 不是合法模型行。
-- FIA 是推理期高分辨率特征模块。当前证据说明 FIA 与 FDR 组合具有正向兼容性，但 FIA-only 并未显示稳定增益。
+- FDR 是来自 D-FINE、适配到 Ultralytics RT-DETR-L/VisDrone 的定位分布基础，不作为本文从零提出的原创模块。
+- BPDD 是论文的主要方法创新：它消费 FDR 的逐边分布，只在训练期工作且不增加推理分支；BPDD-only 不是合法模型行。
+- FIA 是面向 distribution-refined context 的推理期高分辨率增强模块。当前 FDR+FIA 与三模块结果支持正向互补，但 FIA-only 并未显示稳定增益，后者保留在补充消融中。
 - FDR/FGL/Integral 及非均匀积分来自固定版本 D-FINE 先验；本文主张的是面向 Ultralytics RT-DETR-L 与 VisDrone 的适配、组合和验证。

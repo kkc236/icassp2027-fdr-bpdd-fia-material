@@ -1,0 +1,86 @@
+{
+  "format_version": 1,
+  "status": "pending_unified_measurement",
+  "reason": "The designated server is occupied and the local PyTorch build is CPU-only; no cross-hardware runtime values are presented as unified measurements.",
+  "protocol": {
+    "same_hardware_required": true,
+    "device": null,
+    "imgsz": 640,
+    "batch": 1,
+    "half": false,
+    "warmup_iterations": 100,
+    "measured_iterations": 300,
+    "cuda_synchronize": true,
+    "latency_statistic": "median_and_p90_end_to_end_ms",
+    "fps_definition": "1000 / median_end_to_end_latency_ms",
+    "include_preprocess": true,
+    "include_postprocess": true,
+    "software_environment_must_match": true
+  },
+  "rows": [
+    {
+      "method": "RT-DETR-L Baseline",
+      "params": null,
+      "gflops": null,
+      "fps": null,
+      "latency_ms": null,
+      "ap75": 0.21302,
+      "map": 0.21911,
+      "accuracy_split": "VisDrone val",
+      "accuracy_source_id": "strict_control_val",
+      "complexity_status": "pending_unified_measurement",
+      "inference_contract": "baseline"
+    },
+    {
+      "method": "RT-DETR-L + FDR",
+      "params": null,
+      "gflops": null,
+      "fps": null,
+      "latency_ms": null,
+      "ap75": 0.29253,
+      "map": 0.28966,
+      "accuracy_split": "VisDrone val",
+      "accuracy_source_id": "fdr_val",
+      "complexity_status": "pending_unified_measurement",
+      "inference_contract": "fdr_inference_graph"
+    },
+    {
+      "method": "RT-DETR-L + FDR + BPDD",
+      "params": null,
+      "gflops": null,
+      "fps": null,
+      "latency_ms": null,
+      "ap75": 0.29810,
+      "map": 0.29226,
+      "accuracy_split": "VisDrone val",
+      "accuracy_source_id": "bpdd_val",
+      "complexity_status": "pending_unified_measurement",
+      "inference_contract": "same_as_fdr_by_construction"
+    },
+    {
+      "method": "RT-DETR-L + FDR + BPDD + FIA",
+      "params": null,
+      "gflops": null,
+      "fps": null,
+      "latency_ms": null,
+      "ap75": 0.3042,
+      "map": 0.2961,
+      "accuracy_split": "VisDrone val",
+      "accuracy_source_id": "fia_updated_three_module_text_val",
+      "complexity_status": "pending_unified_measurement",
+      "inference_contract": "fdr_plus_fia_inference_graph_bpdd_removed"
+    }
+  ],
+  "non_unified_reference_evidence": {
+    "strict_static_baseline": {"params": 32826626, "gflops": 108.0318976},
+    "strict_static_fdr": {"params": 33156614, "gflops": 108.22912},
+    "three_module_unbound_hardware": {
+      "params": 32635754,
+      "gflops": 109.0,
+      "val_end_to_end_fps": 54.08,
+      "test_end_to_end_fps": 81.49
+    },
+    "paper_table_eligible": false,
+    "note": "These values come from different model authorities or unbound hardware and are retained only for audit; they must not fill the unified comparison cells."
+  }
+}

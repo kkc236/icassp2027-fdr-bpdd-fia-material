@@ -85,14 +85,14 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 ## 4. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
-- BPDD 在 FDR 基础上继续提供小幅正向结果；正式写作中将其表述为训练期渐进分布蒸馏，并保留跨 authority 边界。
-- FIA-only 在 val 略低于 baseline，test 基本持平；FDR+FIA 在 val 和 test 均高于对应 FDR 参照，支持“FIA 与 FDR 兼容并呈正向互补”，不支持“FIA 单独稳定提升”。
+- BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅正向结果，并且只在训练期工作、不增加推理分支。现有 AP75 从 `0.29253` 到 `0.29810`（约 `+0.557 pp`）比总体 mAP 的 `+0.260 pp` 更能提示定位质量改善，但两者仍是跨 authority 算术差，需以唯一新增的严格配对实验升级证据。
+- FIA-only 在 val 略低于 baseline，test 基本持平；该负向结果保留在补充消融。FDR+FIA 在 val 和 test 均高于对应 FDR 参照，完整三模块也在两个 split 正增长，因此正文主张限定为“FIA 在 distribution-refined context 下与 FDR 呈正向互补”，不写成“FIA 在任意配置下均稳定提升”。
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 
-完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)。
+完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)，效率占位与统一测速合同见 [统一复杂度与实时性表](COMPLEXITY_ZH.md)。
 
 ## 5. CCF A/B 会 VisDrone 外部位置
 
 已补充 [VisDrone CCF A/B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS full/regular paper，逐行标出 CCF A/B 等级，并按同 split 的 mAP50–95 分成“综合不高于本文/综合高于本文”；split 或 input 未报告的 AAAI/ICME 行单列为不可排序。期刊和仅预印本来源不进入正式表。
 
-外部数字均为论文报告值，不是本项目复跑值。明确 val 的结果中，本项目三模块 `0.2961` 高于 A 会 TPH-YOLOv5-x+UGS `0.2900`、QueryDet `0.2832`、ClusDet-R50 `0.2670`，也高于 B 会 RT-DETR-R50 `0.2840`、YOLOv8-L `0.2610` 与 HIC-YOLOv5 `0.2595`；它与 A 会 DM-EFS `0.2971`、B 会 UAV-DETR-R18 `0.2980` 最接近。test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明绝对值位置，跨论文不计算严格涨点。AAAI 2025 FBRT-YOLO 论文提供 4090 训练记录和参数相近的 RT-DETR/YOLO 行，但未明确 split/input，因此不进入高低排名，FPS 也不排序。
+外部数字均为论文报告值，不是本项目复跑值。明确 val 的结果中，本项目三模块 `0.2961` 高于 A 会 TPH-YOLOv5-x+UGS `0.2900`、QueryDet `0.2832`、ClusDet-R50 `0.2670`，也高于 B 会 RT-DETR-R50 `0.2840`、YOLOv8-L `0.2610` 与 HIC-YOLOv5 `0.2595`；它与 A 会 DM-EFS `0.2971`、B 会 UAV-DETR-R18 `0.2980` 最接近。ICASSP 2026 VARDet 报告 `AP50=0.6170、AP75=0.3910、mAP=0.3650`，但使用 ResNet-50、1333×800 的统一重实现协议，与本文 640 协议非严格可比。test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明绝对值位置，跨论文不计算严格涨点。AAAI 2025 FBRT-YOLO 论文提供 4090 训练记录和参数相近的 RT-DETR/YOLO 行，但未明确 split/input，因此不进入高低排名，FPS 也不排序。

@@ -663,6 +663,47 @@
       "relative_to_project": "higher"
     },
     {
+      "id": "vardet_r50_val",
+      "method": "VARDet",
+      "family": "detr",
+      "publication": "VARDet: Visual Autoregressive Multi-Scale Prediction and CLIP-Guided Semantics for UAV Small-Object Detection",
+      "venue": "ICASSP 2026",
+      "venue_rank": "B",
+      "publication_status": "peer_reviewed_conference",
+      "split": "val",
+      "input_size": "1333x800",
+      "backbone": "ResNet-50",
+      "pretraining": "not_reported",
+      "training_epochs": null,
+      "evaluator": "paper Table 1 unified reimplementation under ResNet-50, 1333x800 input, and COCO-style metrics",
+      "metrics": {
+        "precision": null,
+        "recall": null,
+        "ap50": 0.617,
+        "ap75": 0.391,
+        "map50_95": 0.365
+      },
+      "parameter_count_m": null,
+      "gflops": null,
+      "fps": null,
+      "training_gpu": "not_reported",
+      "hardware": {
+        "gpu": "not_reported",
+        "batch": "not_reported",
+        "precision": "not_reported",
+        "backend": "not_reported",
+        "latency_scope": "not_reported"
+      },
+      "evidence_type": "reported_by_original_paper",
+      "source_id": "external_vardet_icassp_2026",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11463846",
+      "source_table": "Table 1",
+      "comparison_scope": "external_b_venue_reported_val",
+      "relative_to_project": "higher",
+      "fps_comparison_allowed": false,
+      "note": "Direct ICASSP same-task competitor. Its 1333x800 ResNet-50 unified reimplementation is not protocol-matched to the project's 640x640 RT-DETR-L run. The same table also reports UAVDT val mAP/AP50/AP75=0.248/0.401/0.372."
+    },
+    {
       "id": "ufpmp_r50_val",
       "method": "UFPMP-Det-R50",
       "family": "two_stage",

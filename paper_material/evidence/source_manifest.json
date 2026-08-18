@@ -755,13 +755,13 @@
     },
     "external_visdrone_comparison_json": {
       "artifact": "paper_material/results/external_visdrone_comparison.json",
-      "sha256": "e27aab7c3df9e3769623013f9f9bc56612456b06da643eb37a93261340984258",
+      "sha256": "9b387f64edd0caadb0e8f6e853f46af1fcd9f62705304a4d88ff4dbe14bf2b32",
       "evidence_level": "curated_ccf_a_b_conference_publication_index",
       "transformation": "normalize project rows and CCF A/B conference rows into explicit split, venue-rank, relative-position, protocol, metric, and runtime fields"
     },
     "external_visdrone_comparison_csv": {
       "artifact": "paper_material/results/external_visdrone_comparison.csv",
-      "sha256": "c7b0379c051ab6e85c30c3fd1144d80385ea8e08ec596995fff52f7ec0d3ec98",
+      "sha256": "2f323baf363ad1150f4539f4f8473aec651aca013e47e8cdd684b8ede42a13d5",
       "evidence_level": "flattened_view_of_external_visdrone_comparison_json",
       "transformation": "flatten JSON rows without changing values"
     },
@@ -790,6 +790,19 @@
       ],
       "evidence_level": "original_formal_b_venue_publication_reported_value",
       "transformation": "transcribe the explicit VisDrone validation row and retain partial-pretraining and batch boundaries"
+    },
+    "external_vardet_icassp_2026": {
+      "title": "VARDet: Visual Autoregressive Multi-Scale Prediction and CLIP-Guided Semantics for UAV Small-Object Detection",
+      "venue": "ICASSP 2026",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11463846",
+      "official_program_url": "https://www.cmsworkshops.com/ICASSP2026/view_paper.php?PaperNum=1642",
+      "source_tables": [
+        "Table 1"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value_from_user_supplied_table_capture",
+      "transformation": "transcribe the VisDrone and UAVDT validation rows; retain the paper's unified ResNet-50, 1333x800, COCO-style reimplementation boundary"
     },
     "external_clusdet_iccv_2019": {
       "title": "Clustered Object Detection in Aerial Images",
@@ -884,6 +897,13 @@
       "ccf_class": "A/B",
       "evidence_level": "official_venue_scope_authority",
       "transformation": "use only full or regular papers from listed CCF A/B conferences in the formal external comparison"
+    },
+    "generated_unified_complexity_contract": {
+      "title": "Unified complexity and real-time measurement contract",
+      "artifact": "paper_material/results/complexity_results.json",
+      "sha256": "52242123efaf705febd8766b09a51b14cb0e6482e35d13974b66832093439601",
+      "evidence_level": "generated_measurement_contract_pending_execution",
+      "transformation": "register existing accuracy evidence while leaving all unified Params, FLOPs, FPS, and latency fields null until same-hardware measurement"
     }
   },
   "revocations": [

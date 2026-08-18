@@ -6,6 +6,8 @@
 
 排序规则固定为：先列“综合不高于本文”，再列“综合高于本文”，最后列“不可排序”；综合指标仅指同一已报告 split 的 mAP50–95。本文参照是 val=`0.2961`、test=`0.2337`。组内“不高于”按 mAP 从高到低排列，“高于”按从低到高排列，优先显示最接近本文的结果。这个标签只是绝对值位置，不是严格公平比较：不同输入、预训练、数据处理、训练周期和 evaluator 仍可能不同。不同 split 不计算涨点，跨论文也不写成因果提升；本文不宣称 SOTA。参数量不是筛选条件，只保留为规模上下文。
 
+VARDet 是最直接的同级会议竞品：它发表于 ICASSP 2026，同样研究 UAV 小目标检测，并在 VisDrone/UAVDT 上评估。但其 Table 1 采用作者统一重实现的 ResNet-50、1333×800、COCO-style 协议；本文采用 RT-DETR-L、640×640 的冻结协议。因此下表登记其绝对结果，但标为非严格可比，不能把 `0.3650−0.2961` 写成方法本身带来的公平差距。
+
 ## 1. VisDrone val 参照
 
 | 方法 | 本文 | Input | P | R | AP50 | AP75 | mAP50–95 | Params (M) |
@@ -36,10 +38,11 @@
 | 2 | UAV-DETR-R18 | [IROS 2025, Table I](https://doi.org/10.1109/IROS60139.2025.11246176) | **B** | DETR | 640 | 0.4880 | not_reported | **0.2980** | 20.0 |
 | 3 | YOLOv5x + EMA | [ICASSP 2023, Table 2](https://doi.org/10.1109/ICASSP49357.2023.10096516) | **B** | YOLO | 640；部分预训练 | 0.4970 | not_reported | **0.3040** | 91.18 |
 | 4 | UAV-DETR-R50 | [IROS 2025, Table I](https://doi.org/10.1109/IROS60139.2025.11246176) | **B** | DETR | 640 | 0.5110 | not_reported | **0.3150** | 42.0 |
-| 5 | UFPMP-Det-R50 | [AAAI 2022, Table 1](https://ojs.aaai.org/index.php/AAAI/article/view/19986/19745) | **A** | two-stage | 1333×800；foreground packing | 0.6240 | 0.3670 | **0.3660** | not_reported |
-| 6 | DINO-5scale + UGS | [ICCV 2025, Table 1](https://openaccess.thecvf.com/content/ICCV2025/papers/Sun_Uncertainty-Aware_Gradient_Stabilization_for_Small_Object_Detection_ICCV_2025_paper.pdf) | **A** | DETR | multi-scale；max_det=1500 | 0.6190 | not_reported | **0.3810** | not_reported |
+| 5 | VARDet | [ICASSP 2026, Table 1](https://doi.org/10.1109/ICASSP55912.2026.11463846) | **B** | Transformer detector | 1333×800；R50；统一重实现 | 0.6170 | 0.3910 | **0.3650** | not_reported |
+| 6 | UFPMP-Det-R50 | [AAAI 2022, Table 1](https://ojs.aaai.org/index.php/AAAI/article/view/19986/19745) | **A** | two-stage | 1333×800；foreground packing | 0.6240 | 0.3670 | **0.3660** | not_reported |
+| 7 | DINO-5scale + UGS | [ICCV 2025, Table 1](https://openaccess.thecvf.com/content/ICCV2025/papers/Sun_Uncertainty-Aware_Gradient_Stabilization_for_Small_Object_Detection_ICCV_2025_paper.pdf) | **A** | DETR | multi-scale；max_det=1500 | 0.6190 | not_reported | **0.3810** | not_reported |
 
-DM-EFS 与本文最接近，仅在绝对 mAP 上高 `0.0010`，但不能写成统计显著差异。UFPMP-Det 与 DINO+UGS 使用更高分辨率、切块/多尺度或更宽松的最大预测数，属于强协议参考，不适合直接作为 640 单次推理的公平对照。
+DM-EFS 与本文最接近，仅在绝对 mAP 上高 `0.0010`，但不能写成统计显著差异。VARDet 的 VisDrone val 为 AP50=`0.6170`、AP75=`0.3910`、mAP=`0.3650`；同表 UAVDT val 为 `0.4010/0.3720/0.2480`。VARDet、UFPMP-Det 与 DINO+UGS 使用更高分辨率、切块/多尺度或更宽松的最大预测数，属于强协议参考，不适合直接作为 640 单次推理的公平对照。
 
 ## 2. VisDrone test：明确 split 的正式结果
 
@@ -73,6 +76,7 @@ AAAI 2025 的 FBRT-YOLO 论文确实满足“正式 A 会 + VisDrone + RTX 4090 
 | DM-EFS（ICCV 2025） | A | 动态复用扩展特征集合 | YOLOv7：0.276→0.2971，+2.11 pp | ✓ | ✓（SODA-D、VisDrone、DarkFace） | 未报告 |
 | UGS（ICCV 2025） | A | 离散定位、UM loss、UR refinement | DINO：0.355→0.381，+2.6 pp；TPH-640：0.265→0.290，+2.5 pp | ✓ | ✓（4 个 benchmark） | 未报告 |
 | EMA（ICASSP 2023） | B | 跨空间多尺度注意力；VisDrone 加 tiny head | YOLOv5x：0.300→0.304，+0.4 pp | ✓ | ✓ | 未报告 |
+| VARDet（ICASSP 2026） | B | visual autoregressive multi-scale prediction、CLIP-guided semantics | 当前证据只绑定 Table 1 绝对值，内部串行增量 not_reported | ✓ | ✓（VisDrone、UAVDT） | 未报告 |
 | HIC-YOLOv5（ICRA 2024） | B | 小目标头、Involution、CBAM | test：0.1443→0.2085，+6.42 pp | ✓ | 否（主实验 VisDrone） | 未报告 |
 | UAV-DETR（IROS 2025） | B | Inner-SIoU、MSFF-FE、FD、SAC | R18/R50 均 +3.1 pp | ✓ | ✓（VisDrone、UAVVaste） | 未报告 |
 | NRQO（ICME 2025） | B | NT-FPN、PS-RPN | 0.285→0.321，+3.6 pp | ✓ | ✓（VisDrone、SODA-D、COCO） | 未报告 |
@@ -84,6 +88,7 @@ AAAI 2025 的 FBRT-YOLO 论文确实满足“正式 A 会 + VisDrone + RTX 4090 
 - 可以写：本文完整模型在 VisDrone val/test 上分别达到 `0.2961/0.2337` mAP50–95，在收录的 CCF A/B 正式论文结果中处于可竞争区间。
 - 可以写：在明确 val 的结果里，本文高于 TPH-YOLOv5-x+UGS、UAV-DETR-EV2、标准 RT-DETR-R50、QueryDet、ClusDet 和多项 YOLO 基线的报告值。
 - 可以写：本文与 640-val 的 DM-EFS（`0.2971`）和 UAV-DETR-R18（`0.2980`）非常接近。
+- 可以写：VARDet 是 ICASSP 2026 的同任务直接竞品，但其 `0.3650` 来自 ResNet-50、1333×800 的统一重实现协议，和本文 640 协议非严格可比。
 - 不可以写：本文优于所有 A/B 会方法、达到 SOTA，或把不同协议的绝对差称为模块涨点。
 - 不可以把 split=`not_reported` 的 AAAI/ICME 行并入 val/test 排名。
 - 不可以把不同硬件或不完整测速协议的 FPS 直接排序。

@@ -40,3 +40,9 @@ FIA-only 与 FDR+FIA 的 exact val/test 均按此协议从现有发布版 best c
 standalone 不再重训。其 val/test 算术差可用于普通消融描述，但不是 strict paired 因果效应。三模块的 P3-only val/test 正向观察与 standalone cascading 结果分开标注；三模块四位小数文本已直接提供 P/R/F1/AP50/AP75/mAP 和十类结果，不再从截图反推缺失项。
 
 完整状态见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)，standalone 机器协议见 [FIA best.pt 证据](../evidence/fia_existing_best_evaluation.json)，三模块原始记录见 [val 文本](../evidence/fdr_bpdd_fia_val.txt) 与 [test 文本](../evidence/fdr_bpdd_fia_test.txt)。
+
+## 投稿前唯一新增训练实验
+
+不追加第三数据集，也不强制三种子。唯一新增训练任务是同一源码提交、`seed=0`、同一训练与评估协议下严格配对 `FDR` 和 `FDR+BPDD`；主要报告 AP75，次要报告 mAP50–95、AP50、P/R。当前服务器占用期间不启动训练，完整运行合同与产物清单见 [BPDD 严格配对补充实验](BPDD_STRICT_PAIR_PROTOCOL_ZH.md)。
+
+统一复杂度/实时性不需要训练，但四个 checkpoint 必须在同一硬件、同一 FP32 batch=1 协议下重新测量。目标表与机器合同见 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。
