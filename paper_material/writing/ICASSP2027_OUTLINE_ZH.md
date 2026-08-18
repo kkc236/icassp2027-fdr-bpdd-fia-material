@@ -35,6 +35,7 @@
 - 4.1 Dataset and Protocol：VisDrone、RT-DETR-L、scratch、640、seed 0、100 epochs 与统一评估器。
 - 4.2 Main Results：正式 exact 核心表放 baseline、FDR 和 FDR+BPDD；三模块 P3-only 的正向 val/test 作为补充观察。
 - 论文 A–E 主消融表的 E 行逐项绑定四位小数 val 文本：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`；checkpoint 的 `0.29618` 作为交叉印证，不跨证据拼接 P/R。
+- 4.2 同时加入 [VisDrone 外部方法与 RTX 4090 效率对比](../results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)：正文优先使用同 split、640 输入的正式发表结果；split/input 未报告行放补充表，不计算跨论文涨点。
 - 4.3 Ablation Studies：分开报告现有 best.pt 的 FIA-only 与 FDR+FIA exact val/test；val ΔmAP 为 −0.2315/+0.5280 pp，test ΔmAP 为 −0.0240/+0.6644 pp，且均不是严格配对、不是 P3-only。
 - 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA standalone 和三模块的总体、AP75 与 10 类 test 结果；所有 FIA 指标直接取自已登记记录，不反推。
 
@@ -49,6 +50,7 @@
 - 现有 standalone best.pt 独立 val 中，FIA-only mAP50–95=0.216795（相对 baseline −0.2315 pp），FDR+FIA=0.294940（相对 FDR +0.5280 pp）；independent exact test 分别为 0.177176（−0.0240 pp）与 0.234645（+0.6644 pp），且 AP75 与 10 类明细已补齐。这支持“FIA 与 FDR 组合兼容”，不支持“FIA 单独稳定增益”。
 - 正确 P3-only 三模块四位小数 val 为 P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP50–95=0.2961；相对当前 BPDD val 为 +0.384 pp 的算术观察。checkpoint best-val `0.29618` 与其一致。
 - 三模块 test 为 P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP50–95=0.2337，相对 BPDD test 为 +0.204 pp；因此三模块 val/test 均为正增长。
+- 外部正式论文的同 split 结果可用于说明竞争位置；参数量不是筛选条件。RTX 4090 速度只在 batch、精度、backend 与 latency scope 可核对时比较，当前仅保留同一正式论文内的直接成对结论。
 
 ## 当前禁止主张
 
@@ -58,5 +60,6 @@
 - “本文发明 FDR、FGL、Integral、非均匀积分或相邻 bin 监督”。
 - “BPDD 可脱离 FDR 单独使用”或“BPDD 具有推理期零总开销”。
 - 混用 val/test、不同 checkpoint、不同 evaluator 或不同源码 authority。
+- 把预印本、仅 ResearchGate、split 未报告结果写进正式主对比，或把 RTX 3080 FPS 标成 RTX 4090 FPS。
 
-写作数值统一从 [论文结果汇总](../results/RESULTS_ZH.md)提取，FIA 证据状态以 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md) 为准。
+写作数值统一从 [论文结果汇总](../results/RESULTS_ZH.md)提取，FIA 证据状态以 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md) 为准，外部方法来源与协议边界以 [外部 VisDrone 对比](../results/EXTERNAL_VISDRONE_COMPARISON_ZH.md) 为准。

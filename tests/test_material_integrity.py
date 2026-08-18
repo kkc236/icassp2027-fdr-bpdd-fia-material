@@ -34,6 +34,9 @@ REQUIRED_MATERIAL_FILES = (
     "results/fia_existing_best_val_results.csv",
     "results/fia_existing_best_test_results.csv",
     "results/fdr_bpdd_fia_text_report_class_results.csv",
+    "results/EXTERNAL_VISDRONE_COMPARISON_ZH.md",
+    "results/external_visdrone_comparison.json",
+    "results/external_visdrone_comparison.csv",
     "writing/ICASSP2027_OUTLINE_ZH.md",
     "figures/FIGURE_PLAN_ZH.md",
 )
@@ -732,3 +735,134 @@ def test_split_detail_csvs_have_expected_exact_coverage():
             rows = list(csv.DictReader(handle))
         assert all(row.get("fia", "false") != "true" for row in rows)
         assert all("FIA" not in row["method"] for row in rows)
+
+
+def test_external_visdrone_comparison_contract_and_source_policy():
+    comparison = _load_required_json("results/external_visdrone_comparison.json")
+    manifest = _load_required_json("evidence/source_manifest.json")
+
+    assert comparison["format_version"] == 1
+    assert comparison["dataset"] == "VisDrone2019-DET"
+    assert comparison["policy"]["parameter_count_is_filter"] is False
+    assert comparison["policy"]["parameter_count_is_sort_key"] is False
+    assert comparison["policy"]["cross_protocol_delta_allowed"] is False
+    assert comparison["policy"]["sota_claim_allowed"] is False
+
+    rows = comparison["rows"]
+    assert len(rows) >= 12
+    assert {row["split"] for row in rows} >= {"val", "test", "not_reported"}
+    assert {row["family"] for row in rows} == {"project", "detr", "yolo"}
+    assert {
+        "Drone-DETR",
+        "UAV-DETR-R18",
+        "VRF-DETR",
+        "MCG-RTDETR",
+        "NRQO",
+        "YOLOv8-M",
+        "YOLOv8-L",
+        "YOLOv10-L",
+        "RT-DETR-R50",
+        "RT-DETR-L + FDR + BPDD + FIA",
+    }.issubset({row["method"] for row in rows})
+
+    forbidden_statuses = {
+        "preprint",
+        "arxiv_only",
+        "researchgate_only",
+        "unverified",
+    }
+    assert not ({row["publication_status"] for row in rows} & forbidden_statuses)
+
+    for row in rows:
+        assert row["source_url"].startswith("https://")
+        assert row["source_table"]
+        assert row["evidence_type"] in {
+            "our_run",
+            "reported_by_original_paper",
+            "standard_baseline_rebenchmarked_by_original_paper",
+        }
+        assert set(row["metrics"]) == {
+            "precision",
+            "recall",
+            "ap50",
+            "ap75",
+            "map50_95",
+        }
+        assert row["parameter_count_m"] is None or row["parameter_count_m"] > 0
+        if row["source_id"] is not None:
+            assert row["source_id"] in manifest["sources"]
+
+    assert all(
+        row["split"] == "not_reported"
+        for row in rows
+        if row["method"] == "MCG-RTDETR"
+    )
+
+
+def test_external_visdrone_csv_matches_json_rows():
+    comparison = _load_required_json("results/external_visdrone_comparison.json")
+    csv_path = MATERIAL_ROOT / "results/external_visdrone_comparison.csv"
+    with csv_path.open(encoding="utf-8", newline="") as handle:
+        csv_rows = list(csv.DictReader(handle))
+
+    assert len(csv_rows) == len(comparison["rows"])
+    assert [row["id"] for row in csv_rows] == [
+        row["id"] for row in comparison["rows"]
+    ]
+    for flat, structured in zip(csv_rows, comparison["rows"]):
+        assert flat["method"] == structured["method"]
+        assert flat["split"] == structured["split"]
+        assert flat["source_url"] == structured["source_url"]
+        for csv_key, json_key in (
+            ("precision", "precision"),
+            ("recall", "recall"),
+            ("ap50", "ap50"),
+            ("ap75", "ap75"),
+            ("map50_95", "map50_95"),
+        ):
+            expected = structured["metrics"][json_key]
+            assert flat[csv_key] == ("" if expected is None else str(expected))
+
+
+def test_external_visdrone_rtx4090_speed_scope_is_explicit():
+    comparison = _load_required_json("results/external_visdrone_comparison.json")
+    speed_rows = [row for row in comparison["rows"] if row["fps"] is not None]
+
+    assert speed_rows
+    assert any(row["hardware"]["gpu"] == "NVIDIA GeForce RTX 4090" for row in speed_rows)
+    for row in speed_rows:
+        assert set(row["hardware"]) == {
+            "gpu",
+            "batch",
+            "precision",
+            "backend",
+            "latency_scope",
+        }
+        assert all(value is not None for value in row["hardware"].values())
+        if row["fps_comparison_allowed"]:
+            assert row["hardware"] == comparison["fps_reference_protocol"]
+
+
+def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
+    readme = _read_required_text("README_ZH.md")
+    results = _read_required_text("results/RESULTS_ZH.md")
+    outline = _read_required_text("writing/ICASSP2027_OUTLINE_ZH.md")
+    page = _read_required_text("results/EXTERNAL_VISDRONE_COMPARISON_ZH.md")
+
+    for path in (
+        "results/EXTERNAL_VISDRONE_COMPARISON_ZH.md",
+        "results/external_visdrone_comparison.json",
+        "results/external_visdrone_comparison.csv",
+    ):
+        assert path in readme
+    assert "EXTERNAL_VISDRONE_COMPARISON_ZH.md" in results
+    assert "EXTERNAL_VISDRONE_COMPARISON_ZH.md" in outline
+    for required_text in (
+        "不同 split 不计算涨点",
+        "外部论文报告值，不是本项目复跑值",
+        "不宣称 SOTA",
+        "参数量不是筛选条件",
+        "RTX 4090",
+        "not_reported",
+    ):
+        assert required_text in page

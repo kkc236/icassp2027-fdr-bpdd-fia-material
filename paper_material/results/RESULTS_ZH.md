@@ -90,3 +90,9 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 
 完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)。
+
+## 5. 外部 VisDrone 方法与效率位置
+
+已补充 [VisDrone 外部方法与 RTX 4090 效率对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)，覆盖 Drone-DETR、UAV-DETR、MCG-RTDETR、VRF-DETR、NRQO、RT-UAV-SOD，以及正式论文中统一测量的 YOLO/RT-DETR baseline。
+
+外部数字均为原论文报告值，不是本项目复跑值。val、test 与 `not_reported` split 分表，跨 split 不计算涨点。参数量、GFLOPs 和 FPS 仅作上下文，不以参数量筛选方法；只有同一篇 WaveUAV-YOLO 论文中的 YOLOv13s/WaveUAV-YOLO 两行满足 RTX 4090、batch=1、640×640、相同 backend 和端到端 latency scope 的直接速度比较条件。本项目 `81.49 FPS` 未绑定 GPU，不与外部速度排序。
