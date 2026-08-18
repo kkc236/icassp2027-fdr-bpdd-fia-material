@@ -109,6 +109,59 @@ def _resolve_manifest_path(value: Any, *, run: Path, label: str) -> Path:
     return (raw if raw.is_absolute() else run / raw).resolve()
 
 
+def _is_within(path: Path, directory: Path) -> bool:
+    try:
+        path.relative_to(directory)
+    except ValueError:
+        return False
+    return True
+
+
+def _validate_queue_artifacts(
+    value: Any,
+    *,
+    run: Path,
+    completed_epoch: int,
+    inventory: dict[str, dict[str, Any]],
+) -> None:
+    if isinstance(value, (str, bytes)) or not isinstance(value, Sequence) or not value:
+        raise ValueError(
+            f"ACR-BPDD publication queue epoch {completed_epoch} artifacts are invalid"
+        )
+    for declaration in value:
+        if not isinstance(declaration, Mapping):
+            raise ValueError(
+                f"ACR-BPDD publication queue epoch {completed_epoch} artifact "
+                "declaration is not an object"
+            )
+        raw_path = declaration.get("path")
+        if not isinstance(raw_path, str) or not raw_path:
+            raise ValueError("ACR-BPDD queue artifact path is missing")
+        source = _resolve_manifest_path(raw_path, run=run, label="artifact path")
+        if not _is_within(source, run):
+            raise ValueError(f"ACR-BPDD queue artifact is outside run directory: {source}")
+        if not source.is_file():
+            raise FileNotFoundError(f"ACR-BPDD queue artifact is missing: {source}")
+        name = declaration.get("name", source.name)
+        if (
+            not isinstance(name, str)
+            or not name
+            or Path(name).name != name
+            or name in {".", ".."}
+        ):
+            raise ValueError("ACR-BPDD queue artifact name is invalid")
+        declared_sha = str(declaration.get("sha256", "")).upper()
+        if SHA256_PATTERN.fullmatch(declared_sha) is None:
+            raise ValueError(f"ACR-BPDD queue artifact {name} SHA256 is invalid")
+        record = artifact_record(source)
+        if record["sha256"] != declared_sha:
+            raise ValueError(f"ACR-BPDD queue artifact {name} SHA256 mismatch")
+        previous = inventory.get(name)
+        if previous is not None and previous != record:
+            raise ValueError(f"ACR-BPDD queue artifact duplicate name conflict: {name}")
+        inventory[name] = record
+
+
 def validate_formal_authority(
     run_dir: str | Path,
     *,
@@ -167,10 +220,18 @@ def validate_formal_authority(
     queue_rows = _read_jsonl(queue_path, label="ACR-BPDD publication queue")
     _require_exact_epochs(queue_rows, label="ACR-BPDD publication queue")
     queue_hashes: list[str] = []
+    queue_artifacts: dict[str, dict[str, Any]] = {}
     for row in queue_rows:
         _require_identity(row, identity, label="ACR-BPDD publication queue")
         if row.get("status") != "pending":
             raise ValueError("ACR-BPDD publication queue row is not pending")
+        completed_epoch = int(row["completed_epoch"])
+        _validate_queue_artifacts(
+            row.get("artifacts"),
+            run=run,
+            completed_epoch=completed_epoch,
+            inventory=queue_artifacts,
+        )
         checkpoint_sha = str(row.get("checkpoint_sha256", "")).upper()
         if SHA256_PATTERN.fullmatch(checkpoint_sha) is None:
             raise ValueError("ACR-BPDD publication queue checkpoint SHA256 is invalid")
@@ -218,6 +279,10 @@ def validate_formal_authority(
     }
     data_path = _resolve_manifest_path(manifest.get("data"), run=run, label="data")
     artifacts["data_yaml"] = artifact_record(data_path)
+    for name, record in queue_artifacts.items():
+        if name in artifacts and artifacts[name] != record:
+            raise ValueError(f"ACR-BPDD artifact inventory name conflict: {name}")
+        artifacts[name] = record
     return {
         "identity": dict(identity),
         "completed_epoch": EXPECTED_EPOCHS,
@@ -232,6 +297,7 @@ def validate_formal_authority(
         "publication_queue": {
             "count": EXPECTED_EPOCHS,
             "completed_epochs": [1, EXPECTED_EPOCHS],
+            "artifacts": sorted(queue_artifacts),
         },
         "publication_ledger": {
             "count": EXPECTED_EPOCHS,

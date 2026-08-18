@@ -134,6 +134,24 @@ def _run_authority(
         }
         for epoch in range(1, 101)
     ]
+    _write_jsonl(epochs, epoch_rows)
+    csv_path = run / "acr-bpdd-epochs.csv"
+    csv_path.write_text("completed_epoch\n1\n", encoding="utf-8")
+    optimizer_path = run / "optimizer-evidence.jsonl"
+    optimizer_path.write_text('{"optimizer_attempt":1}\n', encoding="utf-8")
+    declared_artifacts = [
+        {
+            "name": path.name,
+            "path": str(path.resolve()),
+            "sha256": _sha(path),
+        }
+        for path in (
+            epochs,
+            csv_path,
+            run / "acr-bpdd-run.json",
+            optimizer_path,
+        )
+    ]
     queue_rows = []
     ledger_rows = []
     for epoch in range(1, 101):
@@ -148,7 +166,7 @@ def _run_authority(
                 (weights / f"epoch{epoch - 1}.pt").resolve()
             ),
             "checkpoint_sha256": sha256,
-            "artifacts": [str(epochs.resolve())],
+            "artifacts": [dict(artifact) for artifact in declared_artifacts],
         }
         queue_rows.append(row)
         ledger_rows.append(
@@ -165,7 +183,6 @@ def _run_authority(
                 "verified": True,
             }
         )
-    _write_jsonl(epochs, epoch_rows)
     _write_jsonl(queue, queue_rows)
     _write_jsonl(ledger, ledger_rows)
     return run, checkpoint, ledger, queue, epochs, dataset_root
@@ -308,6 +325,66 @@ def test_formal_authority_requires_exact_100_epoch_queue_and_verified_ledger(
     assert authority["artifacts"]["epoch_records"]["sha256"] == _sha(epochs)
     assert authority["artifacts"]["publication_queue"]["sha256"] == _sha(queue)
     assert authority["artifacts"]["publication_ledger"]["sha256"] == _sha(ledger)
+    assert authority["artifacts"]["acr-bpdd-epochs.csv"] == {
+        "path": str((run / "acr-bpdd-epochs.csv").resolve()),
+        "bytes": (run / "acr-bpdd-epochs.csv").stat().st_size,
+        "sha256": _sha(run / "acr-bpdd-epochs.csv"),
+    }
+    assert authority["artifacts"]["optimizer-evidence.jsonl"] == {
+        "path": str((run / "optimizer-evidence.jsonl").resolve()),
+        "bytes": (run / "optimizer-evidence.jsonl").stat().st_size,
+        "sha256": _sha(run / "optimizer-evidence.jsonl"),
+    }
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ("path_escape", "missing_file", "duplicate_name", "sha_mismatch", "missing_sha"),
+)
+def test_queue_artifact_declarations_fail_closed(
+    tmp_path: Path, mutation: str
+) -> None:
+    formal = _load_module()
+    run, checkpoint, ledger, queue, _, _ = _run_authority(tmp_path)
+    queue_rows = [json.loads(line) for line in queue.read_text("utf-8").splitlines()]
+    if mutation == "path_escape":
+        outside = tmp_path / "outside.jsonl"
+        outside.write_text("outside\n", encoding="utf-8")
+        queue_rows[0]["artifacts"].append(
+            {"name": outside.name, "path": str(outside), "sha256": _sha(outside)}
+        )
+    elif mutation == "missing_file":
+        missing = run / "missing.jsonl"
+        queue_rows[0]["artifacts"].append(
+            {"name": missing.name, "path": str(missing), "sha256": "A" * 64}
+        )
+    elif mutation == "duplicate_name":
+        duplicate = run / "nested" / "optimizer-evidence.jsonl"
+        duplicate.parent.mkdir()
+        duplicate.write_text("conflicting optimizer evidence\n", encoding="utf-8")
+        queue_rows[0]["artifacts"].append(
+            {
+                "name": "optimizer-evidence.jsonl",
+                "path": str(duplicate),
+                "sha256": _sha(duplicate),
+            }
+        )
+    elif mutation == "sha_mismatch":
+        queue_rows[0]["artifacts"][0]["sha256"] = "0" * 64
+    else:
+        del queue_rows[0]["artifacts"][0]["sha256"]
+    _write_jsonl(queue, queue_rows)
+    ledger_rows = [json.loads(line) for line in ledger.read_text("utf-8").splitlines()]
+    ledger_rows[0]["queue_record_sha256"] = _canonical_sha(queue_rows[0])
+    _write_jsonl(ledger, ledger_rows)
+
+    with pytest.raises(
+        (FileNotFoundError, ValueError),
+        match="artifact|run directory|outside|missing|duplicate|conflict|SHA256|sha256",
+    ):
+        formal.validate_formal_authority(
+            run, checkpoint=checkpoint, publication_ledger=ledger
+        )
 
 
 @pytest.mark.parametrize(
@@ -645,6 +722,12 @@ def test_end_to_end_report_binds_authorities_metrics_efficiency_and_inventory(
     assert inventory["artifacts"]["publication_queue"]["sha256"] == _sha(queue)
     assert inventory["artifacts"]["publication_ledger"]["sha256"] == _sha(ledger)
     assert inventory["artifacts"]["fdr_evaluation"]["sha256"] == _sha(fdr)
+    assert inventory["artifacts"]["acr-bpdd-epochs.csv"]["sha256"] == _sha(
+        run / "acr-bpdd-epochs.csv"
+    )
+    assert inventory["artifacts"]["optimizer-evidence.jsonl"]["sha256"] == _sha(
+        run / "optimizer-evidence.jsonl"
+    )
     assert inventory["tensor_states"] == {
         "checkpoint_ema_or_model": {
             "source_field": "ema",
