@@ -39,12 +39,11 @@ RTX 4090 效率组优先采用正式同行评审论文在同一 4090 上统一�
 
 1. 相同 VisDrone split：val 与 val、1,610-image test/test-dev 与 test 对齐。
 2. 相同输入尺寸：优先 `640×640`，其他尺寸放入独立补充组。
-3. 相近模型规模：优先参数量接近本项目 `32.64M` 的方法；主邻域定义为 `25M–40M`，更小/更大模型保留但降级到规模补充组。
-4. 相同训练来源：优先 scratch 对 scratch；使用 ImageNet、COCO 或 Objects365 预训练的行单独标记，不与 scratch 结果写成严格胜负。
-5. 相近评估器：优先 COCO AP、相同类别、`max_det=300` 或明确报告最大检测数的结果；未报告项写为 `not_reported`。
-6. 效率比较再要求 RTX 4090、batch、precision、backend、输入和 latency scope 一致。只有全部一致的行才设置 `fps_comparison_allowed=true`。
+3. 相同训练来源：优先 scratch 对 scratch；使用 ImageNet、COCO 或 Objects365 预训练的行单独标记，不与 scratch 结果写成严格胜负。
+4. 相近评估器：优先 COCO AP、相同类别、`max_det=300` 或明确报告最大检测数的结果；未报告项写为 `not_reported`。
+5. 效率比较再要求 RTX 4090、batch、precision、backend、输入和 latency scope 一致。只有全部一致的行才设置 `fps_comparison_allowed=true`。
 
-每个表先展示“协议/规模最接近组”，再展示“相关但不严格可比组”。论文正文只对最接近组作有限比较，其余方法仅提供领域位置参考。
+参数量不作为外部方法准入或排序条件，只作为表格字段，并与 GFLOPs/FPS 一起用于解释精度—效率权衡。每个表先展示“协议最接近组”，再展示“相关但不严格可比组”。论文正文只对最接近组作有限比较，其余方法仅提供领域位置参考。
 
 ## 证据与写作边界
 
