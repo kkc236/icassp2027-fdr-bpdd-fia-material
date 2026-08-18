@@ -124,7 +124,10 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
             # remains the exact retained FDR tensor below.
             cumulative_layers = int(normal.shape[0])
             if bool(torch.isfinite(retained_native).all().item()):
-                maximum = retained_native.abs().amax()
+                # PyTorch 2.5.1 does not implement CUDA Half/BFloat16
+                # ``nextafter``.  Only this scalar diagnostic moves to CPU;
+                # the replay graph and its gradients remain on the GPU.
+                maximum = retained_native.abs().amax().cpu()
                 next_value = torch.nextafter(
                     maximum,
                     torch.full_like(maximum, float("inf")),
