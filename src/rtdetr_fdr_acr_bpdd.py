@@ -122,7 +122,7 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         self.last_acr_replay_tolerance = tolerance
         if (
             not bool(torch.isfinite(absolute_error).all().item())
-            or bool((absolute_error > allowed_error).any().item())
+            or value > tolerance
         ):
             raise RuntimeError(
                 "ACR-BPDD replay changed cumulative corner values: "
