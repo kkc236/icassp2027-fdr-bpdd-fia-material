@@ -233,7 +233,33 @@ def test_acr_amp_replay_budgets_one_roundoff_per_cumulative_layer(
     torch.testing.assert_close(replayed.grad, torch.ones_like(replayed), rtol=0, atol=0)
     assert acr.last_acr_replay_max_abs_diff == pytest.approx(0.00390625)
     assert acr.last_acr_replay_tolerance == pytest.approx(
-        8.75 * torch.finfo(torch.float16).eps
+        13.0 * torch.finfo(torch.float16).eps
+    )
+
+
+def test_acr_amp_replay_uses_true_ulp_at_large_tensor_scale(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Do not underestimate FP16 spacing between powers of two."""
+
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_710)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    retained = torch.full((6, 1, 1, 1), 24.0, dtype=torch.float16)
+    replayed = retained.clone()
+    replayed[-1, 0, 0, 0] += 0.03125
+    replayed.requires_grad_(True)
+    acr.last_fdr_evidence = SimpleNamespace(corner_logits=retained)
+    monkeypatch.setattr(acr.acr_replay, "replay", lambda **_kwargs: replayed)
+
+    aligned = acr._normal_replayed_corners()
+
+    torch.testing.assert_close(aligned.detach(), retained, rtol=0, atol=0)
+    aligned.float().sum().backward()
+    torch.testing.assert_close(replayed.grad, torch.ones_like(replayed), rtol=0, atol=0)
+    assert acr.last_acr_replay_max_abs_diff == pytest.approx(0.03125)
+    assert acr.last_acr_replay_tolerance == pytest.approx(
+        97.0 * torch.finfo(torch.float16).eps
     )
 
 

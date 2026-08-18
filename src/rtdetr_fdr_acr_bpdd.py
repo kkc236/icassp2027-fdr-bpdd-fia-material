@@ -8,6 +8,7 @@ Consequently the auxiliary gradient cannot enter the shared decoder.
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -108,28 +109,38 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         normal = replayed
         if normal.shape != evidence.corner_logits.shape:
             raise RuntimeError("ACR-BPDD replay/FDR corner shapes differ")
-        retained = evidence.corner_logits.detach().float()
+        retained_native = evidence.corner_logits.detach()
+        retained = retained_native.float()
         absolute_error = (normal.detach().float() - retained).abs()
         difference = absolute_error.max()
         if normal.dtype in {torch.float16, torch.bfloat16}:
             epsilon = float(torch.finfo(normal.dtype).eps)
             # ``normal`` stores the cumulative output of every decoder layer.
-            # Replaying the same CUDA GEMMs may contribute one dtype roundoff
-            # at each cumulative addition, so budget one base ULP per layer
-            # plus the usual magnitude-relative term.  The returned forward
-            # value remains the exact retained FDR tensor below.
+            # Replaying the same CUDA GEMMs may contribute one representable
+            # roundoff at each cumulative addition.  Compute the true ULP at
+            # this tensor's native dtype/scale with ``nextafter`` instead of
+            # approximating the step as epsilon*value (which underestimates
+            # spacing between powers of two).  The returned forward value
+            # remains the exact retained FDR tensor below.
             cumulative_layers = int(normal.shape[0])
-            allowed_error = (
-                cumulative_layers * epsilon + epsilon * retained.abs()
-            )
+            if bool(torch.isfinite(retained_native).all().item()):
+                maximum = retained_native.abs().amax()
+                next_value = torch.nextafter(
+                    maximum,
+                    torch.full_like(maximum, float("inf")),
+                )
+                tensor_ulp = max(float((next_value - maximum).float().cpu()), epsilon)
+                tolerance = cumulative_layers * tensor_ulp + epsilon
+            else:
+                tolerance = float("nan")
         else:
-            allowed_error = torch.full_like(absolute_error, 1.0e-6)
+            tolerance = 1.0e-6
         value = float(difference.cpu())
-        tolerance = float(allowed_error.max().cpu())
         self.last_acr_replay_max_abs_diff = value
         self.last_acr_replay_tolerance = tolerance
         if (
             not bool(torch.isfinite(absolute_error).all().item())
+            or not math.isfinite(tolerance)
             or value > tolerance
         ):
             raise RuntimeError(
