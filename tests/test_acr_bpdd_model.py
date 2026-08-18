@@ -210,6 +210,50 @@ def test_acr_amp_replay_uses_one_tensor_level_dtype_envelope(
     )
 
 
+def test_acr_amp_replay_budgets_one_roundoff_per_cumulative_layer(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Six cumulative FDR additions require a six-step roundoff budget."""
+
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_708)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    retained = torch.zeros((6, 1, 1, 2), dtype=torch.float16)
+    retained[..., 1] = 2.75
+    replayed = retained.clone()
+    replayed[-1, 0, 0, 0] = 0.00390625
+    replayed.requires_grad_(True)
+    acr.last_fdr_evidence = SimpleNamespace(corner_logits=retained)
+    monkeypatch.setattr(acr.acr_replay, "replay", lambda **_kwargs: replayed)
+
+    aligned = acr._normal_replayed_corners()
+
+    torch.testing.assert_close(aligned.detach(), retained, rtol=0, atol=0)
+    aligned.float().sum().backward()
+    torch.testing.assert_close(replayed.grad, torch.ones_like(replayed), rtol=0, atol=0)
+    assert acr.last_acr_replay_max_abs_diff == pytest.approx(0.00390625)
+    assert acr.last_acr_replay_tolerance == pytest.approx(
+        8.75 * torch.finfo(torch.float16).eps
+    )
+
+
+def test_acr_amp_replay_rejects_drift_beyond_cumulative_layer_budget(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(91_709)
+        acr = FDRACRBPDDDetectionModel(ACR_BPDD_MODEL_CFG, nc=10, verbose=False)
+    retained = torch.zeros((6, 1, 1, 1), dtype=torch.float16)
+    replayed = retained.clone()
+    replayed[-1, 0, 0, 0] = 0.01
+    replayed.requires_grad_(True)
+    acr.last_fdr_evidence = SimpleNamespace(corner_logits=retained)
+    monkeypatch.setattr(acr.acr_replay, "replay", lambda **_kwargs: replayed)
+
+    with pytest.raises(RuntimeError, match="max_abs"):
+        acr._normal_replayed_corners()
+
+
 def test_acr_fp32_replay_still_rejects_drift_above_one_e_minus_six(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

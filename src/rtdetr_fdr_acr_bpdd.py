@@ -113,7 +113,15 @@ class FDRACRBPDDDetectionModel(FDRBPDDDetectionModel):
         difference = absolute_error.max()
         if normal.dtype in {torch.float16, torch.bfloat16}:
             epsilon = float(torch.finfo(normal.dtype).eps)
-            allowed_error = epsilon + epsilon * retained.abs()
+            # ``normal`` stores the cumulative output of every decoder layer.
+            # Replaying the same CUDA GEMMs may contribute one dtype roundoff
+            # at each cumulative addition, so budget one base ULP per layer
+            # plus the usual magnitude-relative term.  The returned forward
+            # value remains the exact retained FDR tensor below.
+            cumulative_layers = int(normal.shape[0])
+            allowed_error = (
+                cumulative_layers * epsilon + epsilon * retained.abs()
+            )
         else:
             allowed_error = torch.full_like(absolute_error, 1.0e-6)
         value = float(difference.cpu())
