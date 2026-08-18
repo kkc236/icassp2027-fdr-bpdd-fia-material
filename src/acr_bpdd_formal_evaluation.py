@@ -123,18 +123,38 @@ def _validate_queue_artifacts(
     run: Path,
     completed_epoch: int,
     inventory: dict[str, dict[str, Any]],
+    names: dict[str, str],
 ) -> None:
     if isinstance(value, (str, bytes)) or not isinstance(value, Sequence) or not value:
         raise ValueError(
             f"ACR-BPDD publication queue epoch {completed_epoch} artifacts are invalid"
         )
+    seen_in_epoch: set[tuple[str, str, str, str | None]] = set()
     for declaration in value:
-        if not isinstance(declaration, Mapping):
+        if isinstance(declaration, str):
+            raw_path = declaration
+            declared_name: Any = None
+            semantics = "cumulative"
+            declared_sha: str | None = None
+        elif isinstance(declaration, Mapping):
+            raw_path = declaration.get("path")
+            declared_name = declaration.get("name")
+            semantics = declaration.get("content_semantics", "cumulative")
+            raw_sha = declaration.get("sha256")
+            declared_sha = str(raw_sha).upper() if raw_sha is not None else None
+            if semantics not in {"cumulative", "immutable"}:
+                raise ValueError("ACR-BPDD queue artifact semantic is invalid")
+            if declared_sha is not None and semantics != "immutable":
+                raise ValueError(
+                    "ACR-BPDD queue artifact SHA256 requires immutable semantics"
+                )
+            if declared_sha is not None and SHA256_PATTERN.fullmatch(declared_sha) is None:
+                raise ValueError("ACR-BPDD queue immutable artifact SHA256 is invalid")
+        else:
             raise ValueError(
                 f"ACR-BPDD publication queue epoch {completed_epoch} artifact "
-                "declaration is not an object"
+                "declaration must be a path string or object"
             )
-        raw_path = declaration.get("path")
         if not isinstance(raw_path, str) or not raw_path:
             raise ValueError("ACR-BPDD queue artifact path is missing")
         source = _resolve_manifest_path(raw_path, run=run, label="artifact path")
@@ -142,7 +162,7 @@ def _validate_queue_artifacts(
             raise ValueError(f"ACR-BPDD queue artifact is outside run directory: {source}")
         if not source.is_file():
             raise FileNotFoundError(f"ACR-BPDD queue artifact is missing: {source}")
-        name = declaration.get("name", source.name)
+        name = declared_name if declared_name is not None else source.name
         if (
             not isinstance(name, str)
             or not name
@@ -150,16 +170,69 @@ def _validate_queue_artifacts(
             or name in {".", ".."}
         ):
             raise ValueError("ACR-BPDD queue artifact name is invalid")
-        declared_sha = str(declaration.get("sha256", "")).upper()
-        if SHA256_PATTERN.fullmatch(declared_sha) is None:
-            raise ValueError(f"ACR-BPDD queue artifact {name} SHA256 is invalid")
-        record = artifact_record(source)
-        if record["sha256"] != declared_sha:
-            raise ValueError(f"ACR-BPDD queue artifact {name} SHA256 mismatch")
-        previous = inventory.get(name)
-        if previous is not None and previous != record:
+        canonical = str(source)
+        declaration_key = (raw_path, name, semantics, declared_sha)
+        if declaration_key in seen_in_epoch:
+            continue
+        seen_in_epoch.add(declaration_key)
+        previous_path = names.get(name)
+        if previous_path is not None and previous_path != canonical:
             raise ValueError(f"ACR-BPDD queue artifact duplicate name conflict: {name}")
-        inventory[name] = record
+        names[name] = canonical
+        previous = inventory.get(canonical)
+        if previous is None:
+            inventory[canonical] = {
+                "path": source,
+                "name": name,
+                "content_semantics": semantics,
+                "declared_sha256": declared_sha,
+                "raw_paths": {raw_path},
+                "epochs": {completed_epoch},
+            }
+            continue
+        if (
+            previous["name"] != name
+            or previous["content_semantics"] != semantics
+            or previous["declared_sha256"] != declared_sha
+        ):
+            raise ValueError(
+                f"ACR-BPDD queue artifact canonical semantic conflict: {source}"
+            )
+        previous["raw_paths"].add(raw_path)
+        previous["epochs"].add(completed_epoch)
+
+
+def _merge_queue_artifacts(
+    states: Mapping[str, Mapping[str, Any]],
+    artifacts: dict[str, dict[str, Any]],
+) -> None:
+    key_by_path = {str(record["path"]): key for key, record in artifacts.items()}
+    for canonical, state in states.items():
+        existing_key = key_by_path.get(canonical)
+        if existing_key is None:
+            record = artifact_record(state["path"])
+            destination = str(state["name"])
+            if destination in artifacts:
+                raise ValueError(
+                    f"ACR-BPDD artifact inventory name conflict: {destination}"
+                )
+        else:
+            destination = existing_key
+            record = dict(artifacts[existing_key])
+        declared_sha = state["declared_sha256"]
+        if declared_sha is not None and record["sha256"] != declared_sha:
+            raise ValueError(
+                f"ACR-BPDD queue immutable artifact {state['name']} SHA256 mismatch"
+            )
+        epochs = sorted(int(epoch) for epoch in state["epochs"])
+        record.update(
+            {
+                "declared_first_epoch": epochs[0],
+                "declared_last_epoch": epochs[-1],
+                "declared_epoch_count": len(epochs),
+            }
+        )
+        artifacts[destination] = record
 
 
 def validate_formal_authority(
@@ -221,6 +294,7 @@ def validate_formal_authority(
     _require_exact_epochs(queue_rows, label="ACR-BPDD publication queue")
     queue_hashes: list[str] = []
     queue_artifacts: dict[str, dict[str, Any]] = {}
+    queue_artifact_names: dict[str, str] = {}
     for row in queue_rows:
         _require_identity(row, identity, label="ACR-BPDD publication queue")
         if row.get("status") != "pending":
@@ -231,6 +305,7 @@ def validate_formal_authority(
             run=run,
             completed_epoch=completed_epoch,
             inventory=queue_artifacts,
+            names=queue_artifact_names,
         )
         checkpoint_sha = str(row.get("checkpoint_sha256", "")).upper()
         if SHA256_PATTERN.fullmatch(checkpoint_sha) is None:
@@ -279,10 +354,7 @@ def validate_formal_authority(
     }
     data_path = _resolve_manifest_path(manifest.get("data"), run=run, label="data")
     artifacts["data_yaml"] = artifact_record(data_path)
-    for name, record in queue_artifacts.items():
-        if name in artifacts and artifacts[name] != record:
-            raise ValueError(f"ACR-BPDD artifact inventory name conflict: {name}")
-        artifacts[name] = record
+    _merge_queue_artifacts(queue_artifacts, artifacts)
     return {
         "identity": dict(identity),
         "completed_epoch": EXPECTED_EPOCHS,
@@ -297,7 +369,7 @@ def validate_formal_authority(
         "publication_queue": {
             "count": EXPECTED_EPOCHS,
             "completed_epochs": [1, EXPECTED_EPOCHS],
-            "artifacts": sorted(queue_artifacts),
+            "artifacts": sorted(queue_artifact_names),
         },
         "publication_ledger": {
             "count": EXPECTED_EPOCHS,

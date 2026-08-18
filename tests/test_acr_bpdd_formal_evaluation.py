@@ -140,11 +140,7 @@ def _run_authority(
     optimizer_path = run / "optimizer-evidence.jsonl"
     optimizer_path.write_text('{"optimizer_attempt":1}\n', encoding="utf-8")
     declared_artifacts = [
-        {
-            "name": path.name,
-            "path": str(path.resolve()),
-            "sha256": _sha(path),
-        }
+        str(path.resolve())
         for path in (
             epochs,
             csv_path,
@@ -166,7 +162,7 @@ def _run_authority(
                 (weights / f"epoch{epoch - 1}.pt").resolve()
             ),
             "checkpoint_sha256": sha256,
-            "artifacts": [dict(artifact) for artifact in declared_artifacts],
+            "artifacts": list(declared_artifacts),
         }
         queue_rows.append(row)
         ledger_rows.append(
@@ -329,19 +325,25 @@ def test_formal_authority_requires_exact_100_epoch_queue_and_verified_ledger(
         "path": str((run / "acr-bpdd-epochs.csv").resolve()),
         "bytes": (run / "acr-bpdd-epochs.csv").stat().st_size,
         "sha256": _sha(run / "acr-bpdd-epochs.csv"),
+        "declared_first_epoch": 1,
+        "declared_last_epoch": 100,
+        "declared_epoch_count": 100,
     }
     assert authority["artifacts"]["optimizer-evidence.jsonl"] == {
         "path": str((run / "optimizer-evidence.jsonl").resolve()),
         "bytes": (run / "optimizer-evidence.jsonl").stat().st_size,
         "sha256": _sha(run / "optimizer-evidence.jsonl"),
+        "declared_first_epoch": 1,
+        "declared_last_epoch": 100,
+        "declared_epoch_count": 100,
     }
 
 
 @pytest.mark.parametrize(
     "mutation",
-    ("path_escape", "missing_file", "duplicate_name", "sha_mismatch", "missing_sha"),
+    ("path_escape", "missing_file"),
 )
-def test_queue_artifact_declarations_fail_closed(
+def test_queue_string_artifacts_reject_escape_and_missing_file(
     tmp_path: Path, mutation: str
 ) -> None:
     formal = _load_module()
@@ -350,38 +352,130 @@ def test_queue_artifact_declarations_fail_closed(
     if mutation == "path_escape":
         outside = tmp_path / "outside.jsonl"
         outside.write_text("outside\n", encoding="utf-8")
-        queue_rows[0]["artifacts"].append(
-            {"name": outside.name, "path": str(outside), "sha256": _sha(outside)}
-        )
-    elif mutation == "missing_file":
-        missing = run / "missing.jsonl"
-        queue_rows[0]["artifacts"].append(
-            {"name": missing.name, "path": str(missing), "sha256": "A" * 64}
-        )
-    elif mutation == "duplicate_name":
-        duplicate = run / "nested" / "optimizer-evidence.jsonl"
-        duplicate.parent.mkdir()
-        duplicate.write_text("conflicting optimizer evidence\n", encoding="utf-8")
-        queue_rows[0]["artifacts"].append(
-            {
-                "name": "optimizer-evidence.jsonl",
-                "path": str(duplicate),
-                "sha256": _sha(duplicate),
-            }
-        )
-    elif mutation == "sha_mismatch":
-        queue_rows[0]["artifacts"][0]["sha256"] = "0" * 64
+        queue_rows[0]["artifacts"].append(str(outside))
     else:
-        del queue_rows[0]["artifacts"][0]["sha256"]
+        missing = run / "missing.jsonl"
+        queue_rows[0]["artifacts"].append(str(missing))
     _write_jsonl(queue, queue_rows)
     ledger_rows = [json.loads(line) for line in ledger.read_text("utf-8").splitlines()]
     ledger_rows[0]["queue_record_sha256"] = _canonical_sha(queue_rows[0])
     _write_jsonl(ledger, ledger_rows)
 
-    with pytest.raises(
-        (FileNotFoundError, ValueError),
-        match="artifact|run directory|outside|missing|duplicate|conflict|SHA256|sha256",
-    ):
+    expected = "outside run directory" if mutation == "path_escape" else "artifact is missing"
+    with pytest.raises((FileNotFoundError, ValueError), match=expected):
+        formal.validate_formal_authority(
+            run, checkpoint=checkpoint, publication_ledger=ledger
+        )
+
+
+def test_same_epoch_duplicate_exact_string_path_is_deduplicated(tmp_path: Path) -> None:
+    formal = _load_module()
+    run, checkpoint, ledger, queue, _, _ = _run_authority(tmp_path)
+    queue_rows = [json.loads(line) for line in queue.read_text("utf-8").splitlines()]
+    queue_rows[0]["artifacts"].append(queue_rows[0]["artifacts"][0])
+    _write_jsonl(queue, queue_rows)
+    ledger_rows = [json.loads(line) for line in ledger.read_text("utf-8").splitlines()]
+    ledger_rows[0]["queue_record_sha256"] = _canonical_sha(queue_rows[0])
+    _write_jsonl(ledger, ledger_rows)
+
+    authority = formal.validate_formal_authority(
+        run, checkpoint=checkpoint, publication_ledger=ledger
+    )
+
+    assert authority["artifacts"]["epoch_records"][
+        "declared_epoch_count"
+    ] == 100
+
+
+def test_canonical_alias_with_conflicting_object_semantics_is_rejected(
+    tmp_path: Path,
+) -> None:
+    formal = _load_module()
+    run, checkpoint, ledger, queue, _, _ = _run_authority(tmp_path)
+    queue_rows = [json.loads(line) for line in queue.read_text("utf-8").splitlines()]
+    target = run / "optimizer-evidence.jsonl"
+    alias = run / "evidence" / ".." / target.name
+    queue_rows[0]["artifacts"].append(
+        {
+            "name": "different-optimizer-semantics.jsonl",
+            "path": str(alias),
+            "content_semantics": "cumulative",
+        }
+    )
+    _write_jsonl(queue, queue_rows)
+    ledger_rows = [json.loads(line) for line in ledger.read_text("utf-8").splitlines()]
+    ledger_rows[0]["queue_record_sha256"] = _canonical_sha(queue_rows[0])
+    _write_jsonl(ledger, ledger_rows)
+
+    with pytest.raises(ValueError, match="semantic|conflict|canonical"):
+        formal.validate_formal_authority(
+            run, checkpoint=checkpoint, publication_ledger=ledger
+        )
+
+
+def test_optional_immutable_object_artifact_validates_declared_sha(tmp_path: Path) -> None:
+    formal = _load_module()
+    run, checkpoint, ledger, queue, _, _ = _run_authority(tmp_path)
+    immutable = run / "frozen-evaluation-authority.json"
+    immutable.write_text('{"frozen":true}\n', encoding="utf-8")
+    queue_rows = [json.loads(line) for line in queue.read_text("utf-8").splitlines()]
+    queue_rows[0]["artifacts"].append(
+        {
+            "name": immutable.name,
+            "path": str(immutable),
+            "content_semantics": "immutable",
+            "sha256": _sha(immutable),
+        }
+    )
+    _write_jsonl(queue, queue_rows)
+    ledger_rows = [json.loads(line) for line in ledger.read_text("utf-8").splitlines()]
+    ledger_rows[0]["queue_record_sha256"] = _canonical_sha(queue_rows[0])
+    _write_jsonl(ledger, ledger_rows)
+
+    authority = formal.validate_formal_authority(
+        run, checkpoint=checkpoint, publication_ledger=ledger
+    )
+
+    assert authority["artifacts"][immutable.name] == {
+        "path": str(immutable.resolve()),
+        "bytes": immutable.stat().st_size,
+        "sha256": _sha(immutable),
+        "declared_first_epoch": 1,
+        "declared_last_epoch": 1,
+        "declared_epoch_count": 1,
+    }
+
+
+@pytest.mark.parametrize("mode", ("ambiguous_historical_sha", "immutable_sha_mismatch"))
+def test_object_sha_is_only_valid_for_matching_immutable_artifact(
+    tmp_path: Path, mode: str
+) -> None:
+    formal = _load_module()
+    run, checkpoint, ledger, queue, _, _ = _run_authority(tmp_path)
+    target = run / "optimizer-evidence.jsonl"
+    if mode == "immutable_sha_mismatch":
+        target = run / "frozen-mismatch.json"
+        target.write_text('{"frozen":true}\n', encoding="utf-8")
+    declaration = {
+        "name": target.name,
+        "path": str(target),
+        "sha256": "0" * 64,
+    }
+    if mode == "immutable_sha_mismatch":
+        declaration["content_semantics"] = "immutable"
+    queue_rows = [json.loads(line) for line in queue.read_text("utf-8").splitlines()]
+    queue_rows[0]["artifacts"] = [declaration]
+    _write_jsonl(queue, queue_rows)
+    ledger_rows = [json.loads(line) for line in ledger.read_text("utf-8").splitlines()]
+    ledger_rows[0]["queue_record_sha256"] = _canonical_sha(queue_rows[0])
+    _write_jsonl(ledger, ledger_rows)
+
+    expected = (
+        "immutable|semantic"
+        if mode == "ambiguous_historical_sha"
+        else "SHA256 mismatch"
+    )
+    with pytest.raises(ValueError, match=expected):
         formal.validate_formal_authority(
             run, checkpoint=checkpoint, publication_ledger=ledger
         )
@@ -728,6 +822,14 @@ def test_end_to_end_report_binds_authorities_metrics_efficiency_and_inventory(
     assert inventory["artifacts"]["optimizer-evidence.jsonl"]["sha256"] == _sha(
         run / "optimizer-evidence.jsonl"
     )
+    assert inventory["artifacts"]["optimizer-evidence.jsonl"] == {
+        "path": str((run / "optimizer-evidence.jsonl").resolve()),
+        "bytes": (run / "optimizer-evidence.jsonl").stat().st_size,
+        "sha256": _sha(run / "optimizer-evidence.jsonl"),
+        "declared_first_epoch": 1,
+        "declared_last_epoch": 100,
+        "declared_epoch_count": 100,
+    }
     assert inventory["tensor_states"] == {
         "checkpoint_ema_or_model": {
             "source_field": "ema",
