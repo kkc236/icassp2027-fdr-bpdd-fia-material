@@ -91,8 +91,8 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 
 完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)。
 
-## 5. CCF B 会 VisDrone 外部位置
+## 5. CCF A/B 会 VisDrone 外部位置
 
-已补充 [VisDrone CCF B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 ICASSP、ICRA、ICME、IROS full/regular paper，覆盖 EMA、HIC-YOLOv5、UAV-DETR、NRQO，以及同一 IROS 论文中报告的 YOLOv8 和 RT-DETR 标准基线；顶会、期刊和仅预印本来源已移出正式表。
+已补充 [VisDrone CCF A/B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS full/regular paper，逐行标出 CCF A/B 等级，并按同 split 的 mAP50–95 分成“综合不高于本文/综合高于本文”；split 或 input 未报告的 AAAI/ICME 行单列为不可排序。期刊和仅预印本来源不进入正式表。
 
-外部数字均为论文报告值，不是本项目复跑值。640-val 中，本项目三模块 `0.2961` 高于表内 RT-DETR-R50 `0.284`、YOLOv8-L `0.261` 与 HIC-YOLOv5 `0.2595`，接近 UAV-DETR-R18 `0.298` 和 EMA `0.304`；test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明 B 会绝对值位置，跨论文不计算严格涨点。参数量、GFLOPs 与 FPS 仅作上下文；当前没有满足 B 会限定且协议完整的 RTX 4090 速度对，故不做外部速度排序。
+外部数字均为论文报告值，不是本项目复跑值。明确 val 的结果中，本项目三模块 `0.2961` 高于 A 会 TPH-YOLOv5-x+UGS `0.2900`、QueryDet `0.2832`、ClusDet-R50 `0.2670`，也高于 B 会 RT-DETR-R50 `0.2840`、YOLOv8-L `0.2610` 与 HIC-YOLOv5 `0.2595`；它与 A 会 DM-EFS `0.2971`、B 会 UAV-DETR-R18 `0.2980` 最接近。test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明绝对值位置，跨论文不计算严格涨点。AAAI 2025 FBRT-YOLO 论文提供 4090 训练记录和参数相近的 RT-DETR/YOLO 行，但未明确 split/input，因此不进入高低排名，FPS 也不排序。

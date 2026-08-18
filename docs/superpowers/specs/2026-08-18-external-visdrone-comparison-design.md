@@ -74,3 +74,11 @@
 - 每个本项目行都绑定现有材料仓 source ID。
 - Markdown 明确出现 `reported_by_original_paper`、`our_run`、val/test 分离和禁止 SOTA 主张。
 - 全套材料完整性测试通过，工作树无意外文件。
+
+## 2026-08-18 A/B 扩展修订
+
+用户随后要求把 A 会相关工作纳入同一张材料表，并明确标出 A/B、按“综合不高于本文/综合高于本文”排序。修订后的正式范围为 CCF A/B full/regular paper；AAAI、CVPR、ICCV 标 A，ICASSP、ICME、ICRA、IROS 标 B。
+
+排序只使用相同且已明确 split 的 mAP50–95 绝对值：val 以本项目 `0.2961` 为参照，test 以 `0.2337` 为参照。先列不高于本文并按从高到低排列，再列高于本文并按从低到高排列，使最接近本文的结果优先出现。该标签不是跨论文因果增益；输入、裁剪、多尺度、预训练、evaluator 和 `max_det` 差异必须保留。split 或 input 未明确的 AAAI/ICME 行进入“不可排序”区。
+
+新增 A 会来源包括 ICCV 2019 ClusDet、CVPR 2022 QueryDet、AAAI 2022 UFPMP-Det、AAAI 2025 FBRT-YOLO、ICCV 2025 DM-EFS 与 UGS。AAAI 2025 表中的 RTX 4090 只对应训练环境，FPS 对应 RTX 3080；由于原文未明确 VisDrone split/input，只用于模型规模与方法覆盖，不进入精度或速度排名。

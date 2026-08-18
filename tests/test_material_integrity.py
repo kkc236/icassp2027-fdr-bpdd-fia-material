@@ -747,12 +747,23 @@ def test_external_visdrone_comparison_contract_and_source_policy():
     assert comparison["policy"]["parameter_count_is_sort_key"] is False
     assert comparison["policy"]["cross_protocol_delta_allowed"] is False
     assert comparison["policy"]["sota_claim_allowed"] is False
-    assert comparison["policy"]["venue_scope"] == "ccf_b_conference_only"
+    assert comparison["policy"]["venue_scope"] == "ccf_a_b_conference_only"
+    assert comparison["policy"]["relative_sort_order"] == [
+        "not_higher",
+        "higher",
+        "not_rankable",
+    ]
 
     rows = comparison["rows"]
     assert len(rows) >= 12
     assert {row["split"] for row in rows} >= {"val", "test", "not_reported"}
-    assert {row["family"] for row in rows} == {"project", "detr", "yolo"}
+    assert {row["family"] for row in rows} == {
+        "project",
+        "detr",
+        "yolo",
+        "anchor_based",
+        "two_stage",
+    }
     assert {
         "UAV-DETR-R18",
         "UAV-DETR-R50",
@@ -762,8 +773,22 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "YOLOv8-M",
         "YOLOv8-L",
         "RT-DETR-R50",
+        "ClusDet-R50",
+        "QueryDet",
+        "TPH-YOLOv5-x + UGS",
+        "DM-EFS",
+        "UFPMP-Det-R50",
+        "DINO-5scale + UGS",
+        "YOLOv10-X",
+        "RT-DETR-R34",
+        "FBRT-YOLO-L",
+        "FBRT-YOLO-X",
         "RT-DETR-L + FDR + BPDD + FIA",
     }.issubset({row["method"] for row in rows})
+    family_by_method = {row["method"]: row["family"] for row in rows}
+    assert family_by_method["QueryDet"] == "anchor_based"
+    assert family_by_method["ClusDet-R50"] == "two_stage"
+    assert family_by_method["UFPMP-Det-R50"] == "two_stage"
 
     forbidden_statuses = {
         "preprint",
@@ -789,15 +814,39 @@ def test_external_visdrone_comparison_contract_and_source_policy():
             "map50_95",
         }
         assert row["parameter_count_m"] is None or row["parameter_count_m"] > 0
+        assert row["venue_rank"] in {"project", "A", "B"}
+        assert row["relative_to_project"] in {
+            "reference",
+            "project_baseline",
+            "not_higher",
+            "higher",
+            "not_rankable",
+        }
         if row["source_id"] is not None:
             assert row["source_id"] in manifest["sources"]
 
     external_rows = [row for row in rows if row["family"] != "project"]
-    allowed_venues = {"ICASSP 2023", "ICRA 2024", "ICME 2025", "IROS 2025"}
+    allowed_venues = {
+        "ICCV 2019",
+        "AAAI 2022",
+        "CVPR 2022",
+        "ICASSP 2023",
+        "ICRA 2024",
+        "AAAI 2025",
+        "ICME 2025",
+        "ICCV 2025",
+        "IROS 2025",
+    }
     allowed_source_ids = {
+        "external_clusdet_iccv_2019",
+        "external_ufpmp_aaai_2022",
+        "external_querydet_cvpr_2022",
         "external_ema_icassp_2023",
         "external_hic_yolov5_icra_2024",
+        "external_fbrt_yolo_aaai_2025",
         "external_nrqo_icme_2025",
+        "external_dm_efs_iccv_2025",
+        "external_ugs_iccv_2025",
         "external_uav_detr_iros_2025",
     }
     assert {row["venue"] for row in external_rows} <= allowed_venues
@@ -806,6 +855,35 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         row["publication_status"] == "peer_reviewed_conference"
         for row in external_rows
     )
+    assert {row["venue_rank"] for row in external_rows} == {"A", "B"}
+
+    project_by_split = {
+        row["split"]: row["metrics"]["map50_95"]
+        for row in rows
+        if row["id"] in {"project_val_full", "project_test_full"}
+    }
+    for row in external_rows:
+        score = row["metrics"]["map50_95"]
+        if row["split"] not in project_by_split or score is None:
+            assert row["relative_to_project"] == "not_rankable"
+            continue
+        expected = (
+            "higher"
+            if score > project_by_split[row["split"]]
+            else "not_higher"
+        )
+        assert row["relative_to_project"] == expected
+
+    ranked_val = [row for row in external_rows if row["split"] == "val"]
+    lower = [row for row in ranked_val if row["relative_to_project"] == "not_higher"]
+    higher = [row for row in ranked_val if row["relative_to_project"] == "higher"]
+    assert [row["metrics"]["map50_95"] for row in lower] == sorted(
+        (row["metrics"]["map50_95"] for row in lower), reverse=True
+    )
+    assert [row["metrics"]["map50_95"] for row in higher] == sorted(
+        row["metrics"]["map50_95"] for row in higher
+    )
+    assert rows.index(lower[-1]) < rows.index(higher[0])
 
 
 def test_external_visdrone_csv_matches_json_rows():
@@ -870,7 +948,14 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
         "外部论文报告值，不是本项目复跑值",
         "不宣称 SOTA",
         "参数量不是筛选条件",
+        "CCF A",
         "CCF B",
+        "不高于本文",
+        "高于本文",
+        "不可排序",
+        "CVPR",
+        "ICCV",
+        "AAAI",
         "ICASSP",
         "ICRA",
         "ICME",
@@ -878,5 +963,5 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
         "not_reported",
     ):
         assert required_text in page
-    for forbidden_text in ("AAAI", "Sensors 2024", "Remote Sensing", "Scientific Reports"):
+    for forbidden_text in ("Sensors 2024", "Remote Sensing", "Scientific Reports"):
         assert forbidden_text not in page

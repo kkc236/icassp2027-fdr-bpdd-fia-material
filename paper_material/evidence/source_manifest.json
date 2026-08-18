@@ -755,13 +755,13 @@
     },
     "external_visdrone_comparison_json": {
       "artifact": "paper_material/results/external_visdrone_comparison.json",
-      "sha256": "517e1f3fcc6f8285f130ed5a1d69aa78738626a061ab2da2799f47272670592c",
-      "evidence_level": "curated_ccf_b_conference_publication_index",
-      "transformation": "normalize project rows and CCF B conference rows into an explicit split, protocol, metric, and runtime schema"
+      "sha256": "e27aab7c3df9e3769623013f9f9bc56612456b06da643eb37a93261340984258",
+      "evidence_level": "curated_ccf_a_b_conference_publication_index",
+      "transformation": "normalize project rows and CCF A/B conference rows into explicit split, venue-rank, relative-position, protocol, metric, and runtime fields"
     },
     "external_visdrone_comparison_csv": {
       "artifact": "paper_material/results/external_visdrone_comparison.csv",
-      "sha256": "d5a07edbd4e17ab59f92dc33cbdb56d6f482aacc183dd299822c17aec3982584",
+      "sha256": "c7b0379c051ab6e85c30c3fd1144d80385ea8e08ec596995fff52f7ec0d3ec98",
       "evidence_level": "flattened_view_of_external_visdrone_comparison_json",
       "transformation": "flatten JSON rows without changing values"
     },
@@ -791,7 +791,81 @@
       "evidence_level": "original_formal_b_venue_publication_reported_value",
       "transformation": "transcribe the explicit VisDrone validation row and retain partial-pretraining and batch boundaries"
     },
-    "external_ccf_b_venue_scope_2026": {
+    "external_clusdet_iccv_2019": {
+      "title": "Clustered Object Detection in Aerial Images",
+      "venue": "ICCV 2019",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content_ICCV_2019/papers/Yang_Clustered_Object_Detection_in_Aerial_Images_ICCV_2019_paper.pdf",
+      "source_tables": [
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the ResNet-50 VisDrone validation row and preserve the original-plus-cluster-crop protocol"
+    },
+    "external_ufpmp_aaai_2022": {
+      "title": "UFPMP-Det: Toward Accurate and Efficient Object Detection on Drone Imagery",
+      "venue": "AAAI 2022",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/19986/19745",
+      "source_tables": [
+        "Table 1"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the ResNet-50 VisDrone validation row and retain 1333x800 input and 60-epoch protocol"
+    },
+    "external_querydet_cvpr_2022": {
+      "title": "QueryDet: Cascaded Sparse Query for Accelerating High-Resolution Small Object Detection",
+      "venue": "CVPR 2022",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Yang_QueryDet_Cascaded_Sparse_Query_for_Accelerating_High-Resolution_Small_Object_Detection_CVPR_2022_paper.pdf",
+      "source_tables": [
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the CSQ VisDrone validation row and retain four-patch high-resolution preprocessing"
+    },
+    "external_fbrt_yolo_aaai_2025": {
+      "title": "FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection",
+      "venue": "AAAI 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/download/32937/35092",
+      "source_tables": [
+        "Table 1",
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value_split_unreported",
+      "transformation": "transcribe parameter-near RT-DETR/YOLO and FBRT rows while retaining the paper's missing VisDrone split and input identities; training GPU is RTX 4090 and speed GPU is RTX 3080"
+    },
+    "external_dm_efs_iccv_2025": {
+      "title": "DM-EFS: Dynamically Multiplexed Expanded Features Set Form for Robust and Efficient Object Detection",
+      "venue": "ICCV 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Sharma_DM-EFS_Dynamically_Multiplexed_Expanded_Features_Set_Form_for_Robust_and_ICCV_2025_paper.pdf",
+      "source_tables": [
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the explicit 640x640 VisDrone validation row"
+    },
+    "external_ugs_iccv_2025": {
+      "title": "Uncertainty-Aware Gradient Stabilization for Small Object Detection",
+      "venue": "ICCV 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Sun_Uncertainty-Aware_Gradient_Stabilization_for_Small_Object_Detection_ICCV_2025_paper.pdf",
+      "source_tables": [
+        "Table 1",
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the 640x640 TPH-YOLOv5-x+UGS and DETR-family DINO-5scale+UGS VisDrone validation rows"
+    },
+    "external_ccf_a_b_venue_scope_2026": {
       "title": "CCF Recommended International Conferences",
       "publication_status": "official_ranking_directory",
       "source_urls": [
@@ -799,14 +873,17 @@
         "https://www.ccf.org.cn/Academic_Evaluation/AI/"
       ],
       "venues": [
+        "AAAI",
+        "CVPR",
+        "ICCV",
         "ICASSP",
         "ICME",
         "ICRA",
         "IROS"
       ],
-      "ccf_class": "B",
+      "ccf_class": "A/B",
       "evidence_level": "official_venue_scope_authority",
-      "transformation": "use only full or regular papers from listed B conferences in the formal external comparison"
+      "transformation": "use only full or regular papers from listed CCF A/B conferences in the formal external comparison"
     }
   },
   "revocations": [

@@ -62,3 +62,19 @@
 - [x] Run JSON parsing, CSV/JSON row-parity, link/path, forbidden-source-status, and SHA-256 checks.
 - [x] Review `git diff --stat`, `git diff --check`, and final repository status.
 - [x] Commit the implementation and push the updated private material repository.
+
+### Task 5: Extend the comparison to CCF A/B and add relative ordering
+
+**Files:**
+- Modify: `tests/test_material_integrity.py`
+- Modify: `paper_material/results/external_visdrone_comparison.json`
+- Modify: `paper_material/results/external_visdrone_comparison.csv`
+- Modify: `paper_material/results/EXTERNAL_VISDRONE_COMPARISON_ZH.md`
+- Modify: `paper_material/evidence/source_manifest.json`
+- Modify: material index, consolidated results, and paper outline
+
+- [x] Add failing tests for A/B venue labels, required A-venue primary sources, and same-split relative-position groups.
+- [x] Add primary-source-backed ICCV/CVPR/AAAI rows and preserve protocol differences.
+- [x] Sort explicit val rows into `not_higher` (descending) and `higher` (ascending); keep missing split/input rows `not_rankable`.
+- [x] Add the AAAI 2025 RTX 4090 training table while separating its RTX 3080 speed protocol and missing split/input identity.
+- [x] Refresh artifact hashes, run focused verification, commit, and push.
