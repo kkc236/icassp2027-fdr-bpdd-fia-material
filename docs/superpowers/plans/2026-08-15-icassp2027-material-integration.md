@@ -1,5 +1,7 @@
 # ICASSP 2027 FDR–BPDD–FIA Material Integration Plan
 
+> Historical completed plan (superseded for FIA-only status): the pending-evidence assumptions below are retained only as implementation history. Current FIA-only P3-only results are recorded in `paper_material/results/FIA_RESULTS_STATUS_ZH.md`.
+
 ## Goal
 
 Keep the private material repository aligned with the modified FIA implementation and prevent any pre-modification FIA experiment from returning to paper tables, plots, or prose.

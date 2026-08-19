@@ -8,9 +8,9 @@
 
 1. **分布定位基础而非原创冒领**：将来自 D-FINE 的 FDR 边界分布表示和相关监督稳定适配到 Ultralytics RT-DETR-L/VisDrone；不把 FDR、FGL 或 Integral 写成本文从零发明。
 2. **主要方法创新**：提出依赖 FDR 逐边分布的训练期 BPDD，通过未来层加权教师和 better-only 门控渐进改善定位监督，且不增加推理分支。
-3. **互补增强**：集成面向 distribution-refined context 的 FIA 高分辨率增强模块；用 FDR+FIA 与完整三模块的 val/test 正增益证明组合兼容性，而不主张 FIA 在任意配置下均稳定提升。
+3. **高分辨率增强**：集成 FIA，并用 fresh FIA-only P3-only 的 val 正增益以及 FDR+FIA、完整三模块的补充结果说明其有效性与组合兼容性；不同拓扑和证据等级分别报告。
 
-第三点的方法细节已绑定当前 `src/fia.py`：双 depth-wise 残差细化、联合通道/空间注意力、零初始化残差缩放和构造期 RNG 隔离。published standalone 与 P3-only 三模块的拓扑身份仍须分开书写。
+第三点的方法细节已绑定当前 `src/fia.py`：双 depth-wise 残差细化、联合通道/空间注意力、零初始化残差缩放和构造期 RNG 隔离。fresh FIA-only 与三模块均登记为 P3-only；既有 FDR+FIA checkpoint 仍是 cascading，三者的拓扑身份和证据来源须分开书写。
 
 ## 章节结构
 
@@ -36,8 +36,8 @@
 - 4.2 Main Results：正式 exact 核心表放 baseline、FDR 和 FDR+BPDD；三模块 P3-only 的正向 val/test 作为补充观察。
 - 论文 A–E 主消融表的 E 行逐项绑定四位小数 val 文本：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`；checkpoint 的 `0.29618` 作为交叉印证，不跨证据拼接 P/R。
 - 4.2 同时加入 [VisDrone CCF A/B 会外部方法对比](../results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)：正式表只采用 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS full/regular paper；逐行标明 A/B，按同 split 的 mAP50–95 分成不高于本文和高于本文，split/input 未报告行放补充表，不计算跨论文涨点。VARDet（ICASSP 2026）单独标为直接竞品，并注明其 ResNet-50、1333×800、统一重实现协议与本文 640 协议不同。
-- 4.3 Ablation Studies：分开报告现有 best.pt 的 FIA-only 与 FDR+FIA exact val/test；val ΔmAP 为 −0.2315/+0.5280 pp，test ΔmAP 为 −0.0240/+0.6644 pp，且均不是严格配对、不是 P3-only。
-- 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA standalone 和三模块的总体、AP75 与 10 类 test 结果；所有 FIA 指标直接取自已登记记录，不反推。
+- 4.3 Ablation Studies：分开报告 fresh P3-only FIA-only 与既有 cascading FDR+FIA 的 exact val/test。FIA-only val mAP50–95=`0.2270563951`，相对 canonical val baseline `0.21911` 为 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两项都是 split 内算术差，不能跨 val/test 拼接。FDR+FIA 保留既有 val/test 算术差 `+0.5280/+0.6644 pp`。
+- 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA 各 checkpoint 的总体与 AP75；只有已有逐类证据的记录才展示 10 类结果，所有指标直接取自已登记记录，不反推。
 - 4.5 Efficiency：加入 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。BPDD 训练期工作、不增加推理分支；四行 Params/FLOPs/FPS/Latency 只能在同一硬件和统一 batch=1 FP32 协议实测后填入。
 
 投稿前不补第三数据集、不强行三种子；唯一新增的 [FDR 与 FDR+BPDD 严格配对](../experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md) 已完成训练，mAP50–95 配对增益为 `+0.231 pp`。剩余工作只是在冻结 evaluator 下用两个 `best.pt` 补齐 AP75 与 test，不再增加训练臂。
@@ -50,7 +50,8 @@
 
 - strict 证据下，FDR 相对 RT-DETR-L 的 mAP50–95 为 +0.07055，AP75 为 +0.07951。
 - BPDD 是依赖 FDR 边界分布的训练期、无参数蒸馏，不增加推理图或参数。
-- 现有 standalone best.pt 独立 val 中，FIA-only mAP50–95=0.216795（相对 baseline −0.2315 pp），FDR+FIA=0.294940（相对 FDR +0.5280 pp）；independent exact test 分别为 0.177176（−0.0240 pp）与 0.234645（+0.6644 pp），且 AP75 与 10 类明细已补齐。这支持“FIA 与 FDR 组合兼容”，不支持“FIA 单独稳定增益”。
+- fresh P3-only FIA-only best.pt 的 independent exact val 为 P=`0.4871962209`、R=`0.4253173434`、F1=`0.4509443663`、AP50=`0.3987451873`、AP75=`0.2218076018`、mAP50–95=`0.2270563951`，相对 canonical val baseline `0.21911` 为 `+0.7946 pp`。independent exact test 为 P=`0.4482592210`、R=`0.3776360333`、F1=`0.3954178960`、AP50=`0.3366417705`、AP75=`0.1820114030`、mAP50–95=`0.1855174641`，相对 canonical test baseline `0.1774164317` 为 `+0.8101 pp`；不得把两个 split 互作参照。
+- 既有 FDR+FIA cascading best.pt 的 val/test mAP50–95 为 `0.294940/0.234645`，相对 FDR 的同 split 算术差为 `+0.5280/+0.6644 pp`；该记录不得标成 P3-only。
 - 正确 P3-only 三模块四位小数 val 为 P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP50–95=0.2961；相对当前 BPDD val 为 +0.384 pp 的算术观察。checkpoint best-val `0.29618` 与其一致。
 - 三模块 test 为 P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP50–95=0.2337，相对 BPDD test 为 +0.204 pp；因此三模块 val/test 均为正增长。
 - CCF A/B 会正式论文的同 split 结果可用于说明竞争位置；640-val 的 `0.2961` 高于 A 会 TPH-YOLOv5-x+UGS `0.2900`，并接近 A 会 DM-EFS `0.2971` 与 B 会 UAV-DETR-R18 `0.2980`。参数量不是筛选条件；AAAI 2025 的 4090 训练表因 split/input 未明确只放补充区，不做精度或速度排名。
@@ -58,8 +59,8 @@
 
 ## 当前禁止主张
 
-- 把 standalone best.pt 结果称为 P3-only 或严格配对因果增益。
-- 宣称 FIA-only 正增益；当前直接复评显示其 val mAP 略低于 baseline。
+- 把既有 FDR+FIA cascading best.pt 称为 P3-only，或把任一非严格配对算术差写成严格因果增益。
+- 把旧 FIA-only cascading checkpoint 的负向数值继续当作当前结果；fresh FIA-only P3-only val 已取代该记录。
 - 新三模块 best-val 观察是严格配对因果增益、完整评估或最终论文主表结果。
 - “本文发明 FDR、FGL、Integral、非均匀积分或相邻 bin 监督”。
 - “BPDD 可脱离 FDR 单独使用”或“BPDD 具有推理期零总开销”。

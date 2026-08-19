@@ -18,23 +18,24 @@ Y = X + \alpha\bigl(\mathcal{F}(X)-X\bigr),
 - FDR+FIA 检查 FIA 与细粒度分布定位表示的兼容性。
 - FDR+BPDD+FIA 检查完整组合；其中 BPDD 仍只在训练期工作。
 
-## 两种已登记拓扑
+## 已登记拓扑
 
 | 身份 | 连接 | 使用范围 |
 |---|---|---|
-| published cascading standalone | FIA 位于层 22，层 23 使用 `f=-1`，P4/P5 延续 FIA 输出 | 现有 FIA-only、FDR+FIA best.pt 消融 |
-| P3-only three-module | FIA 增强 decoder P3，层 23 显式回到原始 P3（`f=21`） | FDR+BPDD+FIA checkpoint 观察 |
+| current P3-only FIA-only | raw graph 的 FIA 层 22 使用 `f=-1`，即读取上一层 21；层 23 显式 `f=21`；decoder 为 `[22,25,28]` | fresh FIA-only `best.pt` exact val/test |
+| published cascading FDR+FIA | FIA 位于层 22，层 23 使用 `f=-1`，P4/P5 延续 FIA 输出 | 既有 FDR+FIA `best.pt` 消融 |
+| P3-only three-module | FIA 增强 decoder P3，层 23 显式回到原始 P3（`f=21`），decoder 为 `[22,25,28]` | FDR+BPDD+FIA checkpoint 观察 |
 
-因此不能把 standalone 的结果标成 P3-only，也不能把两个拓扑拼成严格成对实验。
+层 22 的 `f=-1` 本身不表示 cascading：在 fresh FIA-only raw graph 中它只表示“读取上一层 21”。区分拓扑的关键是层 23：`f=21` 是正确 P3-only，旧 FIA-only/FDR+FIA 的层 23 `f=-1` 才会继续级联 FIA 输出。旧 FIA-only cascading 记录已被 fresh P3-only checkpoint 取代；既有 FDR+FIA 仍保持 cascading 身份。
 
 ## 当前证据结论
 
-- FIA-only exact val mAP50–95 为 `0.2167954534`，相对 baseline `−0.2315 pp`，说明 FIA 单独并未稳定涨点。
+- fresh P3-only FIA-only exact val 的 P/R/F1/AP50/AP75/mAP50–95 为 `0.4871962209/0.4253173434/0.4509443663/0.3987451873/0.2218076018/0.2270563951`，相对 canonical baseline `0.21911` 为 `+0.7946 pp` 的非严格配对算术增益。
 - FDR+FIA exact val mAP50–95 为 `0.2949403207`，相对 FDR `+0.5280 pp`，支持 FIA 与 FDR 的互补兼容性。
-- independent exact test 中，FIA-only / FDR+FIA 的 mAP50–95 为 `0.1771764568` / `0.2346453866`，AP75 为 `0.1716130742` / `0.2358787301`；相对登记 baseline/FDR 的 mAP 算术差分别为 `−0.0240 pp` / `+0.6644 pp`。
+- independent exact test 中，fresh FIA-only 的 P/R/F1/AP50/AP75/mAP50–95 为 `0.4482592210/0.3776360333/0.3954178960/0.3366417705/0.1820114030/0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。既有 FDR+FIA 的 mAP50–95/AP75 为 `0.2346453866/0.2358787301`，相对登记 FDR 的 test mAP 算术差为 `+0.6644 pp`；所有差值只在各自 split 内成立。
 - FDR+BPDD+FIA P3-only 四位小数 val 文本的 mAP50–95 为 `0.2961`，相对 FDR+BPDD 为 `+0.384 pp` 的算术观察；checkpoint best-val `0.29618` 与其一致。
 - 三模块四位小数 test 文本的 P/R/F1/AP50/AP75/mAP50–95 为 `0.5189/0.4361/0.4634/0.4081/0.2327/0.2337`，相对 FDR+BPDD test 为 `+0.204 pp`，说明完整组合在 val/test 两个 split 上均呈正增长。
 
-论文应把 FIA 的贡献表述为“面向 FDR 分布细化上下文（distribution-refined context）的高分辨率增强设计，并在 FDR+FIA 与完整三模块中显示正向互补”，不能声称 FIA 在任意配置下都稳定提升，也不能把算术差写成严格因果收益。FIA-only 的负向结果不隐藏，放入补充消融。
+论文可表述为“FIA 面向高分辨率小目标表征，fresh P3-only FIA-only 在 canonical val baseline 上取得 `+0.7946 pp` 的算术增益，并在 FDR+FIA 与完整三模块中呈现兼容性观察”。不得把不同 topology/authority 的算术差写成严格因果收益，也不得继续把旧 FIA-only cascading 的负向值当作当前结果。
 
 证据详情见 [论文结果统一汇总](../results/RESULTS_ZH.md)与 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。

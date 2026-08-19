@@ -11,7 +11,7 @@
 5. [BPDD 严格配对补充实验](experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md)
 6. [FIA 消融实验入口](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
 7. [论文结果统一汇总](results/RESULTS_ZH.md)
-8. [FIA 发布版 best.pt 结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
+8. [FIA best.pt 结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)
 9. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
 10. [val 主结果表](results/MAIN_TABLE_ZH.md)
 11. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
@@ -24,10 +24,10 @@
 
 - RT-DETR-L、FDR、FDR+BPDD 是正式核心行。新增同 authority、同 seed 的 FDR/FDR+BPDD 配对训练已完成：best-val mAP50–95 为 `0.29047/0.29278`，BPDD 增益 `+0.231 pp`；AP75 待 best.pt 独立精确复评。A–E 表的旧 C 行暂保留已补齐 AP75 的 cross-authority 完整展示值，不能再作为 BPDD 的主要因果增益。
 - A–E val 主表的 D 行已与统一结果页对齐：FDR+FIA 为 `P=0.57752、R=0.49089、AP50=0.48631、AP75=0.29972、mAP=0.29494`，相对 FDR 为 `+0.528 pp` 的非严格配对算术差，不再保留“待整理”占位。
-- FIA-only 与 FDR+FIA 按当前决策直接采用 Release 中各自的 `best.pt`，不再重训。冻结 evaluator 独立 val 的 mAP50–95 分别为 `0.2167954534` 与 `0.2949403207`；独立 test 的 mAP50–95 分别为 `0.1771764568` 与 `0.2346453866`。
-- FIA-only 相对 baseline 为 `−0.2315 pp`；FDR+FIA 相对 FDR 为 `+0.5280 pp`。两者是非严格配对算术差。
-- 两个 standalone checkpoint 均为 published cascading topology（`model[23].f=-1`），不能称为 P3-only。
-- 两个 standalone `best.pt` 均已在 VisDrone test（1,610 images / 75,102 instances）完成 exact 独立复评；FIA-only / FDR+FIA 的 AP75 分别为 `0.1716130742` / `0.2358787301`。val 与 test 结果分别报告；对既有对照的任何 test 算术差也不是 strict paired 因果增益。
+- FIA-only 已切换到 fresh P3-only `best.pt`。冻结 evaluator 独立 val 为 `P=0.4871962209、R=0.4253173434、F1=0.4509443663、AP50=0.3987451873、AP75=0.2218076018、mAP=0.2270563951`；相对 canonical baseline `0.21911` 为 `+0.7946 pp` 的同 split 算术差。
+- 同一 FIA-only checkpoint 的独立 test 为 `P=0.4482592210、R=0.3776360333、F1=0.3954178960、AP50=0.3366417705、AP75=0.1820114030、mAP=0.1855174641`；相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。该值只作 test 内算术比较，不从 val/test 之间推导涨点。
+- fresh FIA-only 图为正确 P3-only：FIA 层 22 的 `f=-1` 读取上一层 21，层 23 显式 `f=21`，decoder 输入为 `[22,25,28]`。checkpoint SHA-256 为 `c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6`，源码 SHA 为 `118ad631eff93ad806f85ea47819578e6e00bfc5`。旧 FIA-only cascading（层 23 `f=-1`）结果已被取代，仅可作历史记录。
+- FDR+FIA 仍采用既有发布版 cascading `best.pt`：val/test mAP50–95 为 `0.2949403207/0.2346453866`，相对 FDR 的 val/test 算术差为 `+0.5280/+0.6644 pp`；不得把该 checkpoint 标成 P3-only。
 - FDR+BPDD+FIA 已补入与终端截图对应的四位小数文本记录。val 为 `P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP=0.2961`（相对 BPDD `+0.384 pp`）；test 为 `P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP=0.2337`（`+0.204 pp`）。checkpoint `0.29618` 与终端截图作为互证。
 - 外部 VisDrone 正式表收录 CCF A/B 类会议 full/regular paper，并标明会议等级与相对本文的绝对 mAP 位置。当前覆盖 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS；同 split 的结果分成“不高于本文/高于本文”，split 或 input 未报告的结果单列为不可排序。ICASSP 2026 VARDet 已作为同任务直接竞品登记，但其 ResNet-50、1333×800 统一重实现结果与本文 640 协议非严格可比。期刊、预印本与来源不明结果不进入正式表。
 
@@ -41,9 +41,9 @@
 - [val/test 总体 CSV](results/split_overall_results.csv)
 - [尺度 CSV](results/split_scale_results.csv)
 - [类别 CSV](results/split_class_results.csv)
-- [FIA standalone exact val CSV](results/fia_existing_best_val_results.csv)
-- [FIA standalone exact test CSV（总体 + 逐类）](results/fia_existing_best_test_results.csv)
-- [FIA best.pt 完整证据](evidence/fia_existing_best_evaluation.json)
+- [FIA standalone val CSV（按 checkpoint SHA 核对；旧 FIA-only 行仅为历史）](results/fia_existing_best_val_results.csv)
+- [FIA standalone test CSV（按 checkpoint SHA 核对；旧 FIA-only 行仅为历史）](results/fia_existing_best_test_results.csv)
+- [FIA best.pt 机器证据（按 checkpoint SHA 核对；旧 FIA-only 记录已被 fresh P3-only 结果取代）](evidence/fia_existing_best_evaluation.json)
 - [三模块 val 四位小数原始文本](evidence/fdr_bpdd_fia_val.txt)
 - [三模块 test 四位小数原始文本](evidence/fdr_bpdd_fia_test.txt)
 - [三模块 val/test 总体与逐类 CSV](results/fdr_bpdd_fia_text_report_class_results.csv)
@@ -57,5 +57,5 @@
 
 - FDR 是来自 D-FINE、适配到 Ultralytics RT-DETR-L/VisDrone 的定位分布基础，不作为本文从零提出的原创模块。
 - BPDD 是论文的主要方法创新：它消费 FDR 的逐边分布，只在训练期工作且不增加推理分支；BPDD-only 不是合法模型行。
-- FIA 是面向 distribution-refined context 的推理期高分辨率增强模块。当前 FDR+FIA 与三模块结果支持正向互补，但 FIA-only 并未显示稳定增益，后者保留在补充消融中。
+- FIA 是面向高分辨率小目标表征的推理期增强模块。fresh P3-only FIA-only 在 canonical val baseline 上获得 `+0.7946 pp` 的非严格配对算术增益；FDR+FIA 与三模块结果继续作为不同拓扑、不同证据等级的兼容性观察。
 - FDR/FGL/Integral 及非均匀积分来自固定版本 D-FINE 先验；本文主张的是面向 Ultralytics RT-DETR-L 与 VisDrone 的适配、组合和验证。

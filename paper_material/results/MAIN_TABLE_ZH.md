@@ -34,7 +34,8 @@ A–E 标准展示表中，当前完整五指标且可直接写为严格差值�
 
 ## FIA 行状态
 
-- FIA-only、FDR+FIA：按当前实验决策直接采用 Release 中各自的 `best.pt`，已在冻结 VisDrone evaluator 下完成独立 exact val/test；两者是已发布 cascading standalone 拓扑，不称为 P3-only。
+- FIA-only：采用 fresh P3-only `best.pt` 并完成冻结 evaluator 的独立 exact val/test。raw graph 为层 22 `f=-1`（上一层 21）、层 23 `f=21`、decoder `[22,25,28]`；checkpoint/source SHA 为 `c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6` / `118ad631eff93ad806f85ea47819578e6e00bfc5`。
+- FDR+FIA：继续采用 Release 既有 cascading `best.pt`；D 行的 topology 不变，不能称为 P3-only。
 - D 行直接登记 FDR+FIA best.pt 的 exact independent val：`P=0.57752、R=0.49089、AP50=0.48631、AP75=0.29972、mAP=0.29494`；相对 B 行的 `+0.528 pp` 是非严格配对算术差。
 - FDR+BPDD+FIA：四位小数 val 为 P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP50–95=0.2961，相对 BPDD val 为 +0.384 pp。
 - 同一三模块 test 为 P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP50–95=0.2337，相对 BPDD test 为 +0.204 pp；val/test 均为正增长。文本记录和截图互证，但差值仍不写成严格配对 FIA 因果增益。
@@ -43,11 +44,11 @@ A–E 标准展示表中，当前完整五指标且可直接写为严格差值�
 
 | 方法 | P | R | AP50 | AP75 | mAP50–95 | 参照 | ΔmAP | 证据 |
 |---|---:|---:|---:|---:|---:|---|---:|---|
-| RT-DETR-L+FIA | 0.479433 | 0.414194 | 0.385675 | 0.209674 | 0.216795 | RT-DETR-L | −0.231 pp | best checkpoint independent val exact |
+| RT-DETR-L+FIA | 0.487196 | 0.425317 | 0.398745 | 0.221808 | 0.227056 | canonical RT-DETR-L `0.21911` | **+0.7946 pp** | fresh P3-only best checkpoint independent val exact |
 | RT-DETR-L+FDR+FIA | 0.577524 | 0.490889 | 0.486314 | 0.299724 | 0.294940 | RT-DETR-L+FDR | +0.528 pp | best checkpoint independent val exact |
 
-这里的差值是当前登记对照的算术差，不是严格配对因果增益。结论是：FIA-only 略有负增益，FDR+FIA 呈正增益；论文主线使用 FIA 与 FDR 的兼容组合，不以 FIA-only 作为性能主张。
+这里的差值是当前登记对照的同 split 算术差，不是严格配对因果增益。fresh P3-only FIA-only 与既有 cascading FDR+FIA 在各自 val 参照下均为正向；两者的 topology/authority 不同，不拼成严格因果序列。
 
-同一批 `best.pt` 的 independent exact test 已补齐 AP75 和逐类别 F1：FIA-only / FDR+FIA 的 test mAP50–95 分别为 `0.177176` / `0.234645`，AP75 分别为 `0.171613` / `0.235879`。完整 test 表和逐类别明细见 [论文结果统一汇总](RESULTS_ZH.md)。
+independent exact test 中，fresh FIA-only 的 P/R/F1/AP50/AP75/mAP50–95 为 `0.448259/0.377636/0.395418/0.336642/0.182011/0.185517`，相对 protocol-comparable canonical test baseline `0.177416` 为 `+0.8101 pp`；既有 FDR+FIA 的 test mAP50–95/AP75 为 `0.234645/0.235879`。所有差值限于各自 split，完整 test 表见 [论文结果统一汇总](RESULTS_ZH.md)。
 
 最新状态与导入条件见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。

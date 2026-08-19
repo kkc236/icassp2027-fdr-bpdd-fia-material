@@ -30,8 +30,8 @@
       "fdr": false,
       "bpdd": false,
       "fia": true,
-      "status": "existing_best_evaluated",
-      "reason": "The published best.pt was independently evaluated on VisDrone val. It is a cascading standalone checkpoint, not a revised P3-only run."
+      "status": "p3_only_best_checkpoint_exact_val_and_test",
+      "reason": "The fresh best.pt is bound to the corrected P3-only graph and has exact independent VisDrone val and test metrics."
     },
     {
       "method": "RT-DETR-L+FDR+BPDD",
@@ -209,36 +209,43 @@
     {
       "split": "val",
       "method": "RT-DETR-L+FIA",
-      "status": "existing_best_independent_val_exact",
+      "status": "p3_only_best_checkpoint_independent_val_exact",
       "metrics": {
-        "precision": 0.4794334980185041,
-        "recall": 0.4141938299458384,
-        "f1": 0.44443223821449405,
-        "map50": 0.38567545133764725,
-        "map75": 0.2096736111592438,
-        "map": 0.21679545343355132
+        "precision": 0.4871962209136635,
+        "recall": 0.42531734343807504,
+        "f1": 0.4509443663180429,
+        "map50": 0.39874518726363956,
+        "map75": 0.2218076018094571,
+        "map": 0.22705639514425527
       },
       "delta_reference": "RT-DETR-L",
-      "delta_map_pp": -0.23145465664486664,
+      "delta_reference_source_id": "strict_control_val",
+      "delta_map_pp": 0.7946395144255269,
       "delta_strict_paired": false,
       "evidence_level": "best_checkpoint_independent_val_exact",
-      "source_id": "fia_existing_best_independent_val",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "graph_topology": "p3_only_standalone",
       "formal_delta_allowed": false
     },
     {
       "split": "test",
       "method": "RT-DETR-L+FIA",
-      "status": "existing_best_independent_test_exact",
+      "status": "p3_only_best_checkpoint_independent_test_exact",
       "metrics": {
-        "precision": 0.42405399388824083,
-        "recall": 0.3696529891467626,
-        "f1": 0.38186403219771886,
-        "map50": 0.32511085966127234,
-        "map75": 0.17161307417237592,
-        "map": 0.1771764568469921
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812
       },
+      "delta_reference": "RT-DETR-L",
+      "delta_reference_source_id": "strict_control_test_exact",
+      "delta_map_pp": 0.8101032384120604,
+      "delta_strict_paired": false,
       "evidence_level": "best_checkpoint_independent_test_exact",
-      "source_id": "fia_existing_best_independent_val",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "graph_topology": "p3_only_standalone",
       "formal_delta_allowed": false
     },
     {
@@ -315,6 +322,38 @@
       "formal_delta_allowed": false
     }
   ],
+  "superseded_fia_observations": [
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FIA",
+      "status": "superseded_cascading_best_checkpoint_independent_val_exact",
+      "metrics": {
+        "precision": 0.4794334980185041,
+        "recall": 0.4141938299458384,
+        "f1": 0.44443223821449405,
+        "map50": 0.38567545133764725,
+        "map75": 0.2096736111592438,
+        "map": 0.21679545343355132
+      },
+      "source_id": "fia_existing_best_independent_val",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FIA",
+      "status": "superseded_cascading_best_checkpoint_independent_test_exact",
+      "metrics": {
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921
+      },
+      "source_id": "fia_existing_best_independent_val",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact"
+    }
+  ],
   "strict_bpdd_pair_20260819": {
     "status": "training_complete_best_val_selection_metrics_available",
     "source_id": "bpdd_strict_pair_20260819",
@@ -328,5 +367,5 @@
     "map75_status": "pending_best_checkpoint_exact_evaluation",
     "test_status": "pending_best_checkpoint_exact_evaluation"
   },
-  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The 2026-08-19 same-authority same-seed paired training confirms a +0.231 pp BPDD best-val mAP gain; AP75 and test remain pending exact best.pt evaluation. The standalone best.pt checkpoints have exact independent val/test supplementary rows. The corrected P3-only three-module result has matching four-decimal val/test text reports with F1, AP75, and class details; the archived terminal screenshot is a rounded cross-check. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
+  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The fresh FIA-only best.pt has exact P3-only val/test supplementary metrics and non-paired arithmetic gains of +0.7946395144255269 pp on val and +0.8101032384120604 pp on protocol-comparable test. The older cascading FIA-only result is retained only as superseded evidence. The corrected P3-only three-module result retains its four-decimal val/test text-report boundary. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
 }

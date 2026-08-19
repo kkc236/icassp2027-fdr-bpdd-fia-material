@@ -1,9 +1,11 @@
 {
   "format_version": 1,
   "generated_at": "2026-08-17T23:45:49+08:00",
+  "updated_at": "2026-08-19",
   "source_repository": "https://github.com/kkc236/uav-detection-baselines",
   "release_tag": "DFR-BDPP-FIA",
-  "decision": "Use the published standalone best.pt checkpoints directly; no standalone retraining is required for the current paper material.",
+  "release_tag_scope": "historical_cascading_fia_only_and_fdr_fia_arms_only",
+  "decision": "Use the fresh P3-only FIA-only best.pt evaluation as canonical exact FIA-only evidence. Retain the older cascading FIA-only checkpoint as a superseded audit record; retain the independently evaluated FDR+FIA checkpoint as a separate non-P3-only supplementary result.",
   "dataset": {
     "name": "VisDrone",
     "split": "val",
@@ -32,20 +34,128 @@
     "checkpoint_selection": "best.pt"
   },
   "environment": {
-    "python": "3.12.8",
-    "torch": "2.5.1+cu124",
-    "ultralytics": "8.4.90",
-    "gpu": "NVIDIA GeForce RTX 4090"
+    "current_p3_only_server": {
+      "python": "3.10.12",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "gpu": "NVIDIA GeForce RTX 4090"
+    },
+    "historical_release_independent_evaluation": {
+      "python": "3.12.8",
+      "torch": "2.5.1+cu124",
+      "ultralytics": "8.4.90",
+      "gpu": "NVIDIA GeForce RTX 4090"
+    }
   },
   "arms": [
     {
-      "variant": "fia_only",
+      "variant": "fia_only_p3",
+      "method": "RT-DETR-L+FIA",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "source_commit": "118ad631eff93ad806f85ea47819578e6e00bfc5",
+      "checkpoint_sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+      "checkpoint_selection": "best.pt",
+      "result_status": "current",
+      "release_asset": {
+        "name": "fia-p3-only-final-20260819.tar.gz",
+        "asset_id": 520838108,
+        "size_bytes": 62725579,
+        "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+        "updated_at": "2026-08-19T12:52:19Z",
+        "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz"
+      },
+      "raw_artifacts": {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json",
+        "graph_identity_normalization": "paper_material/evidence/fia_p3_only_20260819/graph-identity-normalization.json",
+        "release_content_manifest": "paper_material/evidence/fia_p3_only_20260819/MANIFEST.sha256"
+      },
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "fia_layer_from_raw": -1,
+        "fia_layer_from_effective": 21,
+        "layer_23_from": 21,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "p3_only_standalone"
+      },
+      "val": {
+        "evidence_level": "best_checkpoint_independent_val_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "images": 548,
+        "instances": 38759,
+        "data_yaml_sha256": "e04ce418942f8efe02ce8b174cbece0004fe3d6be2d07f7e6fbbbab0117cbfe6",
+        "metrics": {
+          "precision": 0.4871962209136635,
+          "recall": 0.42531734343807504,
+          "f1": 0.4509443663180429,
+          "map50": 0.39874518726363956,
+          "map75": 0.2218076018094571,
+          "map": 0.22705639514425527
+        },
+        "delta_reference": "RT-DETR-L",
+        "delta_reference_source_id": "strict_control_val",
+        "delta_map_pp": 0.7946395144255269,
+        "delta_strict_paired": false,
+        "comparison_scope": "same_split_project_baseline_arithmetic",
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.5393788313839029, "recall": 0.44075079149706015, "f1": 0.4851024625710901, "map50": 0.4438810179643528, "map75": 0.13190730835940082, "map": 0.19090022989080252},
+          {"class": "people", "precision": 0.4853382562855667, "recall": 0.3731614170399181, "f1": 0.4219209793235193, "map50": 0.35240798404755297, "map75": 0.06273289617504296, "map": 0.1312308409726593},
+          {"class": "bicycle", "precision": 0.2936405372241281, "recall": 0.1919191919191919, "f1": 0.2321249116692623, "map50": 0.14492278481728915, "map75": 0.038827214058890114, "map": 0.05940832227789135},
+          {"class": "car", "precision": 0.7448067996413542, "recall": 0.815149293175321, "f1": 0.778392083053548, "map50": 0.812689912218368, "map75": 0.6117619404184949, "map": 0.5509212906491647},
+          {"class": "van", "precision": 0.5053601153353752, "recall": 0.519371939205919, "f1": 0.5122702309074373, "map50": 0.48145893864443734, "map75": 0.36940602185625293, "map": 0.32982490682954396},
+          {"class": "truck", "precision": 0.4892130423757679, "recall": 0.332, "f1": 0.3955580870924257, "map50": 0.3299567361172603, "map75": 0.2416379920265706, "map": 0.21567325055336978},
+          {"class": "tricycle", "precision": 0.4018998071110429, "recall": 0.32248803827751193, "f1": 0.35784112393501083, "map50": 0.2622726573681081, "map75": 0.1274488669906482, "map": 0.1361346392611928},
+          {"class": "awning-tricycle", "precision": 0.2738368904335298, "recall": 0.18796992481203006, "f1": 0.2229204853903273, "map50": 0.13072973434618482, "map75": 0.08005749798400288, "map": 0.07701717064280567},
+          {"class": "bus", "precision": 0.597529760498624, "recall": 0.5537848605577689, "f1": 0.5748262534757465, "map50": 0.5414142867961111, "map75": 0.43282953277939495, "map": 0.37820495832468276},
+          {"class": "motor", "precision": 0.5409581688473435, "recall": 0.5165779778960294, "f1": 0.5284870457620615, "map50": 0.48771782031673144, "map75": 0.12146674744587287, "map": 0.20124834204044037}
+        ]
+      },
+      "test": {
+        "evidence_level": "best_checkpoint_independent_test_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "images": 1610,
+        "instances": 75102,
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae",
+        "metrics": {
+          "precision": 0.4482592209945812,
+          "recall": 0.377636033342981,
+          "f1": 0.3954178960043504,
+          "map50": 0.33664177054432,
+          "map75": 0.18201140298044138,
+          "map": 0.18551746406283812
+        },
+        "delta_reference": "RT-DETR-L",
+        "delta_reference_source_id": "strict_control_test_exact",
+        "delta_map_pp": 0.8101032384120604,
+        "delta_strict_paired": false,
+        "comparison_scope": "same_dataset_and_evaluator_protocol_arithmetic",
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.4881419138880031, "recall": 0.29582457281830854, "f1": 0.3683942505178199, "map50": 0.2858952230555769, "map75": 0.05833395359015474, "map": 0.10888741555897838},
+          {"class": "people", "precision": 0.4654571683922623, "recall": 0.19679447841913988, "f1": 0.2766301937374901, "map50": 0.18782814002833506, "map75": 0.024409432585302822, "map": 0.06411197568490334},
+          {"class": "bicycle", "precision": 0.3414184905172627, "recall": 0.1228878648233487, "f1": 0.1807263192858879, "map50": 0.12393386619637435, "map75": 0.023857239403696082, "map": 0.046437166227742195},
+          {"class": "car", "precision": 0.7075512236207134, "recall": 0.7609175749804089, "f1": 0.733264692807594, "map50": 0.747753079606095, "map75": 0.5013633383110879, "map": 0.46017880364486635},
+          {"class": "van", "precision": 0.34376394133807575, "recall": 0.5120429734881303, "f1": 0.41135893541241914, "map50": 0.3902443166240764, "map75": 0.2904308225651072, "map": 0.2543847732966757},
+          {"class": "truck", "precision": 0.4310444196864611, "recall": 0.44979315532154945, "f1": 0.44021925293719744, "map50": 0.39874932036930655, "map75": 0.27082691180202895, "map": 0.24552925842304135},
+          {"class": "tricycle", "precision": 0.28309675963796066, "recall": 0.3113207547169811, "f1": 0.2965386945708155, "map50": 0.19970761713645171, "map75": 0.0847463260189414, "map": 0.09813099389931794},
+          {"class": "awning-tricycle", "precision": 0.36014106878713364, "recall": 0.2003338898163606, "f1": 0.25745471795034863, "map50": 0.16963942088327777, "map75": 0.09361098301563264, "map": 0.09239812402942586},
+          {"class": "bus", "precision": 0.6193918576809399, "recall": 0.5408163265306123, "f1": 0.5774433135577641, "map50": 0.5488537052274489, "map75": 0.4086324437772154, "map": 0.36731132377220715},
+          {"class": "motor", "precision": 0.44258536639699897, "recall": 0.38562874251497004, "f1": 0.4121485892661674, "map50": 0.3138130163162573, "map75": 0.06390257873524645, "map": 0.11780480609122326}
+        ]
+      }
+    },
+    {
+      "variant": "fia_only_cascading_superseded",
       "method": "RT-DETR-L+FIA",
       "source_id": "fia_existing_best_independent_val",
       "release_archive": "fia-seed0-20260815-211156.zip",
       "release_archive_sha256": "17eb96a577f20a99370f87f6a33374a7f402a9989a4d692f8961dce0fd9aab0a",
       "checkpoint_sha256": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
       "checkpoint_selection": "best.pt",
+      "result_status": "superseded",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact",
+      "supersession_reason": "Fresh exact evaluation is bound to the corrected P3-only FIA-only graph; this checkpoint uses the older cascading topology.",
       "graph_identity": {
         "p3_only": false,
         "fia_layer": 22,
@@ -110,6 +220,7 @@
       "release_archive_sha256": "30fc5c418a4f24b8e8c6ee3a44ddc88d94ba236225f178e689cfe81540afc900",
       "checkpoint_sha256": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
       "checkpoint_selection": "best.pt",
+      "result_status": "current_supplementary",
       "graph_identity": {
         "p3_only": false,
         "fia_layer": 22,
@@ -168,7 +279,7 @@
     }
   ],
   "claim_boundary": {
-    "allowed": "Report exact independent val and test metrics from the two published best.pt checkpoints, including test AP75 and per-class F1. State that FIA-only is slightly negative on val mAP, while FDR+FIA is positive relative to FDR.",
-    "forbidden": "Call the standalone checkpoints P3-only, mix val and test comparisons, or claim the arithmetic deltas are strict paired causal gains."
+    "allowed": "Report the fresh FIA-only P3-only best.pt exact val and test metrics. Report its val arithmetic gain of 0.7946395144255269 percentage points over strict_control_val and its protocol-comparable test arithmetic gain of 0.8101032384120604 percentage points over strict_control_test_exact. Retain the older cascading FIA-only and current FDR+FIA evaluations with their explicit topology and lifecycle labels.",
+    "forbidden": "Use the superseded cascading FIA-only checkpoint as the canonical FIA-only result, claim unsupplied per-class metrics, mix val and test comparisons, or claim any arithmetic delta is a strict paired causal gain."
   }
 }

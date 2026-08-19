@@ -120,41 +120,56 @@ def test_existing_best_fia_evaluations_are_registered():
     }
 
     arms = {arm["variant"]: arm for arm in evidence["arms"]}
-    assert set(arms) == {"fia_only", "fdr_fia"}
-    assert arms["fia_only"]["checkpoint_sha256"] == (
+    assert set(arms) == {
+        "fia_only_p3",
+        "fia_only_cascading_superseded",
+        "fdr_fia",
+    }
+    assert arms["fia_only_p3"]["checkpoint_sha256"] == (
+        "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6"
+    )
+    assert arms["fia_only_cascading_superseded"]["checkpoint_sha256"] == (
         "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9"
     )
     assert arms["fdr_fia"]["checkpoint_sha256"] == (
         "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1"
     )
+    assert arms["fia_only_p3"]["graph_identity"]["p3_only"] is True
+    assert arms["fia_only_p3"]["graph_identity"]["layer_23_from"] == 21
     for arm in arms.values():
-        assert arm["graph_identity"]["p3_only"] is False
-        assert arm["graph_identity"]["layer_23_from"] == -1
         assert arm["graph_identity"]["decoder_from"] == [22, 25, 28]
         assert arm["val"]["evidence_level"] == "best_checkpoint_independent_val_exact"
-        assert len(arm["val"]["per_class"]) == 10
         assert arm["test"]["evidence_level"] == (
             "best_checkpoint_independent_test_exact"
         )
-        assert len(arm["test"]["per_class"]) == 10
-        assert all(
-            class_row["f1"] is not None and class_row["map75"] is not None
-            for class_row in arm["test"]["per_class"]
-        )
+        if arm["test"]["per_class"] is not None:
+            assert len(arm["val"]["per_class"]) == 10
+            assert len(arm["test"]["per_class"]) == 10
+            assert all(
+                class_row["f1"] is not None and class_row["map75"] is not None
+                for class_row in arm["test"]["per_class"]
+            )
+        else:
+            assert arm["val"]["per_class_status"] == "not_supplied"
+            assert arm["test"]["per_class_status"] == "not_supplied"
         assert arm["source_id"] in manifest["sources"]
         source = manifest["sources"][arm["source_id"]]
         assert source["test_evaluation_protocol"]["split"] == "test"
         assert source["independent_test_metrics"] == arm["test"]["metrics"]
 
-    assert arms["fia_only"]["val"]["metrics"]["map"] == 0.21679545343355132
+    assert arms["fia_only_p3"]["val"]["metrics"]["map"] == 0.22705639514425527
+    assert (
+        arms["fia_only_cascading_superseded"]["val"]["metrics"]["map"]
+        == 0.21679545343355132
+    )
     assert arms["fdr_fia"]["val"]["metrics"]["map"] == 0.29494032070762063
-    assert arms["fia_only"]["test"]["metrics"] == {
-        "precision": 0.42405399388824083,
-        "recall": 0.3696529891467626,
-        "f1": 0.38186403219771886,
-        "map50": 0.32511085966127234,
-        "map75": 0.17161307417237592,
-        "map": 0.1771764568469921,
+    assert arms["fia_only_p3"]["test"]["metrics"] == {
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812,
     }
     assert arms["fdr_fia"]["test"]["metrics"] == {
         "precision": 0.5189669713045484,
@@ -166,17 +181,18 @@ def test_existing_best_fia_evaluations_are_registered():
     }
     status = _load_required_json("evidence/fia_results_status.json")
     status_arms = status["updated_standalone_results"]
-    for variant in ("fia_only", "fdr_fia"):
-        source = manifest["sources"][arms[variant]["source_id"]]
-        assert status_arms[variant]["val_metrics"]["f1"] == (
-            arms[variant]["val"]["metrics"]["f1"]
+    status_variants = {"fia_only": "fia_only_p3", "fdr_fia": "fdr_fia"}
+    for status_variant, evidence_variant in status_variants.items():
+        source = manifest["sources"][arms[evidence_variant]["source_id"]]
+        assert status_arms[status_variant]["val_metrics"]["f1"] == (
+            arms[evidence_variant]["val"]["metrics"]["f1"]
         )
-        assert source["metrics"]["f1"] == arms[variant]["val"]["metrics"]["f1"]
+        assert source["metrics"]["f1"] == arms[evidence_variant]["val"]["metrics"]["f1"]
         assert source["evaluation_protocol"]["f1_definition"] == (
             "mean_per_class_result.box.f1"
         )
-    assert arms["fia_only"]["val"]["delta_map_pp"] == (
-        arms["fia_only"]["val"]["metrics"]["map"] - 0.21911
+    assert arms["fia_only_p3"]["val"]["delta_map_pp"] == (
+        arms["fia_only_p3"]["val"]["metrics"]["map"] - 0.21911
     ) * 100
     assert arms["fdr_fia"]["val"]["delta_map_pp"] == (
         arms["fdr_fia"]["val"]["metrics"]["map"] - 0.289659749097641
@@ -185,10 +201,153 @@ def test_existing_best_fia_evaluations_are_registered():
     csv_path = MATERIAL_ROOT / "results/fia_existing_best_val_results.csv"
     with csv_path.open(encoding="utf-8", newline="") as handle:
         csv_rows = list(csv.DictReader(handle))
-    assert len(csv_rows) == 2
+    assert len(csv_rows) == 3
     assert {row["source_id"] for row in csv_rows} == {
+        "fia_p3_only_best_checkpoint_exact",
         "fia_existing_best_independent_val",
         "fdr_fia_existing_best_independent_val",
+    }
+    csv_by_source = {row["source_id"]: row for row in csv_rows}
+    assert csv_by_source["fia_p3_only_best_checkpoint_exact"]["result_status"] == "current"
+    assert csv_by_source["fia_existing_best_independent_val"]["result_status"] == (
+        "superseded"
+    )
+
+
+def test_fia_only_p3_exact_evaluation_supersedes_cascading_record():
+    evidence = _load_required_json("evidence/fia_existing_best_evaluation.json")
+    manifest = _load_required_json("evidence/source_manifest.json")
+    status = _load_required_json("evidence/fia_results_status.json")
+
+    arms = {arm["variant"]: arm for arm in evidence["arms"]}
+    current = arms["fia_only_p3"]
+    superseded = arms["fia_only_cascading_superseded"]
+
+    assert current["source_id"] == "fia_p3_only_best_checkpoint_exact"
+    assert current["source_commit"] == "118ad631eff93ad806f85ea47819578e6e00bfc5"
+    assert current["checkpoint_sha256"] == (
+        "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6"
+    )
+    assert current["graph_identity"] == {
+        "p3_only": True,
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "fia_layer_from_raw": -1,
+        "fia_layer_from_effective": 21,
+        "layer_23_from": 21,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "p3_only_standalone",
+    }
+    assert current["val"]["metrics"] == {
+        "precision": 0.4871962209136635,
+        "recall": 0.42531734343807504,
+        "f1": 0.4509443663180429,
+        "map50": 0.39874518726363956,
+        "map75": 0.2218076018094571,
+        "map": 0.22705639514425527,
+    }
+    assert current["val"]["delta_map_pp"] == 0.7946395144255269
+    assert current["test"]["metrics"] == {
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812,
+    }
+    assert current["test"]["delta_reference_source_id"] == (
+        "strict_control_test_exact"
+    )
+    assert current["test"]["delta_map_pp"] == 0.8101032384120604
+    assert current["test"]["delta_strict_paired"] is False
+
+    assert superseded["source_id"] == "fia_existing_best_independent_val"
+    assert superseded["result_status"] == "superseded"
+    assert superseded["superseded_by"] == current["source_id"]
+
+    source = manifest["sources"][current["source_id"]]
+    assert source["source_commit"] == current["source_commit"]
+    assert source["checkpoint_sha256"] == current["checkpoint_sha256"]
+    assert source["graph_identity"] == current["graph_identity"]
+    assert source["metrics"] == current["val"]["metrics"]
+    assert source["independent_test_metrics"] == current["test"]["metrics"]
+    assert {
+        manifest["sources"][source_id]["canonical_local_artifact_sha256"]
+        for source_id in (
+            "fia_p3_only_best_checkpoint_exact",
+            "fia_existing_best_independent_val",
+            "fdr_fia_existing_best_independent_val",
+        )
+    } == {"7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882"}
+
+    assert status["canonical_fia_only_source_id"] == current["source_id"]
+    assert "fia_existing_best_independent_val" in status["superseded_source_ids"]
+    assert status["updated_standalone_results"]["fia_only"]["source_id"] == (
+        current["source_id"]
+    )
+    assert status["superseded_standalone_results"]["fia_only_cascading"][
+        "source_id"
+    ] == "fia_existing_best_independent_val"
+
+
+def test_fia_only_p3_raw_artifacts_and_per_class_rows_are_reproducible():
+    evidence = _load_required_json("evidence/fia_existing_best_evaluation.json")
+    manifest = _load_required_json("evidence/source_manifest.json")
+    status = _load_required_json("evidence/fia_results_status.json")
+    source = manifest["sources"]["fia_p3_only_best_checkpoint_exact"]
+    artifact_root = MATERIAL_ROOT / "evidence/fia_p3_only_20260819"
+    expected_hashes = {
+        "fia-only-p3-val.json": "5e6c3c0a8935f28f017df6a5e0a4ad4d7ade1ae926c55db44a9721f0bc84a625",
+        "fia-only-p3-test.json": "653ab5e9fc84c9d0e9826ce455e468f8cd52d6ec78e4327306f07c322ccbab29",
+        "graph-identity-normalization.json": "b80a424b1c7d87d8882ca890132048ac99d6718ea27b244f9155ad412991b68f",
+    }
+
+    assert source["release_asset"] == {
+        "name": "fia-p3-only-final-20260819.tar.gz",
+        "asset_id": 520838108,
+        "size_bytes": 62725579,
+        "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+        "updated_at": "2026-08-19T12:52:19Z",
+        "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz",
+    }
+    assert {
+        Path(item["path"]).name: item["sha256"] for item in source["artifacts"]
+    } == expected_hashes
+
+    raw = {}
+    for filename, expected_sha256 in expected_hashes.items():
+        path = artifact_root / filename
+        assert path.is_file()
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected_sha256
+        if filename.endswith(".json") and filename.startswith("fia-only"):
+            raw[filename] = json.loads(path.read_text(encoding="utf-8"))
+
+    lean_manifest = artifact_root / "MANIFEST.sha256"
+    manifest_lines = lean_manifest.read_text(encoding="utf-8").splitlines()
+    assert len(manifest_lines) == 18
+    assert all("MANIFEST.sha256" not in line for line in manifest_lines)
+    for filename, expected_sha256 in expected_hashes.items():
+        assert f"{expected_sha256}  ./evaluation/{filename}" in manifest_lines
+
+    arms = {arm["variant"]: arm for arm in evidence["arms"]}
+    current = arms["fia_only_p3"]
+    val_classes = raw["fia-only-p3-val.json"]["per_class"]
+    test_classes = raw["fia-only-p3-test.json"]["per_class"]
+    assert len(val_classes) == len(test_classes) == 10
+    assert current["val"]["per_class"] == val_classes
+    assert current["test"]["per_class"] == test_classes
+    assert source["per_class_status"] == "available_exact"
+    assert source["per_class_artifacts"] == {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json#per_class",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json#per_class",
+        "class_count": 10,
+    }
+    status_current = status["updated_standalone_results"]["fia_only"]
+    assert status_current["per_class_available"] is True
+    assert status_current["per_class_count"] == 10
+    assert status_current["per_class_artifacts"] == {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json#per_class",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json#per_class",
     }
 
 
@@ -212,7 +371,11 @@ def test_existing_best_fia_test_csv_matches_exact_evidence():
     with csv_path.open(encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
 
-    assert len(rows) == 22
+    expected_row_count = sum(
+        1 + (10 if arm["test"]["per_class"] is not None else 0)
+        for arm in evidence_arms.values()
+    )
+    assert len(rows) == expected_row_count
     assert {row["source_id"] for row in rows} == set(evidence_arms)
     assert all(row["split"] == "test" for row in rows)
     assert all(
@@ -227,7 +390,8 @@ def test_existing_best_fia_test_csv_matches_exact_evidence():
         overall_rows = [row for row in arm_rows if row["scope"] == "overall"]
         class_rows = [row for row in arm_rows if row["scope"] == "class"]
         assert len(overall_rows) == 1
-        assert len(class_rows) == 10
+        expected_per_class = arm["test"]["per_class"]
+        assert len(class_rows) == (10 if expected_per_class is not None else 0)
 
         overall = overall_rows[0]
         assert overall["method"] == arm["method"]
@@ -239,9 +403,10 @@ def test_existing_best_fia_test_csv_matches_exact_evidence():
 
         evidence_classes = {
             class_row["class"]: class_row
-            for class_row in arm["test"]["per_class"]
+            for class_row in (expected_per_class or [])
         }
-        assert {row["class"] for row in class_rows} == set(expected_counts)
+        if expected_per_class is not None:
+            assert {row["class"] for row in class_rows} == set(expected_counts)
         for row in class_rows:
             class_name = row["class"]
             expected = evidence_classes[class_name]
@@ -295,7 +460,7 @@ def test_main_results_are_bound_to_manifest():
         row["source_id"]
         for row in results["supplementary_updated_fia_observations"]
     } == {
-        "fia_existing_best_independent_val",
+        "fia_p3_only_best_checkpoint_exact",
         "fdr_fia_existing_best_independent_val",
         "fia_updated_three_module_text_val",
         "fia_updated_three_module_text_test",
@@ -303,6 +468,13 @@ def test_main_results_are_bound_to_manifest():
     assert all(
         row["source_id"] in sources
         for row in results["supplementary_updated_fia_observations"]
+    )
+    assert {
+        row["source_id"] for row in results["superseded_fia_observations"]
+    } == {"fia_existing_best_independent_val"}
+    assert all(
+        row["superseded_by"] == "fia_p3_only_best_checkpoint_exact"
+        for row in results["superseded_fia_observations"]
     )
     assert "supplementary_unverified_observations" not in results
 
@@ -349,10 +521,10 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
 
     assert status["format_version"] == 1
     assert status["status"] == (
-        "standalone_exact_val_test_three_module_four_decimal_val_test_available"
+        "fia_only_p3_exact_val_test_three_module_four_decimal_val_test_available"
     )
     assert status["valid_fia_result_source_ids"] == [
-        "fia_existing_best_independent_val",
+        "fia_p3_only_best_checkpoint_exact",
         "fdr_fia_existing_best_independent_val",
         "fia_updated_three_module_checkpoint_best_val",
         "fia_updated_three_module_terminal_val",
@@ -366,8 +538,10 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
     assert status["user_report_is_formal_numeric_evidence"] is False
     standalone = status["updated_standalone_results"]
     assert standalone["fia_only"]["test_metrics"]["map75"] == (
-        0.17161307417237592
+        0.18201140298044138
     )
+    assert standalone["fia_only"]["delta_map_pp"] == 0.7946395144255269
+    assert standalone["fia_only"]["test_delta_map_pp"] == 0.8101032384120604
     assert standalone["fdr_fia"]["test_metrics"]["map75"] == (
         0.23587873005461435
     )
@@ -388,6 +562,13 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
         source_id in manifest["sources"]
         for source_id in status["valid_fia_result_source_ids"]
     )
+    assert status["superseded_source_ids"] == [
+        "fia_existing_best_independent_val"
+    ]
+    superseded = status["superseded_standalone_results"]["fia_only_cascading"]
+    assert superseded["result_status"] == "superseded"
+    assert superseded["superseded_by"] == "fia_p3_only_best_checkpoint_exact"
+    assert superseded["test_metrics"]["map75"] == 0.17161307417237592
     updated = status["updated_three_module_observation"]
     source = manifest["sources"]["fia_updated_three_module_checkpoint_best_val"]
     assert updated["graph"]["p3_only"] is True
@@ -409,22 +590,26 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
     web_audit = status["web_release_audit"]
     assert web_audit["release_id"] == 371026410
     assert web_audit["release_tag"] == "DFR-BDPP-FIA"
-    assert web_audit["displayed_asset_count"] == 10
-    assert web_audit["custom_asset_count"] == 8
+    assert web_audit["displayed_asset_count"] == 11
+    assert web_audit["custom_asset_count"] == 9
     assert web_audit["autogenerated_source_archive_count"] == 2
-    assert web_audit["hidden_updated_standalone_assets_found"] is False
+    assert web_audit["hidden_updated_standalone_assets_found"] is True
+    assert web_audit["canonical_p3_only_fia_asset"]["asset_id"] == 520838108
     for arm in ("fia_only", "fdr_fia"):
         candidate = web_audit["standalone_candidates"][arm]
         assert candidate["web_assets_present"] is True
         assert candidate["observed_checkpoint_layer_23_from"] == -1
         assert candidate["required_updated_checkpoint_layer_23_from"] == 21
-        assert candidate["decision"] == (
-            "accepted_as_existing_published_best_not_p3_only"
-        )
         assert candidate["numeric_use_allowed"] is True
-        assert candidate["numeric_use_scope"] == (
-            "independent val and test exact; not revised P3-only evidence"
-        )
+    assert web_audit["standalone_candidates"]["fia_only"]["decision"] == (
+        "superseded_by_fresh_p3_only_exact_evaluation"
+    )
+    assert web_audit["standalone_candidates"]["fia_only"][
+        "numeric_use_scope"
+    ] == "historical independent val and test exact only; not canonical revised P3-only evidence"
+    assert web_audit["standalone_candidates"]["fdr_fia"]["decision"] == (
+        "accepted_as_existing_published_best_not_p3_only"
+    )
 
     removed_paths = (
         "evidence/fdr_bpdd_fia_val_exact.json",
@@ -446,15 +631,18 @@ def test_pre_revision_fia_results_are_scope_limited_and_replaced():
         "best_checkpoint_independent_test_exact",
         "model[23].f=-1",
         "model[23].f=21",
-        "0.56996",
-        "0.49848",
-        "0.48982",
-        "0.29618",
-        "0.216795",
-        "0.294940",
-        "-0.2315",
-        "+0.5280",
-        "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+            "0.56996",
+            "0.49848",
+            "0.48982",
+            "0.29618",
+            "0.227056",
+            "0.185517",
+            "0.294940",
+            "+0.7946",
+            "+0.5280",
+            "118ad631eff93ad806f85ea47819578e6e00bfc5",
+            "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+            "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
     ):
         assert required_text in restored_page
     for revoked_text in (
@@ -710,7 +898,9 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
     assert len(combinations) == 8
     assert combinations[(False, True, False)]["status"] == "invalid_dependency"
     assert combinations[(False, True, True)]["status"] == "invalid_dependency"
-    assert combinations[(False, False, True)]["status"] == "existing_best_evaluated"
+    assert combinations[(False, False, True)]["status"] == (
+        "p3_only_best_checkpoint_exact_val_and_test"
+    )
     assert combinations[(True, False, True)]["status"] == "existing_best_evaluated"
     assert combinations[(True, True, True)]["status"] == (
         "updated_four_decimal_val_test_available"
@@ -740,7 +930,13 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
         for row in comparison["supplementary_updated_fia_observations"]
     }
     assert supplementary[("test", "RT-DETR-L+FIA")]["metrics"]["map75"] == (
-        0.17161307417237592
+        0.18201140298044138
+    )
+    assert supplementary[("val", "RT-DETR-L+FIA")]["metrics"]["map"] == (
+        0.22705639514425527
+    )
+    assert supplementary[("test", "RT-DETR-L+FIA")]["delta_map_pp"] == (
+        0.8101032384120604
     )
     assert supplementary[("test", "RT-DETR-L+FDR+FIA")]["metrics"][
         "map75"
@@ -750,6 +946,9 @@ def test_split_gain_comparison_covers_every_module_combination_without_fabricati
         == "best_checkpoint_independent_test_exact"
         for method in ("RT-DETR-L+FIA", "RT-DETR-L+FDR+FIA")
     )
+    assert {
+        row["source_id"] for row in comparison["superseded_fia_observations"]
+    } == {"fia_existing_best_independent_val"}
 
 
 def test_readme_links_split_comparison_outputs():
@@ -782,16 +981,18 @@ def test_consolidated_results_page_covers_exact_fia_val_test_and_boundaries():
         "RT-DETR-L+FDR+BPDD",
         "0.292258",
         "FIA-only",
-        "0.216795",
-        "0.177176",
+        "0.227056",
+        "0.185517",
         "FDR+FIA",
         "0.294940",
         "0.234645",
-        "0.171613",
+        "0.182011",
         "0.235879",
+        "+0.7946 pp",
+        "+0.8101 pp",
         "best_checkpoint_independent_test_exact",
-        "逐类别 F1 的均值",
-        "published cascading",
+        "逐类别 F1 均值",
+        "fresh P3-only",
         "P3-only",
         "0.29618",
         "非严格",

@@ -1,5 +1,7 @@
 # FIA Release 结果页覆盖设计
 
+> 历史设计（已 superseded）：其中“FIA-only 精确资产待导入”等状态已由 2026-08-19 的 fresh P3-only `best.pt` exact val/test 结果取代。当前口径以 `paper_material/results/FIA_RESULTS_STATUS_ZH.md` 为准。
+
 ## 目标
 
 恢复 `paper_material/results/FIA_ABLATION_RELEASE_RESULTS_ZH.md`，并用修改后 FIA 的当前有效结果状态完全覆盖旧内容。旧拓扑产生的 FIA-only、FDR+FIA 与三模块数值、截图、哈希和结论不得保留。

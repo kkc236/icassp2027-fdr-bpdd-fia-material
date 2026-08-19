@@ -85,6 +85,134 @@
       "evidence_level": "cross_authority_exact",
       "transformation": "none"
     },
+    "fia_p3_only_best_checkpoint_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "118ad631eff93ad806f85ea47819578e6e00bfc5",
+      "release_tag": "DFR-BDPP-FIA",
+      "release_asset": {
+        "name": "fia-p3-only-final-20260819.tar.gz",
+        "asset_id": 520838108,
+        "size_bytes": 62725579,
+        "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+        "updated_at": "2026-08-19T12:52:19Z",
+        "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz"
+      },
+      "checkpoint_kind": "best.pt",
+      "checkpoint_sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+      "local_artifact": "paper_material/evidence/fia_existing_best_evaluation.json",
+      "canonical_local_artifact_sha256": "7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882",
+      "record_selector": "arms[variant=fia_only_p3]",
+      "artifacts": [
+        {
+          "path": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json",
+          "sha256": "5e6c3c0a8935f28f017df6a5e0a4ad4d7ade1ae926c55db44a9721f0bc84a625",
+          "record_type": "raw_exact_val_evaluation"
+        },
+        {
+          "path": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json",
+          "sha256": "653ab5e9fc84c9d0e9826ce455e468f8cd52d6ec78e4327306f07c322ccbab29",
+          "record_type": "raw_exact_test_evaluation"
+        },
+        {
+          "path": "paper_material/evidence/fia_p3_only_20260819/graph-identity-normalization.json",
+          "sha256": "b80a424b1c7d87d8882ca890132048ac99d6718ea27b244f9155ad412991b68f",
+          "record_type": "raw_to_effective_graph_identity_normalization"
+        }
+      ],
+      "release_content_manifest": {
+        "path": "paper_material/evidence/fia_p3_only_20260819/MANIFEST.sha256",
+        "sha256": "182141234424c6f463999e79e86de891fe80964420bba3a7a323357979d67530",
+        "entry_count": 18,
+        "self_hash_included": false,
+        "scope": "release_archive_contents; three registered JSON artifacts are copied locally"
+      },
+      "result_status": "current",
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "fia_layer_from_raw": -1,
+        "fia_layer_from_effective": 21,
+        "layer_23_from": 21,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ],
+        "topology_label": "p3_only_standalone"
+      },
+      "evaluation_protocol": {
+        "split": "val",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "images": 548,
+        "instances": 38759,
+        "data_yaml_sha256": "e04ce418942f8efe02ce8b174cbece0004fe3d6be2d07f7e6fbbbab0117cbfe6"
+      },
+      "metrics": {
+        "precision": 0.4871962209136635,
+        "recall": 0.42531734343807504,
+        "f1": 0.4509443663180429,
+        "map50": 0.39874518726363956,
+        "map75": 0.2218076018094571,
+        "map": 0.22705639514425527
+      },
+      "val_comparison": {
+        "delta_reference_source_id": "strict_control_val",
+        "delta_map_pp": 0.7946395144255269,
+        "strict_paired": false,
+        "scope": "same_split_project_baseline_arithmetic"
+      },
+      "test_evaluation_protocol": {
+        "split": "test",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "images": 1610,
+        "instances": 75102,
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae"
+      },
+      "independent_test_metrics": {
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812
+      },
+      "test_comparison": {
+        "delta_reference_source_id": "strict_control_test_exact",
+        "delta_map_pp": 0.8101032384120604,
+        "strict_paired": false,
+        "scope": "same_dataset_and_evaluator_protocol_arithmetic"
+      },
+      "per_class_status": "available_exact",
+      "per_class_artifacts": {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json#per_class",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json#per_class",
+        "class_count": 10
+      },
+      "evidence_level": "best_checkpoint_independent_val_and_test_exact",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "ablation_table_allowed": true,
+      "transformation": "register the fresh exact best.pt val and test evaluation with raw and resolved P3-only graph identity"
+    },
     "fia_existing_best_independent_val": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "release_tag": "DFR-BDPP-FIA",
@@ -93,8 +221,11 @@
       "checkpoint_kind": "best.pt",
       "checkpoint_sha256": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
       "local_artifact": "paper_material/evidence/fia_existing_best_evaluation.json",
-      "canonical_local_artifact_sha256": "f386c2da62c3a881affcef2b6830fbaf044f8404ae004ac54d8869aad0ebb2ed",
-      "record_selector": "arms[variant=fia_only]",
+      "canonical_local_artifact_sha256": "7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882",
+      "record_selector": "arms[variant=fia_only_cascading_superseded]",
+      "result_status": "superseded",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact",
+      "supersession_reason": "Fresh exact FIA-only evaluation is bound to the corrected P3-only graph; this retained checkpoint uses the older cascading topology.",
       "graph_identity": {
         "p3_only": false,
         "fia_layer": 22,
@@ -154,8 +285,9 @@
       "evidence_level": "best_checkpoint_independent_val_and_test_exact",
       "strict_paired": false,
       "formal_main_table_allowed": false,
-      "ablation_table_allowed": true,
-      "transformation": "load the published best.pt and run the frozen independent VisDrone val and test evaluators"
+      "ablation_table_allowed": false,
+      "historical_numeric_use_allowed": true,
+      "transformation": "retain the older published cascading best.pt independent val and test evaluation as a superseded audit record"
     },
     "fdr_fia_existing_best_independent_val": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
@@ -165,8 +297,9 @@
       "checkpoint_kind": "best.pt",
       "checkpoint_sha256": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
       "local_artifact": "paper_material/evidence/fia_existing_best_evaluation.json",
-      "canonical_local_artifact_sha256": "f386c2da62c3a881affcef2b6830fbaf044f8404ae004ac54d8869aad0ebb2ed",
+      "canonical_local_artifact_sha256": "7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882",
       "record_selector": "arms[variant=fdr_fia]",
+      "result_status": "current_supplementary",
       "graph_identity": {
         "p3_only": false,
         "fia_layer": 22,
@@ -937,6 +1070,18 @@
         "fia_existing_best_independent_val",
         "fdr_fia_existing_best_independent_val"
       ],
+      "formal_numeric_use_allowed": false,
+      "record": "paper_material/evidence/fia_results_status.json"
+    },
+    {
+      "id": "cascading_fia_only_superseded_20260819",
+      "status": "superseded_not_deleted",
+      "scope": "The retained fia_existing_best_independent_val record is exact for its older cascading topology but is no longer the canonical FIA-only ablation result.",
+      "replacement_status": "superseded_by_fresh_p3_only_best_checkpoint_exact",
+      "replacement_source_ids": [
+        "fia_p3_only_best_checkpoint_exact"
+      ],
+      "historical_numeric_use_allowed": true,
       "formal_numeric_use_allowed": false,
       "record": "paper_material/evidence/fia_results_status.json"
     }

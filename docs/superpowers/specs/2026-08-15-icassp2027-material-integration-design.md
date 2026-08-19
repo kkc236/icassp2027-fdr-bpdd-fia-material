@@ -1,5 +1,7 @@
 # ICASSP 2027 FDR–BPDD–FIA Material Integration Design
 
+> Historical design (superseded for FIA-only status): the then-pending standalone FIA evidence has since been replaced by a fresh P3-only `best.pt` exact val/test evaluation. Use `paper_material/results/FIA_RESULTS_STATUS_ZH.md` for the current record.
+
 ## Objective
 
 Maintain one private repository containing the runnable FDR, BPDD, and modified FIA implementation together with evidence-safe ICASSP writing material. This is a migration, correction, and evidence-binding task rather than an algorithm redesign.

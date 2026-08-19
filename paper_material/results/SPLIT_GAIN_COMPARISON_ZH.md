@@ -2,7 +2,7 @@
 
 ## 证据状态
 
-正式核心表保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD。standalone FIA 两个已发布 `best.pt` 已完成冻结 evaluator 独立 exact val/test。正确 P3-only 三模块已有与终端截图逐项吻合的四位小数文本结果：val mAP50–95=`0.2961`，test mAP50–95=`0.2337`，两者均为正增长；checkpoint 的 val `0.29618` 和终端截图作为交叉印证。
+正式核心表保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD。fresh P3-only FIA-only 与既有 cascading FDR+FIA `best.pt` 均已完成冻结 evaluator 独立 exact val/test。正确 P3-only 三模块已有与终端截图逐项吻合的四位小数文本结果：val mAP50–95=`0.2961`，test mAP50–95=`0.2337`，两者均为正增长；checkpoint 的 val `0.29618` 和终端截图作为交叉印证。
 
 新增 BPDD 配对训练已完成：同 authority、同 seed 下 FDR/FDR+BPDD 的 best-val mAP50–95 为 `0.29047/0.29278`，BPDD 为 **+0.231 pp**；AP50 为 **+0.425 pp**、Recall 为 **+1.178 pp**。AP75 与 test 待两个 best.pt 独立精确复评，因此下方历史完整指标表暂不覆盖。
 
@@ -13,7 +13,7 @@
 | 0 | 0 | 0 | RT-DETR-L | exact | exact | 已完成 |
 | 1 | 0 | 0 | RT-DETR-L+FDR | exact | exact | 已完成 |
 | 0 | 1 | 0 | RT-DETR-L+BPDD | — | — | 结构无效：BPDD 必须依赖 FDR |
-| 0 | 0 | 1 | RT-DETR-L+FIA | exact best-val | exact best-test | 现有 best 直接复评；val 略有负增益 |
+| 0 | 0 | 1 | RT-DETR-L+FIA | exact best-val | exact best-test | fresh P3-only best；val 相对 canonical baseline `+0.7946 pp` |
 | 1 | 1 | 0 | RT-DETR-L+FDR+BPDD | exact | exact | 已完成 |
 | 1 | 0 | 1 | RT-DETR-L+FDR+FIA | exact best-val | exact best-test | 现有 best 直接复评；val 正增益 |
 | 0 | 1 | 1 | RT-DETR-L+BPDD+FIA | — | — | 结构无效：BPDD 必须依赖 FDR |
@@ -53,17 +53,17 @@
 
 | 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 参照 | ΔmAP |
 |---|---:|---:|---:|---:|---:|---:|---|---:|
-| FIA-only | 0.479433 | 0.414194 | 0.444432 | 0.385675 | 0.209674 | 0.216795 | baseline | −0.231 pp |
+| FIA-only | 0.487196 | 0.425317 | 0.450944 | 0.398745 | 0.221808 | 0.227056 | canonical baseline `0.21911` | **+0.7946 pp** |
 | FDR+FIA | 0.577524 | 0.490889 | 0.530694 | 0.486314 | 0.299724 | 0.294940 | FDR | +0.528 pp |
 
 ### test（best.pt 独立复评，exact evaluator；表内展示到 6 位小数）
 
 | 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 参照 | ΔmAP |
 |---|---:|---:|---:|---:|---:|---:|---|---:|
-| FIA-only | 0.424054 | 0.369653 | 0.381864* | 0.325111 | 0.171613 | 0.177176 | baseline | −0.0240 pp |
-| FDR+FIA | 0.518967 | 0.431655 | 0.460654* | 0.407439 | 0.235879 | 0.234645 | FDR | +0.6644 pp |
+| FIA-only | 0.448259 | 0.377636 | 0.395418 | 0.336642 | 0.182011 | 0.185517 | canonical test baseline `0.177416` | **+0.8101 pp** |
+| FDR+FIA | 0.518967 | 0.431655 | 0.460654 | 0.407439 | 0.235879 | 0.234645 | FDR | +0.6644 pp |
 
-星号表示 F1 为 evaluator 逐类别 F1 的均值，不是由总体 P/R 重新计算的调和均值。test 对照差值是跨既有 authority 的算术观察，不是 strict paired 因果增益。
+两行 F1 均为 evaluator 逐类别 F1 均值，fresh FIA-only 逐类结果来自新 checkpoint 的 exact JSON。其 `+0.8101 pp` 是相对 protocol-comparable canonical test baseline 的同 split 算术差；不得跨 val/test 推导涨点。FDR+FIA test 差值是跨既有 authority 的算术观察，不是 strict paired 因果增益。
 
 ## 三模块 P3-only 四位小数结果
 
@@ -79,9 +79,10 @@
 
 ## FIA 使用边界
 
-- standalone 行来自 Release 现有 `best.pt`；计算图为 cascading，不得标成 P3-only。
-- val 与 test 均为统一 evaluator 对 Release `best.pt` 的精确独立复评，但必须按 split 分开报告和比较。
-- FIA-only 只相对 baseline 陈述，FDR+FIA 只相对 FDR 陈述，三模块只相对 FDR+BPDD 陈述。
+- FIA-only 当前行来自 fresh P3-only `best.pt`：层 22 `f=-1`（上一层 21）、层 23 `f=21`、decoder `[22,25,28]`。旧 FIA-only cascading 行已 superseded。
+- FDR+FIA 仍来自 Release 既有 cascading `best.pt`，不得标成 P3-only。
+- val 与 test 均为统一 evaluator 的精确独立复评，必须按 split 分开报告和比较。
+- FIA-only 在 val/test 分别只相对 protocol-comparable canonical baseline 陈述 `+0.7946/+0.8101 pp`，不得跨 split 比较。FDR+FIA 只相对 FDR 陈述，三模块只相对 FDR+BPDD 陈述。
 - 三模块可作为四位小数正向消融结果；由于文本未携带完整运行身份，差值按结果间算术比较书写，不扩写为严格配对因果效应。
 
-状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。standalone best.pt 的 test 总体与 10 类明细见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)；三模块原始记录见 [`val 文本`](../evidence/fdr_bpdd_fia_val.txt)、[`test 文本`](../evidence/fdr_bpdd_fia_test.txt)及其[结构化总体/逐类表](fdr_bpdd_fia_text_report_class_results.csv)。
+状态入口：[FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)。既有 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv) 必须按 checkpoint SHA 核对；旧 FIA-only 行仅为历史，不能与 fresh checkpoint 拼接逐类结果。三模块原始记录见 [`val 文本`](../evidence/fdr_bpdd_fia_val.txt)、[`test 文本`](../evidence/fdr_bpdd_fia_test.txt)及其[结构化总体/逐类表](fdr_bpdd_fia_text_report_class_results.csv)。

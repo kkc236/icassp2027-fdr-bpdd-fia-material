@@ -1,5 +1,7 @@
 # FIA Release Results Refresh Implementation Plan
 
+> Historical completed plan (superseded): its pending standalone-FIA assumptions are no longer current. The fresh FIA-only P3-only exact val/test status is maintained in `paper_material/results/FIA_RESULTS_STATUS_ZH.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Restore the established FIA release-results Markdown path with only post-revision FIA evidence and status.

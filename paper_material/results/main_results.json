@@ -88,17 +88,42 @@
       "fdr": false,
       "bpdd": false,
       "fia": true,
-      "status": "existing_best_independent_val_exact",
-      "precision": 0.4794334980185041,
-      "recall": 0.4141938299458384,
-      "map50": 0.38567545133764725,
-      "map75": 0.2096736111592438,
-      "map": 0.21679545343355132,
+      "status": "p3_only_best_checkpoint_independent_val_exact",
+      "precision": 0.4871962209136635,
+      "recall": 0.42531734343807504,
+      "f1": 0.4509443663180429,
+      "map50": 0.39874518726363956,
+      "map75": 0.2218076018094571,
+      "map": 0.22705639514425527,
       "delta_reference": "RT-DETR-L",
-      "delta_map_pp": -0.23145465664486664,
+      "delta_reference_source_id": "strict_control_val",
+      "delta_map_pp": 0.7946395144255269,
       "delta_strict_paired": false,
       "evidence_level": "best_checkpoint_independent_val_exact",
-      "source_id": "fia_existing_best_independent_val",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "graph_topology": "p3_only_standalone",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "VisDrone test",
+      "method": "RT-DETR-L+FIA",
+      "fdr": false,
+      "bpdd": false,
+      "fia": true,
+      "status": "p3_only_best_checkpoint_independent_test_exact",
+      "precision": 0.4482592209945812,
+      "recall": 0.377636033342981,
+      "f1": 0.3954178960043504,
+      "map50": 0.33664177054432,
+      "map75": 0.18201140298044138,
+      "map": 0.18551746406283812,
+      "delta_reference": "RT-DETR-L",
+      "delta_reference_source_id": "strict_control_test_exact",
+      "delta_map_pp": 0.8101032384120604,
+      "delta_strict_paired": false,
+      "evidence_level": "best_checkpoint_independent_test_exact",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "graph_topology": "p3_only_standalone",
       "formal_delta_allowed": false
     },
     {
@@ -159,6 +184,24 @@
       "evidence_level": "user_supplied_text_report_4dp",
       "source_id": "fia_updated_three_module_text_test",
       "formal_delta_allowed": false
+    }
+  ],
+  "superseded_fia_observations": [
+    {
+      "split": "VisDrone val",
+      "method": "RT-DETR-L+FIA",
+      "status": "superseded_cascading_best_checkpoint_independent_val_exact",
+      "map": 0.21679545343355132,
+      "source_id": "fia_existing_best_independent_val",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact"
+    },
+    {
+      "split": "VisDrone test",
+      "method": "RT-DETR-L+FIA",
+      "status": "superseded_cascading_best_checkpoint_independent_test_exact",
+      "map": 0.1771764568469921,
+      "source_id": "fia_existing_best_independent_val",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact"
     }
   ]
 }

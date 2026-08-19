@@ -1,0 +1,37 @@
+{
+  "format_version": 1,
+  "records": [
+    {
+      "artifact": "fia-only-p3-test.json",
+      "raw_graph_identity": {
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "layer_23_from": 21,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ]
+      },
+      "normalized_fia_input_layer": 21,
+      "interpretation": "Ultralytics f=-1 is a relative reference to the immediately preceding layer; for FIA layer 22 this resolves to layer 21. Layer 23 explicitly reads layer 21, so P4/P5 reconstruction does not cascade from FIA output.",
+      "p3_only_validated": true
+    },
+    {
+      "artifact": "fia-only-p3-val.json",
+      "raw_graph_identity": {
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "layer_23_from": 21,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ]
+      },
+      "normalized_fia_input_layer": 21,
+      "interpretation": "Ultralytics f=-1 is a relative reference to the immediately preceding layer; for FIA layer 22 this resolves to layer 21. Layer 23 explicitly reads layer 21, so P4/P5 reconstruction does not cascade from FIA output.",
+      "p3_only_validated": true
+    }
+  ]
+}
