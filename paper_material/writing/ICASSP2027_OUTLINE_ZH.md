@@ -37,6 +37,7 @@
 - 论文 A–E 主消融表的 E 行逐项绑定四位小数 val 文本：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`；checkpoint 的 `0.29618` 作为交叉印证，不跨证据拼接 P/R。
 - 4.2 同时加入 [VisDrone CCF A/B 会外部方法对比](../results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)：正式表只采用 AAAI、CVPR、ICCV、IJCAI、ICASSP、ICRA、ICME、IROS full/regular paper；逐行标明 A/B，按同 split 的 mAP50–95 分成不高于本文和高于本文，split/input/mAP 未报告行放补充表，不计算跨论文涨点。正文优先用 TPH-UGS、UAV-DETR-EV2 和 RT-DETR-R50 作为接近但不高于本文的 640 对照；DM-EFS、UAV-DETR-R18、RAFDE 作为近邻上界；ResBiDet/VARDet 保留同会和强协议边界。
 - 4.3 Ablation Studies：分开报告 fresh P3-only FIA-only 与既有 cascading FDR+FIA 的 exact val/test。FIA-only val mAP50–95=`0.2270563951`，相对 canonical val baseline `0.21911` 为 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两项都是 split 内算术差，不能跨 val/test 拼接。FDR+FIA 保留既有 val/test 算术差 `+0.5280/+0.6644 pp`。
+- 4.3 的 AP-FDR 内部表只保留 Full、`w/o preliminary reference` 和 `w/o DN FDR supervision` 三行。后两行已在源码提交 `ebb349ae` 中冻结为单因素配置，按同一 seed0/100-epoch 协议顺序训练；机器证据登记前不填写结果数字。
 - 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA 各 checkpoint 的总体与 AP75；只有已有逐类证据的记录才展示 10 类结果，所有指标直接取自已登记记录，不反推。
 - 4.5 Efficiency：加入已完成的 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。同一 RTX 4090、batch=1 FP32 端到端实测表明，BPDD 的严格配对推理 Params/FLOPs/峰值显存完全相同且延迟差仅为测量波动；FIA 增加 0.301 M 参数、3.419 GFLOPs 和 0.861 ms 中位延迟，三模块保持 25.21 FPS。
 

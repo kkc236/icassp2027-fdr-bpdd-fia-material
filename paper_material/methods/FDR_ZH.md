@@ -83,7 +83,7 @@ FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两
 - `src/rtdetr_fdr.py`：模型、训练损失和推理路径集成。
 - `src/fdr_math.py`：参考固定版本 D-FINE 公式实现的非均匀投影、Integral、距离编解码与 FGL 基础算子。
 - `configs/rtdetr-l-fdr.yaml`：正式结构与损失参数。
-- `configs/rtdetr-l-fdr-no-prebox.yaml`、`configs/rtdetr-l-fdr-no-prebox-loss.yaml`、`configs/rtdetr-l-fdr-no-fgl.yaml`、`configs/rtdetr-l-fdr-no-cumulative.yaml`：单因素消融入口。
+- `configs/rtdetr-l-fdr-no-prebox.yaml`、`configs/rtdetr-l-fdr-no-dn.yaml`、`configs/rtdetr-l-fdr-no-prebox-loss.yaml`、`configs/rtdetr-l-fdr-no-fgl.yaml`、`configs/rtdetr-l-fdr-no-cumulative.yaml`：单因素消融入口。其中 no-DN 配置仅关闭额外 DN FDR 监督，stock DN 损失保持不变。
 
 ## 主张边界
 

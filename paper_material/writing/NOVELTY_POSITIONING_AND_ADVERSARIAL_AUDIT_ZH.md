@@ -92,7 +92,7 @@ RAFDE 由 RAFF 和 BTRD 组成。其 YOLOv11m baseline 为 `0.266` mAP，RAFF �
 | 外部比较协议不一致 | 高 | 表内逐行标 split/input；近邻 640、强协议、不可排序三层分组；不宣称 SOTA | 外部 VisDrone 对比表 |
 | RAFDE 参数更少且 mAP 更高 | 中 | 不回避；强调不同范式、本文 AP50 略高、BPDD 零推理开销和完整 DETR 定位贡献 | RAFDE 原表、本文 complexity |
 | ResBiDet 为同会论文，为什么未比较 | 中 | 正文给 AP50 对照并披露公开摘要的缺失字段 | DOI/IEEE abstract |
-| 主要涨点来自参考的基础算子，个人创新贡献有限 | 高 | 把 `+7.055 pp` 归给完整 AP-FDR，不拆分冒领；通过 no-prebox/no-prebox-loss/no-FGL/no-cumulative 以及结构差异表证明本文组织方式的必要性；BPDD/FIA 再给独立正向证据 | AP-FDR 消融、strict FDR 对照、BPDD/FIA 结果 |
+| 主要涨点来自参考的基础算子，个人创新贡献有限 | 高 | 把 `+7.055 pp` 归给完整 AP-FDR，不拆分冒领；优先用 `w/o preliminary reference` 与 `w/o DN FDR supervision` 验证本文结构/监督组织，其余 no-prebox-loss/no-FGL/no-cumulative 作为后备；BPDD/FIA 再给独立正向证据 | AP-FDR 双消融、strict FDR 对照、BPDD/FIA 结果 |
 
 审稿时最危险的不是出现 D-FINE 引用，而是把完全一致的基础公式改名后声称首次提出。正文应在 Related Work 完成一次明确归因，随后用差异表和消融把注意力锁定在 AP-FDR 的结构、监督合同及其与 BPDD/FIA 的协同上。
 
