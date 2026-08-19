@@ -22,7 +22,6 @@ w/o DN FDR supervision 只移除 loss_fgl_dn、loss_fgl_aux_dn、loss_bbox_pre_d
 ## 源码权威
 
 - 仓库：kkc236/uav-detection-baselines
-- 分支：codex/bpdd-ira-final-eval-d7200906
 - 实现提交：ebb349aeb2cf092d4880751e165e22614c3c9d8c
 - 训练入口：scripts/train_ap_fdr_ablation.py
 - 本地聚焦验证：65 tests passed；compileall 与 git diff --check 通过。
@@ -61,4 +60,3 @@ w/o DN FDR supervision 只移除 loss_fgl_dn、loss_fgl_aux_dn、loss_bbox_pre_d
 ## 当前状态
 
 截至 2026-08-20，源码、配置、训练入口和本地测试已经完成并推送；正式训练结果尚未登记。服务器 SSH 在认证前关闭连接，因此本文件只登记协议，不填结果占位。恢复连接后按上述顺序启动，机器证据入库后再更新 RESULTS_ZH.md 和论文表格。
-
