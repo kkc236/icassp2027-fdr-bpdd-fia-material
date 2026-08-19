@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "dataset": "VisDrone2019-DET",
-  "updated": "2026-08-18",
+  "updated": "2026-08-20",
   "policy": {
     "formal_publications_only": true,
     "excluded_publication_statuses": [
@@ -108,8 +108,8 @@
         "ap75": 0.3042,
         "map50_95": 0.2961
       },
-      "parameter_count_m": 32.635754,
-      "gflops": 109,
+      "parameter_count_m": 33.45809,
+      "gflops": 111.648,
       "fps": null,
       "training_gpu": "not_reported",
       "hardware": {
@@ -581,6 +581,47 @@
       "relative_to_project": "higher"
     },
     {
+      "id": "rafde_yolov11m_640_val",
+      "method": "RAFDE",
+      "family": "yolo",
+      "publication": "Towards Region-Adaptive Feature Disentanglement and Enhancement for Small Object Detection",
+      "venue": "IJCAI 2025",
+      "venue_rank": "A",
+      "publication_status": "peer_reviewed_conference",
+      "split": "val",
+      "input_size": "640x640",
+      "backbone": "YOLOv11m",
+      "pretraining": "not_reported",
+      "training_epochs": 150,
+      "evaluator": "paper-reported VisDrone validation; input=640x640; batch=8",
+      "metrics": {
+        "precision": null,
+        "recall": null,
+        "ap50": 0.485,
+        "ap75": null,
+        "map50_95": 0.3
+      },
+      "parameter_count_m": 11.02,
+      "gflops": 72.0,
+      "fps": null,
+      "training_gpu": "NVIDIA RTX A6000",
+      "hardware": {
+        "gpu": "not_reported",
+        "batch": "not_reported",
+        "precision": "not_reported",
+        "backend": "not_reported",
+        "latency_scope": "not_reported"
+      },
+      "evidence_type": "reported_by_original_paper",
+      "source_id": "external_rafde_ijcai_2025",
+      "source_url": "https://www.ijcai.org/proceedings/2025/78",
+      "source_table": "Tables 1-2 and Section 4.2",
+      "comparison_scope": "external_a_venue_reported_val",
+      "relative_to_project": "higher",
+      "fps_comparison_allowed": false,
+      "note": "Formal IJCAI paper under a 640x640 VisDrone validation setting. Its YOLOv11m training recipe and evaluator are not paired with the project's RT-DETR-L protocol; the absolute mAP difference is 0.0039."
+    },
+    {
       "id": "ema_yolov5x_val",
       "method": "YOLOv5x + EMA",
       "family": "yolo",
@@ -846,8 +887,8 @@
         "ap75": 0.2327,
         "map50_95": 0.2337
       },
-      "parameter_count_m": 32.635754,
-      "gflops": 109,
+      "parameter_count_m": 33.45809,
+      "gflops": 111.648,
       "fps": 81.49,
       "training_gpu": "not_reported",
       "hardware": {
@@ -1112,6 +1153,47 @@
       "note": "Formal CCF B ICME paper; split and input are not explicitly stated, so no cross-row delta is allowed.",
       "venue_rank": "B",
       "relative_to_project": "not_rankable"
+    },
+    {
+      "id": "resbidet_split_input_unreported",
+      "method": "ResBiDet",
+      "family": "yolo",
+      "publication": "ResBiDet: Efficient Dual-Branch Small Object Detection for UAVs under Resource-Constrained Conditions",
+      "venue": "ICASSP 2026",
+      "venue_rank": "B",
+      "publication_status": "peer_reviewed_conference",
+      "split": "not_reported",
+      "input_size": "dual-resolution; exact sizes not available in accessible abstract",
+      "backbone": "dual-branch lightweight detector",
+      "pretraining": "not_reported",
+      "training_epochs": null,
+      "evaluator": "IEEE abstract reports VisDrone2019 AP50; split, exact input sizes, and evaluator details are not available in the accessible metadata",
+      "metrics": {
+        "precision": null,
+        "recall": null,
+        "ap50": 0.387,
+        "ap75": null,
+        "map50_95": null
+      },
+      "parameter_count_m": null,
+      "gflops": null,
+      "fps": null,
+      "training_gpu": "not_reported",
+      "hardware": {
+        "gpu": "not_reported",
+        "batch": "not_reported",
+        "precision": "not_reported",
+        "backend": "not_reported",
+        "latency_scope": "not_reported"
+      },
+      "evidence_type": "reported_by_original_paper",
+      "source_id": "external_resbidet_icassp_2026",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11464428",
+      "source_table": "IEEE Xplore abstract and official ICASSP program page",
+      "comparison_scope": "external_b_venue_reported_ap50_split_input_unreported",
+      "relative_to_project": "not_rankable",
+      "fps_comparison_allowed": false,
+      "note": "Direct same-venue UAV small-object paper. Its accessible abstract reports VisDrone2019 AP50=0.387 and UAVDT AP50=0.402, but not mAP50-95 or a complete protocol; compare AP50 descriptively only."
     }
   ]
 }

@@ -1229,6 +1229,8 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "UFPMP-Det-R50",
         "DINO-5scale + UGS",
         "VARDet",
+        "RAFDE",
+        "ResBiDet",
         "YOLOv10-X",
         "RT-DETR-R34",
         "FBRT-YOLO-L",
@@ -1282,6 +1284,7 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "CVPR 2022",
         "ICASSP 2023",
         "ICASSP 2026",
+        "IJCAI 2025",
         "ICRA 2024",
         "AAAI 2025",
         "ICME 2025",
@@ -1294,6 +1297,8 @@ def test_external_visdrone_comparison_contract_and_source_policy():
         "external_querydet_cvpr_2022",
         "external_ema_icassp_2023",
         "external_vardet_icassp_2026",
+        "external_resbidet_icassp_2026",
+        "external_rafde_ijcai_2025",
         "external_hic_yolov5_icra_2024",
         "external_fbrt_yolo_aaai_2025",
         "external_nrqo_icme_2025",
@@ -1355,6 +1360,29 @@ def test_external_visdrone_comparison_contract_and_source_policy():
     assert vardet["comparison_scope"] == "external_b_venue_reported_val"
     assert "unified reimplementation" in vardet["evaluator"]
     assert "not protocol-matched" in vardet["note"]
+
+    rafde = next(row for row in rows if row["method"] == "RAFDE")
+    assert rafde["venue"] == "IJCAI 2025"
+    assert rafde["venue_rank"] == "A"
+    assert rafde["split"] == "val"
+    assert rafde["input_size"] == "640x640"
+    assert rafde["backbone"] == "YOLOv11m"
+    assert rafde["metrics"] == {
+        "precision": None,
+        "recall": None,
+        "ap50": 0.485,
+        "ap75": None,
+        "map50_95": 0.3,
+    }
+    assert rafde["relative_to_project"] == "higher"
+
+    resbidet = next(row for row in rows if row["method"] == "ResBiDet")
+    assert resbidet["venue"] == "ICASSP 2026"
+    assert resbidet["venue_rank"] == "B"
+    assert resbidet["split"] == "not_reported"
+    assert resbidet["metrics"]["ap50"] == 0.387
+    assert resbidet["metrics"]["map50_95"] is None
+    assert resbidet["relative_to_project"] == "not_rankable"
 
     vardet_source = manifest["sources"]["external_vardet_icassp_2026"]
     assert vardet_source["source_url"] == (
@@ -1439,6 +1467,8 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
         "ICME",
         "IROS",
         "VARDet",
+        "RAFDE",
+        "ResBiDet",
         "1333×800",
         "非严格可比",
         "not_reported",

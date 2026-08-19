@@ -888,13 +888,13 @@
     },
     "external_visdrone_comparison_json": {
       "artifact": "paper_material/results/external_visdrone_comparison.json",
-      "sha256": "9b387f64edd0caadb0e8f6e853f46af1fcd9f62705304a4d88ff4dbe14bf2b32",
+      "sha256": "5655fefac8689c155fae3b7c26c6a7612d8b904906c04343534ab61d44ad8408",
       "evidence_level": "curated_ccf_a_b_conference_publication_index",
       "transformation": "normalize project rows and CCF A/B conference rows into explicit split, venue-rank, relative-position, protocol, metric, and runtime fields"
     },
     "external_visdrone_comparison_csv": {
       "artifact": "paper_material/results/external_visdrone_comparison.csv",
-      "sha256": "2f323baf363ad1150f4539f4f8473aec651aca013e47e8cdd684b8ede42a13d5",
+      "sha256": "985ef4ccc21bbbb6067f5e7e4cc7e5a48675b4fce92bd19a4757f776b2b6013d",
       "evidence_level": "flattened_view_of_external_visdrone_comparison_json",
       "transformation": "flatten JSON rows without changing values"
     },
@@ -936,6 +936,34 @@
       ],
       "evidence_level": "original_formal_b_venue_publication_reported_value_from_user_supplied_table_capture",
       "transformation": "transcribe the VisDrone and UAVDT validation rows; retain the paper's unified ResNet-50, 1333x800, COCO-style reimplementation boundary"
+    },
+    "external_resbidet_icassp_2026": {
+      "title": "ResBiDet: Efficient Dual-Branch Small Object Detection for UAVs under Resource-Constrained Conditions",
+      "venue": "ICASSP 2026",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11464428",
+      "official_program_url": "https://cmsworkshops.com/ICASSP2026/view_paper.php?PaperNum=8864",
+      "source_tables": [
+        "IEEE Xplore abstract"
+      ],
+      "evidence_level": "original_formal_b_venue_abstract_reported_value",
+      "transformation": "transcribe only the abstract-reported VisDrone2019 and UAVDT AP50 values; preserve missing split, exact input, mAP50-95, and full-protocol fields"
+    },
+    "external_rafde_ijcai_2025": {
+      "title": "Towards Region-Adaptive Feature Disentanglement and Enhancement for Small Object Detection",
+      "venue": "IJCAI 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://www.ijcai.org/proceedings/2025/78",
+      "source_pdf": "https://www.ijcai.org/proceedings/2025/0078.pdf",
+      "doi": "10.24963/ijcai.2025/78",
+      "source_tables": [
+        "Tables 1-2",
+        "Section 4.2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the explicit VisDrone validation 640x640 RAFDE row and its module-wise ablation; retain YOLOv11m, batch, epoch, GPU, and missing AP75 boundaries"
     },
     "external_clusdet_iccv_2019": {
       "title": "Clustered Object Detection in Aerial Images",
@@ -1022,6 +1050,7 @@
         "AAAI",
         "CVPR",
         "ICCV",
+        "IJCAI",
         "ICASSP",
         "ICME",
         "ICRA",

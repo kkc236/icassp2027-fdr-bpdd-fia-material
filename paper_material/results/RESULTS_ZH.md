@@ -116,6 +116,6 @@ fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence
 
 ## 6. CCF A/B 会 VisDrone 外部位置
 
-已补充 [VisDrone CCF A/B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS full/regular paper，逐行标出 CCF A/B 等级，并按同 split 的 mAP50–95 分成“综合不高于本文/综合高于本文”；split 或 input 未报告的 AAAI/ICME 行单列为不可排序。期刊和仅预印本来源不进入正式表。
+已补充 [VisDrone CCF A/B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 AAAI、CVPR、ICCV、IJCAI、ICASSP、ICRA、ICME、IROS full/regular paper，逐行标出 CCF A/B 等级，并按同 split 的 mAP50–95 分成“综合不高于本文/综合高于本文”；split、input 或 mAP50–95 未报告的行单列为不可排序。期刊和仅预印本来源不进入正式表。
 
-外部数字均为论文报告值，不是本项目复跑值。明确 val 的结果中，本项目三模块 `0.2961` 高于 A 会 TPH-YOLOv5-x+UGS `0.2900`、QueryDet `0.2832`、ClusDet-R50 `0.2670`，也高于 B 会 RT-DETR-R50 `0.2840`、YOLOv8-L `0.2610` 与 HIC-YOLOv5 `0.2595`；它与 A 会 DM-EFS `0.2971`、B 会 UAV-DETR-R18 `0.2980` 最接近。ICASSP 2026 VARDet 报告 `AP50=0.6170、AP75=0.3910、mAP=0.3650`，但使用 ResNet-50、1333×800 的统一重实现协议，与本文 640 协议非严格可比。test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明绝对值位置，跨论文不计算严格涨点。AAAI 2025 FBRT-YOLO 论文提供 4090 训练记录和参数相近的 RT-DETR/YOLO 行，但未明确 split/input，因此不进入高低排名，FPS 也不排序。
+外部数字均为论文报告值，不是本项目复跑值。明确 val 的结果中，本项目三模块 `0.2961` 高于 A 会 TPH-YOLOv5-x+UGS `0.2900`、QueryDet `0.2832`、ClusDet-R50 `0.2670`，也高于 B 会 UAV-DETR-EV2 `0.2870`、RT-DETR-R50 `0.2840`；它与 A 会 DM-EFS `0.2971`、B 会 UAV-DETR-R18 `0.2980` 和 A 会 RAFDE `0.3000` 构成最接近的上下界。RAFDE 在 640 下报告 AP50=`0.4850`、mAP=`0.3000`；本文 AP50=`0.4898` 略高、mAP 略低。ICASSP 2026 ResBiDet 的 IEEE 摘要报告 VisDrone2019 AP50=`0.387`，低于本文 `0.4898`，但其 split、精确双分辨率输入与 mAP50–95 未公开在可访问摘要中。VARDet 报告 `AP50=0.6170、AP75=0.3910、mAP=0.3650`，但使用 ResNet-50、1333×800 的统一重实现协议，与本文 640 协议非严格可比。test 中本项目 `0.2337`，HIC-YOLOv5 为 `0.2085`。这些只用于说明绝对值位置，跨论文不计算严格涨点。
