@@ -99,16 +99,22 @@ fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence
 
 因此三模块在 val/test 上都是正增长。test 覆盖 1,610 images / 75,102 instances；四位小数文本已经补齐 AP75、F1 和十类结果，截图作为三位小数交叉核验。原始文本见 [`../evidence/fdr_bpdd_fia_val.txt`](../evidence/fdr_bpdd_fia_val.txt) 与 [`../evidence/fdr_bpdd_fia_test.txt`](../evidence/fdr_bpdd_fia_test.txt)，结构化明细见 [`fdr_bpdd_fia_text_report_class_results.csv`](fdr_bpdd_fia_text_report_class_results.csv)。
 
-## 4. 论文可用结论
+## 4. 统一复杂度与实时性
+
+在同一 NVIDIA GeForce RTX 4090、`imgsz=640`、`batch=1`、FP32 端到端协议下，Baseline、FDR、FDR+BPDD、FDR+BPDD+FIA 分别为 `28.85/25.73/25.77/25.21 FPS`，中位延迟为 `34.66/38.86/38.80/39.66 ms`。
+
+严格配对 FDR 与 FDR+BPDD 的原始架构均为 `33,156,614 Params / 108.229 GFLOPs`，峰值显存同为 `363.98 MiB`；两者中位延迟仅差 `−0.085 ms`，属于测量波动。这给出直接证据：BPDD 不增加推理分支或可测开销。相对 FDR+BPDD，FIA 增加 `301,476 Params（+0.91%）`、`3.419 GFLOPs（+3.16%）` 和 `0.861 ms（+2.22%）` 中位延迟，三模块仍保持 `25.21 FPS`。完整表及 1,500 个原始样本见 [统一复杂度与实时性结果](COMPLEXITY_ZH.md)。
+
+## 5. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
 - BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅稳定正增益，并且只在训练期工作、不增加推理分支。严格 best.pt 配对复评确认 val/test mAP50–95 分别 `+0.239/+0.283 pp`，AP75 分别 `+0.072/+0.276 pp`；历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
 - fresh P3-only FIA-only 在 val mAP50–95 上相对 canonical baseline `0.21911` 提高 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两个差值均限于各自 split。旧 FIA-only cascading 负向结果已 superseded。FDR+FIA 和完整三模块继续作为不同 topology/authority 下的正向兼容性观察。
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 
-完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)，效率占位与统一测速合同见 [统一复杂度与实时性表](COMPLEXITY_ZH.md)。
+完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)，效率实测结果见 [统一复杂度与实时性表](COMPLEXITY_ZH.md)。
 
-## 5. CCF A/B 会 VisDrone 外部位置
+## 6. CCF A/B 会 VisDrone 外部位置
 
 已补充 [VisDrone CCF A/B 会外部方法对比](EXTERNAL_VISDRONE_COMPARISON_ZH.md)。正式外部行仅来自 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS full/regular paper，逐行标出 CCF A/B 等级，并按同 split 的 mAP50–95 分成“综合不高于本文/综合高于本文”；split 或 input 未报告的 AAAI/ICME 行单列为不可排序。期刊和仅预印本来源不进入正式表。
 

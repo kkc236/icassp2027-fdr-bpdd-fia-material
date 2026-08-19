@@ -1,35 +1,45 @@
-# 统一复杂度与实时性表
+# 统一复杂度与实时性结果
 
-这张表用于回答两个问题：BPDD 的小幅增益是否值得，以及三个模块是否破坏 RT-DETR 的实时性。精度列采用当前 VisDrone val 登记结果；复杂度与速度列必须在同一硬件、同一软件环境和同一输入协议下重新测量。
+四个论文配置已在同一台 NVIDIA GeForce RTX 4090、同一软件环境和同一 FP32 batch=1 协议下完成测量。延迟为完整 `predict` 路径的端到端时间，包含预处理、网络推理和后处理；每个模型预热 100 次、正式测量 300 次，并在计时前后执行 CUDA synchronize。FPS 定义为 `1000 / median latency(ms)`。
 
 ## 论文目标表
 
-| 模型 | Params | FLOPs | FPS | Latency | AP75 | mAP50–95 |
-|---|---:|---:|---:|---:|---:|---:|
-| RT-DETR-L Baseline | 待统一实测 | 待统一实测 | 待统一实测 | 待统一实测 | 0.21302 | 0.21911 |
-| RT-DETR-L + FDR | 待统一实测 | 待统一实测 | 待统一实测 | 待统一实测 | 0.29253 | 0.28966 |
-| RT-DETR-L + FDR + BPDD | 待统一实测 | 待统一实测 | 待统一实测 | 待统一实测 | 0.29810 | 0.29226 |
-| RT-DETR-L + FDR + BPDD + FIA | 待统一实测 | 待统一实测 | 待统一实测 | 待统一实测 | 0.3042 | 0.2961 |
+| 模型 | Params (M) | FLOPs (G) | Peak VRAM (MiB) | FPS | Latency median / P90 (ms) | AP75 | mAP50–95 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| RT-DETR-L Baseline | 32.827 | 108.032 | 233.8 | 28.85 | 34.66 / 35.29 | 0.21302 | 0.21911 |
+| RT-DETR-L + FDR | 33.157 | 108.229 | 364.0 | 25.73 | 38.86 / 39.46 | 0.29253 | 0.28966 |
+| RT-DETR-L + FDR + BPDD | 33.157 | 108.229 | 364.0 | 25.77 | 38.80 / 39.48 | 0.29810 | 0.29226 |
+| RT-DETR-L + FDR + BPDD + FIA | 33.458 | 111.648 | 374.1 | 25.21 | 39.66 / 40.35 | 0.3042 | 0.2961 |
 
-状态：`pending_unified_measurement`。服务器当前被占用，本机虽然有 RTX 4070 Laptop GPU，但现有 PyTorch 为 CPU-only，因此今天不把不同硬件或不同模型 authority 的旧速度拼成“统一实测”。机器合同见 [`complexity_results.json`](complexity_results.json)。
+表中精度列保持用户确认的 A–E VisDrone val 口径；复杂度列绑定各行列出的 exact checkpoint SHA。BPDD 是否增加推理开销不依赖跨 authority 的精度比较，而由下面的严格配对 checkpoint 直接复核。
 
-## 冻结测速协议
+Params/FLOPs 按统一脚本在 predictor fusion 前对 checkpoint 原始架构统计，与既有静态报告口径一致。严格 BPDD 复评日志中的 `32,334,278 Params / 103.7 GFLOPs` 是 predictor 融合后的部署图摘要；两种数字作用不同，不应混为矛盾，也不影响 BPDD 两臂完全相等的结论。
 
-- 四个 checkpoint 在同一 GPU、同一功耗模式、同一 CUDA/cuDNN/PyTorch/Ultralytics 环境下测量；
-- `imgsz=640`、`batch=1`、FP32（`half=False`）；
-- 预热 100 次，正式测量 300 次，每次计时前后执行 CUDA synchronize；
-- Latency 同时报中位数和 P90，范围包含 preprocess、network inference 与 postprocess；
-- FPS 定义为 `1000 / median end-to-end latency(ms)`；
-- Params 与 FLOPs 使用同一个 640×640 输入和同一统计工具；同时记录峰值显存；
-- 不用 val/test 数据加载耗时替代模型 latency，不混用 batch=8 的评估速度与 batch=1 的实时性速度。
+## BPDD 推理开销严格配对
 
-## BPDD 的复杂度判定
+| 配对 checkpoint | Params | FLOPs | Peak VRAM | FPS | Median / P90 |
+|---|---:|---:|---:|---:|---:|
+| FDR strict-pair control | 33,156,614 | 108.229 G | 363.98 MiB | 25.72 | 38.887 / 39.416 ms |
+| FDR+BPDD strict-pair | 33,156,614 | 108.229 G | 363.98 MiB | 25.77 | 38.802 / 39.480 ms |
 
-BPDD 只在训练期产生蒸馏监督，不增加推理分支。因而在同一 FDR 推理配置下，`FDR+BPDD` 的 Params、FLOPs、FPS 与 Latency 应与 `FDR` 一致；这不是用旧速度猜测，而是待统一测量复核的结构合同。若实测或模型统计不一致，优先视为配置/checkpoint 身份问题。
+两行的 Params、FLOPs 和峰值显存完全相等。FDR+BPDD 的中位延迟比配对 FDR 低 `0.085 ms`，P90 高 `0.063 ms`，均属于测量波动，不主张 BPDD 加速。可以稳定写成：**BPDD 只在训练期提供监督，不增加推理分支，也不引入推理参数、FLOPs 或可测的额外推理延迟。**
 
-## 已有但不可填入主表的参考
+## FIA 额外成本
 
-- 严格静态报告记录 baseline 为 32,826,626 Params / 108.0318976 GFLOPs，FDR 为 33,156,614 Params / 108.2291200 GFLOPs。
-- 三模块四位小数文本记录 32,635,754 Params / 109.0 GFLOPs，并分别记录 val/test 端到端 54.08/81.49 FPS；但硬件身份未绑定，且模型 authority 与前两行不同。
+相对 FDR+BPDD，加入 FIA 后增加：
 
-这些数字保留用于审计和发现异常，不进入“同硬件统一设置”论文表。测速完成后，只替换目标表中的“待统一实测”，不改动已冻结的 AP75/mAP 证据来源。
+- `301,476` Params（`+0.91%`）；
+- `3.419` GFLOPs（`+3.16%`）；
+- `10.10 MiB` 峰值显存（`+2.78%`）；
+- `0.861 ms` 中位端到端延迟（`+2.22%`），FPS 从 `25.77` 降至 `25.21`。
+
+因此三模块仍保持约 25 FPS 的 batch=1 FP32 端到端速度。FIA 带来的计算成本较小，没有破坏实时性；论文中不应将本表的 FP32 端到端 FPS 与其他论文的 FP16、TensorRT、纯网络 forward 或不同输入尺寸速度直接排名。
+
+## 冻结协议与证据
+
+- `imgsz=640`、`batch=1`、FP32；固定 seeded uint8 RGB 输入；`conf=0.001`、`max_det=300`；
+- 预热 100 次、正式测量 300 次；每次计时前后 CUDA synchronize；
+- 环境：Python 3.10.12、PyTorch 2.5.1+cu121、CUDA 12.1、cuDNN 90100、Ultralytics 8.4.90；
+- 原始 1,500 个延迟样本、checkpoint 哈希、模型图身份及环境信息见 [`../evidence/unified_complexity_20260820/unified_complexity_raw.json`](../evidence/unified_complexity_20260820/unified_complexity_raw.json)；机器汇总见 [`complexity_results.json`](complexity_results.json)。
+
+首轮诊断因显式传入已弃用的 `half=False` 参数而在每次调用内打印警告，延迟被日志 I/O 污染，未进入材料。当前结果来自去除该参数后的干净复测；模型加载后显式转为 FP32，并由脚本校验参数 dtype。

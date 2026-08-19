@@ -38,9 +38,9 @@
 - 4.2 同时加入 [VisDrone CCF A/B 会外部方法对比](../results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)：正式表只采用 AAAI、CVPR、ICCV、ICASSP、ICRA、ICME、IROS full/regular paper；逐行标明 A/B，按同 split 的 mAP50–95 分成不高于本文和高于本文，split/input 未报告行放补充表，不计算跨论文涨点。VARDet（ICASSP 2026）单独标为直接竞品，并注明其 ResNet-50、1333×800、统一重实现协议与本文 640 协议不同。
 - 4.3 Ablation Studies：分开报告 fresh P3-only FIA-only 与既有 cascading FDR+FIA 的 exact val/test。FIA-only val mAP50–95=`0.2270563951`，相对 canonical val baseline `0.21911` 为 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两项都是 split 内算术差，不能跨 val/test 拼接。FDR+FIA 保留既有 val/test 算术差 `+0.5280/+0.6644 pp`。
 - 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA 各 checkpoint 的总体与 AP75；只有已有逐类证据的记录才展示 10 类结果，所有指标直接取自已登记记录，不反推。
-- 4.5 Efficiency：加入 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。BPDD 训练期工作、不增加推理分支；四行 Params/FLOPs/FPS/Latency 只能在同一硬件和统一 batch=1 FP32 协议实测后填入。
+- 4.5 Efficiency：加入已完成的 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。同一 RTX 4090、batch=1 FP32 端到端实测表明，BPDD 的严格配对推理 Params/FLOPs/峰值显存完全相同且延迟差仅为测量波动；FIA 增加 0.301 M 参数、3.419 GFLOPs 和 0.861 ms 中位延迟，三模块保持 25.21 FPS。
 
-投稿前不补第三数据集、不强行三种子；唯一新增的 [FDR 与 FDR+BPDD 严格配对](../experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md) 已完成训练及 best.pt 统一 val/test 复评：mAP50–95 配对增益为 `+0.239/+0.283 pp`，AP75 为 `+0.072/+0.276 pp`。训练实验已收口，剩余实验材料仅为统一复杂度/延迟表。
+投稿前不补第三数据集、不强行三种子；唯一新增的 [FDR 与 FDR+BPDD 严格配对](../experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md) 已完成训练及 best.pt 统一 val/test 复评：mAP50–95 配对增益为 `+0.239/+0.283 pp`，AP75 为 `+0.072/+0.276 pp`。统一复杂度/延迟也已完成，训练和效率实验均已收口。
 
 ### 5. Conclusion
 

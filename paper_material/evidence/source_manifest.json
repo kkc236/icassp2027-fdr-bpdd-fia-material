@@ -1052,12 +1052,34 @@
       "splits_available": ["val", "test"],
       "transformation": "select each arm's best checkpoint, independently evaluate both checkpoints on frozen VisDrone val and test protocols, preserve exact JSON/log/script hashes, and compute same-split paired percentage-point differences"
     },
+    "unified_complexity_20260820": {
+      "title": "Unified RTX 4090 end-to-end complexity and latency benchmark",
+      "artifact": "paper_material/evidence/unified_complexity_20260820/unified_complexity_raw.json",
+      "sha256": "71ecb8f21030d416b3bb5d736cb4cc03a5a53afce98bc05c494e748087c0343c",
+      "benchmark_script": "scripts/benchmark_unified_complexity.py",
+      "benchmark_script_sha256": "e74b22dc626ec335f91b1b01b87c60fe32e8b2d48cbad9a6281b168c55e838e3",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "runtime_source_commit": "07d900d32a0c810cce43b8146abe78040e46e677",
+      "evidence_level": "same_hardware_exact_checkpoint_unified_measurement",
+      "protocol": {
+        "device": "NVIDIA GeForce RTX 4090",
+        "imgsz": 640,
+        "batch": 1,
+        "half": false,
+        "warmup_iterations": 100,
+        "measured_iterations_per_authority": 300,
+        "authorities": 5,
+        "latency_scope": "preprocess_inference_postprocess"
+      },
+      "transformation": "preserve all 1500 raw synchronized latency samples and derive median, linear P90, FPS, Params, GFLOPs, and peak allocated CUDA memory"
+    },
     "generated_unified_complexity_contract": {
-      "title": "Unified complexity and real-time measurement contract",
+      "title": "Completed unified complexity and real-time measurement summary",
       "artifact": "paper_material/results/complexity_results.json",
-      "sha256": "52242123efaf705febd8766b09a51b14cb0e6482e35d13974b66832093439601",
-      "evidence_level": "generated_measurement_contract_pending_execution",
-      "transformation": "register existing accuracy evidence while leaving all unified Params, FLOPs, FPS, and latency fields null until same-hardware measurement"
+      "sha256": "131a4a5660b74a58cc7b80c82e264698144c4753a4884e83ee6b879773f0049c",
+      "source_id": "unified_complexity_20260820",
+      "evidence_level": "generated_from_same_hardware_exact_checkpoint_measurement",
+      "transformation": "combine the user-confirmed A-E accuracy columns with exact-checkpoint unified complexity measurements and retain a separate strict FDR/FDR+BPDD overhead pair"
     }
   },
   "revocations": [

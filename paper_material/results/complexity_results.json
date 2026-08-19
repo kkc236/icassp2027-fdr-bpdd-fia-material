@@ -1,10 +1,26 @@
 {
   "format_version": 1,
-  "status": "pending_unified_measurement",
-  "reason": "The designated server is occupied and the local PyTorch build is CPU-only; no cross-hardware runtime values are presented as unified measurements.",
+  "status": "completed_unified_measurement",
+  "measured_at_utc": "2026-08-19T16:11:10.371943+00:00",
+  "source": {
+    "raw_artifact": "paper_material/evidence/unified_complexity_20260820/unified_complexity_raw.json",
+    "raw_artifact_sha256": "71ecb8f21030d416b3bb5d736cb4cc03a5a53afce98bc05c494e748087c0343c",
+    "benchmark_script": "scripts/benchmark_unified_complexity.py",
+    "benchmark_script_sha256": "e74b22dc626ec335f91b1b01b87c60fe32e8b2d48cbad9a6281b168c55e838e3",
+    "runtime_source_commit": "07d900d32a0c810cce43b8146abe78040e46e677"
+  },
+  "environment": {
+    "device": "NVIDIA GeForce RTX 4090",
+    "device_index": 0,
+    "gpu_total_memory_mib": 22683.5,
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "cudnn": 90100,
+    "ultralytics": "8.4.90"
+  },
   "protocol": {
     "same_hardware_required": true,
-    "device": null,
     "imgsz": 640,
     "batch": 1,
     "half": false,
@@ -15,72 +31,122 @@
     "fps_definition": "1000 / median_end_to_end_latency_ms",
     "include_preprocess": true,
     "include_postprocess": true,
+    "conf": 0.001,
+    "max_det": 300,
+    "input": "one fixed seeded uint8 RGB image",
+    "static_cost_scope": "unfused checkpoint architecture before predictor fusion",
     "software_environment_must_match": true
   },
   "rows": [
     {
       "method": "RT-DETR-L Baseline",
-      "params": null,
-      "gflops": null,
-      "fps": null,
-      "latency_ms": null,
+      "authority_id": "baseline",
+      "checkpoint_sha256": "32f5c09fc2180d39e97a7ab6ea8c86a64c62f4fa7e22dc297181564b04d7ddc0",
+      "params": 32826626,
+      "gflops": 108.0318976,
+      "peak_memory_mib": 233.828125,
+      "fps": 28.85030468373204,
+      "latency_ms": 34.661679000009826,
+      "latency_p90_ms": 35.28881709993357,
       "ap75": 0.21302,
       "map": 0.21911,
       "accuracy_split": "VisDrone val",
       "accuracy_source_id": "strict_control_val",
-      "complexity_status": "pending_unified_measurement",
+      "complexity_status": "unified_measured",
       "inference_contract": "baseline"
     },
     {
       "method": "RT-DETR-L + FDR",
-      "params": null,
-      "gflops": null,
-      "fps": null,
-      "latency_ms": null,
+      "authority_id": "fdr",
+      "checkpoint_sha256": "7f0f19d46aac5c8a0629fce275c9fe4cbdf3fa14a2acab7d0e6f10d3ad3776f1",
+      "params": 33156614,
+      "gflops": 108.22912,
+      "peak_memory_mib": 363.9775390625,
+      "fps": 25.731859765763932,
+      "latency_ms": 38.86232900003961,
+      "latency_p90_ms": 39.45628549998901,
       "ap75": 0.29253,
       "map": 0.28966,
       "accuracy_split": "VisDrone val",
       "accuracy_source_id": "fdr_val",
-      "complexity_status": "pending_unified_measurement",
+      "complexity_status": "unified_measured",
       "inference_contract": "fdr_inference_graph"
     },
     {
       "method": "RT-DETR-L + FDR + BPDD",
-      "params": null,
-      "gflops": null,
-      "fps": null,
-      "latency_ms": null,
+      "authority_id": "fdr_bpdd",
+      "checkpoint_sha256": "8c7fee3cff1c3f84210f694b1f080115b16948104f6c4bd181652fd4a3667f35",
+      "params": 33156614,
+      "gflops": 108.22912,
+      "peak_memory_mib": 363.9775390625,
+      "fps": 25.771726290128747,
+      "latency_ms": 38.8022124999452,
+      "latency_p90_ms": 39.47968239995134,
       "ap75": 0.29810,
       "map": 0.29226,
       "accuracy_split": "VisDrone val",
       "accuracy_source_id": "bpdd_val",
-      "complexity_status": "pending_unified_measurement",
-      "inference_contract": "same_as_fdr_by_construction"
+      "complexity_status": "unified_measured",
+      "inference_contract": "same_as_fdr_by_measurement_and_construction"
     },
     {
       "method": "RT-DETR-L + FDR + BPDD + FIA",
-      "params": null,
-      "gflops": null,
-      "fps": null,
-      "latency_ms": null,
+      "authority_id": "fdr_bpdd_fia",
+      "checkpoint_sha256": "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+      "params": 33458090,
+      "gflops": 111.648142848,
+      "peak_memory_mib": 374.078125,
+      "fps": 25.212409507625583,
+      "latency_ms": 39.663007999990896,
+      "latency_p90_ms": 40.35233079998761,
       "ap75": 0.3042,
       "map": 0.2961,
       "accuracy_split": "VisDrone val",
       "accuracy_source_id": "fia_updated_three_module_text_val",
-      "complexity_status": "pending_unified_measurement",
+      "complexity_status": "unified_measured",
       "inference_contract": "fdr_plus_fia_inference_graph_bpdd_removed"
     }
   ],
-  "non_unified_reference_evidence": {
-    "strict_static_baseline": {"params": 32826626, "gflops": 108.0318976},
-    "strict_static_fdr": {"params": 33156614, "gflops": 108.22912},
-    "three_module_unbound_hardware": {
-      "params": 32635754,
-      "gflops": 109.0,
-      "val_end_to_end_fps": 54.08,
-      "test_end_to_end_fps": 81.49
+  "strict_bpdd_pair": {
+    "purpose": "verify that training-only BPDD adds no inference graph cost",
+    "fdr_checkpoint_sha256": "d2b6407bd291bf5d6a0e1651c99894a27bb4d8f293c82cd92e404060d6780d82",
+    "fdr_bpdd_checkpoint_sha256": "8c7fee3cff1c3f84210f694b1f080115b16948104f6c4bd181652fd4a3667f35",
+    "fdr": {
+      "params": 33156614,
+      "gflops": 108.22912,
+      "peak_memory_mib": 363.9775390625,
+      "fps": 25.7155109481694,
+      "latency_ms": 38.88703600000554,
+      "latency_p90_ms": 39.4163325000477
     },
-    "paper_table_eligible": false,
-    "note": "These values come from different model authorities or unbound hardware and are retained only for audit; they must not fill the unified comparison cells."
-  }
+    "fdr_bpdd": {
+      "params": 33156614,
+      "gflops": 108.22912,
+      "peak_memory_mib": 363.9775390625,
+      "fps": 25.771726290128747,
+      "latency_ms": 38.8022124999452,
+      "latency_p90_ms": 39.47968239995134
+    },
+    "deltas_fdr_bpdd_minus_fdr": {
+      "params": 0,
+      "gflops": 0.0,
+      "peak_memory_mib": 0.0,
+      "fps": 0.05621534195934785,
+      "latency_ms": -0.08482350006033812,
+      "latency_p90_ms": 0.06334989990364193
+    },
+    "conclusion": "equal_static_cost_and_no_measurable_inference_overhead"
+  },
+  "fia_increment_over_fdr_bpdd": {
+    "params": 301476,
+    "params_percent": 0.9092484534156594,
+    "gflops": 3.4190228480000115,
+    "gflops_percent": 3.159060008988339,
+    "peak_memory_mib": 10.1005859375,
+    "peak_memory_percent": 2.77505748390853,
+    "latency_ms": 0.8607955000456968,
+    "latency_percent": 2.2184186018952206,
+    "fps": -0.5593167825031635
+  },
+  "accuracy_complexity_authority_note": "Accuracy columns preserve the user-confirmed A-E val table. Complexity columns come from the exact checkpoint hashes listed in each row; the separate strict BPDD pair is the causal efficiency authority for BPDD overhead."
 }

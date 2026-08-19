@@ -47,4 +47,4 @@ FIA-only 当前 checkpoint SHA-256 为 `c00cae89aaeb722854f8c845d14507c3598f75d5
 
 不追加第三数据集，也不强制三种子。唯一新增训练任务是在同一源码提交、`seed=0`、同一训练与评估协议下配对 `FDR` 和 `FDR+BPDD`，现已完成 100 epochs 及两个 `best.pt` 的冻结 evaluator val/test 精确复评：BPDD 的 val/test mAP50–95 增益为 `+0.239/+0.283 pp`，AP75 增益为 `+0.072/+0.276 pp`。完整 authority、产物和哈希见 [BPDD 严格配对补充实验](BPDD_STRICT_PAIR_PROTOCOL_ZH.md)。
 
-统一复杂度/实时性不需要训练，但四个 checkpoint 必须在同一硬件、同一 FP32 batch=1 协议下重新测量。目标表与机器合同见 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。
+统一复杂度/实时性不需要训练，现已在同一 NVIDIA GeForce RTX 4090 上完成。四个论文 checkpoint 及严格 BPDD 配对 FDR 控制统一采用 `imgsz=640`、`batch=1`、FP32、预热 100 次、正式 300 次、逐次 CUDA synchronize；端到端延迟包含 preprocess、inference 与 postprocess，FPS 为 `1000/median latency`。目标表、机器汇总和原始样本见 [统一复杂度与实时性结果](../results/COMPLEXITY_ZH.md)。

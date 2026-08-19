@@ -1,7 +1,9 @@
 import csv
 import hashlib
 import json
+import math
 import re
+import statistics
 import subprocess
 from pathlib import Path
 
@@ -27,6 +29,8 @@ REQUIRED_MATERIAL_FILES = (
     "results/MAIN_TABLE_ZH.md",
     "results/COMPLEXITY_ZH.md",
     "results/complexity_results.json",
+    "evidence/unified_complexity_20260820/README.md",
+    "evidence/unified_complexity_20260820/unified_complexity_raw.json",
     "evidence/source_manifest.json",
     "evidence/bpdd_val_exact.json",
     "results/SPLIT_GAIN_COMPARISON_ZH.md",
@@ -768,14 +772,17 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
         "Latency",
         "AP75",
         "mAP50–95",
-        "待统一实测",
+        "28.85",
+        "25.21",
+        "0.861 ms",
+        "1,500",
         "不增加推理分支",
     ):
         assert required_text in page
 
     complexity = _load_required_json("results/complexity_results.json")
     assert complexity["format_version"] == 1
-    assert complexity["status"] == "pending_unified_measurement"
+    assert complexity["status"] == "completed_unified_measurement"
     assert complexity["protocol"]["same_hardware_required"] is True
     assert complexity["protocol"]["imgsz"] == 640
     assert complexity["protocol"]["batch"] == 1
@@ -788,23 +795,78 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
         "RT-DETR-L + FDR + BPDD + FIA",
     }
     assert all(
-        row[key] is None
+        isinstance(row[key], (int, float)) and row[key] > 0
         for row in rows.values()
-        for key in ("params", "gflops", "fps", "latency_ms")
+        for key in (
+            "params",
+            "gflops",
+            "peak_memory_mib",
+            "fps",
+            "latency_ms",
+            "latency_p90_ms",
+        )
     )
     assert rows["RT-DETR-L Baseline"]["ap75"] == 0.21302
     assert rows["RT-DETR-L + FDR"]["map"] == 0.28966
     assert rows["RT-DETR-L + FDR + BPDD"]["ap75"] == 0.29810
     assert rows["RT-DETR-L + FDR + BPDD + FIA"]["map"] == 0.2961
+    assert rows["RT-DETR-L Baseline"]["params"] == 32826626
+    assert rows["RT-DETR-L + FDR"]["gflops"] == 108.22912
     assert rows["RT-DETR-L + FDR + BPDD"]["inference_contract"] == (
-        "same_as_fdr_by_construction"
+        "same_as_fdr_by_measurement_and_construction"
     )
+    assert rows["RT-DETR-L + FDR + BPDD + FIA"]["params"] == 33458090
+    pair = complexity["strict_bpdd_pair"]
+    assert pair["fdr"]["params"] == pair["fdr_bpdd"]["params"]
+    assert pair["fdr"]["gflops"] == pair["fdr_bpdd"]["gflops"]
+    assert pair["fdr"]["peak_memory_mib"] == pair["fdr_bpdd"]["peak_memory_mib"]
+    assert pair["conclusion"] == (
+        "equal_static_cost_and_no_measurable_inference_overhead"
+    )
+
+    raw_path = MATERIAL_ROOT / complexity["source"]["raw_artifact"].removeprefix(
+        "paper_material/"
+    )
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    assert hashlib.sha256(raw_path.read_bytes()).hexdigest() == complexity["source"][
+        "raw_artifact_sha256"
+    ]
+    assert raw["status"] == "completed_unified_measurement"
+    assert raw["environment"]["gpu"] == "NVIDIA GeForce RTX 4090"
+    assert set(raw["all_authorities"]) == {
+        "baseline",
+        "fdr",
+        "strict_pair_fdr",
+        "fdr_bpdd",
+        "fdr_bpdd_fia",
+    }
+    for authority in raw["all_authorities"].values():
+        samples = authority["latency_samples_ms"]
+        latency = authority["latency"]
+        assert len(samples) == 300
+        assert all(math.isfinite(value) and value > 0 for value in samples)
+        assert statistics.median(samples) == latency["median_ms"]
+        ordered = sorted(samples)
+        position = (len(ordered) - 1) * 0.9
+        lower = math.floor(position)
+        upper = math.ceil(position)
+        p90 = (
+            ordered[lower]
+            if lower == upper
+            else ordered[lower] * (upper - position)
+            + ordered[upper] * (position - lower)
+        )
+        assert p90 == latency["p90_ms"]
+        assert 1000.0 / latency["median_ms"] == latency["fps"]
 
     manifest = _load_required_json("evidence/source_manifest.json")
     source = manifest["sources"]["generated_unified_complexity_contract"]
     assert source["artifact"] == "paper_material/results/complexity_results.json"
     artifact = REPOSITORY_ROOT / source["artifact"]
     assert hashlib.sha256(artifact.read_bytes()).hexdigest() == source["sha256"]
+    raw_source = manifest["sources"]["unified_complexity_20260820"]
+    assert raw_source["artifact"] == complexity["source"]["raw_artifact"]
+    assert raw_source["sha256"] == complexity["source"]["raw_artifact_sha256"]
 
 
 def test_completed_bpdd_strict_pair_is_source_bound_and_reported():
