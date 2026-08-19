@@ -750,9 +750,9 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
         "训练期",
         "不增加推理分支",
         "已完成训练",
-        "0.29047",
-        "0.29278",
-        "+0.231 pp",
+        "+0.239 pp",
+        "+0.283 pp",
+        "+0.276 pp",
     ):
         assert required_text in protocol
 
@@ -817,26 +817,25 @@ def test_completed_bpdd_strict_pair_is_source_bound_and_reported():
     protocol = _read_required_text("experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md")
 
     assert summary["format_version"] == 1
-    assert summary["status"] == (
-        "training_complete_best_val_selection_metrics_available"
+    assert summary["status"] == "best_checkpoint_exact_val_test_complete"
+    assert summary["authority"]["source_commit"] == (
+        "848f00cb7a40907e3884885ecd5bbd474450758a"
     )
-    assert summary["authority"] == {
-        "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
-        "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
-        "protocol_manifest_sha256": (
-            "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24"
-        ),
-        "initial_state_sha256": (
-            "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d"
-        ),
-        "seed": 0,
-        "epochs": 100,
-        "imgsz": 640,
-        "batch": 8,
-        "workers": 8,
-    }
+    assert summary["authority"]["evaluator_commit"] == (
+        "2997705c8f448cee10339eb87daed818dcef8e1e"
+    )
+    assert summary["authority"]["seed"] == 0
+    assert summary["authority"]["imgsz"] == 640
+    assert summary["authority"]["batch"] == 8
+    assert summary["authority"]["workers"] == 8
+    assert summary["authority"]["conf"] == 0.001
+    assert summary["authority"]["max_det"] == 300
+    assert summary["authority"]["nms"] is False
+    assert summary["authority"]["cache"] is False
+    assert summary["authority"]["half"] is False
+    assert summary["authority"]["rect"] is False
     assert summary["arms"]["fdr"]["best_epoch"] == 97
-    assert summary["arms"]["fdr"]["metrics"] == {
+    assert summary["arms"]["fdr"]["selection_metrics"] == {
         "precision": 0.5808,
         "recall": 0.47923,
         "map50": 0.48232,
@@ -844,21 +843,26 @@ def test_completed_bpdd_strict_pair_is_source_bound_and_reported():
         "map": 0.29047,
     }
     assert summary["arms"]["fdr_bpdd"]["best_epoch"] == 93
-    assert summary["arms"]["fdr_bpdd"]["metrics"] == {
+    assert summary["arms"]["fdr_bpdd"]["selection_metrics"] == {
         "precision": 0.57937,
         "recall": 0.49101,
         "map50": 0.48657,
         "map75": None,
         "map": 0.29278,
     }
-    assert summary["deltas_pp"] == {
-        "precision": -0.143,
-        "recall": 1.178,
-        "map50": 0.425,
-        "map75": None,
-        "map": 0.231,
-    }
-    assert summary["map75_status"] == "pending_best_checkpoint_exact_evaluation"
+    exact = summary["independent_best_evaluation"]
+    assert exact["val"]["fdr"]["map75"] == 0.29694111137614726
+    assert exact["val"]["fdr_bpdd"]["map75"] == 0.2976607591780332
+    assert exact["val"]["deltas_pp"]["map"] == 0.2389750054356654
+    assert exact["val"]["deltas_pp"]["map75"] == 0.07196478018859365
+    assert exact["test"]["fdr"]["map"] == 0.2311236870257676
+    assert exact["test"]["fdr_bpdd"]["map"] == 0.23395865945253597
+    assert exact["test"]["deltas_pp"]["map"] == 0.2834972426768362
+    assert exact["test"]["deltas_pp"]["map75"] == 0.2758792898446355
+    assert summary["inference_graph"]["fdr_params"] == 32334278
+    assert summary["inference_graph"]["fdr_bpdd_params"] == 32334278
+    assert summary["inference_graph"]["fdr_gflops"] == 103.7
+    assert summary["inference_graph"]["fdr_bpdd_gflops"] == 103.7
 
     for artifact in summary["artifacts"]:
         path = REPOSITORY_ROOT / artifact["artifact"]
@@ -874,16 +878,15 @@ def test_completed_bpdd_strict_pair_is_source_bound_and_reported():
     assert results["strict_bpdd_pair_20260819"] == summary["paper_result_record"]
 
     for required_text in (
-        "严格配对训练已完成",
-        "0.29047",
-        "0.29278",
-        "+0.231 pp",
-        "+0.425 pp",
-        "+1.178 pp",
-        "AP75 待 best.pt 独立精确复评",
+        "严格配对训练和 `best.pt` 统一 val/test 独立精确复评均已完成",
+        "0.290380",
+        "0.292770",
+        "+0.239 pp",
+        "+0.283 pp",
+        "+0.276 pp",
     ):
         assert required_text in page
-    assert "状态为 **已完成训练**" in protocol
+    assert "状态为 **已完成训练及统一 best.pt val/test 复评**" in protocol
 
 
 def test_split_gain_comparison_covers_every_module_combination_without_fabrication():
@@ -1102,7 +1105,7 @@ def test_three_module_text_reports_are_canonical_and_complete():
 
 def test_split_detail_csvs_have_expected_exact_coverage():
     expected_counts = {
-        "results/split_overall_results.csv": 6,
+        "results/split_overall_results.csv": 10,
         "results/split_scale_results.csv": 24,
         "results/split_class_results.csv": 60,
     }

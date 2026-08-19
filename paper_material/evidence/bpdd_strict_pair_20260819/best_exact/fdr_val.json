@@ -1,0 +1,158 @@
+{
+  "best_epoch": 97,
+  "checkpoint": {
+    "model_type": "src.rtdetr_fdr.FDRRTDETRDetectionModel",
+    "path": "/data/uav/runs/bpdd-formal-848f00cb/formal-seed0-fdr-bpdd-v1/weights/best.pt",
+    "sha256": "d2b6407bd291bf5d6a0e1651c99894a27bb4d8f293c82cd92e404060d6780d82"
+  },
+  "class_details": {
+    "awning-tricycle": {
+      "id": 7,
+      "map": 0.12660926322135704,
+      "map50": 0.200579909919061,
+      "map75": 0.13572350649293113
+    },
+    "bicycle": {
+      "id": 2,
+      "map": 0.10327665799184324,
+      "map50": 0.21829637788721462,
+      "map75": 0.08016677217062489
+    },
+    "bus": {
+      "id": 8,
+      "map": 0.4461769256038731,
+      "map50": 0.6008835838899307,
+      "map75": 0.5363943678324876
+    },
+    "car": {
+      "id": 3,
+      "map": 0.6076404569701326,
+      "map50": 0.8524902675508146,
+      "map75": 0.6864264431104323
+    },
+    "motor": {
+      "id": 9,
+      "map": 0.29709086235773896,
+      "map50": 0.6085418051432532,
+      "map75": 0.24352231294374385
+    },
+    "pedestrian": {
+      "id": 0,
+      "map": 0.27115064627886365,
+      "map50": 0.5628927274522932,
+      "map75": 0.2190686564348232
+    },
+    "people": {
+      "id": 1,
+      "map": 0.20834192518931963,
+      "map50": 0.49537999138517613,
+      "map75": 0.135923235711365
+    },
+    "tricycle": {
+      "id": 6,
+      "map": 0.20763854729028278,
+      "map50": 0.35953957246229534,
+      "map75": 0.22152687140799568
+    },
+    "truck": {
+      "id": 5,
+      "map": 0.26179191012378705,
+      "map50": 0.3965697535222247,
+      "map75": 0.29037819479125626
+    },
+    "van": {
+      "id": 4,
+      "map": 0.37408255613939295,
+      "map50": 0.527439299160349,
+      "map75": 0.4202807528658128
+    }
+  },
+  "classes": {
+    "awning-tricycle": 0.12660926322135704,
+    "bicycle": 0.10327665799184324,
+    "bus": 0.4461769256038731,
+    "car": 0.6076404569701326,
+    "motor": 0.29709086235773896,
+    "pedestrian": 0.27115064627886365,
+    "people": 0.20834192518931963,
+    "tricycle": 0.20763854729028278,
+    "truck": 0.26179191012378705,
+    "van": 0.37408255613939295
+  },
+  "dataset": {
+    "data_yaml": "/data/uav/runs/bpdd-formal-848f00cb/_bpdd-authority/formal-data.yaml",
+    "images": 548,
+    "instances": 38759
+  },
+  "evaluation_protocol": {
+    "batch": 8,
+    "cache": false,
+    "conf": 0.001,
+    "device": "0",
+    "half": false,
+    "imgsz": 640,
+    "max_det": 300,
+    "nms": false,
+    "plots": false,
+    "rect": false,
+    "save_json": false,
+    "save_txt": false,
+    "split": "val",
+    "verbose": true,
+    "workers": 8
+  },
+  "experiment_id": "bpdd_strict_pair_20260819_best_exact_evaluation",
+  "format_version": 1,
+  "metrics": {
+    "f1": 0.525694041216341,
+    "map": 0.2903799751166591,
+    "map50": 0.48226132883726125,
+    "map75": 0.29694111137614726,
+    "precision": 0.5801681053363241,
+    "recall": 0.48057146303461573
+  },
+  "prediction_passes": 1,
+  "processed_images": 548,
+  "scale_definition": {
+    "coordinate_space": "network-input-pixels",
+    "large": "sqrt(area) >= 96",
+    "medium": "32 <= sqrt(area) < 96",
+    "small": "16 <= sqrt(area) < 32",
+    "tiny": "sqrt(area) < 16"
+  },
+  "scale_details": {
+    "large": {
+      "gt": 130,
+      "map": 0.3718938458844339,
+      "map50": 0.4386051972945453,
+      "map75": 0.4069570908896958
+    },
+    "medium": {
+      "gt": 5349,
+      "map": 0.39988878290837754,
+      "map50": 0.5471580048328157,
+      "map75": 0.45444725619191784
+    },
+    "small": {
+      "gt": 12420,
+      "map": 0.29025616991172387,
+      "map50": 0.46164287443251073,
+      "map75": 0.32364887629919903
+    },
+    "tiny": {
+      "gt": 20860,
+      "map": 0.14600865555571904,
+      "map50": 0.3010184319068917,
+      "map75": 0.11936618745832872
+    }
+  },
+  "scales": {
+    "large": 0.3718938458844339,
+    "medium": 0.39988878290837754,
+    "small": 0.29025616991172387,
+    "tiny": 0.14600865555571904
+  },
+  "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+  "split": "val",
+  "variant": "fdr"
+}

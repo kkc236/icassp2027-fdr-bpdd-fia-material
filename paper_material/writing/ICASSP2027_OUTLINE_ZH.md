@@ -40,7 +40,7 @@
 - 4.4 Analysis：呈现 FDR/BPDD 的可审计分析，以及 FIA 各 checkpoint 的总体与 AP75；只有已有逐类证据的记录才展示 10 类结果，所有指标直接取自已登记记录，不反推。
 - 4.5 Efficiency：加入 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。BPDD 训练期工作、不增加推理分支；四行 Params/FLOPs/FPS/Latency 只能在同一硬件和统一 batch=1 FP32 协议实测后填入。
 
-投稿前不补第三数据集、不强行三种子；唯一新增的 [FDR 与 FDR+BPDD 严格配对](../experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md) 已完成训练，mAP50–95 配对增益为 `+0.231 pp`。剩余工作只是在冻结 evaluator 下用两个 `best.pt` 补齐 AP75 与 test，不再增加训练臂。
+投稿前不补第三数据集、不强行三种子；唯一新增的 [FDR 与 FDR+BPDD 严格配对](../experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md) 已完成训练及 best.pt 统一 val/test 复评：mAP50–95 配对增益为 `+0.239/+0.283 pp`，AP75 为 `+0.072/+0.276 pp`。训练实验已收口，剩余实验材料仅为统一复杂度/延迟表。
 
 ### 5. Conclusion
 

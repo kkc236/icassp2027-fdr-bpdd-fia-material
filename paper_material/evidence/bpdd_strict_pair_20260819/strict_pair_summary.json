@@ -1,121 +1,99 @@
 {
   "format_version": 1,
   "experiment_id": "bpdd_strict_pair_20260819",
-  "status": "training_complete_best_val_selection_metrics_available",
-  "split": "VisDrone val",
+  "status": "best_checkpoint_exact_val_test_complete",
+  "splits": ["VisDrone val", "VisDrone test"],
   "authority": {
     "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
     "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+    "evaluator_commit": "2997705c8f448cee10339eb87daed818dcef8e1e",
     "protocol_manifest_sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24",
     "initial_state_sha256": "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d",
     "seed": 0,
     "epochs": 100,
     "imgsz": 640,
     "batch": 8,
-    "workers": 8
+    "workers": 8,
+    "conf": 0.001,
+    "max_det": 300,
+    "nms": false,
+    "cache": false,
+    "half": false,
+    "rect": false
   },
   "arms": {
     "fdr": {
       "run_id": "formal-seed0-fdr-bpdd-v1",
       "best_epoch": 97,
-      "metrics": {
-        "precision": 0.5808,
-        "recall": 0.47923,
-        "map50": 0.48232,
-        "map75": null,
-        "map": 0.29047
-      },
       "best_checkpoint_sha256": "d2b6407bd291bf5d6a0e1651c99894a27bb4d8f293c82cd92e404060d6780d82",
+      "selection_metrics": {"precision": 0.5808, "recall": 0.47923, "map50": 0.48232, "map75": null, "map": 0.29047},
       "execution_note": "The FDR arm resumed deterministically from its authority-bound last.pt after 24 completed epochs and finished epochs 25 through 100."
     },
     "fdr_bpdd": {
       "run_id": "formal-seed0-fdr_bpdd-bpdd-v1",
       "best_epoch": 93,
-      "metrics": {
-        "precision": 0.57937,
-        "recall": 0.49101,
-        "map50": 0.48657,
-        "map75": null,
-        "map": 0.29278
-      },
-      "best_checkpoint_sha256": "8c7fee3cff1c3f84210f694b1f080115b16948104f6c4bd181652fd4a3667f35"
+      "best_checkpoint_sha256": "8c7fee3cff1c3f84210f694b1f080115b16948104f6c4bd181652fd4a3667f35",
+      "selection_metrics": {"precision": 0.57937, "recall": 0.49101, "map50": 0.48657, "map75": null, "map": 0.29278}
     }
   },
-  "deltas_pp": {
-    "precision": -0.143,
-    "recall": 1.178,
-    "map50": 0.425,
-    "map75": null,
-    "map": 0.231
+  "independent_best_evaluation": {
+    "val": {
+      "images": 548,
+      "instances": 38759,
+      "fdr": {"precision": 0.5801681053363241, "recall": 0.48057146303461573, "f1": 0.525694041216341, "map50": 0.48226132883726125, "map75": 0.29694111137614726, "map": 0.2903799751166591},
+      "fdr_bpdd": {"precision": 0.5787259448738623, "recall": 0.4914187781518712, "f1": 0.5315109080024156, "map50": 0.4860583842353373, "map75": 0.2976607591780332, "map": 0.29276972517101574},
+      "deltas_pp": {"precision": -0.14421604624618167, "recall": 1.0847315117255452, "f1": 0.5816866786074626, "map50": 0.3797055398076066, "map75": 0.07196478018859365, "map": 0.2389750054356654}
+    },
+    "test": {
+      "images": 1610,
+      "instances": 75102,
+      "fdr": {"precision": 0.5216899808796007, "recall": 0.4271938498604836, "f1": 0.46973664034674584, "map50": 0.40270869476017024, "map75": 0.23312879716059715, "map": 0.2311236870257676},
+      "fdr_bpdd": {"precision": 0.5142559868826487, "recall": 0.43353666260772006, "f1": 0.47045907013316324, "map50": 0.4056144457555832, "map75": 0.2358875900590435, "map": 0.23395865945253597},
+      "deltas_pp": {"precision": -0.7433993996951993, "recall": 0.634281274723647, "f1": 0.07224297864174001, "map50": 0.2905750995412959, "map75": 0.2758792898446355, "map": 0.2834972426768362}
+    }
   },
-  "map75_status": "pending_best_checkpoint_exact_evaluation",
-  "test_status": "pending_best_checkpoint_exact_evaluation",
-  "evidence_level": "same_authority_same_seed_paired_training_best_val_selection_metrics",
+  "inference_graph": {
+    "fdr_params": 32334278,
+    "fdr_bpdd_params": 32334278,
+    "fdr_gflops": 103.7,
+    "fdr_bpdd_gflops": 103.7,
+    "conclusion": "BPDD adds no inference-time branch, parameters, or FLOPs in the evaluated checkpoints."
+  },
+  "evidence_level": "same_authority_same_seed_best_checkpoint_independent_exact_val_test",
   "paper_result_record": {
-    "status": "training_complete_best_val_selection_metrics_available",
-    "split": "VisDrone val",
+    "status": "best_checkpoint_exact_val_test_complete",
     "paired": true,
     "source_id": "bpdd_strict_pair_20260819",
     "authority_source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
-    "fdr": {
-      "best_epoch": 97,
-      "precision": 0.5808,
-      "recall": 0.47923,
-      "map50": 0.48232,
-      "map75": null,
-      "map": 0.29047
+    "best_epochs": {"fdr": 97, "fdr_bpdd": 93},
+    "val": {
+      "fdr": {"precision": 0.5801681053363241, "recall": 0.48057146303461573, "f1": 0.525694041216341, "map50": 0.48226132883726125, "map75": 0.29694111137614726, "map": 0.2903799751166591},
+      "fdr_bpdd": {"precision": 0.5787259448738623, "recall": 0.4914187781518712, "f1": 0.5315109080024156, "map50": 0.4860583842353373, "map75": 0.2976607591780332, "map": 0.29276972517101574},
+      "deltas_pp": {"precision": -0.14421604624618167, "recall": 1.0847315117255452, "f1": 0.5816866786074626, "map50": 0.3797055398076066, "map75": 0.07196478018859365, "map": 0.2389750054356654}
     },
-    "fdr_bpdd": {
-      "best_epoch": 93,
-      "precision": 0.57937,
-      "recall": 0.49101,
-      "map50": 0.48657,
-      "map75": null,
-      "map": 0.29278
-    },
-    "deltas_pp": {
-      "precision": -0.143,
-      "recall": 1.178,
-      "map50": 0.425,
-      "map75": null,
-      "map": 0.231
-    },
-    "map75_status": "pending_best_checkpoint_exact_evaluation",
-    "test_status": "pending_best_checkpoint_exact_evaluation"
+    "test": {
+      "fdr": {"precision": 0.5216899808796007, "recall": 0.4271938498604836, "f1": 0.46973664034674584, "map50": 0.40270869476017024, "map75": 0.23312879716059715, "map": 0.2311236870257676},
+      "fdr_bpdd": {"precision": 0.5142559868826487, "recall": 0.43353666260772006, "f1": 0.47045907013316324, "map50": 0.4056144457555832, "map75": 0.2358875900590435, "map": 0.23395865945253597},
+      "deltas_pp": {"precision": -0.7433993996951993, "recall": 0.634281274723647, "f1": 0.07224297864174001, "map50": 0.2905750995412959, "map75": 0.2758792898446355, "map": 0.2834972426768362}
+    }
   },
   "artifacts": [
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/protocol.json",
-      "sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24"
-    },
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/results.csv",
-      "sha256": "0084d489870fdd053a424dd60b2c732cd0f7a573c6b460252a847d00adb75585"
-    },
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/args.yaml",
-      "sha256": "6730412d7b676bace2924bd5adc29c02336141b6a2b972dbcfd80953c4d64cfd"
-    },
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/bpdd-epochs.jsonl",
-      "sha256": "593038d79f6445499042f1deb94fdb4c89cac67541472254073fcc4a36948e16"
-    },
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/results.csv",
-      "sha256": "4bc042d6898d0c31f689d117608e566cf6cdc33c84c85915e0b81f2098889826"
-    },
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/args.yaml",
-      "sha256": "e0e3362d0cd064a8851336c8d94da3a77f537fcb118f0db0d60e85d0714693b1"
-    },
-    {
-      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/bpdd-epochs.jsonl",
-      "sha256": "f53eae9d5f2ec45b367da541128990003464d9b3435745f9ae6a8315c770be72"
-    }
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/protocol.json", "sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/results.csv", "sha256": "0084d489870fdd053a424dd60b2c732cd0f7a573c6b460252a847d00adb75585"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/args.yaml", "sha256": "6730412d7b676bace2924bd5adc29c02336141b6a2b972dbcfd80953c4d64cfd"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/bpdd-epochs.jsonl", "sha256": "593038d79f6445499042f1deb94fdb4c89cac67541472254073fcc4a36948e16"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/results.csv", "sha256": "4bc042d6898d0c31f689d117608e566cf6cdc33c84c85915e0b81f2098889826"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/args.yaml", "sha256": "e0e3362d0cd064a8851336c8d94da3a77f537fcb118f0db0d60e85d0714693b1"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/bpdd-epochs.jsonl", "sha256": "f53eae9d5f2ec45b367da541128990003464d9b3435745f9ae6a8315c770be72"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/best_exact/fdr_val.json", "sha256": "db15db6b2fe71c80c0c0601da9a8171902d43dff3d01eb42eeea12efcb1f22d9"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/best_exact/fdr_test.json", "sha256": "ebab8abfe05e7f3b4b7d116e2256af8a85ca47f5a2796d59a0ca12fb149eba6c"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/best_exact/fdr_bpdd_val.json", "sha256": "1a4e46564354b8ebb630d9c8a85721e9ea8d800d8edaae2d85827043e1b8a7ed"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/best_exact/fdr_bpdd_test.json", "sha256": "80d6bcb38a1deb2393c24d1c5fb3b0e925d5d3cdbe576230a1227dee13535f10"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/best_exact/run.log", "sha256": "07aa1f1b8993ca6b7d6a36ae282a20aea0dc476c8cca385a189fbb131a540ea6"},
+    {"artifact": "paper_material/evidence/bpdd_strict_pair_20260819/best_exact/evaluate_strict_best_pair.py", "sha256": "bb384b2d7b9563aa7591555118048f82fa6f677b764409b0ba9d76d4d4db8490"}
   ],
   "limitations": [
-    "AP75 is not present in the training CSV and remains null until best.pt is independently evaluated under the frozen evaluator.",
-    "VisDrone test results remain pending the same best.pt evaluation.",
+    "The strict pair uses one seed; it supports a paired ablation claim but not a multi-seed variance claim.",
     "The FDR arm used deterministic resume after epoch 24; the authority, initial state, seed, protocol, and total epoch budget remained fixed."
   ]
 }

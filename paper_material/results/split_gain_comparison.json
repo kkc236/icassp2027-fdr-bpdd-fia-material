@@ -355,17 +355,24 @@
     }
   ],
   "strict_bpdd_pair_20260819": {
-    "status": "training_complete_best_val_selection_metrics_available",
+    "status": "best_checkpoint_exact_val_test_complete",
     "source_id": "bpdd_strict_pair_20260819",
-    "split": "val",
-    "fdr_map": 0.29047,
-    "fdr_bpdd_map": 0.29278,
-    "delta_map_pp": 0.231,
-    "delta_map50_pp": 0.425,
-    "delta_recall_pp": 1.178,
-    "map75": null,
-    "map75_status": "pending_best_checkpoint_exact_evaluation",
-    "test_status": "pending_best_checkpoint_exact_evaluation"
+    "val": {
+      "fdr_map": 0.2903799751166591,
+      "fdr_bpdd_map": 0.29276972517101574,
+      "delta_map_pp": 0.2389750054356654,
+      "delta_map50_pp": 0.3797055398076066,
+      "delta_map75_pp": 0.07196478018859365,
+      "delta_recall_pp": 1.0847315117255452
+    },
+    "test": {
+      "fdr_map": 0.2311236870257676,
+      "fdr_bpdd_map": 0.23395865945253597,
+      "delta_map_pp": 0.2834972426768362,
+      "delta_map50_pp": 0.2905750995412959,
+      "delta_map75_pp": 0.2758792898446355,
+      "delta_recall_pp": 0.634281274723647
+    }
   },
   "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The fresh FIA-only best.pt has exact P3-only val/test supplementary metrics and non-paired arithmetic gains of +0.7946395144255269 pp on val and +0.8101032384120604 pp on protocol-comparable test. The older cascading FIA-only result is retained only as superseded evidence. The corrected P3-only three-module result retains its four-decimal val/test text-report boundary. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
 }

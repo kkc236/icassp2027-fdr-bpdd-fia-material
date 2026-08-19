@@ -6,19 +6,22 @@
 
 论文 A–E 主消融表以 [val 主消融表](MAIN_TABLE_ZH.md) 为准。E 行采用与终端截图对应的四位小数文本记录：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`。checkpoint 的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不用于替换该行 P/R。
 
-### BPDD 严格配对训练结果（2026-08-19）
+### BPDD 严格配对 best.pt 结果（2026-08-19）
 
-严格配对训练已完成。两个实验臂使用同一源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol manifest、同一初始状态、`seed=0`、`imgsz=640`、`batch=8`、`workers=8` 和 100 epochs。FDR 臂在 authority-bound `last.pt` 上确定性续跑完成，FDR+BPDD 臂为同一 authority 下的完整对照臂。
+严格配对训练和 `best.pt` 统一 val/test 独立精确复评均已完成。两个实验臂使用同一源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol manifest、同一初始状态、`seed=0` 和 100 epochs；复评固定 `imgsz=640`、`batch=8`、`workers=8`、`conf=0.001`、`max_det=300`、`nms/cache/half/rect=False`。
 
-| 配置 | best epoch | Precision | Recall | AP50 | AP75 | mAP50–95 |
-|---|---:|---:|---:|---:|---:|---:|
-| FDR | 97 | 0.58080 | 0.47923 | 0.48232 | 待 best.pt 独立精确复评 | 0.29047 |
-| FDR+BPDD | 93 | 0.57937 | 0.49101 | 0.48657 | 待 best.pt 独立精确复评 | 0.29278 |
-| BPDD 配对增量 | — | −0.143 pp | **+1.178 pp** | **+0.425 pp** | 待补 | **+0.231 pp** |
+| split / 配置 | best epoch | Precision | Recall | F1 | AP50 | AP75 | mAP50–95 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| val FDR | 97 | 0.580168 | 0.480571 | 0.525694 | 0.482261 | 0.296941 | 0.290380 |
+| val FDR+BPDD | 93 | 0.578726 | 0.491419 | 0.531511 | 0.486058 | 0.297661 | 0.292770 |
+| val BPDD 配对增量 | — | −0.144 pp | **+1.085 pp** | **+0.582 pp** | **+0.380 pp** | **+0.072 pp** | **+0.239 pp** |
+| test FDR | 97 | 0.521690 | 0.427194 | 0.469737 | 0.402709 | 0.233129 | 0.231124 |
+| test FDR+BPDD | 93 | 0.514256 | 0.433537 | 0.470459 | 0.405614 | 0.235888 | 0.233959 |
+| test BPDD 配对增量 | — | −0.743 pp | **+0.634 pp** | **+0.072 pp** | **+0.291 pp** | **+0.276 pp** | **+0.283 pp** |
 
-因此，BPDD 在同 authority、同 seed 配对下的 val mAP50–95 正增益已经确认：`0.29047 → 0.29278（+0.231 pp）`；AP50 同时提高 `+0.425 pp`，Recall 提高 `+1.178 pp`。训练 CSV 不保存 AP75，所以 AP75 待 best.pt 独立精确复评，不用历史值替代。原始 `results.csv`、`args.yaml`、逐 epoch JSONL、协议文件、checkpoint SHA-256 和结构化摘要已归档在 [`../evidence/bpdd_strict_pair_20260819/`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
+因此 BPDD 在同 authority、同 seed 的 val 和 test 上均为正增长。尤其 test AP75 提升 `+0.276 pp`，与定位质量改善方向一致。两个 checkpoint 的推理图均为 32,334,278 Params / 103.7 GFLOPs，证明 BPDD 不增加推理参数和 FLOPs。训练 selection 指标 `0.29047/0.29278` 继续作为运行溯源，论文主张使用上述统一 best.pt 精确复评。原始 JSON、完整日志、评估脚本和 SHA-256 已归档在 [`../evidence/bpdd_strict_pair_20260819/best_exact/`](../evidence/bpdd_strict_pair_20260819/best_exact/MANIFEST.sha256)。
 
-下方 A–E 表仍保留已补齐 AP75 的标准展示行；其中 C 行是历史 cross-authority 完整指标，不能再作为 BPDD 的主要因果增益。待新 `best.pt` AP75 精确复评完成后，再用严格配对的完整指标替换 C 行。
+下方 A–E 表继续保留用户确认的标准展示口径；其中 C 行是历史 cross-authority 完整指标。严格 BPDD 因果增益只引用本节的新配对表，避免把两套 authority 混成一行。
 
 ### val
 
@@ -99,7 +102,7 @@ fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence
 ## 4. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
-- BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅正向结果，并且只在训练期工作、不增加推理分支。新严格配对训练已确认 val mAP50–95 `+0.231 pp`、AP50 `+0.425 pp`、Recall `+1.178 pp`；AP75 待 best.pt 独立精确复评。历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
+- BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅稳定正增益，并且只在训练期工作、不增加推理分支。严格 best.pt 配对复评确认 val/test mAP50–95 分别 `+0.239/+0.283 pp`，AP75 分别 `+0.072/+0.276 pp`；历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
 - fresh P3-only FIA-only 在 val mAP50–95 上相对 canonical baseline `0.21911` 提高 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两个差值均限于各自 split。旧 FIA-only cascading 负向结果已 superseded。FDR+FIA 和完整三模块继续作为不同 topology/authority 下的正向兼容性观察。
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 

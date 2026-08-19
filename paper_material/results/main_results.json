@@ -50,36 +50,21 @@
     }
   ],
   "strict_bpdd_pair_20260819": {
-    "status": "training_complete_best_val_selection_metrics_available",
-    "split": "VisDrone val",
+    "status": "best_checkpoint_exact_val_test_complete",
     "paired": true,
     "source_id": "bpdd_strict_pair_20260819",
     "authority_source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
-    "fdr": {
-      "best_epoch": 97,
-      "precision": 0.5808,
-      "recall": 0.47923,
-      "map50": 0.48232,
-      "map75": null,
-      "map": 0.29047
+    "best_epochs": {"fdr": 97, "fdr_bpdd": 93},
+    "val": {
+      "fdr": {"precision": 0.5801681053363241, "recall": 0.48057146303461573, "f1": 0.525694041216341, "map50": 0.48226132883726125, "map75": 0.29694111137614726, "map": 0.2903799751166591},
+      "fdr_bpdd": {"precision": 0.5787259448738623, "recall": 0.4914187781518712, "f1": 0.5315109080024156, "map50": 0.4860583842353373, "map75": 0.2976607591780332, "map": 0.29276972517101574},
+      "deltas_pp": {"precision": -0.14421604624618167, "recall": 1.0847315117255452, "f1": 0.5816866786074626, "map50": 0.3797055398076066, "map75": 0.07196478018859365, "map": 0.2389750054356654}
     },
-    "fdr_bpdd": {
-      "best_epoch": 93,
-      "precision": 0.57937,
-      "recall": 0.49101,
-      "map50": 0.48657,
-      "map75": null,
-      "map": 0.29278
-    },
-    "deltas_pp": {
-      "precision": -0.143,
-      "recall": 1.178,
-      "map50": 0.425,
-      "map75": null,
-      "map": 0.231
-    },
-    "map75_status": "pending_best_checkpoint_exact_evaluation",
-    "test_status": "pending_best_checkpoint_exact_evaluation"
+    "test": {
+      "fdr": {"precision": 0.5216899808796007, "recall": 0.4271938498604836, "f1": 0.46973664034674584, "map50": 0.40270869476017024, "map75": 0.23312879716059715, "map": 0.2311236870257676},
+      "fdr_bpdd": {"precision": 0.5142559868826487, "recall": 0.43353666260772006, "f1": 0.47045907013316324, "map50": 0.4056144457555832, "map75": 0.2358875900590435, "map": 0.23395865945253597},
+      "deltas_pp": {"precision": -0.7433993996951993, "recall": 0.634281274723647, "f1": 0.07224297864174001, "map50": 0.2905750995412959, "map75": 0.2758792898446355, "map": 0.2834972426768362}
+    }
   },
   "supplementary_updated_fia_observations": [
     {

@@ -14,13 +14,22 @@
 
 ## 新 BPDD 严格配对结果
 
-2026-08-19 已在源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol/initial state、`seed=0` 和 100 epochs 下完成 FDR/FDR+BPDD 配对训练：FDR best epoch 97 的 P/R/AP50/mAP 为 `0.58080/0.47923/0.48232/0.29047`；FDR+BPDD best epoch 93 为 `0.57937/0.49101/0.48657/0.29278`。对应增量为 P `−0.143 pp`、R `+1.178 pp`、AP50 `+0.425 pp`、mAP50–95 `+0.231 pp`。
+2026-08-19 已在源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol/initial state、`seed=0` 和 100 epochs 下完成 FDR/FDR+BPDD 配对训练，并对两个 `best.pt` 完成统一 val/test 独立精确复评。
 
-该结果已经把 BPDD 的 mAP 正增益升级为同 authority、同 seed 配对证据。由于训练 CSV 不含 AP75，当前 A–E 表的 C 行暂不替换；AP75 待 best.pt 独立精确复评后，再一次性刷新 C 行全部指标。原始证据见 [`../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
+| split / 配置 | P | R | F1 | AP50 | AP75 | mAP50–95 |
+|---|---:|---:|---:|---:|---:|---:|
+| val FDR | 0.580168 | 0.480571 | 0.525694 | 0.482261 | 0.296941 | 0.290380 |
+| val FDR+BPDD | 0.578726 | 0.491419 | 0.531511 | 0.486058 | 0.297661 | 0.292770 |
+| val 配对差 | −0.144 pp | +1.085 pp | +0.582 pp | +0.380 pp | **+0.072 pp** | **+0.239 pp** |
+| test FDR | 0.521690 | 0.427194 | 0.469737 | 0.402709 | 0.233129 | 0.231124 |
+| test FDR+BPDD | 0.514256 | 0.433537 | 0.470459 | 0.405614 | 0.235888 | 0.233959 |
+| test 配对差 | −0.743 pp | +0.634 pp | +0.072 pp | +0.291 pp | **+0.276 pp** | **+0.283 pp** |
+
+该结果把 BPDD 的正增益升级为同 authority、同 seed、同 evaluator 的完整 val/test 配对证据。A–E 标准表保持用户确认口径，严格 BPDD 数字单独采用上表，不与历史 C 行拼接。原始证据见 [`../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
 
 ## 差值边界
 
-A–E 标准展示表中，当前完整五指标且可直接写为严格差值的是 +FDR 相对 RT-DETR-L；新 BPDD 配对证据另见上节，其 AP75 尚待补齐：
+A–E 标准展示表保持既有口径；+FDR 相对 RT-DETR-L 的严格差值如下，新 BPDD 严格差值见上节：
 
 | 指标 | 绝对差 | 百分点差 |
 |---|---:|---:|

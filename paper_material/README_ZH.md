@@ -22,7 +22,7 @@
 
 ## 当前结果口径
 
-- RT-DETR-L、FDR、FDR+BPDD 是正式核心行。新增同 authority、同 seed 的 FDR/FDR+BPDD 配对训练已完成：best-val mAP50–95 为 `0.29047/0.29278`，BPDD 增益 `+0.231 pp`；AP75 待 best.pt 独立精确复评。A–E 表的旧 C 行暂保留已补齐 AP75 的 cross-authority 完整展示值，不能再作为 BPDD 的主要因果增益。
+- RT-DETR-L、FDR、FDR+BPDD 是正式核心行。新增同 authority、同 seed 的 FDR/FDR+BPDD 配对训练及 best.pt 统一 val/test 复评均已完成：BPDD 的 val/test mAP50–95 增益为 `+0.239/+0.283 pp`，AP75 增益为 `+0.072/+0.276 pp`。A–E 表的旧 C 行继续作为用户确认的 cross-authority 标准展示值；BPDD 的主要因果增益引用新严格配对表。
 - A–E val 主表的 D 行已与统一结果页对齐：FDR+FIA 为 `P=0.57752、R=0.49089、AP50=0.48631、AP75=0.29972、mAP=0.29494`，相对 FDR 为 `+0.528 pp` 的非严格配对算术差，不再保留“待整理”占位。
 - FIA-only 已切换到 fresh P3-only `best.pt`。冻结 evaluator 独立 val 为 `P=0.4871962209、R=0.4253173434、F1=0.4509443663、AP50=0.3987451873、AP75=0.2218076018、mAP=0.2270563951`；相对 canonical baseline `0.21911` 为 `+0.7946 pp` 的同 split 算术差。
 - 同一 FIA-only checkpoint 的独立 test 为 `P=0.4482592210、R=0.3776360333、F1=0.3954178960、AP50=0.3366417705、AP75=0.1820114030、mAP=0.1855174641`；相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。该值只作 test 内算术比较，不从 val/test 之间推导涨点。

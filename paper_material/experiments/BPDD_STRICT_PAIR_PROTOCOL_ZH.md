@@ -2,7 +2,7 @@
 
 ## 决策
 
-这是投稿前唯一新增训练实验。状态为 **已完成训练**：FDR 与 FDR+BPDD 均已完成 100 epochs；best-val selection 的 P/R/AP50/mAP 已归档，AP75 与 test 仍待两个 `best.pt` 在冻结 evaluator 下独立精确复评。不追加第三数据集，也不强行做三种子。
+这是投稿前唯一新增训练实验。状态为 **已完成训练及统一 best.pt val/test 复评**：FDR 与 FDR+BPDD 均已完成 100 epochs，AP75、test 和逐项差值均已补齐。不追加第三数据集，也不强行做三种子。
 
 目的不是追求更高绝对值，而是在同一源码提交、同一数据、同一 seed 和同一训练/评估协议下严格配对一次 `FDR` 与 `FDR+BPDD`，把 BPDD 的效果从跨 authority 算术观察升级为可信配对证据。
 
@@ -33,16 +33,19 @@
 
 运行 authority 为源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、protocol manifest SHA-256 `52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24`、初始状态 SHA-256 `51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d`。两臂均为 `seed=0`、100 epochs、`imgsz=640`、`batch=8`、`workers=8`。
 
-| 配置 | best epoch | P | R | AP50 | AP75 | mAP50–95 |
-|---|---:|---:|---:|---:|---:|---:|
-| FDR | 97 | 0.58080 | 0.47923 | 0.48232 | 待 exact | 0.29047 |
-| FDR+BPDD | 93 | 0.57937 | 0.49101 | 0.48657 | 待 exact | 0.29278 |
-| 配对差 | — | −0.143 pp | +1.178 pp | +0.425 pp | 待补 | **+0.231 pp** |
+| split / 配置 | best epoch | P | R | F1 | AP50 | AP75 | mAP50–95 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| val FDR | 97 | 0.580168 | 0.480571 | 0.525694 | 0.482261 | 0.296941 | 0.290380 |
+| val FDR+BPDD | 93 | 0.578726 | 0.491419 | 0.531511 | 0.486058 | 0.297661 | 0.292770 |
+| val 配对差 | — | −0.144 pp | +1.085 pp | +0.582 pp | +0.380 pp | **+0.072 pp** | **+0.239 pp** |
+| test FDR | 97 | 0.521690 | 0.427194 | 0.469737 | 0.402709 | 0.233129 | 0.231124 |
+| test FDR+BPDD | 93 | 0.514256 | 0.433537 | 0.470459 | 0.405614 | 0.235888 | 0.233959 |
+| test 配对差 | — | −0.743 pp | +0.634 pp | +0.072 pp | +0.291 pp | **+0.276 pp** | **+0.283 pp** |
 
-这证明 BPDD 的总体 mAP 正增益在同 authority、同 seed 下成立。FDR 臂从其 authority-bound `last.pt` 在第 25 轮继续确定性训练至第 100 轮；该运行事实已在证据摘要中显式保留。原始产物及哈希见 [`../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
+这证明 BPDD 的总体 mAP 正增益在同 authority、同 seed 下同时覆盖 val/test；test AP75 `+0.276 pp` 是更直接的定位质量证据。FDR 臂从其 authority-bound `last.pt` 在第 25 轮继续确定性训练至第 100 轮；该运行事实已在证据摘要中显式保留。原始产物及哈希见 [`../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
 
-BPDD 只在训练期消费 FDR 的逐边分布并产生蒸馏损失，不增加推理分支。因此严格配对实验还应确认导出的 FDR 与 FDR+BPDD 推理图在参数量和 FLOPs 上一致；若不一致，应先排查配置或 checkpoint 身份，不能直接写入论文。
+BPDD 只在训练期消费 FDR 的逐边分布并产生蒸馏损失，不增加推理分支。本次两个 checkpoint 的推理图均为 32,334,278 Params / 103.7 GFLOPs，已确认 BPDD 不增加推理参数和 FLOPs。
 
 ## 论文使用
 
-正文现在可写“在同 authority、同 seed 的配对训练中，BPDD 将 val mAP50–95 从 `0.29047` 提高到 `0.29278`，提升 `+0.231 pp`”。AP75 在独立精确复评完成前仍保持为空，不能引用历史 `+0.557 pp` 作为新配对结果。BPDD 训练期工作、推理期不增加分支的结构结论保持不变。
+正文可写：“在同 authority、同 seed、同 evaluator 的 best.pt 配对评估中，BPDD 将 val/test mAP50–95 分别提高 `+0.239/+0.283 pp`，并将 AP75 分别提高 `+0.072/+0.276 pp`；其训练期监督不增加推理参数或 FLOPs。”历史 `+0.557 pp` 只作 cross-authority 背景，不替代新配对 AP75。

@@ -45,6 +45,6 @@ FIA-only 当前 checkpoint SHA-256 为 `c00cae89aaeb722854f8c845d14507c3598f75d5
 
 ## 投稿前唯一新增训练实验
 
-不追加第三数据集，也不强制三种子。唯一新增训练任务是在同一源码提交、`seed=0`、同一训练与评估协议下配对 `FDR` 和 `FDR+BPDD`，现已完成 100 epochs：best-val mAP50–95 为 `0.29047/0.29278`，BPDD 增益 `+0.231 pp`。AP75 与 test 待两个 `best.pt` 在冻结 evaluator 下独立精确复评；完整 authority、产物和哈希见 [BPDD 严格配对补充实验](BPDD_STRICT_PAIR_PROTOCOL_ZH.md)。
+不追加第三数据集，也不强制三种子。唯一新增训练任务是在同一源码提交、`seed=0`、同一训练与评估协议下配对 `FDR` 和 `FDR+BPDD`，现已完成 100 epochs 及两个 `best.pt` 的冻结 evaluator val/test 精确复评：BPDD 的 val/test mAP50–95 增益为 `+0.239/+0.283 pp`，AP75 增益为 `+0.072/+0.276 pp`。完整 authority、产物和哈希见 [BPDD 严格配对补充实验](BPDD_STRICT_PAIR_PROTOCOL_ZH.md)。
 
 统一复杂度/实时性不需要训练，但四个 checkpoint 必须在同一硬件、同一 FP32 batch=1 协议下重新测量。目标表与机器合同见 [统一复杂度与实时性表](../results/COMPLEXITY_ZH.md)。
