@@ -2,12 +2,12 @@
 
 ## 论文主线
 
-建议主线为“细粒度分布细化基础—训练期渐进蒸馏—高分辨率特征增强”。FDR 是从固定版本 D-FINE 适配而来的结构基础，不是本文发明；BPDD 和 FIA 在 RT-DETR-L/VisDrone 系统中分别处理优化监督与高分辨率表征。
+建议主线为“架构保持型分布定位—训练期渐进蒸馏—高分辨率特征增强”。本文首先提出面向 RT-DETR-L 的 AP-FDR，以 localization-only 结构、匹配一致监督和公平初始化合同建立细粒度定位；BPDD 和 FIA 分别进一步处理跨层优化监督与高分辨率表征。
 
 ## 贡献组织
 
-1. **分布定位基础而非原创冒领**：将来自 D-FINE 的 FDR 边界分布表示和相关监督稳定适配到 Ultralytics RT-DETR-L/VisDrone；不把 FDR、FGL 或 Integral 写成本文从零发明。
-2. **主要方法创新**：提出依赖 FDR 逐边分布的训练期 BPDD，通过未来层加权教师和 better-only 门控渐进改善定位监督，且不增加推理分支。
+1. **架构保持型分布定位创新**：提出 AP-FDR，在保留 RT-DETR-L 分类、查询选择、Decoder 主体、stock matching 与后处理合同的同时，构建 stock-head-informed preliminary 分支、normal/DN 匹配一致的逐边分布监督和隔离初始化机制。基础分布算子参考 D-FINE，但 AP-FDR 的结构与监督组织作为本文第一项创新。
+2. **跨层优化创新**：提出依赖 AP-FDR 逐边分布的训练期 BPDD，通过未来层加权教师和 better-only 门控渐进改善定位监督，且不增加推理分支。
 3. **高分辨率增强**：集成 FIA，并用 fresh FIA-only P3-only 的 val 正增益以及 FDR+FIA、完整三模块的补充结果说明其有效性与组合兼容性；不同拓扑和证据等级分别报告。
 
 第三点的方法细节已绑定当前 `src/fia.py`：双 depth-wise 残差细化、联合通道/空间注意力、零初始化残差缩放和构造期 RNG 隔离。fresh FIA-only 与三模块均登记为 P3-only；既有 FDR+FIA checkpoint 仍是 cascading，三者的拓扑身份和证据来源须分开书写。
@@ -20,12 +20,12 @@
 
 ### 2. Related Work
 
-覆盖 transformer detector、分布式框回归、蒸馏和小目标特征增强；明确 FDR/FGL/Integral 的来源。把 ICASSP 2026 ResBiDet/VARDet 作为最近的同会、同任务工作：ResBiDet 用低分辨率粗分支引导高分辨率精分支，VARDet 用 visual autoregressive multi-scale prediction 与 CLIP-guided semantics；本文聚焦 FDR 定位分布、训练期 BPDD 和 640 输入下的 FIA 表征增强。IJCAI 2025 RAFDE 作为 640 输入的近邻强方法，代表区域自适应融合与边界增强下采样路线。相关工作只比较问题与设计路径，不把不同协议的绝对数值写成公平优劣。
+覆盖 transformer detector、分布式框回归、蒸馏和小目标特征增强；说明 AP-FDR 参考 D-FINE 的离散边界表示、FGL 与 Integral 基础公式，同时把讨论重点放在本文的架构保持、匹配一致和 normal/DN 统一监督。把 ICASSP 2026 ResBiDet/VARDet 作为最近的同会、同任务工作：ResBiDet 用低分辨率粗分支引导高分辨率精分支，VARDet 用 visual autoregressive multi-scale prediction 与 CLIP-guided semantics；本文聚焦 AP-FDR 定位分布、训练期 BPDD 和 640 输入下的 FIA 表征增强。IJCAI 2025 RAFDE 作为 640 输入的近邻强方法，代表区域自适应融合与边界增强下采样路线。相关工作只比较问题与设计路径，不把不同协议的绝对数值写成公平优劣。
 
 ### 3. Method
 
 - 3.1 Overall Architecture：RT-DETR-L baseline、FDR decoder、训练期 BPDD 与修改后 FIA 的关系。
-- 3.2 Fine-grained Distribution Refinement：分布表示与解码。
+- 3.2 Architecture-Preserving Fine-grained Distribution Refinement：架构保持、匹配一致监督、preliminary 分支以及分布表示与解码。
 - 3.3 Boundary Progressive Distribution Distillation：教师构造、激活条件和损失。
 - 3.4 FIA：描述双基础块、联合通道/空间注意力、恒等安全残差缩放及 P3 插入位置。
 - 3.5 Training Objective and Inference：总损失、BPDD 仅训练期、FDR/FIA 推理期角色。
@@ -49,6 +49,7 @@
 ## 当前允许主张
 
 - strict 证据下，FDR 相对 RT-DETR-L 的 mAP50–95 为 +0.07055，AP75 为 +0.07951。
+- AP-FDR 是本文第一项方法创新；允许主张其架构保持型定位改造、stock-head-informed preliminary 分支、normal/DN 匹配一致监督和公平初始化合同。基础离散分布、FGL 与 Integral 需注明参考来源。
 - BPDD 是依赖 FDR 边界分布的训练期、无参数蒸馏，不增加推理图或参数。
 - fresh P3-only FIA-only best.pt 的 independent exact val 为 P=`0.4871962209`、R=`0.4253173434`、F1=`0.4509443663`、AP50=`0.3987451873`、AP75=`0.2218076018`、mAP50–95=`0.2270563951`，相对 canonical val baseline `0.21911` 为 `+0.7946 pp`。independent exact test 为 P=`0.4482592210`、R=`0.3776360333`、F1=`0.3954178960`、AP50=`0.3366417705`、AP75=`0.1820114030`、mAP50–95=`0.1855174641`，相对 canonical test baseline `0.1774164317` 为 `+0.8101 pp`；不得把两个 split 互作参照。
 - 既有 FDR+FIA cascading best.pt 的 val/test mAP50–95 为 `0.294940/0.234645`，相对 FDR 的同 split 算术差为 `+0.5280/+0.6644 pp`；该记录不得标成 P3-only。
@@ -63,7 +64,7 @@
 - 把既有 FDR+FIA cascading best.pt 称为 P3-only，或把任一非严格配对算术差写成严格因果增益。
 - 把旧 FIA-only cascading checkpoint 的负向数值继续当作当前结果；fresh FIA-only P3-only val 已取代该记录。
 - 新三模块 best-val 观察是严格配对因果增益、完整评估或最终论文主表结果。
-- “本文发明 FDR、FGL、Integral、非均匀积分或相邻 bin 监督”。
+- “本文首次发明离散边界分布、FGL、Integral、非均匀积分或相邻 bin 监督”；允许表述为“本文提出 AP-FDR，其基础分布算子参考既有工作”。
 - “BPDD 可脱离 FDR 单独使用”或“BPDD 具有推理期零总开销”。
 - 混用 val/test、不同 checkpoint、不同 evaluator 或不同源码 authority。
 - 把顶会、期刊、仅预印本、仅聚合页或 split 未报告结果写进正式 val/test 主对比，或对测速协议不完整的 FPS 排名。

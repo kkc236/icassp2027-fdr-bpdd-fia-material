@@ -108,7 +108,7 @@ fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence
 ## 5. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
-- BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅稳定正增益，并且只在训练期工作、不增加推理分支。严格 best.pt 配对复评确认 val/test mAP50–95 分别 `+0.239/+0.283 pp`，AP75 分别 `+0.072/+0.276 pp`；历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
+- AP-FDR 是论文的第一项方法创新，其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督和公平初始化合同共同取得相对 baseline 的大幅定位增益。BPDD 是第二项跨层优化创新，在 AP-FDR 上继续提供小幅稳定正增益，并且只在训练期工作、不增加推理分支。严格 best.pt 配对复评确认 val/test mAP50–95 分别 `+0.239/+0.283 pp`，AP75 分别 `+0.072/+0.276 pp`；历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
 - fresh P3-only FIA-only 在 val mAP50–95 上相对 canonical baseline `0.21911` 提高 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两个差值均限于各自 split。旧 FIA-only cascading 负向结果已 superseded。FDR+FIA 和完整三模块继续作为不同 topology/authority 下的正向兼容性观察。
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 

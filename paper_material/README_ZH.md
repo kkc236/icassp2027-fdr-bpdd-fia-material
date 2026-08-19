@@ -4,7 +4,7 @@
 
 ## 阅读顺序
 
-1. [FDR：细粒度分布细化](methods/FDR_ZH.md)
+1. [AP-FDR：架构保持型细粒度分布细化](methods/FDR_ZH.md)
 2. [BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
 3. [FIA：高分辨率特征增强](methods/FIA_ZH.md)
 4. [冻结实验协议](experiments/PROTOCOL_ZH.md)
@@ -58,7 +58,7 @@
 
 ## 方法依赖
 
-- FDR 是来自 D-FINE、适配到 Ultralytics RT-DETR-L/VisDrone 的定位分布基础，不作为本文从零提出的原创模块。
-- BPDD 是论文的主要方法创新：它消费 FDR 的逐边分布，只在训练期工作且不增加推理分支；BPDD-only 不是合法模型行。
+- AP-FDR（结果表中沿用 FDR）是本文第一项方法创新：它参考已有逐边分布思想，在 Ultralytics RT-DETR-L 中提出 localization-only 的架构保持改造、stock-head-informed preliminary 分支、normal/DN 匹配一致监督和公平初始化合同。
+- BPDD 是论文的第二项方法创新：它消费 AP-FDR 的逐边分布，只在训练期工作且不增加推理分支；BPDD-only 不是合法模型行。
 - FIA 是面向高分辨率小目标表征的推理期增强模块。fresh P3-only FIA-only 在 canonical val baseline 上获得 `+0.7946 pp` 的非严格配对算术增益；FDR+FIA 与三模块结果继续作为不同拓扑、不同证据等级的兼容性观察。
-- FDR/FGL/Integral 及非均匀积分来自固定版本 D-FINE 先验；本文主张的是面向 Ultralytics RT-DETR-L 与 VisDrone 的适配、组合和验证。
+- AP-FDR 参考固定版本 D-FINE 的离散边界表示、FGL、Integral 与非均匀投影公式。本文不主张首次发明这些基础算子，主张的是上述 RT-DETR 专用结构与监督机制及其在 VisDrone 上的严格验证。
