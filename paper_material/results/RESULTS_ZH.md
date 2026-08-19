@@ -6,6 +6,20 @@
 
 论文 A–E 主消融表以 [val 主消融表](MAIN_TABLE_ZH.md) 为准。E 行采用与终端截图对应的四位小数文本记录：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`。checkpoint 的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不用于替换该行 P/R。
 
+### BPDD 严格配对训练结果（2026-08-19）
+
+严格配对训练已完成。两个实验臂使用同一源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol manifest、同一初始状态、`seed=0`、`imgsz=640`、`batch=8`、`workers=8` 和 100 epochs。FDR 臂在 authority-bound `last.pt` 上确定性续跑完成，FDR+BPDD 臂为同一 authority 下的完整对照臂。
+
+| 配置 | best epoch | Precision | Recall | AP50 | AP75 | mAP50–95 |
+|---|---:|---:|---:|---:|---:|---:|
+| FDR | 97 | 0.58080 | 0.47923 | 0.48232 | 待 best.pt 独立精确复评 | 0.29047 |
+| FDR+BPDD | 93 | 0.57937 | 0.49101 | 0.48657 | 待 best.pt 独立精确复评 | 0.29278 |
+| BPDD 配对增量 | — | −0.143 pp | **+1.178 pp** | **+0.425 pp** | 待补 | **+0.231 pp** |
+
+因此，BPDD 在同 authority、同 seed 配对下的 val mAP50–95 正增益已经确认：`0.29047 → 0.29278（+0.231 pp）`；AP50 同时提高 `+0.425 pp`，Recall 提高 `+1.178 pp`。训练 CSV 不保存 AP75，所以 AP75 待 best.pt 独立精确复评，不用历史值替代。原始 `results.csv`、`args.yaml`、逐 epoch JSONL、协议文件、checkpoint SHA-256 和结构化摘要已归档在 [`../evidence/bpdd_strict_pair_20260819/`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
+
+下方 A–E 表仍保留已补齐 AP75 的标准展示行；其中 C 行是历史 cross-authority 完整指标，不能再作为 BPDD 的主要因果增益。待新 `best.pt` AP75 精确复评完成后，再用严格配对的完整指标替换 C 行。
+
 ### val
 
 | 编号 | 模型 | FDR | BPDD | FIA | Precision | Recall | AP50 | AP75 | mAP50–95 | 模块增量 |
@@ -85,7 +99,7 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 ## 4. 论文可用结论
 
 - FDR 是当前最稳定、证据等级最高的主要增益来源。
-- BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅正向结果，并且只在训练期工作、不增加推理分支。现有 AP75 从 `0.29253` 到 `0.29810`（约 `+0.557 pp`）比总体 mAP 的 `+0.260 pp` 更能提示定位质量改善，但两者仍是跨 authority 算术差，需以唯一新增的严格配对实验升级证据。
+- BPDD 是论文的主要方法创新，在 FDR 基础上继续提供小幅正向结果，并且只在训练期工作、不增加推理分支。新严格配对训练已确认 val mAP50–95 `+0.231 pp`、AP50 `+0.425 pp`、Recall `+1.178 pp`；AP75 待 best.pt 独立精确复评。历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
 - FIA-only 在 val 略低于 baseline，test 基本持平；该负向结果保留在补充消融。FDR+FIA 在 val 和 test 均高于对应 FDR 参照，完整三模块也在两个 split 正增长，因此正文主张限定为“FIA 在 distribution-refined context 下与 FDR 呈正向互补”，不写成“FIA 在任意配置下均稳定提升”。
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
 

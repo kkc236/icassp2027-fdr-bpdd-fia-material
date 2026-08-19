@@ -561,7 +561,10 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
         "+0.557 pp",
         "训练期",
         "不增加推理分支",
-        "待执行",
+        "已完成训练",
+        "0.29047",
+        "0.29278",
+        "+0.231 pp",
     ):
         assert required_text in protocol
 
@@ -614,6 +617,85 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
     assert source["artifact"] == "paper_material/results/complexity_results.json"
     artifact = REPOSITORY_ROOT / source["artifact"]
     assert hashlib.sha256(artifact.read_bytes()).hexdigest() == source["sha256"]
+
+
+def test_completed_bpdd_strict_pair_is_source_bound_and_reported():
+    summary = _load_required_json(
+        "evidence/bpdd_strict_pair_20260819/strict_pair_summary.json"
+    )
+    manifest = _load_required_json("evidence/source_manifest.json")
+    results = _load_required_json("results/main_results.json")
+    page = _read_required_text("results/RESULTS_ZH.md")
+    protocol = _read_required_text("experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md")
+
+    assert summary["format_version"] == 1
+    assert summary["status"] == (
+        "training_complete_best_val_selection_metrics_available"
+    )
+    assert summary["authority"] == {
+        "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+        "protocol_manifest_sha256": (
+            "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24"
+        ),
+        "initial_state_sha256": (
+            "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d"
+        ),
+        "seed": 0,
+        "epochs": 100,
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+    }
+    assert summary["arms"]["fdr"]["best_epoch"] == 97
+    assert summary["arms"]["fdr"]["metrics"] == {
+        "precision": 0.5808,
+        "recall": 0.47923,
+        "map50": 0.48232,
+        "map75": None,
+        "map": 0.29047,
+    }
+    assert summary["arms"]["fdr_bpdd"]["best_epoch"] == 93
+    assert summary["arms"]["fdr_bpdd"]["metrics"] == {
+        "precision": 0.57937,
+        "recall": 0.49101,
+        "map50": 0.48657,
+        "map75": None,
+        "map": 0.29278,
+    }
+    assert summary["deltas_pp"] == {
+        "precision": -0.143,
+        "recall": 1.178,
+        "map50": 0.425,
+        "map75": None,
+        "map": 0.231,
+    }
+    assert summary["map75_status"] == "pending_best_checkpoint_exact_evaluation"
+
+    for artifact in summary["artifacts"]:
+        path = REPOSITORY_ROOT / artifact["artifact"]
+        assert path.is_file()
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == artifact["sha256"]
+
+    source = manifest["sources"]["bpdd_strict_pair_20260819"]
+    assert source["artifact"] == (
+        "paper_material/evidence/bpdd_strict_pair_20260819/strict_pair_summary.json"
+    )
+    summary_path = REPOSITORY_ROOT / source["artifact"]
+    assert hashlib.sha256(summary_path.read_bytes()).hexdigest() == source["sha256"]
+    assert results["strict_bpdd_pair_20260819"] == summary["paper_result_record"]
+
+    for required_text in (
+        "严格配对训练已完成",
+        "0.29047",
+        "0.29278",
+        "+0.231 pp",
+        "+0.425 pp",
+        "+1.178 pp",
+        "AP75 待 best.pt 独立精确复评",
+    ):
+        assert required_text in page
+    assert "状态为 **已完成训练**" in protocol
 
 
 def test_split_gain_comparison_covers_every_module_combination_without_fabrication():

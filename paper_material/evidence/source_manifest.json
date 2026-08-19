@@ -898,6 +898,27 @@
       "evidence_level": "official_venue_scope_authority",
       "transformation": "use only full or regular papers from listed CCF A/B conferences in the formal external comparison"
     },
+    "bpdd_strict_pair_20260819": {
+      "title": "Same-authority same-seed FDR versus FDR+BPDD paired training",
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/strict_pair_summary.json",
+      "sha256": "4d0a1f236a9b12d6ee2ae85e274d6bda042c747c9f0f6ff971763e0b25c279a8",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+      "protocol_manifest_sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24",
+      "initial_state_sha256": "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d",
+      "evidence_level": "same_authority_same_seed_paired_training_best_val_selection_metrics",
+      "metrics_available": [
+        "precision",
+        "recall",
+        "map50",
+        "map"
+      ],
+      "metrics_pending": [
+        "map75",
+        "test"
+      ],
+      "transformation": "select each arm's maximum training-log val mAP50-95 row, preserve raw results/args/epoch records and checkpoint hashes, and compute paired percentage-point differences without filling unavailable AP75"
+    },
     "generated_unified_complexity_contract": {
       "title": "Unified complexity and real-time measurement contract",
       "artifact": "paper_material/results/complexity_results.json",

@@ -12,9 +12,15 @@
 
 证据等级：A/B 为 `strict`；C 为 `cross_authority_exact`；D 为 `best_checkpoint_independent_val_exact`；E 为 `user_supplied_text_report_4dp`。D 行及其 `+0.528 pp` 不升级为严格配对；E 行文本记录与归档终端截图逐项吻合，截图只是三位小数显示。checkpoint 内的 `0.29618/+0.3922 pp` 仍作为另一条补充正向记录，不替换本行四位小数结果。
 
+## 新 BPDD 严格配对结果
+
+2026-08-19 已在源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol/initial state、`seed=0` 和 100 epochs 下完成 FDR/FDR+BPDD 配对训练：FDR best epoch 97 的 P/R/AP50/mAP 为 `0.58080/0.47923/0.48232/0.29047`；FDR+BPDD best epoch 93 为 `0.57937/0.49101/0.48657/0.29278`。对应增量为 P `−0.143 pp`、R `+1.178 pp`、AP50 `+0.425 pp`、mAP50–95 `+0.231 pp`。
+
+该结果已经把 BPDD 的 mAP 正增益升级为同 authority、同 seed 配对证据。由于训练 CSV 不含 AP75，当前 A–E 表的 C 行暂不替换；AP75 待 best.pt 独立精确复评后，再一次性刷新 C 行全部指标。原始证据见 [`../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json`](../evidence/bpdd_strict_pair_20260819/strict_pair_summary.json)。
+
 ## 差值边界
 
-唯一可直接写为严格配对差值的是 +FDR 相对 RT-DETR-L：
+A–E 标准展示表中，当前完整五指标且可直接写为严格差值的是 +FDR 相对 RT-DETR-L；新 BPDD 配对证据另见上节，其 AP75 尚待补齐：
 
 | 指标 | 绝对差 | 百分点差 |
 |---|---:|---:|

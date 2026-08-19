@@ -4,6 +4,8 @@
 
 正式核心表保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD。standalone FIA 两个已发布 `best.pt` 已完成冻结 evaluator 独立 exact val/test。正确 P3-only 三模块已有与终端截图逐项吻合的四位小数文本结果：val mAP50–95=`0.2961`，test mAP50–95=`0.2337`，两者均为正增长；checkpoint 的 val `0.29618` 和终端截图作为交叉印证。
 
+新增 BPDD 配对训练已完成：同 authority、同 seed 下 FDR/FDR+BPDD 的 best-val mAP50–95 为 `0.29047/0.29278`，BPDD 为 **+0.231 pp**；AP50 为 **+0.425 pp**、Recall 为 **+1.178 pp**。AP75 与 test 待两个 best.pt 独立精确复评，因此下方历史完整指标表暂不覆盖。
+
 ## 组合覆盖状态
 
 | FDR | BPDD | FIA | 模型 | val | test | 状态 |
@@ -25,7 +27,7 @@
 | +FDR | 0.569113 | 0.492777 | 0.524840 | 0.484684 | 0.292526 | 0.289660 | +7.055 pp | strict |
 | +FDR+BPDD | 0.570634 | 0.494464 | 0.529825* | 0.486407 | 0.298096 | 0.292258 | +0.260 pp | cross_authority_exact |
 
-星号表示 F1 由聚合 P/R 计算。BPDD 相对 FDR 的数值差是跨 authority 算术差，不是严格配对因果增益。
+星号表示 F1 由聚合 P/R 计算。本表 BPDD 相对 FDR 的 `+0.260 pp` 是历史跨 authority 算术差；新的同 authority 配对 mAP 增益为 `+0.231 pp`，单独登记且不与本表缺失的配对 AP75 拼接。
 
 | 增量 | ΔP | ΔR | ΔF1 | ΔAP50 | ΔAP75 | ΔmAP50–95 |
 |---|---:|---:|---:|---:|---:|---:|

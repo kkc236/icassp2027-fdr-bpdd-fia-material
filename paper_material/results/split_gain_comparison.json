@@ -315,5 +315,18 @@
       "formal_delta_allowed": false
     }
   ],
-  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The standalone best.pt checkpoints have exact independent val/test supplementary rows. The corrected P3-only three-module result has matching four-decimal val/test text reports with F1, AP75, and class details; the archived terminal screenshot is a rounded cross-check. None of the supplementary arithmetic deltas is a strict paired causal gain."
+  "strict_bpdd_pair_20260819": {
+    "status": "training_complete_best_val_selection_metrics_available",
+    "source_id": "bpdd_strict_pair_20260819",
+    "split": "val",
+    "fdr_map": 0.29047,
+    "fdr_bpdd_map": 0.29278,
+    "delta_map_pp": 0.231,
+    "delta_map50_pp": 0.425,
+    "delta_recall_pp": 1.178,
+    "map75": null,
+    "map75_status": "pending_best_checkpoint_exact_evaluation",
+    "test_status": "pending_best_checkpoint_exact_evaluation"
+  },
+  "claim_boundary": "Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The 2026-08-19 same-authority same-seed paired training confirms a +0.231 pp BPDD best-val mAP gain; AP75 and test remain pending exact best.pt evaluation. The standalone best.pt checkpoints have exact independent val/test supplementary rows. The corrected P3-only three-module result has matching four-decimal val/test text reports with F1, AP75, and class details; the archived terminal screenshot is a rounded cross-check. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
 }

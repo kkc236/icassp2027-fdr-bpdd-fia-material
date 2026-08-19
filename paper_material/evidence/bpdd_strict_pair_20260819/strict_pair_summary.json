@@ -1,0 +1,121 @@
+{
+  "format_version": 1,
+  "experiment_id": "bpdd_strict_pair_20260819",
+  "status": "training_complete_best_val_selection_metrics_available",
+  "split": "VisDrone val",
+  "authority": {
+    "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+    "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+    "protocol_manifest_sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24",
+    "initial_state_sha256": "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d",
+    "seed": 0,
+    "epochs": 100,
+    "imgsz": 640,
+    "batch": 8,
+    "workers": 8
+  },
+  "arms": {
+    "fdr": {
+      "run_id": "formal-seed0-fdr-bpdd-v1",
+      "best_epoch": 97,
+      "metrics": {
+        "precision": 0.5808,
+        "recall": 0.47923,
+        "map50": 0.48232,
+        "map75": null,
+        "map": 0.29047
+      },
+      "best_checkpoint_sha256": "d2b6407bd291bf5d6a0e1651c99894a27bb4d8f293c82cd92e404060d6780d82",
+      "execution_note": "The FDR arm resumed deterministically from its authority-bound last.pt after 24 completed epochs and finished epochs 25 through 100."
+    },
+    "fdr_bpdd": {
+      "run_id": "formal-seed0-fdr_bpdd-bpdd-v1",
+      "best_epoch": 93,
+      "metrics": {
+        "precision": 0.57937,
+        "recall": 0.49101,
+        "map50": 0.48657,
+        "map75": null,
+        "map": 0.29278
+      },
+      "best_checkpoint_sha256": "8c7fee3cff1c3f84210f694b1f080115b16948104f6c4bd181652fd4a3667f35"
+    }
+  },
+  "deltas_pp": {
+    "precision": -0.143,
+    "recall": 1.178,
+    "map50": 0.425,
+    "map75": null,
+    "map": 0.231
+  },
+  "map75_status": "pending_best_checkpoint_exact_evaluation",
+  "test_status": "pending_best_checkpoint_exact_evaluation",
+  "evidence_level": "same_authority_same_seed_paired_training_best_val_selection_metrics",
+  "paper_result_record": {
+    "status": "training_complete_best_val_selection_metrics_available",
+    "split": "VisDrone val",
+    "paired": true,
+    "source_id": "bpdd_strict_pair_20260819",
+    "authority_source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+    "fdr": {
+      "best_epoch": 97,
+      "precision": 0.5808,
+      "recall": 0.47923,
+      "map50": 0.48232,
+      "map75": null,
+      "map": 0.29047
+    },
+    "fdr_bpdd": {
+      "best_epoch": 93,
+      "precision": 0.57937,
+      "recall": 0.49101,
+      "map50": 0.48657,
+      "map75": null,
+      "map": 0.29278
+    },
+    "deltas_pp": {
+      "precision": -0.143,
+      "recall": 1.178,
+      "map50": 0.425,
+      "map75": null,
+      "map": 0.231
+    },
+    "map75_status": "pending_best_checkpoint_exact_evaluation",
+    "test_status": "pending_best_checkpoint_exact_evaluation"
+  },
+  "artifacts": [
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/protocol.json",
+      "sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24"
+    },
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/results.csv",
+      "sha256": "0084d489870fdd053a424dd60b2c732cd0f7a573c6b460252a847d00adb75585"
+    },
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/args.yaml",
+      "sha256": "6730412d7b676bace2924bd5adc29c02336141b6a2b972dbcfd80953c4d64cfd"
+    },
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr/bpdd-epochs.jsonl",
+      "sha256": "593038d79f6445499042f1deb94fdb4c89cac67541472254073fcc4a36948e16"
+    },
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/results.csv",
+      "sha256": "4bc042d6898d0c31f689d117608e566cf6cdc33c84c85915e0b81f2098889826"
+    },
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/args.yaml",
+      "sha256": "e0e3362d0cd064a8851336c8d94da3a77f537fcb118f0db0d60e85d0714693b1"
+    },
+    {
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/fdr_bpdd/bpdd-epochs.jsonl",
+      "sha256": "f53eae9d5f2ec45b367da541128990003464d9b3435745f9ae6a8315c770be72"
+    }
+  ],
+  "limitations": [
+    "AP75 is not present in the training CSV and remains null until best.pt is independently evaluated under the frozen evaluator.",
+    "VisDrone test results remain pending the same best.pt evaluation.",
+    "The FDR arm used deterministic resume after epoch 24; the authority, initial state, seed, protocol, and total epoch budget remained fixed."
+  ]
+}

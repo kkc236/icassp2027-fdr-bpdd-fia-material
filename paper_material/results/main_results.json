@@ -49,6 +49,38 @@
       "source_id": "bpdd_val"
     }
   ],
+  "strict_bpdd_pair_20260819": {
+    "status": "training_complete_best_val_selection_metrics_available",
+    "split": "VisDrone val",
+    "paired": true,
+    "source_id": "bpdd_strict_pair_20260819",
+    "authority_source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+    "fdr": {
+      "best_epoch": 97,
+      "precision": 0.5808,
+      "recall": 0.47923,
+      "map50": 0.48232,
+      "map75": null,
+      "map": 0.29047
+    },
+    "fdr_bpdd": {
+      "best_epoch": 93,
+      "precision": 0.57937,
+      "recall": 0.49101,
+      "map50": 0.48657,
+      "map75": null,
+      "map": 0.29278
+    },
+    "deltas_pp": {
+      "precision": -0.143,
+      "recall": 1.178,
+      "map50": 0.425,
+      "map75": null,
+      "map": 0.231
+    },
+    "map75_status": "pending_best_checkpoint_exact_evaluation",
+    "test_status": "pending_best_checkpoint_exact_evaluation"
+  },
   "supplementary_updated_fia_observations": [
     {
       "split": "VisDrone val",
