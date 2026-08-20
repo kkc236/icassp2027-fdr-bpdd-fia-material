@@ -1,21 +1,27 @@
 # AP-FDR：面向 RT-DETR-L 的架构保持型细粒度分布细化
 
-本文将所提出的 Architecture-Preserving Fine-grained Distribution Refinement 记为 **AP-FDR**；为与既有配置、checkpoint 和结果表保持一致，后文仍沿用简称 **FDR**。AP-FDR 的贡献不在于重新命名分布回归基础算子，而在于将其重构为与 stock RT-DETR-L 检测合同兼容的定位系统。
+本文将所提出的 Architecture-Preserving Fine-grained Distribution Refinement 记为 **AP-FDR**；为与既有配置、checkpoint 和结果表保持一致，后文仍沿用简称 **FDR**。AP-FDR 解决的不是“如何把一个现成检测器嵌入 RT-DETR”，而是如何在保持 stock RT-DETR-L 检测合同的条件下，为密集小目标建立可训练、可比较的逐边分布定位路径。
+
+## 技术问题
+
+VisDrone 中的小目标边界只占少量像素，遮挡与尺度变化又会放大四条边的定位不确定性。stock RT-DETR-L 由每层框头直接输出四个连续框量，虽然结构简洁，却没有显式表示每条边的多粒度概率分布。另一方面，直接采用 D-FINE 的完整 detector 会同时改变分类质量建模、Decoder 宽度、查询处理和训练组件，难以判断增益究竟来自分布定位还是来自整套架构变化。
+
+因此，本文把研究问题限定为：能否只重构 RT-DETR-L 的 localization branch，同时保留分类、查询选择、Decoder 主体、匹配和后处理合同，并让新增分布监督在 normal 与 denoising 查询上复用同一 assignment？AP-FDR 正是针对这一受控问题设计，而不是对既有完整 detector 的整体替换。
 
 ## 本文原创设计
 
-AP-FDR 面向 Ultralytics RT-DETR-L 提出四项相互约束、共同定义方法身份的设计：
+围绕上述问题，AP-FDR 面向 Ultralytics RT-DETR-L 提出四项相互约束、共同定义方法身份的设计：
 
-1. **架构保持型定位路径**：只改造 localization branch，保留 stock 分类头、查询选择、六层 Decoder attention/FFN、Hungarian matching 与后处理合同；同时不引入 LQE、DDF、GO-LSD 或 Decoder widening，使定位改造的因果边界清晰。
-2. **stock-head-informed preliminary geometry**：从 stock 第一层框头复制 preliminary head，以既有回归几何初始化六层共享参考框，而不是另外引入随机初始化的粗框分支。
-3. **normal/DN 匹配一致监督**：FGL、preliminary-box L1/GIoU 与连续框损失沿用 stock criterion 已产生的逐层 assignment，不增加第二套 matcher，并把同一合同显式扩展到 normal 与 denoising 两条路径。
-4. **隔离初始化与公平比较合同**：新增分布头使用私有 RNG，避免改变公共参数初始化、数据顺序和后续训练随机状态。
+1. **架构保持型定位路径**：为隔离分布定位本身的作用，只改造 localization branch，保留 stock 分类头、查询选择、六层 Decoder attention/FFN、Hungarian matching 与后处理合同；同时不引入 LQE、DDF、GO-LSD 或 Decoder widening。
+2. **stock-head-informed preliminary geometry**：为避免随机粗框分支破坏原有回归起点，从 stock 第一层框头复制 preliminary head，以既有回归几何初始化六层共享参考框。
+3. **normal/DN 匹配一致监督**：为避免分布监督和连续框监督学习不同的 query–GT 关系，FGL、preliminary-box L1/GIoU 与连续框损失沿用 stock criterion 已产生的逐层 assignment，不增加第二套 matcher，并把同一合同显式扩展到 normal 与 denoising 两条路径。
+4. **隔离初始化与公平比较合同**：为使新增头不改变对照模型的公共随机轨迹，分布头使用私有 RNG，避免改变公共参数初始化、数据顺序和后续训练随机状态。
 
 这四项结构与监督设计是本文对 AP-FDR 的原创主张，也是内部单因素消融需要验证的对象。
 
 ## 基础构件来源
 
-受 D-FINE 启发，AP-FDR 基于固定 commit `7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6` 已公开的边界分布基础构件。生产实现沿用 `weighting_function`、`Integral`、`translate_gt`、`bbox2distance`、`distance2bbox` 与 `unimodal_distribution_focal_loss` 的数学行为，并固定相应的 33-bin 表示和 FGL 设置。逐边离散表示、非均匀投影、Integral、相邻 bin FGL 与累计分布细化不作为本文原创点；D-FINE 的完整 detector、LQE、DDF、GO-LSD 和 Decoder widening 没有进入 AP-FDR。
+受 D-FINE 启发，AP-FDR 基于固定 commit `7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6` 已公开的边界分布基础构件。生产实现沿用 `weighting_function`、`Integral`、`translate_gt`、`bbox2distance`、`distance2bbox` 与 `unimodal_distribution_focal_loss` 的数学行为，并固定相应的 33-bin 表示和 FGL 设置。逐边离散表示、非均匀投影、Integral、相邻 bin FGL 与累计分布细化不作为本文原创点；D-FINE 的完整 detector、LQE、DDF、GO-LSD 和 Decoder widening 没有进入 AP-FDR。该段只界定基础机制的来源；本文方法主张仍由上一节四项 RT-DETR 专用结构与监督设计定义。
 
 ## 问题与模块位置
 
@@ -77,6 +83,6 @@ FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两
 
 ## 主张边界
 
-允许表述：本文提出 AP-FDR，一种面向 RT-DETR-L 的架构保持型细粒度分布细化方法；其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督与隔离初始化构成本文原创设计。受 D-FINE 启发的边界分布基础构件按上述来源边界明确归因。
+允许表述：本文针对 stock RT-DETR-L 连续框路径缺少逐边不确定性表达、完整 detector 替换又会混入多项架构变化的问题，提出 AP-FDR；其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督与隔离初始化构成本文原创设计。受 D-FINE 启发的边界分布基础构件按上述来源边界明确归因。
 
 禁止表述：不得声称本文首次发明离散边界分布、FGL、Integral、相邻 bin 软标签或非均匀 weighting；不得把可加载消融 YAML 当作已完成的消融结果；不得把 `+7.055 pp` 拆分归因给尚未独立训练验证的任一内部开关；不得在没有实测时宣称零开销、特定延迟或特定参数增幅。

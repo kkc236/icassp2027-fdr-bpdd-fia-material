@@ -2,13 +2,17 @@
 
 ## 论文主线
 
-建议主线为“AP-FDR 架构保持型定位—BPDD 原创优化—FIA 高分辨率增强”。本文首先面向 stock RT-DETR-L 提出 AP-FDR，以 localization-only 路径、stock-head-informed preliminary geometry、normal/DN 匹配一致监督和隔离初始化建立细粒度定位；其边界分布基础构件受 D-FINE 启发并明确归因。继而提出纯粹由本文机制推导的 BPDD，并以 FIA 补充高分辨率表征。
+建议主线为“边界不确定性—早期层弱监督—高分辨率表征不足”三个相互关联的问题，而不是“AP-FDR、BPDD、FIA 三个模块”的并列清单。本文首先面向 stock RT-DETR-L 提出 AP-FDR，以 localization-only 路径、stock-head-informed preliminary geometry、normal/DN 匹配一致监督和隔离初始化建立细粒度定位；其边界分布基础构件受 D-FINE 启发并明确归因。继而针对 AP-FDR 产生的逐层分布提出 BPDD，并以 FIA 补充 P3 高分辨率表征。
+
+## 写作规则
+
+全文采用“问题—设计—证据”顺序：先说明现有 RT-DETR 在密集 UAV 小目标上的具体不足，再写本文为解决该不足改变了什么结构、监督关系或特征流，最后紧跟对应的严格结果、消融状态或复杂度证据。正式 ICASSP 论文仅作为这种组织方式的内部写法样本；与本研究没有直接技术关系的样本不进入 Related Work、外部比较表或参考文献，也不能被用来替代本文自身的创新论证。
 
 ## 贡献组织
 
-1. **架构保持型分布定位创新**：提出 AP-FDR；在保留 RT-DETR-L 分类、查询选择、Decoder 主体、stock matching 与后处理合同的同时，构建 stock-head-informed preliminary 分支、normal/DN 匹配一致的逐边分布监督和隔离初始化机制。基础分布构件受 D-FINE 启发并归于参考工作，AP-FDR 的 RT-DETR 专用结构与监督组织作为本文第一项创新。
-2. **原创跨层优化算法**：BPDD 是由本文独立提出并实现的原创算法。它不采用 GO-LSD 的固定最终层教师或 DDF，而是通过未来层 softmin 混合教师、better-only 逐边门控和 stock assignment 复用渐进改善定位监督，且不增加推理分支。
-3. **高分辨率增强**：集成 FIA，并用 fresh FIA-only P3-only 的 val 正增益以及 FDR+FIA、完整三模块的补充结果说明其有效性与组合兼容性；不同拓扑和证据等级分别报告。
+1. **边界不确定性 → AP-FDR → 严格定位增益**：stock RT-DETR-L 的连续框路径不显式表达逐边不确定性。AP-FDR 在保留分类、查询选择、Decoder 主体、stock matching 与后处理合同的同时，构建 stock-head-informed preliminary 分支、normal/DN 匹配一致的逐边分布监督和隔离初始化机制。基础分布构件受 D-FINE 启发并归于参考工作；完整 AP-FDR 的严格 val mAP/AP75 增益支撑整体方法，内部组件只在单因素实验完成后分别归因。
+2. **早期层监督不足 → BPDD → 严格配对增益**：BPDD 是由本文独立提出并实现的原创算法。它不用固定最终层无条件监督所有目标边，而是通过未来层 softmin 混合教师、better-only 逐边门控和 stock assignment 复用渐进改善定位监督。严格配对 val/test 与 AP75 结果支撑其训练期收益，统一复杂度结果支撑其不增加推理分支。
+3. **P3 表征不足 → FIA → 正向兼容性与有限开销**：FIA 以 P3-only 方式增强高分辨率特征，同时让 P4/P5 从原分支重建。fresh FIA-only、完整三模块的 val/test 正向结果和统一复杂度表共同说明有效性与代价；既有 cascading FDR+FIA 作为不同拓扑的补充记录单独报告。
 
 第三点的方法细节已绑定当前 `src/fia.py`：双 depth-wise 残差细化、联合通道/空间注意力、零初始化残差缩放和构造期 RNG 隔离。fresh FIA-only 与三模块均登记为 P3-only；既有 FDR+FIA checkpoint 仍是 cascading，三者的拓扑身份和证据来源须分开书写。
 
@@ -16,18 +20,18 @@
 
 ### 1. Introduction
 
-围绕无人机场景小目标、遮挡和定位不确定性展开问题，说明定位分布、训练监督和高分辨率表征三个层面的互补性。
+第一段交代无人机图像中小目标、遮挡和边界像素敏感性；第二段收窄到 RT-DETR 的三个缺口：连续框难以表达逐边不确定性、早期 Decoder 层缺少可靠的目标边监督、640 输入下 P3 细节易受限；第三段分别给出 AP-FDR、BPDD、FIA 的解决动作；末段只列贡献和已登记证据。Introduction 不展开 D-FINE 组件清单，也不把任何无关 ICASSP 写法样本当作相关工作。
 
 ### 2. Related Work
 
-覆盖 transformer detector、分布式框回归、蒸馏和小目标特征增强；用一句话明确 AP-FDR 的边界分布基础构件“受 D-FINE 启发”，随后把讨论重点放在本文的架构保持、stock-head preliminary geometry、匹配一致和 normal/DN 统一监督。将 GO-LSD 作为 BPDD 的最接近相关工作，先承认它启发跨层定位问题，再用教师来源、可靠性门控、匹配合同、查询范围和损失形式说明 BPDD 的独立算法构造。把 ICASSP 2026 ResBiDet/VARDet 作为最近的同会、同任务工作：ResBiDet 用低分辨率粗分支引导高分辨率精分支，VARDet 用 visual autoregressive multi-scale prediction 与 CLIP-guided semantics；本文聚焦 AP-FDR 定位分布、训练期 BPDD 和 640 输入下的 FIA 表征增强。IJCAI 2025 RAFDE 作为 640 输入的近邻强方法，代表区域自适应融合与边界增强下采样路线。相关工作只比较问题与设计路径，不把不同协议的绝对数值写成公平优劣。
+只覆盖与本文技术链直接相关的 transformer detector、分布式框回归、跨层蒸馏和 UAV 小目标特征增强。用一句话明确 AP-FDR 的边界分布基础构件“受 D-FINE 启发”，随后把差异收束到架构保持、stock-head preliminary geometry、匹配一致和 normal/DN 统一监督。将 GO-LSD 作为 BPDD 的最接近相关工作，先承认它启发跨层定位问题，再用教师来源、可靠性门控、匹配合同、查询范围和损失形式说明 BPDD 的独立算法构造。把 ICASSP 2026 ResBiDet/VARDet 作为最近的同会、同任务工作：ResBiDet 用低分辨率粗分支引导高分辨率精分支，VARDet 用 visual autoregressive multi-scale prediction 与 CLIP-guided semantics；本文聚焦 AP-FDR 定位分布、训练期 BPDD 和 640 输入下的 FIA 表征增强。IJCAI 2025 RAFDE 作为 640 输入的近邻强方法，代表区域自适应融合与边界增强下采样路线。相关工作只比较问题与设计路径，不把不同协议的绝对数值写成公平优劣，也不收录仅用于学习行文方式的无关论文。
 
 ### 3. Method
 
-- 3.1 Overall Architecture：RT-DETR-L baseline、FDR decoder、训练期 BPDD 与修改后 FIA 的关系。
-- 3.2 Architecture-Preserving Fine-grained Distribution Refinement：架构保持、匹配一致监督、preliminary 分支以及分布表示与解码。
-- 3.3 Boundary Progressive Distribution Distillation：先给出“由本文独立提出并实现”的来源声明，再写未来层 softmin 教师、better-only 激活条件和损失；正文或补充材料加入 BPDD–GO-LSD 六维差异表。
-- 3.4 FIA：描述双基础块、联合通道/空间注意力、恒等安全残差缩放及 P3 插入位置。
+- 3.1 Overall Architecture：先用三个问题标注 RT-DETR-L baseline、FDR decoder、训练期 BPDD 与 P3-only FIA 的职责和依赖方向，避免画成任意插件堆叠。
+- 3.2 Architecture-Preserving Fine-grained Distribution Refinement：先说明“连续框路径不足但完整 detector 替换不可控”，再写架构保持、匹配一致监督、preliminary 分支以及分布表示与解码；基础构件来源放在结构设计之后，用一段完成归因。
+- 3.3 Boundary Progressive Distribution Distillation：先说明固定末层教师对每个目标边未必可靠，再给出“由本文独立提出并实现”的 future-layer softmin 教师、better-only 激活条件和损失；正文或补充材料加入 BPDD–GO-LSD 六维差异表。
+- 3.4 FIA：先说明只增强 P3 的必要性，再描述双基础块、联合通道/空间注意力、恒等安全残差缩放及 P3-only 插入位置，明确 P4/P5 绕过 FIA 重建。
 - 3.5 Training Objective and Inference：总损失、BPDD 仅训练期、FDR/FIA 推理期角色。
 
 ### 4. Experiments

@@ -22,6 +22,10 @@
 
 这种安排既保留必要归因，也把审稿焦点从基础算子的出处转向本文为何以新的结构和监督合同重构它们。对于 BPDD，采用“问题启发相关、算法构造独立”的更强口径：GO-LSD 提供跨层定位蒸馏的问题背景，BPDD 的 future-layer mixture、better-only gate、stock assignment contract、normal-only scope 与损失定义均为本文独立设计。
 
+### 写法样本的使用边界
+
+正式 ICASSP 方法论文只用于学习一种稳定的贡献组织方式：先界定目标任务中尚未解决的问题，再给出针对该问题的结构或监督设计，最后用消融、精度和复杂度证据闭合主张。这个内部写作观察不构成本文的技术相关工作，也不进入 Related Work、外部比较表或参考文献。正文只引用与 UAV detection、RT-DETR、分布定位、跨层蒸馏和小目标表征直接相关的工作，不能用“同会存在类似改造论文”替代本文自身的创新论证。
+
 ## 3. 推荐标题
 
 首选：
@@ -36,21 +40,21 @@
 
 首选标题同时覆盖 AP-FDR 与 BPDD，最利于建立个人方法主线。第二个标题最突出 AP-FDR，但要求正文具备完整内部消融；第三个标题更适合保守投稿版本。
 
-## 4. 三层贡献结构
+## 4. 问题—设计—证据的三层贡献结构
 
 ### 贡献 1：AP-FDR 架构与监督创新
 
-提出 AP-FDR，在不改变 RT-DETR-L 分类、查询选择、Decoder 主体、Hungarian matching 与后处理合同的条件下，将逐边分布定位限制在 localization branch。其关键设计包括从 stock 框头获得几何先验的 preliminary 分支、normal/DN 共享 stock assignment 的匹配一致监督，以及不污染公共参数随机状态的新增分布头初始化。33-bin 表示、非均匀 Integral 与 FGL 基础形式参考既有工作，不单独计为原创。
+**问题**：stock RT-DETR-L 直接回归连续框，无法显式表达密集小目标每条边的不确定性；整体替换 detector 又会混入分类、Decoder 和查询处理变化。**设计**：提出 AP-FDR，在保留分类、查询选择、Decoder 主体、Hungarian matching 与后处理合同的条件下，将逐边分布定位限制在 localization branch，并构建 stock-head-informed preliminary 分支、normal/DN 共享 stock assignment 的匹配一致监督及隔离初始化。**证据**：严格统一评估中，完整 AP-FDR 相对 baseline 的 val mAP50–95 提高 `+7.055 pp`、AP75 提高 `+7.951 pp`；内部单因素消融完成前，该增益只归于完整 AP-FDR。33-bin 表示、非均匀 Integral 与 FGL 基础形式参考既有工作，不单独计为原创。
 
 ### 贡献 2：跨层优化创新 BPDD
 
-BPDD 是由本文独立提出并实现的原创算法。它不复用 GO-LSD 的固定最终层教师、DDF 损失或源代码，而是从同一次前向的全部未来解码层构造目标边质量加权教师；better-only 门控只在教师优于当前层时施加 KL 监督，并直接复用 stock 最终层匹配。严格配对 best.pt 复评显示，BPDD 在 val/test 上分别提高 `+0.239/+0.283 pp` mAP50–95，test AP75 提高 `+0.276 pp`；其推理 Params、FLOPs、显存和延迟与 FDR 配对臂相同。
+**问题**：早期 Decoder 层定位较弱，而固定使用最终层作为教师并不能保证每个目标、每条边都获得更可靠的监督。**设计**：BPDD 是由本文独立提出并实现的原创算法；它从同一次前向的全部未来解码层构造目标边质量加权教师，better-only 门控只在教师优于当前层时施加 KL 监督，并直接复用 stock 最终层匹配。它不复用 GO-LSD 的固定最终层教师、DDF 损失或源代码。**证据**：严格配对 best.pt 复评显示，BPDD 在 val/test 上分别提高 `+0.239/+0.283 pp` mAP50–95，test AP75 提高 `+0.276 pp`；其推理 Params、FLOPs、显存和延迟与 FDR 配对臂相同。
 
 “原创”在这里指 BPDD 的具体 formulation、损失合同与代码实现具有独立来源；不扩张为未经系统检索证明的“文献史上首次”。论文仍应主动引用 GO-LSD，并把六维差异表放在 Method 或 Supplementary，而不是通过弱化相关工作制造原创性。
 
 ### 贡献 3：轻量表征互补 FIA
 
-FIA 通过双 depth-wise 残差细化、联合通道/空间门控和零初始化残差缩放增强 P3。fresh P3-only FIA-only 在 val/test 上分别呈现 `+0.7946/+0.8101 pp` 的同 split 算术增益。FIA 只增加 `0.301M` 参数、`3.419G` FLOPs 和 `0.861 ms` 中位延迟；三模块仍达到 `25.21 FPS`。
+**问题**：640 输入下，密集小目标主要依赖高分辨率 P3，但把增强特征继续级联重建 P4/P5 会扩大干预范围。**设计**：FIA 以 P3-only 拓扑插入，通过双 depth-wise 残差细化、联合通道/空间门控和零初始化残差缩放增强 P3，同时让 P4/P5 继续从原始分支构建。**证据**：fresh P3-only FIA-only 在 val/test 上分别呈现 `+0.7946/+0.8101 pp` 的同 split 算术增益；FIA 只增加 `0.301M` 参数、`3.419G` FLOPs 和 `0.861 ms` 中位延迟，三模块仍达到 `25.21 FPS`。
 
 ## 5. 外部论文的使用层级
 
@@ -105,21 +109,21 @@ RAFDE 由 RAFF 和 BTRD 组成。其 YOLOv11m baseline 为 `0.266` mAP，RAFF �
 
 ### 7.1 Abstract draft
 
-Dense UAV imagery poses a coupled challenge of uncertain boundary localization, weak supervision in early decoder layers, and fragile high-resolution representations. We propose architecture-preserving fine-grained distribution refinement (AP-FDR), which builds on established D-FINE boundary-distribution primitives while confining distributional regression to the localization branch and retaining the original RT-DETR classification, query assignment, decoder, and post-processing contracts. AP-FDR further couples a stock-head-informed preliminary branch with assignment-consistent distribution supervision for both normal and denoising queries. Building on its layer-wise boundary distributions, we independently formulate BPDD, a training-only strategy that constructs target-conditioned teachers from all future decoder layers and activates distillation only when the teacher improves upon the current layer. A lightweight FIA module further enhances the P3 path while preserving the original P4/P5 construction. On VisDrone2019, AP-FDR improves validation mAP50–95 from 21.91% to 28.97%. BPDD provides paired validation/test gains without additional inference parameters or FLOPs, and the complete model reaches 29.61% validation mAP50–95 and 23.37% test mAP50–95 at 25.21 FPS on an RTX 4090.
+Dense UAV imagery poses a coupled challenge of uncertain boundary localization, weak supervision in early decoder layers, and fragile high-resolution representations. We propose architecture-preserving fine-grained distribution refinement (AP-FDR), which introduces per-edge distribution modeling only into the localization branch while retaining the original RT-DETR classification, query assignment, decoder, and post-processing contracts. AP-FDR couples a stock-head-informed preliminary branch with assignment-consistent distribution supervision for both normal and denoising queries. Building on its layer-wise boundary distributions, we independently formulate BPDD, a training-only strategy that constructs target-conditioned teachers from all future decoder layers and activates distillation only when the teacher improves upon the current layer. A lightweight FIA module further enhances the P3 path while preserving the original P4/P5 construction. On VisDrone2019, AP-FDR improves validation mAP50–95 from 21.91% to 28.97%. BPDD provides paired validation/test gains without additional inference parameters or FLOPs, and the complete model reaches 29.61% validation mAP50–95 and 23.37% test mAP50–95 at 25.21 FPS on an RTX 4090.
 
 ### 7.2 Introduction 末段
 
-This work studies how fine-grained boundary distributions can be reorganized into an architecture-preserving localization mechanism for dense UAV imagery. Building on established D-FINE primitives, AP-FDR confines distribution refinement to the RT-DETR box path, derives its preliminary geometry from the stock regression head, and reuses the original assignments to supervise both normal and denoising queries. Its decoder produces a sequence of boundary distributions, but no single later layer is guaranteed to be the best teacher for every target edge. We therefore independently formulate and implement BPDD to select and distill quality-weighted mixtures of future distributions into earlier layers, and complement it with a lightweight P3 interaction module. The resulting framework couples localization representation, cross-layer optimization, and high-resolution context while retaining the original single-pass detection contract.
+This work studies how fine-grained boundary distributions can be reorganized into an architecture-preserving localization mechanism for dense UAV imagery. AP-FDR confines distribution refinement to the RT-DETR box path, derives its preliminary geometry from the stock regression head, and reuses the original assignments to supervise both normal and denoising queries. Its decoder produces a sequence of boundary distributions, but no single later layer is guaranteed to be the best teacher for every target edge. We therefore independently formulate and implement BPDD to select and distill quality-weighted mixtures of future distributions into earlier layers, and complement it with a lightweight P3 interaction module. The resulting framework couples localization representation, cross-layer optimization, and high-resolution context while retaining the original single-pass detection contract. The relationship between AP-FDR's underlying distribution primitives and D-FINE is stated separately in Related Work and Method.
 
 ### 7.3 Contributions
 
 1. We propose AP-FDR, an architecture-preserving distribution refinement method that isolates fine-grained boundary regression in the RT-DETR localization branch, introduces a stock-head-informed preliminary path, and enforces assignment-consistent distribution supervision for normal and denoising queries while preserving the original detection contract.
-2. We independently formulate and implement BPDD, an original training-only distillation algorithm that builds target-conditioned softmin teachers from all future decoder layers and suppresses unreliable supervision through a better-only quality gate. Unlike GO-LSD, BPDD reuses the stock final-layer assignment, excludes denoising queries, and does not adopt DDF. Paired experiments confirm consistent validation/test gains without inference overhead.
+2. We independently formulate and implement BPDD, an original training-only distillation algorithm that builds target-conditioned softmin teachers from all future decoder layers, suppresses unreliable supervision through a better-only quality gate, and reuses the stock final-layer assignment. Paired experiments confirm consistent validation/test gains without inference overhead.
 3. We design a lightweight P3-only FIA module and report a positive standalone observation together with its compatibility with distribution refinement. The complete system provides competitive 640-resolution VisDrone accuracy together with unified latency and complexity measurements.
 
 ### 7.4 Related Work 中的 D-FINE 归因段
 
-Fine-grained distribution refinement represents each box boundary with a discrete probability distribution and recovers continuous offsets through an integral operator. Inspired by the boundary representation, non-uniform integral, and fine-grained localization objective studied in D-FINE, we investigate how these primitives can be reorganized for a stock RT-DETR pipeline. Our AP-FDR differs in its architecture-preserving localization-only scope, stock-head-informed preliminary branch, assignment-consistent normal/denoising supervision, and isolated initialization contract. D-FINE's GO-LSD also motivates the general question of cross-layer localization transfer; BPDD addresses that question through an independently derived all-future softmin teacher and a target-edge better-only gate rather than GO-LSD's final-layer DDF formulation. FIA subsequently extends AP-FDR from the high-resolution representation perspective.
+Fine-grained distribution refinement represents each box boundary with a discrete probability distribution and recovers continuous offsets through an integral operator. Inspired by the boundary representation, non-uniform integral, and fine-grained localization objective studied in D-FINE, we investigate how these primitives can be reorganized for a stock RT-DETR pipeline. AP-FDR contributes an architecture-preserving localization-only path, stock-head-informed preliminary geometry, assignment-consistent normal/denoising supervision, and an isolated initialization contract. D-FINE's GO-LSD also motivates the general question of cross-layer localization transfer; BPDD addresses that question with an independently formulated all-future softmin teacher and target-edge better-only gate rather than the final-layer DDF formulation.
 
 ### 7.5 FDR 方法小节开头
 

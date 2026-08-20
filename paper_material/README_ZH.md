@@ -1,6 +1,6 @@
 # ICASSP 2027 论文材料入口
 
-本目录汇总 RT-DETR-L、FDR、BPDD 与 FIA 在 VisDrone 上的方法、协议、结果和证据边界。核心结果与补充消融分开呈现；val/test、P3-only/cascading 以及 strict/non-paired 不得混写。
+本目录汇总面向 VisDrone 密集小目标的三层方法链：AP-FDR 处理逐边定位不确定性，BPDD 改善早期 Decoder 层的分布监督，FIA 补充 P3 高分辨率表征。材料按“问题—设计—证据”组织，而不是把三个名称写成可任意叠加的插件清单。核心结果与补充消融分开呈现；val/test、P3-only/cascading 以及 strict/non-paired 不得混写。
 
 ## 阅读顺序
 
@@ -59,6 +59,6 @@
 
 ## 方法依赖
 
-- AP-FDR（结果表中沿用 FDR）是本文第一项方法创新：面向 stock RT-DETR-L 提出架构保持型 localization path、stock-head-informed preliminary geometry、normal/DN 匹配一致监督与隔离初始化。其边界分布基础构件受 D-FINE 启发并按固定版本归因，但 D-FINE 的完整 detector、LQE、DDF 与 GO-LSD 不属于 AP-FDR。
-- BPDD 是由本文独立提出并实现的原创算法，也是论文的第二项方法创新。D-FINE/GO-LSD 只启发了“跨层定位知识能否改善早期层”这一研究问题；BPDD 的未来层 softmin 教师、better-only 可靠性门控、stock assignment 复用和训练期边界均由本文独立设计。它消费 AP-FDR 的逐边分布，只在训练期工作且不增加推理分支；BPDD-only 不是合法模型行。
-- FIA 是面向高分辨率小目标表征的推理期增强模块。fresh P3-only FIA-only 在 canonical val baseline 上获得 `+0.7946 pp` 的非严格配对算术增益；FDR+FIA 与三模块结果继续作为不同拓扑、不同证据等级的兼容性观察。
+- **逐边定位不确定性 → AP-FDR**：结果表中沿用 FDR。AP-FDR 面向 stock RT-DETR-L 提出架构保持型 localization path、stock-head-informed preliminary geometry、normal/DN 匹配一致监督与隔离初始化。其边界分布基础构件受 D-FINE 启发并按固定版本归因，但 D-FINE 的完整 detector、LQE、DDF 与 GO-LSD 不属于 AP-FDR；严格 baseline/FDR 结果支撑完整 AP-FDR，内部开关在独立消融完成前不拆分归因。
+- **早期层定位监督不足 → BPDD**：BPDD 是由本文独立提出并实现的原创算法。D-FINE/GO-LSD 只启发“跨层定位知识能否改善早期层”这一研究问题；BPDD 的未来层 softmin 教师、better-only 可靠性门控、stock assignment 复用和训练期边界均由本文独立设计。它消费 AP-FDR 的逐边分布，只在训练期工作且不增加推理分支；严格 FDR/FDR+BPDD 配对结果与统一复杂度表构成对应证据，BPDD-only 不是合法模型行。
+- **P3 小目标表征不足 → FIA**：FIA 以 P3-only 拓扑增强高分辨率特征，同时保持 P4/P5 从原分支构建。fresh P3-only FIA-only 在 canonical val baseline 上获得 `+0.7946 pp` 的非严格配对算术增益；FDR+FIA 与三模块结果继续作为不同拓扑、不同证据等级的兼容性观察，复杂度表登记其有限推理代价。
