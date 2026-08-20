@@ -1478,3 +1478,25 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
     assert "ICASSP 2026" in outline
     for forbidden_text in ("Sensors 2024", "Remote Sensing", "Scientific Reports"):
         assert forbidden_text not in page
+def test_dfine_inspiration_and_bpdd_originality_framing_contract() -> None:
+    readme = _read_required_text("README_ZH.md")
+    fdr = _read_required_text("methods/FDR_ZH.md")
+    bpdd = _read_required_text("methods/BPDD_ZH.md")
+    outline = _read_required_text("writing/ICASSP2027_OUTLINE_ZH.md")
+    audit = _read_required_text(
+        "writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md"
+    )
+
+    for text in (readme, fdr, outline, audit):
+        assert "受 D-FINE 启发" in text
+    for text in (readme, bpdd, outline, audit):
+        assert "由本文独立提出并实现的原创算法" in text
+
+    assert "不复用 GO-LSD 的教师构造、DDF 损失或代码实现" in bpdd
+    assert "问题启发相关、算法构造独立" in bpdd
+    assert "教师来源" in bpdd
+    assert "可靠性门控" in bpdd
+    assert "匹配合同" in bpdd
+    assert "查询范围" in bpdd
+    assert "independently formulate and implement BPDD" in audit
+    assert "不扩张为未经系统检索证明的“文献史上首次”" in audit
