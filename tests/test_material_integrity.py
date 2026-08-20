@@ -1500,3 +1500,31 @@ def test_dfine_inspiration_and_bpdd_originality_framing_contract() -> None:
     assert "查询范围" in bpdd
     assert "independently formulate and implement BPDD" in audit
     assert "不扩张为未经系统检索证明的“文献史上首次”" in audit
+
+
+def test_ap_fdr_contribution_first_attribution_contract() -> None:
+    spec = (
+        REPOSITORY_ROOT
+        / "docs/superpowers/specs/2026-08-20-dfine-inspired-originality-framing-design.md"
+    ).read_text(encoding="utf-8")
+    fdr = _read_required_text("methods/FDR_ZH.md")
+    audit = _read_required_text(
+        "writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md"
+    )
+
+    for forbidden in ("1:4", "1/5", "80% 原创", "算法主体 80%"):
+        assert forbidden not in spec
+        assert forbidden not in fdr
+        assert forbidden not in audit
+
+    assert fdr.index("## 本文原创设计") < fdr.index("## 基础构件来源")
+    for symbol in (
+        "weighting_function",
+        "Integral",
+        "translate_gt",
+        "bbox2distance",
+        "distance2bbox",
+        "unimodal_distribution_focal_loss",
+    ):
+        assert symbol in fdr
+    assert "不以任何数值比例描述算法原创性" in audit
