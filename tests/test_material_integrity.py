@@ -1528,3 +1528,26 @@ def test_ap_fdr_contribution_first_attribution_contract() -> None:
     ):
         assert symbol in fdr
     assert "不以任何数值比例描述算法原创性" in audit
+
+
+def test_writing_exemplar_boundary() -> None:
+    readme = _read_required_text("README_ZH.md")
+    fdr = _read_required_text("methods/FDR_ZH.md")
+    outline = _read_required_text("writing/ICASSP2027_OUTLINE_ZH.md")
+    audit = _read_required_text(
+        "writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md"
+    )
+
+    manuscript_materials = (readme, fdr, outline, audit)
+    for exemplar_name in (
+        "YOLO-SAM2",
+        "SpaRSep",
+        "Adapting Pitch-Based",
+        "YOLO-Based Lightweight Object Detection",
+        "D2Q-DETR",
+    ):
+        for text in manuscript_materials:
+            assert exemplar_name not in text
+
+    assert "问题—设计—证据" in outline
+    assert "问题—设计—证据" in audit
