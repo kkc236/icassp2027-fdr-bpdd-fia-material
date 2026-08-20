@@ -59,7 +59,6 @@
 
 ## 方法依赖
 
-- AP-FDR（结果表中沿用 FDR）是本文第一项方法创新：受 D-FINE 启发，我们没有复现其完整检测器，而是在 Ultralytics RT-DETR-L 中独立重构 localization path，提出 localization-only 的架构保持改造、stock-head-informed preliminary 分支、normal/DN 匹配一致监督和公平初始化合同。
+- AP-FDR（结果表中沿用 FDR）是本文第一项方法创新：面向 stock RT-DETR-L 提出架构保持型 localization path、stock-head-informed preliminary geometry、normal/DN 匹配一致监督与隔离初始化。其边界分布基础构件受 D-FINE 启发并按固定版本归因，但 D-FINE 的完整 detector、LQE、DDF 与 GO-LSD 不属于 AP-FDR。
 - BPDD 是由本文独立提出并实现的原创算法，也是论文的第二项方法创新。D-FINE/GO-LSD 只启发了“跨层定位知识能否改善早期层”这一研究问题；BPDD 的未来层 softmin 教师、better-only 可靠性门控、stock assignment 复用和训练期边界均由本文独立设计。它消费 AP-FDR 的逐边分布，只在训练期工作且不增加推理分支；BPDD-only 不是合法模型行。
 - FIA 是面向高分辨率小目标表征的推理期增强模块。fresh P3-only FIA-only 在 canonical val baseline 上获得 `+0.7946 pp` 的非严格配对算术增益；FDR+FIA 与三模块结果继续作为不同拓扑、不同证据等级的兼容性观察。
-- AP-FDR 参考固定版本 D-FINE 的离散边界表示、FGL、Integral 与非均匀投影公式。本文不主张首次发明这些基础算子，原创主张落在上述 RT-DETR 专用结构、监督合同与公平实验设计；BPDD 的具体算法构造和实现则作为本文独立原创贡献。

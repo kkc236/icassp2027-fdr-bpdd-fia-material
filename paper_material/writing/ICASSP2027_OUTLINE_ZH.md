@@ -2,11 +2,11 @@
 
 ## 论文主线
 
-建议主线为“D-FINE 启发的定位问题—AP-FDR 独立重构—BPDD 原创优化—高分辨率特征增强”。受 D-FINE 启发，本文首先提出面向 RT-DETR-L 的 AP-FDR，以 localization-only 结构、匹配一致监督和公平初始化合同建立细粒度定位；继而提出纯粹由本文机制推导的 BPDD，并以 FIA 补充高分辨率表征。
+建议主线为“AP-FDR 架构保持型定位—BPDD 原创优化—FIA 高分辨率增强”。本文首先面向 stock RT-DETR-L 提出 AP-FDR，以 localization-only 路径、stock-head-informed preliminary geometry、normal/DN 匹配一致监督和隔离初始化建立细粒度定位；其边界分布基础构件受 D-FINE 启发并明确归因。继而提出纯粹由本文机制推导的 BPDD，并以 FIA 补充高分辨率表征。
 
 ## 贡献组织
 
-1. **架构保持型分布定位创新**：受 D-FINE 启发，提出 AP-FDR；在保留 RT-DETR-L 分类、查询选择、Decoder 主体、stock matching 与后处理合同的同时，构建 stock-head-informed preliminary 分支、normal/DN 匹配一致的逐边分布监督和隔离初始化机制。基础分布算子归于 D-FINE，AP-FDR 的结构与监督组织作为本文第一项创新。
+1. **架构保持型分布定位创新**：提出 AP-FDR；在保留 RT-DETR-L 分类、查询选择、Decoder 主体、stock matching 与后处理合同的同时，构建 stock-head-informed preliminary 分支、normal/DN 匹配一致的逐边分布监督和隔离初始化机制。基础分布构件受 D-FINE 启发并归于参考工作，AP-FDR 的 RT-DETR 专用结构与监督组织作为本文第一项创新。
 2. **原创跨层优化算法**：BPDD 是由本文独立提出并实现的原创算法。它不采用 GO-LSD 的固定最终层教师或 DDF，而是通过未来层 softmin 混合教师、better-only 逐边门控和 stock assignment 复用渐进改善定位监督，且不增加推理分支。
 3. **高分辨率增强**：集成 FIA，并用 fresh FIA-only P3-only 的 val 正增益以及 FDR+FIA、完整三模块的补充结果说明其有效性与组合兼容性；不同拓扑和证据等级分别报告。
 
@@ -20,7 +20,7 @@
 
 ### 2. Related Work
 
-覆盖 transformer detector、分布式框回归、蒸馏和小目标特征增强；明确写“受 D-FINE 启发”，说明 AP-FDR 参考其离散边界表示、FGL 与 Integral 基础公式，同时把讨论重点放在本文的架构保持、匹配一致和 normal/DN 统一监督。随后将 GO-LSD 作为 BPDD 的最接近相关工作，先承认它启发跨层定位问题，再用教师来源、可靠性门控、匹配合同、查询范围和损失形式说明 BPDD 的独立算法构造。把 ICASSP 2026 ResBiDet/VARDet 作为最近的同会、同任务工作：ResBiDet 用低分辨率粗分支引导高分辨率精分支，VARDet 用 visual autoregressive multi-scale prediction 与 CLIP-guided semantics；本文聚焦 AP-FDR 定位分布、训练期 BPDD 和 640 输入下的 FIA 表征增强。IJCAI 2025 RAFDE 作为 640 输入的近邻强方法，代表区域自适应融合与边界增强下采样路线。相关工作只比较问题与设计路径，不把不同协议的绝对数值写成公平优劣。
+覆盖 transformer detector、分布式框回归、蒸馏和小目标特征增强；用一句话明确 AP-FDR 的边界分布基础构件“受 D-FINE 启发”，随后把讨论重点放在本文的架构保持、stock-head preliminary geometry、匹配一致和 normal/DN 统一监督。将 GO-LSD 作为 BPDD 的最接近相关工作，先承认它启发跨层定位问题，再用教师来源、可靠性门控、匹配合同、查询范围和损失形式说明 BPDD 的独立算法构造。把 ICASSP 2026 ResBiDet/VARDet 作为最近的同会、同任务工作：ResBiDet 用低分辨率粗分支引导高分辨率精分支，VARDet 用 visual autoregressive multi-scale prediction 与 CLIP-guided semantics；本文聚焦 AP-FDR 定位分布、训练期 BPDD 和 640 输入下的 FIA 表征增强。IJCAI 2025 RAFDE 作为 640 输入的近邻强方法，代表区域自适应融合与边界增强下采样路线。相关工作只比较问题与设计路径，不把不同协议的绝对数值写成公平优劣。
 
 ### 3. Method
 

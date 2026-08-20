@@ -1,10 +1,21 @@
 # AP-FDR：面向 RT-DETR-L 的架构保持型细粒度分布细化
 
-本文将所提出的 Architecture-Preserving Fine-grained Distribution Refinement 记为 **AP-FDR**；为与既有配置、checkpoint 和结果表保持一致，后文仍沿用简称 **FDR**。受 D-FINE 启发，我们把“以逐边概率分布表达定位不确定性”作为出发点，但没有复现其完整 detector。AP-FDR 面向 Ultralytics RT-DETR-L 独立重构定位路径，贡献对象是架构保持、stock-head-informed preliminary geometry、匹配一致和 normal/DN 双路径监督设计。
+本文将所提出的 Architecture-Preserving Fine-grained Distribution Refinement 记为 **AP-FDR**；为与既有配置、checkpoint 和结果表保持一致，后文仍沿用简称 **FDR**。AP-FDR 的贡献不在于重新命名分布回归基础算子，而在于将其重构为与 stock RT-DETR-L 检测合同兼容的定位系统。
 
-## 从启发到独立重构
+## 本文原创设计
 
-D-FINE 提供的是分布化定位的基础观察与数学构件；本文进一步提出的问题是：在不替换 stock RT-DETR-L 分类、查询选择、Decoder 主体、Hungarian matching 与后处理合同的前提下，能否把这些构件组织成可独立验证的定位模块？AP-FDR 的答案不是简单复制一个 D-FINE head，而是建立四项相互约束的 RT-DETR 专用设计：定位分支隔离、从 stock 框头继承的 preliminary reference、normal/DN assignment-consistent supervision，以及不改变公共随机状态的初始化合同。因此，AP-FDR 的原创性来自这套结构与监督组合；D-FINE 已公开的离散分布、FGL、Integral 和非均匀投影继续明确归属于参考工作。
+AP-FDR 面向 Ultralytics RT-DETR-L 提出四项相互约束、共同定义方法身份的设计：
+
+1. **架构保持型定位路径**：只改造 localization branch，保留 stock 分类头、查询选择、六层 Decoder attention/FFN、Hungarian matching 与后处理合同；同时不引入 LQE、DDF、GO-LSD 或 Decoder widening，使定位改造的因果边界清晰。
+2. **stock-head-informed preliminary geometry**：从 stock 第一层框头复制 preliminary head，以既有回归几何初始化六层共享参考框，而不是另外引入随机初始化的粗框分支。
+3. **normal/DN 匹配一致监督**：FGL、preliminary-box L1/GIoU 与连续框损失沿用 stock criterion 已产生的逐层 assignment，不增加第二套 matcher，并把同一合同显式扩展到 normal 与 denoising 两条路径。
+4. **隔离初始化与公平比较合同**：新增分布头使用私有 RNG，避免改变公共参数初始化、数据顺序和后续训练随机状态。
+
+这四项结构与监督设计是本文对 AP-FDR 的原创主张，也是内部单因素消融需要验证的对象。
+
+## 基础构件来源
+
+受 D-FINE 启发，AP-FDR 基于固定 commit `7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6` 已公开的边界分布基础构件。生产实现沿用 `weighting_function`、`Integral`、`translate_gt`、`bbox2distance`、`distance2bbox` 与 `unimodal_distribution_focal_loss` 的数学行为，并固定相应的 33-bin 表示和 FGL 设置。逐边离散表示、非均匀投影、Integral、相邻 bin FGL 与累计分布细化不作为本文原创点；D-FINE 的完整 detector、LQE、DDF、GO-LSD 和 Decoder widening 没有进入 AP-FDR。
 
 ## 问题与模块位置
 
@@ -32,7 +43,7 @@ d_l=\operatorname{Integral}(z_l),\qquad
 b_l=\operatorname{Decode}(b^{pre},d_l).
 \]
 
-`Integral` 对每条边的 33-bin softmax 使用参考 D-FINE 固定公式实现的非均匀投影值求期望，再由 `distance2bbox` 相对 `b^{pre}` 解码。层间框参考和查询残差在训练时按实现停止梯度，避免改变 stock 解码器层的梯度合同。`cumulative=false` 配置仅用于独立训练消融，不能用完整模型权重临时关闭开关来替代消融实验。
+`Integral` 对每条边的 33-bin softmax 使用固定的非均匀投影值求期望，再由 `distance2bbox` 相对 `b^{pre}` 解码。层间框参考和查询残差在训练时按实现停止梯度，避免改变 stock 解码器层的梯度合同。`cumulative=false` 配置仅用于独立训练消融，不能用完整模型权重临时关闭开关来替代消融实验。
 
 FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两项交叉熵，并用停止梯度的匹配框 IoU 加权：
 
@@ -48,31 +59,6 @@ FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两
 \]
 
 并与 stock VFL、L1、GIoU、辅助及去噪损失共同优化。
-
-## AP-FDR 的独立设计
-
-相对于直接把一套完整分布检测器替换进 RT-DETR，AP-FDR 包含四项相互约束、共同定义其方法身份的设计：
-
-1. **架构保持型定位改造**：只改造 box path，保留分类、查询选择、Decoder 主体、匹配与后处理合同；
-2. **定位分支解耦**：不引入 LQE、DDF、GO-LSD 或 Decoder widening，使 FDR 的因果边界保持清晰；
-3. **匹配一致监督**：FGL 和 preliminary-box 损失复用 stock criterion 已产生的 normal/DN 匹配，不重复分配；
-4. **公平初始化合同**：preliminary head 继承 stock 框头，新增分布头使用私有 RNG，避免污染公共参数和数据顺序随机状态。
-
-这四点共同定义本文的 AP-FDR。33-bin 表示、非均匀 Integral、相邻 bin 软标签与 FGL 基础形式只作为被参考的数学构件，不单独计作本文原创。
-
-## 与参考方案的差异边界
-
-| 维度 | D-FINE 完整检测框架 | 本文 AP-FDR |
-|---|---|---|
-| 改造范围 | 围绕分布定位构建完整 detector，并结合 GO-LSD 等组件 | 仅改造 stock RT-DETR-L localization branch |
-| 分类与 Decoder | 包含自身的分类质量与 Decoder 设计 | 保留 stock 分类头、查询选择、六层 Decoder attention/FFN |
-| preliminary 分支 | 独立定义 preliminary box head | 从 stock 第一层框头复制，保留原始几何初始化 |
-| 匹配关系 | 使用其原生 criterion 与输出组织 | FGL、pre-box 与连续框监督复用 stock 逐层 assignment |
-| normal/DN 合同 | 在其原生训练框架内处理 | 显式映射到 Ultralytics normal/DN 两条损失路径 |
-| 蒸馏边界 | 完整方法包含 GO-LSD/DDF 相关监督 | AP-FDR 本身不含蒸馏；本文另行提出 BPDD |
-| 可比性控制 | 原框架训练合同 | 新增 head 私有 RNG，不改变公共初始化与数据随机序列 |
-
-正文不需要展开这张表的全部工程细节，但应至少写清前三项方法差异；完整表适合放补充材料或 rebuttal。
 
 ## 训练与推理
 
@@ -91,6 +77,6 @@ FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两
 
 ## 主张边界
 
-允许表述：受 D-FINE 启发，本文提出 AP-FDR，一种面向 RT-DETR-L 的架构保持型细粒度分布细化方法。它参考已有逐边分布和 FGL 基础公式，但通过 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督以及公平初始化合同完成独立重构。
+允许表述：本文提出 AP-FDR，一种面向 RT-DETR-L 的架构保持型细粒度分布细化方法；其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督与隔离初始化构成本文原创设计。受 D-FINE 启发的边界分布基础构件按上述来源边界明确归因。
 
 禁止表述：不得声称本文首次发明离散边界分布、FGL、Integral、相邻 bin 软标签或非均匀 weighting；不得把可加载消融 YAML 当作已完成的消融结果；不得把 `+7.055 pp` 拆分归因给尚未独立训练验证的任一内部开关；不得在没有实测时宣称零开销、特定延迟或特定参数增幅。
