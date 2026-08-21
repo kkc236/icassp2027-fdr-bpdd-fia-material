@@ -69,7 +69,9 @@ def _load_json(path: Path) -> dict:
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    # Evidence hashes bind the canonical bytes stored by Git.  Normalize the
+    # Windows checkout's CRLF conversion so the assertion is cross-platform.
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def test_equal_raw_evidence_is_present_and_byte_bound() -> None:
