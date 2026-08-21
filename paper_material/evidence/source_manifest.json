@@ -26,6 +26,23 @@
       "checkpoint_bytes": 67288254,
       "best_epoch": 91,
       "training_epochs_completed": 100,
+      "release": {
+        "repository": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material",
+        "release_id": 374471972,
+        "tag": "equal-seed0-formal100-20260821",
+        "target_commit": "9a6bb67131804ecc3d1729ca038b254caba4f28e",
+        "published_at": "2026-08-21T14:46:00Z",
+        "prerelease": true,
+        "url": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/releases/tag/equal-seed0-formal100-20260821",
+        "archive": {
+          "asset_id": 523859760,
+          "name": "equal-seed0-formal100-20260821.tar.gz",
+          "size_bytes": 124713872,
+          "sha256": "6f7805e66a2f847332a8f0591cd04eb674cda7a18dc8d300865c5e68d3468086",
+          "url": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/releases/download/equal-seed0-formal100-20260821/equal-seed0-formal100-20260821.tar.gz",
+          "contents": "best.pt, last.pt, results.csv, args.yaml, training log, launch authority, runtime config, completion manifest, exact val/test JSON, SHA-256 manifest"
+        }
+      },
       "artifacts": [
         {
           "path": "paper_material/evidence/equal_formal100_20260821/args.yaml",

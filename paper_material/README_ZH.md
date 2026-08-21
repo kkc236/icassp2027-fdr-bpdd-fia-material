@@ -41,6 +41,7 @@
 ## 机器可读材料
 
 - [EQuAL 机器汇总](results/equal_results.json)
+- [EQuAL 私密 Release（best/last、日志、authority、exact val/test）](https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/releases/tag/equal-seed0-formal100-20260821)
 - [EQuAL val exact JSON](evidence/equal_formal100_20260821/equal_val.json)
 - [EQuAL test exact JSON](evidence/equal_formal100_20260821/equal_test.json)
 - [EQuAL val/test 逐类 CSV](results/equal_class_results.csv)

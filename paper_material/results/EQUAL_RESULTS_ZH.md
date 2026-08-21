@@ -43,6 +43,7 @@ EQuAL standalone 判定为 `pass`，可以作为新的第一定位方法候选�
 
 ## 5. 证据入口
 
+- [私密 GitHub Release（含 best/last、训练日志和完整证据包）](https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/releases/tag/equal-seed0-formal100-20260821)
 - [机器汇总](equal_results.json)
 - [val exact JSON](../evidence/equal_formal100_20260821/equal_val.json)
 - [test exact JSON](../evidence/equal_formal100_20260821/equal_test.json)
