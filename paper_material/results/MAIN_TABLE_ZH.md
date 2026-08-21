@@ -12,6 +12,17 @@
 
 证据等级：A/B 为 `strict`；C 为 `cross_authority_exact`；D 为 `best_checkpoint_independent_val_exact`；E 为 `user_supplied_text_report_4dp`。D 行及其 `+0.528 pp` 不升级为严格配对；E 行文本记录与归档终端截图逐项吻合，截图只是三位小数显示。checkpoint 内的 `0.29618/+0.3922 pp` 仍作为另一条补充正向记录，不替换本行四位小数结果。
 
+## EQuAL replacement candidate
+
+EQuAL 是对 B 行 AP-FDR 训练组织的最新整体重构。其 standalone exact 结果已经通过采用门槛，但 EQuAL+BPDD/FIA 尚未重训，所以暂不把 A–E 表的 B–E 行改名或拼接成新的组合序列。
+
+| split | 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 相对登记 AP-FDR |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| val | RT-DETR-L + EQuAL | 0.594055 | 0.488666 | 0.536231 | 0.490477 | **0.301026** | **0.294378** | AP75 +0.850 pp；mAP +0.472 pp |
+| test | RT-DETR-L + EQuAL | 0.521576 | 0.428839 | 0.470683 | 0.406246 | **0.235363** | **0.234610** | AP75 +0.646 pp；mAP +0.661 pp |
+
+以上差值为同 split 注册 authority 的非严格算术比较。EQuAL 完整数据见 [EQuAL Formal100 与统一 val/test](EQUAL_RESULTS_ZH.md)。
+
 ## 新 BPDD 严格配对结果
 
 2026-08-19 已在源码提交 `848f00cb7a40907e3884885ecd5bbd474450758a`、同一 protocol/initial state、`seed=0` 和 100 epochs 下完成 FDR/FDR+BPDD 配对训练，并对两个 `best.pt` 完成统一 val/test 独立精确复评。

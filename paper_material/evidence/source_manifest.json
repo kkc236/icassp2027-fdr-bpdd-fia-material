@@ -6,6 +6,72 @@
     "git_blob_oid": "Git object ID naming the exact blob payload."
   },
   "sources": {
+    "equal_formal100_best_exact_20260821": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_branch": "codex/ap-fdr-integrated-redesign",
+      "source_commit": "fca7763679b6e10ed68f98971a362a054ecd4853",
+      "paper_alias_commit": "c331c36619739a0e90bcff56b41baca11dd36705",
+      "paper_method": "EQuAL",
+      "raw_runtime_method": "ACE-FDR",
+      "runtime_run_name": "formal-seed0-ace-fdr-v1",
+      "alias_binding": {
+        "path": "paper_material/evidence/equal_formal100_20260821/equal-runtime-alias.json",
+        "sha256": "1059f7db3214ef8e51a6c557ee2b7b10a304a214deab46e2eb0edb646ebc801f",
+        "canonical_method": "equal",
+        "runtime_method": "ace_fdr",
+        "yaml_semantics_equal": true
+      },
+      "checkpoint_kind": "best.pt",
+      "checkpoint_sha256": "06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca",
+      "checkpoint_bytes": 67288254,
+      "best_epoch": 91,
+      "training_epochs_completed": 100,
+      "artifacts": [
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/args.yaml",
+          "sha256": "42f22ddf2d4c85a8232f12ed5d71c53b053f4abc76f07e3b142bd46237b8781f",
+          "record_type": "training_arguments"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/results.csv",
+          "sha256": "8c9939380832aaf31ae0c0ae8a441d06aa8f2e759208c7c66bc8282e831a531d",
+          "record_type": "formal100_training_log"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/completion-manifest.json",
+          "sha256": "c044ae6a45aec29d809f2c7e22e1c6ff4ac7c85899c14eed9e6c92217e659106",
+          "record_type": "evaluation_completion_manifest"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/equal_val.json",
+          "sha256": "3990a5ee856407f5007f044988ec1c1fdc99c9f2783fcf5c0de48e6a8145e7a4",
+          "record_type": "best_checkpoint_exact_val_evaluation"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/equal_test.json",
+          "sha256": "5b34545d662255b852a63a8e59104976d7d686c76df20328a379548a99d1452b",
+          "record_type": "same_best_checkpoint_exact_test_evaluation"
+        }
+      ],
+      "evaluation_protocol": {
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "prediction_passes_per_split": 1
+      },
+      "evidence_level": "best_checkpoint_independent_val_and_test_exact",
+      "strict_paired": false,
+      "standalone_adoption_gate": "pass",
+      "combination_retraining_required": true,
+      "old_ap_fdr_combination_relabel_allowed": false,
+      "transformation": "import byte-exact training/evaluation records and bind immutable ACE-FDR runtime identifiers to the paper-facing EQuAL alias"
+    },
     "strict_control_val": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_commit": "f6fe1365171eceef2ee327e589b14718f3773486",

@@ -1,5 +1,7 @@
 # ICASSP 2027 写作提纲
 
+> **2026-08-21 方法代际状态**：EQuAL standalone exact val/test 已通过替换门槛，计划取代 AP-FDR 成为第一定位方法。下文 AP-FDR 组合叙事仍对应已有 BPDD/FIA 权重和结果，不能直接改名；先完成 EQuAL+BPDD，再完成 EQuAL+BPDD+FIA，随后一次性把 Method、贡献条目和主表切换到 EQuAL。EQuAL 的当前方法与结果分别见 [`EQUAL_ZH.md`](../methods/EQUAL_ZH.md) 和 [`EQUAL_RESULTS_ZH.md`](../results/EQUAL_RESULTS_ZH.md)。
+
 ## 论文主线
 
 建议主线为“边界不确定性—早期层弱监督—高分辨率表征不足”三个相互关联的问题，而不是“AP-FDR、BPDD、FIA 三个模块”的并列清单。本文首先面向 stock RT-DETR-L 提出 AP-FDR，以 localization-only 路径、stock-head-informed preliminary geometry、normal/DN 匹配一致监督和隔离初始化建立细粒度定位；其边界分布基础构件受 D-FINE 启发并明确归因。继而针对 AP-FDR 产生的逐层分布提出 BPDD，并以 FIA 补充 P3 高分辨率表征。

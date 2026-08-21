@@ -1,5 +1,7 @@
 # AP-FDR 内部双消融协议
 
+> **状态更新（2026-08-21）**：本协议属于 EQuAL 重构前的 AP-FDR 内部诊断。当前论文候选 EQuAL 已统一采用 `preliminary_box=false`、`supervise_dn_fdr=false` 和 `edge_adaptive_fgl=true`，并通过 standalone exact val/test 门槛。旧消融继续保留用于解释设计演化，但不能把单个关闭项的结果冒充为 EQuAL 效果；EQuAL 的正式结果以 [`EQUAL_RESULTS_ZH.md`](../results/EQUAL_RESULTS_ZH.md) 为准。
+
 ## 目的
 
 本轮只补两条对投稿影响最大的 AP-FDR 内部消融，用来回答：

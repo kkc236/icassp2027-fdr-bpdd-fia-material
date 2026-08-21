@@ -80,6 +80,11 @@ def _load_required_json(relative_path):
     return json.loads(_read_required_text(relative_path))
 
 
+def _canonical_git_text_sha256(path):
+    """Hash text as stored in Git, independent of Windows checkout CRLF."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def test_required_material_files_exist():
     missing = [
         str((MATERIAL_ROOT / relative_path).relative_to(REPOSITORY_ROOT))
@@ -322,7 +327,7 @@ def test_fia_only_p3_raw_artifacts_and_per_class_rows_are_reproducible():
     for filename, expected_sha256 in expected_hashes.items():
         path = artifact_root / filename
         assert path.is_file()
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected_sha256
+        assert _canonical_git_text_sha256(path) == expected_sha256
         if filename.endswith(".json") and filename.startswith("fia-only"):
             raw[filename] = json.loads(path.read_text(encoding="utf-8"))
 
@@ -828,7 +833,7 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
         "paper_material/"
     )
     raw = json.loads(raw_path.read_text(encoding="utf-8"))
-    assert hashlib.sha256(raw_path.read_bytes()).hexdigest() == complexity["source"][
+    assert _canonical_git_text_sha256(raw_path) == complexity["source"][
         "raw_artifact_sha256"
     ]
     assert raw["status"] == "completed_unified_measurement"
@@ -863,7 +868,7 @@ def test_bpdd_strict_pair_and_unified_complexity_materials_are_nonfabricated():
     source = manifest["sources"]["generated_unified_complexity_contract"]
     assert source["artifact"] == "paper_material/results/complexity_results.json"
     artifact = REPOSITORY_ROOT / source["artifact"]
-    assert hashlib.sha256(artifact.read_bytes()).hexdigest() == source["sha256"]
+    assert _canonical_git_text_sha256(artifact) == source["sha256"]
     raw_source = manifest["sources"]["unified_complexity_20260820"]
     assert raw_source["artifact"] == complexity["source"]["raw_artifact"]
     assert raw_source["sha256"] == complexity["source"]["raw_artifact_sha256"]

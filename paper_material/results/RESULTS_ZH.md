@@ -2,6 +2,19 @@
 
 本页是论文结果的统一入口。正式核心结果、FIA standalone 消融和三模块 P3-only 观察按证据等级分开，val/test 不混写。
 
+## 0. EQuAL 最新定位方法结果（2026-08-21）
+
+EQuAL seed0 Formal100 已连续完成 100 epochs。使用同一个 best epoch 91 checkpoint（SHA-256 `06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca`）完成一次统一 val/test exact 复评：
+
+| split | P | R | F1 | AP50 | AP75 | mAP50–95 | ΔAP75 vs AP-FDR | ΔmAP vs AP-FDR |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| val | 0.594055 | 0.488666 | 0.536231 | 0.490477 | **0.301026** | **0.294378** | **+0.850 pp** | **+0.472 pp** |
+| test | 0.521576 | 0.428839 | 0.470683 | 0.406246 | **0.235363** | **0.234610** | **+0.646 pp** | **+0.661 pp** |
+
+两个 split 的 AP50、AP75 和 mAP50–95 均正向，EQuAL standalone 采用门槛通过；Recall 略降，不能写成全部指标全面提高。差值以材料仓已登记 AP-FDR authority 为参照，属于同 split、同 evaluator 协议的非严格算术比较，不是 fresh strict pair。
+
+现有 A–E 表及 BPDD/FIA 组合仍属于 AP-FDR 代际，不能改名为 EQuAL 结果。完整系统状态为 `combination_retraining_pending`：先重训 **EQuAL + BPDD**，通过后再重训 **EQuAL + BPDD + FIA**。完整精确数值和逐类结果见 [EQuAL 专页](EQUAL_RESULTS_ZH.md)。
+
 ## 1. 正式核心结果
 
 论文 A–E 主消融表以 [val 主消融表](MAIN_TABLE_ZH.md) 为准。E 行采用与终端截图对应的四位小数文本记录：`P=0.5693、R=0.4991、AP50=0.4898、AP75=0.3042、mAP=0.2961、+0.384 pp`。checkpoint 的 `0.29618/+0.3922 pp` 是另一条补充正向记录，不用于替换该行 P/R。
@@ -107,7 +120,8 @@ fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence
 
 ## 5. 论文可用结论
 
-- FDR 是当前最稳定、证据等级最高的主要增益来源。
+- EQuAL 已在 standalone val/test 的 mAP 与 AP75 上同时超过登记 AP-FDR，成为当前优先定位方案；组合链尚未重训，因此最终论文系统仍保留“待组合验证”状态。
+- 原 AP-FDR 仍是现有 BPDD/FIA 组合证据的定位底座，在 EQuAL 组合完成前不能从 A–E 表删除或把旧权重改名。
 - AP-FDR 是论文的第一项方法创新，其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督和公平初始化合同共同取得相对 baseline 的大幅定位增益。BPDD 是第二项跨层优化创新，在 AP-FDR 上继续提供小幅稳定正增益，并且只在训练期工作、不增加推理分支。严格 best.pt 配对复评确认 val/test mAP50–95 分别 `+0.239/+0.283 pp`，AP75 分别 `+0.072/+0.276 pp`；历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
 - fresh P3-only FIA-only 在 val mAP50–95 上相对 canonical baseline `0.21911` 提高 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两个差值均限于各自 split。旧 FIA-only cascading 负向结果已 superseded。FDR+FIA 和完整三模块继续作为不同 topology/authority 下的正向兼容性观察。
 - 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。

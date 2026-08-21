@@ -27,6 +27,14 @@ standalone `best.pt` 的独立 val/test 复评显式固定：
 - 同一 VisDrone YAML、10 类映射与 Ultralytics 8.4.90；
 - checkpoint 统一选择 `best.pt`。
 
+## EQuAL Formal100 与采用门槛
+
+EQuAL 的 raw runtime 标识为 `ACE-FDR/ace_fdr`，论文名称通过 alias 绑定为 EQuAL。正式 run 使用源码 `fca7763679b6e10ed68f98971a362a054ecd4853`、`seed=0`、`pretrained=False`、MuSGD、640、batch 8 连续完成 100 epochs；best epoch 为 91，checkpoint SHA-256 为 `06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca`。
+
+同一个 `best.pt` 按本页统一 evaluator 各执行一次 val 和 test，禁止依据 test 重新选择 checkpoint。采用门槛为：val mAP 严格高于登记 AP-FDR、val AP75 不退化，并用 test mAP/AP75 检查方向。当前三项门槛均通过。该比较不是同一新源码提交下同时重跑的 fresh strict pair，因此只登记为同 split、同 evaluator 协议的非严格算术比较。
+
+EQuAL 改变了分布锚点和监督组织。现有 AP-FDR+BPDD、AP-FDR+FIA 及 AP-FDR+BPDD+FIA checkpoint 不能改名复用；组合实验必须从 EQuAL 配置重新训练。最高优先级为 `EQuAL + BPDD`，通过后再生成完整 `EQuAL + BPDD + FIA` 结果。
+
 fresh P3-only FIA-only 与既有 cascading FDR+FIA 的 exact val/test 均按此协议对各自 `best.pt` 独立得到。val 为 548 images / 38,759 instances；test 为 1,610 images / 75,102 instances。两个 split 不混算；只报告各 split 的原始指标和明确给定的同 split 参照差值，不从 val/test 之间推导涨点。standalone 与既有对照之间的算术差均不升级为 strict paired 因果效应。
 
 ## FIA 证据合同

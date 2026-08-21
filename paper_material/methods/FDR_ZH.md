@@ -1,5 +1,7 @@
 # AP-FDR：面向 RT-DETR-L 的架构保持型细粒度分布细化
 
+> **方法代际说明（2026-08-21）**：本页记录现有 BPDD/FIA 组合 checkpoint 所依赖的 AP-FDR。最新定位候选已重构为 [EQuAL](EQUAL_ZH.md)，但 EQuAL 组合尚未重训，因此本页和旧 A–E 结果继续保留，不能直接改名。
+
 本文将所提出的 Architecture-Preserving Fine-grained Distribution Refinement 记为 **AP-FDR**；为与既有配置、checkpoint 和结果表保持一致，后文仍沿用简称 **FDR**。AP-FDR 解决的不是“如何把一个现成检测器嵌入 RT-DETR”，而是如何在保持 stock RT-DETR-L 检测合同的条件下，为密集小目标建立可训练、可比较的逐边分布定位路径。
 
 ## 技术问题
