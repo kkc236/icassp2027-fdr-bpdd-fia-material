@@ -1,5 +1,7 @@
 # ICASSP 2027 论文材料入口
 
+> **当前路线已于 2026-08-22 切换。** 论文主实验改为官方 D-FINE-S / VisDrone 路线并统一重跑。下方 EQuAL、AP-FDR、Ultralytics RT-DETR-L 及其组合数值只保留为历史审计材料，均不得继续作为新稿主结果引用。最新有效范围、保留项和替换顺序见 [当前重跑状态](CURRENT_RERUN_STATUS_ZH.md)。
+
 本目录汇总面向 VisDrone 密集小目标的三层方法链。当前定位方法候选已由 AP-FDR 重构为 EQuAL；BPDD 改善早期 Decoder 层的分布监督，FIA 补充 P3 高分辨率表征。EQuAL standalone 已完成 Formal100 和 exact val/test，但新组合仍待重训，因此旧 AP-FDR 组合结果与新 EQuAL 结果严格分代保存。材料按“问题—设计—证据”组织；val/test、方法代际、P3-only/cascading 以及 strict/non-paired 不得混写。
 
 ## 阅读顺序
