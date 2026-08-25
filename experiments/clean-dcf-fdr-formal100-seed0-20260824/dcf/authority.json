@@ -1,0 +1,68 @@
+{
+  "config": {
+    "path": "/data/uav/source/uav-detection-baselines-ec4e2a46/configs/rtdetr-l-dcf-fdr.yaml",
+    "sha256": "D5599330D641F202C61422A09B95C6003AEE4D2A2600C124EB11C8B6594F3EDD"
+  },
+  "dataset": {
+    "file_count": 14038,
+    "sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB"
+  },
+  "format_version": 1,
+  "initial_state": {
+    "path": "/data/uav/protocols/fdr-d97e1eb7/initial-state.pt",
+    "sha256": "51AAB2EB3FB7D123501C69C7B8DC90FF3EA0B9344A108EDEEF2C7D6DCDBB742D"
+  },
+  "method": "dcf_fdr",
+  "settings": {
+    "amp": true,
+    "batch": 8,
+    "cache": false,
+    "close_mosaic": 10,
+    "copy_paste": 0.0,
+    "cos_lr": false,
+    "cutmix": 0.0,
+    "data": "/data/uav/runs/dcf-fdr-ec4e2a46-dcf/authority/data/formal-data.yaml",
+    "degrees": 0.0,
+    "deterministic": true,
+    "device": "0",
+    "epochs": 100,
+    "exist_ok": false,
+    "fliplr": 0.5,
+    "flipud": 0.0,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "imgsz": 640,
+    "lr0": 0.01,
+    "lrf": 0.01,
+    "max_det": 300,
+    "mixup": 0.0,
+    "model": "/data/uav/source/uav-detection-baselines-ec4e2a46/configs/rtdetr-l-dcf-fdr.yaml",
+    "momentum": 0.937,
+    "mosaic": 1.0,
+    "name": "formal-seed0-dcf-fdr-v1",
+    "nbs": 64,
+    "nms": false,
+    "optimizer": "MuSGD",
+    "perspective": 0.0,
+    "plots": true,
+    "pretrained": false,
+    "project": "/data/uav/runs/dcf-fdr-ec4e2a46-dcf",
+    "save": true,
+    "save_period": -1,
+    "scale": 0.5,
+    "seed": 0,
+    "shear": 0.0,
+    "translate": 0.1,
+    "val": true,
+    "warmup_bias_lr": 0.0,
+    "warmup_epochs": 3.0,
+    "warmup_momentum": 0.8,
+    "weight_decay": 0.0005,
+    "workers": 8
+  },
+  "source": {
+    "git_commit": "ec4e2a463db7a53f7c4c9c4bc9edabdf5c39f40b",
+    "tree_sha256": "594450836BD46900E1558A0EF3E8127E7F3448BA99D77A9DC1379EB987586DF8"
+  }
+}

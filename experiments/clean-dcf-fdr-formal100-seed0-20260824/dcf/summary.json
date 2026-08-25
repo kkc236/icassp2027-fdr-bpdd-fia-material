@@ -1,0 +1,48 @@
+{
+  "arm": "dcf",
+  "best_by_map50_95": {
+    "epoch": 89,
+    "metrics/mAP50(B)": 0.49258,
+    "metrics/mAP50-95(B)": 0.29661,
+    "metrics/precision(B)": 0.58646,
+    "metrics/recall(B)": 0.4959
+  },
+  "completed_epochs": 100,
+  "latest": {
+    "epoch": 100,
+    "metrics/mAP50(B)": 0.49094,
+    "metrics/mAP50-95(B)": 0.29388,
+    "metrics/precision(B)": 0.58183,
+    "metrics/recall(B)": 0.49878
+  },
+  "metric_peaks": {
+    "metrics/mAP50(B)": {
+      "epoch": 91,
+      "metrics/mAP50(B)": 0.49303,
+      "metrics/mAP50-95(B)": 0.29601,
+      "metrics/precision(B)": 0.58439,
+      "metrics/recall(B)": 0.49459
+    },
+    "metrics/mAP50-95(B)": {
+      "epoch": 89,
+      "metrics/mAP50(B)": 0.49258,
+      "metrics/mAP50-95(B)": 0.29661,
+      "metrics/precision(B)": 0.58646,
+      "metrics/recall(B)": 0.4959
+    },
+    "metrics/precision(B)": {
+      "epoch": 88,
+      "metrics/mAP50(B)": 0.49248,
+      "metrics/mAP50-95(B)": 0.29616,
+      "metrics/precision(B)": 0.59411,
+      "metrics/recall(B)": 0.49208
+    },
+    "metrics/recall(B)": {
+      "epoch": 97,
+      "metrics/mAP50(B)": 0.49219,
+      "metrics/mAP50-95(B)": 0.29435,
+      "metrics/precision(B)": 0.58025,
+      "metrics/recall(B)": 0.49993
+    }
+  }
+}

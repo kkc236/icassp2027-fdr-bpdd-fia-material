@@ -1,0 +1,79 @@
+{
+  "artifacts": {
+    "RESULTS.md": {
+      "bytes": 456,
+      "sha256": "4a8836283960b2239a6099168d3505cc9bc0e71ff5b99c423ce193bac8144deb"
+    },
+    "aligned-epochs.csv": {
+      "bytes": 15832,
+      "sha256": "835a0378a1a5cb2fd1b38a93483f692d3390598f13a196d4471c54f61c289656"
+    },
+    "clean/args.yaml": {
+      "bytes": 1813,
+      "sha256": "04f7d091b3e272d4a8798344820bf58ecf5f942af16a1e8c98449ba2dcf40de1"
+    },
+    "clean/authority.json": {
+      "bytes": 1871,
+      "sha256": "a7391d07b377d32e5e09555b25702ffb82e31ca1d161acdac4db2af615f65496"
+    },
+    "clean/results.csv": {
+      "bytes": 16368,
+      "sha256": "e4e13c2ab06ffabbf05087d026819d0a92de6773304a8a8d580e21837db8c283"
+    },
+    "clean/summary.json": {
+      "bytes": 1233,
+      "sha256": "187a315445eb92ef0c77d7a3b996a601197cb39c719406b9db26e780777a1177"
+    },
+    "clean/train.log.gz": {
+      "bytes": 1444487,
+      "sha256": "e0c87dfde54051c4735f610fe6229b42c371ed4637c7f494dd8aeabc10db58ff"
+    },
+    "comparison.json": {
+      "bytes": 3000,
+      "sha256": "fe899d668f622cb3cdd8682244470d26851ed3dcfa14917435447e28f7551965"
+    },
+    "dcf/args.yaml": {
+      "bytes": 1867,
+      "sha256": "6a583f6184172e41034530409b84c128249af350fe36707c9f927b7a655acf61"
+    },
+    "dcf/authority.json": {
+      "bytes": 1859,
+      "sha256": "5678f67ed24ea4a6dde813e665d6f74d49161ac4a32b3e7adeccbd7d01dfd669"
+    },
+    "dcf/results.csv": {
+      "bytes": 16358,
+      "sha256": "8813725a0096d2cdb6c51badc7bbe6d8d06a8e28c3097833052f88e5d3fc6f9e"
+    },
+    "dcf/summary.json": {
+      "bytes": 1233,
+      "sha256": "a502baab9ea16ee971bf2125eb5fbaa43c77353ca7993bc778fa111b26b4c39b"
+    },
+    "dcf/train.log.gz": {
+      "bytes": 1454067,
+      "sha256": "aefad4b9eb0011f3fc09086fec996f11c7e823d6edd3246528e93ee3a1accde0"
+    }
+  },
+  "decision": "failed_negative",
+  "experiment": "clean_dcf_fdr_formal100_seed0",
+  "format_version": 1,
+  "initial_state_sha256": "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d",
+  "release_assets": {
+    "clean-fdr-seed0-formal100-best.pt": {
+      "bytes": 67288382,
+      "sha256": "87139a4afbb85690a2b0ec48f382f902655fb58e20ce8e90c995df3e1c236550"
+    },
+    "clean-fdr-seed0-formal100-last.pt": {
+      "bytes": 67288382,
+      "sha256": "8d22e2287bca66e8263908ca0dc427b2fc4418af3fe67bc4e4d4e99a39c3a220"
+    },
+    "dcf-fdr-seed0-formal100-best.pt": {
+      "bytes": 67324394,
+      "sha256": "2096a26d9dd38945f09df8bdaa39ca66dc8449f95a8d5fdc0731c1489d834a9e"
+    },
+    "dcf-fdr-seed0-formal100-last.pt": {
+      "bytes": 67324394,
+      "sha256": "eec6e43c783b4dcf62afd1465a358b403a9ff182b353347f5437f42ccc85bff1"
+    }
+  },
+  "source_commit": "ec4e2a463db7a53f7c4c9c4bc9edabdf5c39f40b"
+}
