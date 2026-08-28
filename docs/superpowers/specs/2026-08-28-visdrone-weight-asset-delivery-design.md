@@ -100,6 +100,32 @@ The handoff must make the following policy unambiguous:
 - Dry-run does not replace default-off tensor parity or the real-batch smoke
   test.
 
+## Cross-Server Comparison Gate
+
+"Can run on another server" and "can be compared directly with the historical
+run" are separate claims. Publish both the raw checkpoint SHA-256 and the
+canonical tensor fingerprints already defined by `src.fdr_protocol`.
+
+- `STRICT_HISTORICAL`: the downloaded file SHA-256 equals the historical
+  `51AAB2...` authority and the artifact passes `validate_fdr_initial_state`.
+  Only this state permits the new arms to inherit the old strict initialization
+  identity.
+- `TENSOR_EQUIVALENT_ONLY`: the raw file hash differs but every available
+  canonical tensor fingerprint matches a frozen historical fingerprint. This
+  supports a tensor-equivalence statement, not an exact historical-artifact
+  claim.
+- `STRICT_NEW_MATRIX`: the replacement file and canonical fingerprints are
+  identical across all newly trained arms, but historical identity is not
+  established. These arms are directly comparable with each other; old runs
+  remain historical references.
+- `NON_STRICT`: required hashes or fingerprints are absent, differ, or were
+  collected only after weights changed.
+
+Before publishing the replacement as the only route, search the active server
+for an exact `51AAB2...` copy and attempt deterministic reconstruction under the
+original source/environment authority. Never promote a reconstructed file unless
+its complete raw SHA-256 matches.
+
 ## Security and Publication Boundary
 
 - The release contains only model checkpoint bytes and a checksum manifest.
@@ -127,6 +153,8 @@ Completion requires fresh evidence for all of the following:
 
 - target server source file exists;
 - source SHA-256 and byte size recorded;
+- initial-state artifact passes `validate_fdr_initial_state` and its canonical
+  fingerprints are recorded;
 - GitHub API reports the expected asset name and size;
 - a fresh download matches the source SHA-256;
 - Markdown contains the real URL and full hash;
