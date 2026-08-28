@@ -31,8 +31,9 @@ BPDD/FIA 的最终组合尚未按新 FDR 身份重训，因此旧 AP-FDR 组合�
 8. [创新定位与对抗性审计](writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md)
 9. [图表规划](figures/FIGURE_PLAN_ZH.md)
 10. [冻结实验协议](experiments/PROTOCOL_ZH.md)
-11. [统一复杂度与实时性历史表](results/COMPLEXITY_ZH.md)
-12. [VisDrone 外部会议方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
+11. [VisDrone 最终组合实验交接](experiments/VISDRONE_FINAL_EXPERIMENT_HANDOFF_ZH.md)
+12. [统一复杂度与实时性历史表](results/COMPLEXITY_ZH.md)
+13. [VisDrone 外部会议方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
 
 ## 当前 FDR 结果口径
 

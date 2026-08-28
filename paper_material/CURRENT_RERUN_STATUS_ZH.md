@@ -88,6 +88,9 @@ Original FDR
 
 ## 后续执行顺序
 
+完整的跨服务器配置、镜像、哈希、四臂矩阵、统一评估与发布合同见
+[VisDrone 最终实验交接](experiments/VISDRONE_FINAL_EXPERIMENT_HANDOFF_ZH.md)。
+
 1. 固定 LRS-FDR + BPDD + FIA 的完整 VisDrone 组合配置；
 2. 以 Baseline / NA-FDR / 完整方法三组执行第二数据集；
 3. 对最终 VisDrone 组合和第二数据集 best checkpoint 使用同一声明协议复评；
