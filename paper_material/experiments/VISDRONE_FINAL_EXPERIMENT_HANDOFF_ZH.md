@@ -123,11 +123,11 @@ gh auth status --hostname github.com
 
 ## 2. 最终实验矩阵
 
-### 2.1 严格默认矩阵：四臂同提交
+### 2.1 严格默认矩阵：三臂训练 + 冻结控制参考
 
 | Variant ID | 方法 | Native alignment | LRS | BPDD | FIA | 主要对照 |
 |---|---|:---:|:---:|:---:|:---:|---|
-| `lrs_fdr` | LRS-FDR | ✓ | ✓ | × | × | 同身份控制臂 |
+| `lrs_fdr` | LRS-FDR | ✓ | ✓ | × | × | 已冻结的历史控制参考，不是本 launcher 的 arm |
 | `lrs_fdr_bpdd` | LRS-FDR+BPDD | ✓ | ✓ | ✓ | × | 相对 `lrs_fdr` 隔离 BPDD |
 | `lrs_fdr_fia` | LRS-FDR+FIA | ✓ | ✓ | × | ✓ | 相对 `lrs_fdr` 隔离 FIA |
 | `full` | LRS-FDR+BPDD+FIA | ✓ | ✓ | ✓ | ✓ | 最终投稿方法 |
@@ -149,9 +149,10 @@ gh auth status --hostname github.com
 2. `lrs_fdr_fia`；
 3. `full`。
 
-采用该方案前，必须证明最终组合源码在 BPDD/FIA 关闭时与冻结 LRS-FDR 的模型
-配置、共享参数初始化和预测输出一致。若 source commit、初始权重、数据签名或默认
-关闭输出不能绑定，必须回到四臂矩阵。
+采用该方案前，必须证明最终组合源码在 BPDD/FIA 关闭时与冻结 LRS-FDR 控制参考的
+模型配置、共享参数初始化和预测输出一致。若 control reference 的 source commit、
+初始权重、数据签名或默认关闭输出不能绑定，应按单独的 `scripts/train_lrs_fdr.py`
+接口重训控制；当前 pending run list 仍只有 g/h/i。
 
 ## 3. Task 0：建立最终同身份实现
 
@@ -187,7 +188,7 @@ LRS 身份文件，不能让旧 `rtdetr_fdr_bpdd*.py` 的默认行为静默改�
 - [ ] FIA 使用 P3-only 拓扑：FIA 读取层 21，下一条 P4 路径也读取原层 21，
   decoder 输入为 FIA P3 与原 P4/P5；
 - [ ] FIA 残差缩放继续零初始化并使用私有 RNG；
-- [ ] 四臂均使用同一 300-query、6-layer decoder 合同。
+- [ ] g/h/i 与冻结控制参考使用同一 300-query、6-layer decoder 合同。
 
 ### 统一启动器接口
 
@@ -228,7 +229,7 @@ evaluator/comparator（含 AP75、per-class、scale、identity/protocol checks�
 - [ ] 记录三个新 YAML 的 SHA-256；
 - [ ] 记录 initial-state SHA-256；
 - [ ] 记录 train/val/test annotation SHA-256；
-- [ ] 四臂使用同一个 initial-state 文件。
+- [ ] g/h/i 使用同一个 initial-state 文件；冻结控制参考沿用其既有 identity。
 
 ### 4.2 Default-off 与状态隔离
 
@@ -244,7 +245,7 @@ evaluator/comparator（含 AP75、per-class、scale、identity/protocol checks�
 ### 4.3 一批真实数据 smoke test
 
 - [ ] 使用真实 VisDrone batch 执行一次 FP32 前向/反向；
-- [ ] 四臂损失均有限；
+- [ ] g/h/i 三个待训练臂的损失均有限；冻结控制参考只绑定既有 authority；
 - [ ] LRS 统计存在且有限；
 - [ ] BPDD 臂含 `loss_bpdd`，非 BPDD 臂不含；
 - [ ] BPDD active-edge ratio 大于零；
@@ -389,8 +390,9 @@ manifest，传输后先运行 `sha256sum -c MANIFEST.sha256`。完整 `pip freez
 | val | 548 images / 38,759 instances |
 | test local held-out | 1,610 images / 75,102 instances |
 
-三个新组合 YAML 会产生新的 SHA-256，这是正常现象；但每个 YAML 必须从同一个
-最终 commit 读取并写入各自 authority，不能在服务器上临时编辑。
+三个新组合 YAML 会产生新的 SHA-256，这是正常现象；但每个 YAML 必须从 release
+commit 读取并写入各自 authority，不能在服务器上临时编辑。冻结控制参考若需重训，
+使用 release 中 `scripts/train_lrs_fdr.py` 的独立接口和独立 authority。
 
 ### 5.4 目录变量与启动前检查
 
@@ -476,7 +478,8 @@ git show -s --format='%H %s' HEAD
 | Decoder | hidden_dim / queries / layers | `256` / `300` / `6` |
 
 VisDrone data YAML 将模型的 `nc` 统一覆盖为 `10`。源模型 YAML 中的模板 `nc=80`
-无需手动改写；必须保证四臂由同一数据 YAML 执行相同覆盖。
+无需手动改写；必须保证 g/h/i 由同一数据 YAML 执行相同覆盖，冻结控制参考的
+YAML/authority 单独核验。
 
 Best selection 固定为 val mAP50-95 最大值；test 永远不参与选模。启动器必须从冻结
 `FROZEN_SETTINGS` 读取参数，不能在命令行临时覆盖 optimizer、学习率、scheduler、
@@ -518,65 +521,86 @@ sha256sum "$RUN_ROOT/runtime-identity.json" \
   "$RUN_ROOT/environment.freeze.txt" > "$RUN_ROOT/environment.sha256"
 ```
 
-四臂 authority 必须引用同一个 `runtime-identity.json` SHA。不同服务器运行的臂只有
+g/h/i authority 必须引用同一个 `runtime-identity.json` SHA；冻结控制参考沿用其既有
+authority。不同服务器运行的臂只有
 在 source/data/initial/config/training/runtime identity 全部一致时才标为严格可比；
 GPU 型号不同则训练结果可作相同协议比较，但实时性单列。
 
 ## 6. Task 1：Dry-run 与 authority 冻结
 
-四臂都先执行 dry-run：
+当前 pending run list 只有 release launcher 的三个 arm：g、h、i。冻结的既有
+LRS-FDR control 仅作为历史参考，不是该 launcher 的 arm；如需重训 control，使用
+`scripts/train_lrs_fdr.py` 的独立接口和独立 authority。
+
+三个待训练 arm 都先执行 dry-run：
 
 ```bash
 cd "$REPO_ROOT"
 
-for variant in lrs_fdr lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/train_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --initial-state "$INITIAL_STATE" \
-    --output-root "$RUN_ROOT" \
-    --name "formal-seed0-${variant}-v1" \
-    --dry-run
-done
+python scripts/train_visdrone_lrs_system.py \
+  --arm g \
+  --dataset-root "$VISDRONE_ROOT" \
+  --initial-state "$INITIAL_STATE" \
+  --output-root "$RUN_ROOT" \
+  --name formal-seed0-lrs_fdr_bpdd-v1 \
+  --dry-run
+
+python scripts/train_visdrone_lrs_system.py \
+  --arm h \
+  --dataset-root "$VISDRONE_ROOT" \
+  --initial-state "$INITIAL_STATE" \
+  --output-root "$RUN_ROOT" \
+  --name formal-seed0-lrs_fdr_fia-v1 \
+  --dry-run
+
+python scripts/train_visdrone_lrs_system.py \
+  --arm i \
+  --dataset-root "$VISDRONE_ROOT" \
+  --initial-state "$INITIAL_STATE" \
+  --output-root "$RUN_ROOT" \
+  --name formal-seed0-lrs_fdr_bpdd_fia-v1 \
+  --dry-run
 ```
 
 验收：
 
-- [ ] 四个 authority JSON 均存在；
+- [ ] 三个 pending-arm authority JSON 均存在；
 - [ ] source commit 完全相同；
 - [ ] dataset/initial-state 签名完全相同；
-- [ ] 除 variant、配置 SHA 和模块私有字段外，训练设置完全相同；
+- [ ] 除 arm、配置 SHA 和模块私有字段外，训练设置完全相同；
 - [ ] `exist_ok=false`；
 - [ ] 没有创建伪造的训练 epoch 记录。
 
 ## 7. Task 2：Formal100 训练
 
-单卡默认串行执行，避免显存竞争和吞吐变化：
+单卡默认串行执行 g/h/i，避免显存竞争和吞吐变化。冻结的既有 LRS-FDR control
+不在此 launcher 的 pending list 中；若作者决定重训 control，另行使用
+`scripts/train_lrs_fdr.py` 的 `--dataset-root`、`--initial-state`、`--output-root`、
+`--name`（可选 `--dry-run`）接口并保存独立 authority。
 
 ```bash
 cd "$REPO_ROOT"
 
-for variant in lrs_fdr lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/train_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --initial-state "$INITIAL_STATE" \
-    --output-root "$RUN_ROOT" \
-    --name "formal-seed0-${variant}-v1"
-done
-```
+python scripts/train_visdrone_lrs_system.py \
+  --arm g \
+  --dataset-root "$VISDRONE_ROOT" \
+  --initial-state "$INITIAL_STATE" \
+  --output-root "$RUN_ROOT" \
+  --name formal-seed0-lrs_fdr_bpdd-v1
 
-如果作者明确选择算力受限方案，循环仅使用：
+python scripts/train_visdrone_lrs_system.py \
+  --arm h \
+  --dataset-root "$VISDRONE_ROOT" \
+  --initial-state "$INITIAL_STATE" \
+  --output-root "$RUN_ROOT" \
+  --name formal-seed0-lrs_fdr_fia-v1
 
-```bash
-for variant in lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/train_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --initial-state "$INITIAL_STATE" \
-    --output-root "$RUN_ROOT" \
-    --name "formal-seed0-${variant}-v1"
-done
+python scripts/train_visdrone_lrs_system.py \
+  --arm i \
+  --dataset-root "$VISDRONE_ROOT" \
+  --initial-state "$INITIAL_STATE" \
+  --output-root "$RUN_ROOT" \
+  --name formal-seed0-lrs_fdr_bpdd_fia-v1
 ```
 
 ### 训练监控
@@ -735,12 +759,12 @@ LRS-FDR+BPDD、LRS-FDR+FIA 或 Full。
 
 只有以下全部满足才可将本交接标记为完成：
 
-- [ ] 三个新组合配置和统一启动/评估/比较工具已提交；
+- [ ] release 中三个组合配置、launcher、模型源文件和 source tests 已核验；
 - [ ] Gate 0 全部通过；
 - [ ] 选定矩阵的 Formal100 全部完成且 epoch 连续；
-- [ ] 四臂 best 选择规则一致；
-- [ ] val 统一复评完成；
-- [ ] test 在 val 冻结后一次性完成；
+- [ ] g/h/i best 选择规则一致；
+- [ ] unified independent evaluator/comparator 签入并完成 val 复评（论文定稿 gate）；
+- [ ] evaluator 签入后 test 在 val 冻结后一次性完成；
 - [ ] Overall/Scale/Class 三层结果完整；
 - [ ] 六个规定方向差值全部生成；
 - [ ] 复杂度与实时性完成；
