@@ -110,15 +110,32 @@ VisDrone 最终组合一致。第二数据集不复制所有历史 FDR 开关。
 - [BPDD 严格配对实验合同](experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md)
 - [FIA standalone 机器证据](evidence/fia_existing_best_evaluation.json)
 - [外部 VisDrone 对比 JSON](results/external_visdrone_comparison.json)
+- [外部 VisDrone 对比 CSV](results/external_visdrone_comparison.csv)
 - [来源清单](evidence/source_manifest.json)
 
 ## 历史材料入口
 
 以下文件保持原始身份，不作为当前路线：
 
-- [EQuAL 方法](methods/EQUAL_ZH.md)与[EQuAL 结果](results/EQUAL_RESULTS_ZH.md)；
+- [EQuAL 方法](methods/EQUAL_ZH.md)、[EQuAL 结果](results/EQUAL_RESULTS_ZH.md)与
+  [EQuAL 机器结果](results/equal_results.json)；
 - [AP-FDR 内部双消融旧协议](experiments/AP_FDR_INTERNAL_ABLATION_PROTOCOL_ZH.md)；
 - [旧组合结果汇总](results/RESULTS_ZH.md)与[旧 val 主表](results/MAIN_TABLE_ZH.md)；
+- [旧模块拆分对比](results/SPLIT_GAIN_COMPARISON_ZH.md)、
+  [机器摘要](results/split_gain_comparison.json)、
+  [总体 CSV](results/split_overall_results.csv)、
+  [尺度 CSV](results/split_scale_results.csv)与
+  [类别 CSV](results/split_class_results.csv)；
+- [FIA 消融脚手架](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)、
+  [发布结果](results/FIA_ABLATION_RELEASE_RESULTS_ZH.md)、
+  [状态页](results/FIA_RESULTS_STATUS_ZH.md)、
+  [状态 JSON](evidence/fia_results_status.json)、
+  [existing-best 评估](evidence/fia_existing_best_evaluation.json)、
+  [val CSV](results/fia_existing_best_val_results.csv)与
+  [test CSV](results/fia_existing_best_test_results.csv)；
+- [旧三模块 val 文本](evidence/fdr_bpdd_fia_val.txt)、
+  [test 文本](evidence/fdr_bpdd_fia_test.txt)与
+  [类别 CSV](results/fdr_bpdd_fia_text_report_class_results.csv)；
 - `paper_material/evidence/dfine_s_equal_fia_matched_20260823/` 下的 D-FINE-S
   切换实验；
 - `experiments/clean-dcf-fdr-formal100-seed0-20260824/` 下的 DCF-FDR 失败记录。

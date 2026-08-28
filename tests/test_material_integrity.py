@@ -1479,11 +1479,12 @@ def test_external_visdrone_material_is_linked_and_has_claim_boundaries():
         "not_reported",
     ):
         assert required_text in page
-    assert "VARDet" in outline
-    assert "ICASSP 2026" in outline
+    assert "VisDrone 外部会议方法对比" in outline
     for forbidden_text in ("Sensors 2024", "Remote Sensing", "Scientific Reports"):
         assert forbidden_text not in page
-def test_dfine_inspiration_and_bpdd_originality_framing_contract() -> None:
+
+
+def test_lrs_fdr_identity_and_bpdd_originality_framing_contract() -> None:
     readme = _read_required_text("README_ZH.md")
     fdr = _read_required_text("methods/FDR_ZH.md")
     bpdd = _read_required_text("methods/BPDD_ZH.md")
@@ -1493,9 +1494,13 @@ def test_dfine_inspiration_and_bpdd_originality_framing_contract() -> None:
     )
 
     for text in (readme, fdr, outline, audit):
-        assert "受 D-FINE 启发" in text
-    for text in (readme, bpdd, outline, audit):
-        assert "由本文独立提出并实现的原创算法" in text
+        assert "LRS-FDR" in text
+        assert "NA-FDR" in text
+    assert "第一项完整定位模块" in readme
+    assert "`w/o LRS` 内部消融" in fdr
+    assert "EQuAL、AP-FDR、DCF-FDR 和官方 D-FINE-S" in outline
+    assert "只保留为历史材料" in audit
+    assert "由本文独立提出并实现的原创算法" in bpdd
 
     assert "不复用 GO-LSD 的教师构造、DDF 损失或代码实现" in bpdd
     assert "问题启发相关、算法构造独立" in bpdd
@@ -1503,14 +1508,14 @@ def test_dfine_inspiration_and_bpdd_originality_framing_contract() -> None:
     assert "可靠性门控" in bpdd
     assert "匹配合同" in bpdd
     assert "查询范围" in bpdd
-    assert "independently formulate and implement BPDD" in audit
-    assert "不扩张为未经系统检索证明的“文献史上首次”" in audit
+    assert "LRS-FDR+BPDD+FIA 的同身份完整训练" in audit
+    assert "第二数据集" in audit
 
 
-def test_ap_fdr_contribution_first_attribution_contract() -> None:
+def test_lrs_fdr_contribution_first_attribution_contract() -> None:
     spec = (
         REPOSITORY_ROOT
-        / "docs/superpowers/specs/2026-08-20-dfine-inspired-originality-framing-design.md"
+        / "docs/superpowers/specs/2026-08-28-lrs-fdr-material-freeze-design.md"
     ).read_text(encoding="utf-8")
     fdr = _read_required_text("methods/FDR_ZH.md")
     audit = _read_required_text(
@@ -1522,17 +1527,21 @@ def test_ap_fdr_contribution_first_attribution_contract() -> None:
         assert forbidden not in fdr
         assert forbidden not in audit
 
-    assert fdr.index("## 本文原创设计") < fdr.index("## 基础构件来源")
+    assert fdr.index("## 2. NA-FDR：Native-Aligned FDR") < fdr.index(
+        "## 8. 来源、实现和可复训入口"
+    )
     for symbol in (
-        "weighting_function",
-        "Integral",
-        "translate_gt",
-        "bbox2distance",
-        "distance2bbox",
-        "unimodal_distribution_focal_loss",
+        "native reference",
+        "normal matched queries",
+        "reliability_shrinkage_alpha",
+        "representability firewall",
+        "non-uniform Integral",
+        "累计细化",
     ):
         assert symbol in fdr
-    assert "不以任何数值比例描述算法原创性" in audit
+    assert "LRS 相对 NA-FDR 的 mAP 只有 `+0.011 pp`" in fdr
+    assert "第一创新大量借用 D-FINE" in audit
+    assert "只主张 NA 对齐组织和 LRS 变换" in audit
 
 
 def test_writing_exemplar_boundary() -> None:
@@ -1554,5 +1563,7 @@ def test_writing_exemplar_boundary() -> None:
         for text in manuscript_materials:
             assert exemplar_name not in text
 
-    assert "问题—设计—证据" in outline
-    assert "问题—设计—证据" in audit
+    for label in ("**问题**", "**设计**", "**证据**"):
+        assert label in outline
+    assert "证据等级" in audit
+    assert "对抗性审计" in audit

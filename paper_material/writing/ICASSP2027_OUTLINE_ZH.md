@@ -169,5 +169,6 @@ BPDD/FIA 新组合仍需训练。
 - [LRS-FDR 方法](../methods/FDR_ZH.md)
 - [LRS-FDR 结果](../results/LRS_FDR_RESULTS_ZH.md)
 - [LRS-FDR 证据包](../evidence/lrs_fdr_formal100_20260828/README.md)
+- [VisDrone 外部会议方法对比](../results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
 - [当前实验状态](../CURRENT_RERUN_STATUS_ZH.md)
 - [冻结设计](../../docs/superpowers/specs/2026-08-28-lrs-fdr-material-freeze-design.md)
