@@ -6,6 +6,79 @@
     "git_blob_oid": "Git object ID naming the exact blob payload."
   },
   "sources": {
+    "lrs_fdr_formal100_best_val_20260828": {
+      "title": "Original FDR, NA-FDR, and LRS-FDR seed-0 Formal100 best-checkpoint VisDrone validation",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_branch": "codex/lrs-fgl",
+      "source_commit": "9fa9078011d92cc23fc1f0eec06ff34983986ff0",
+      "source_tree_sha256": "2345E1B06301A1E1563163481691BEB00A15D4FDC5028AF4399A1ABA2AE8AE3E",
+      "paper_methods": {
+        "original_fdr": "Original FDR",
+        "clean_fdr": "NA-FDR",
+        "clean_fdr_plus_lrs_fgl": "LRS-FDR"
+      },
+      "historical_runtime_aliases_preserved": true,
+      "config_sha256": "6225C4BBC6B67C3C364E23476FC12A078F2091D61223632468765EA260160C87",
+      "initial_state_sha256": "51AAB2EB3FB7D123501C69C7B8DC90FF3EA0B9344A108EDEEF2C7D6DCDBB742D",
+      "dataset_sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB",
+      "checkpoints": {
+        "original_fdr_best_sha256": "7F0F19D46AAC5C8A0629FCE275C9FE4CBDF3FA14A2ACAB7D0E6F10D3AD3776F1",
+        "na_fdr_best_sha256": "87139A4AFBB85690A2B0EC48F382F902655FB58E20CE8E90C995DF3E1C236550",
+        "lrs_fdr_best_sha256": "BA5CDFFE8E2A0E147CE0D6D30CCBD3A0D25E31A7DCF69F8B247D2A079B492DFA"
+      },
+      "artifacts": [
+        {
+          "path": "paper_material/evidence/lrs_fdr_formal100_20260828/independent-evaluation/comparison.json",
+          "sha256": "1F882611E8FE68E2AC8AB082CCCE6C364227886DF2804CABBC374FF5CE7777F9",
+          "record_type": "three_arm_best_checkpoint_val_comparison"
+        },
+        {
+          "path": "paper_material/evidence/lrs_fdr_formal100_20260828/independent-evaluation/original_fdr.json",
+          "sha256": "1256D0E6188745484287E25866630C3273082FFA6DD5AE267F47F8A7C3EF5F6D",
+          "record_type": "original_fdr_best_checkpoint_val"
+        },
+        {
+          "path": "paper_material/evidence/lrs_fdr_formal100_20260828/independent-evaluation/na_fdr.json",
+          "sha256": "C608554FF6E1ADA5FA1849BBC86DD3782C08958A69F9322A533F47916D15B52F",
+          "record_type": "na_fdr_best_checkpoint_val"
+        },
+        {
+          "path": "paper_material/evidence/lrs_fdr_formal100_20260828/independent-evaluation/lrs_fdr.json",
+          "sha256": "F49F398CE9C8404DC2C5A8E3D43DF9AA5C8EF9DDEBC0240F8273E9690FFEEC71",
+          "record_type": "lrs_fdr_best_checkpoint_val"
+        },
+        {
+          "path": "paper_material/evidence/lrs_fdr_formal100_20260828/authority/lrs_fdr_authority.json",
+          "sha256": "91525B56AD2A03E54B36057843F5814477EA092A9068A150F20C2DDCE56BC3DC",
+          "record_type": "lrs_fdr_training_authority"
+        },
+        {
+          "path": "paper_material/evidence/lrs_fdr_formal100_20260828/authority/lrs_fdr_gate0.json",
+          "sha256": "83F50BD59172E36F716241168C2654CAF035210837F83A47B26365A160408D4D",
+          "record_type": "lrs_fgl_pretraining_gate0"
+        }
+      ],
+      "evaluation_protocol": {
+        "dataset": "VisDrone val",
+        "images": 548,
+        "instances": 38759,
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "prediction_passes_per_checkpoint": 1
+      },
+      "selection_rule": "select each arm independently by maximum training-log mAP50-95 and evaluate that checkpoint once",
+      "evidence_level": "matched_fixed_seed_best_checkpoint_independent_val_with_class_and_scale_metrics",
+      "strict_fresh_concurrent_pair": false,
+      "multi_seed": false,
+      "transformation": "import source evidence byte-exact; rename destination display filenames only; preserve raw method and run identifiers inside all artifacts"
+    },
     "equal_formal100_best_exact_20260821": {
       "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
       "source_branch": "codex/ap-fdr-integrated-redesign",
