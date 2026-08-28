@@ -1,90 +1,227 @@
-# AP-FDR：面向 RT-DETR-L 的架构保持型细粒度分布细化
+# LRS-FDR：原生对齐与分层可靠性收缩的细粒度分布细化
 
-> **方法代际说明（2026-08-21）**：本页记录现有 BPDD/FIA 组合 checkpoint 所依赖的 AP-FDR。最新定位候选已重构为 [EQuAL](EQUAL_ZH.md)，但 EQuAL 组合尚未重训，因此本页和旧 A–E 结果继续保留，不能直接改名。
+> **当前方法身份（2026-08-28）**：论文第一项定位创新固定为 **LRS-FDR**。
+> **NA-FDR** 是其原生对齐基础和 `w/o LRS` 内部消融。历史运行标识
+> `Clean FDR` 对应 NA-FDR，历史运行标识 `Clean FDR + LRS-FGL` / `lrs_fdr`
+> 对应 LRS-FDR；原始日志、checkpoint 和配置名称不回写。
 
-本文将所提出的 Architecture-Preserving Fine-grained Distribution Refinement 记为 **AP-FDR**；为与既有配置、checkpoint 和结果表保持一致，后文仍沿用简称 **FDR**。AP-FDR 解决的不是“如何把一个现成检测器嵌入 RT-DETR”，而是如何在保持 stock RT-DETR-L 检测合同的条件下，为密集小目标建立可训练、可比较的逐边分布定位路径。
+## 1. 研究问题与统一设计
 
-## 技术问题
+RT-DETR 的连续四维框回归难以显式表达密集小目标四条边的不确定性。已有 FDR
+通过逐边离散分布、non-uniform Integral、FGL 和跨层累计细化提供了更细的定位
+表示，但历史实现中的 learned preliminary reference 和扰动 DN query 上的额外
+FDR 监督未得到内部实验支持；同时，基础 FGL 直接用匹配框 IoU 加权，使浅层中
+低 IoU 但仍有学习价值的正常匹配获得较弱的分布监督。
 
-VisDrone 中的小目标边界只占少量像素，遮挡与尺度变化又会放大四条边的定位不确定性。stock RT-DETR-L 由每层框头直接输出四个连续框量，虽然结构简洁，却没有显式表示每条边的多粒度概率分布。另一方面，直接采用 D-FINE 的完整 detector 会同时改变分类质量建模、Decoder 宽度、查询处理和训练组件，难以判断增益究竟来自分布定位还是来自整套架构变化。
+LRS-FDR 用一个统一模块解决这两个问题：
 
-因此，本文把研究问题限定为：能否只重构 RT-DETR-L 的 localization branch，同时保留分类、查询选择、Decoder 主体、匹配和后处理合同，并让新增分布监督在 normal 与 denoising 查询上复用同一 assignment？AP-FDR 正是针对这一受控问题设计，而不是对既有完整 detector 的整体替换。
+1. **NA-FDR 原生对齐基础**重新组织分布锚点和监督范围；
+2. **LRS-FGL 可靠性收缩**在 NA-FDR 内部重新分配浅层正常匹配的 FGL 权重。
 
-## 本文原创设计
+完整数据流为：
 
-围绕上述问题，AP-FDR 面向 Ultralytics RT-DETR-L 提出四项相互约束、共同定义方法身份的设计：
+```text
+RT-DETR decoder query + native reference
+  -> 4 × 33-bin boundary logits
+  -> cumulative distribution refinement
+  -> normal Hungarian matched-query FGL
+  -> representability firewall
+  -> layerwise reliability shrinkage (shallow layers only)
+  -> non-uniform Integral and box decoding
+```
 
-1. **架构保持型定位路径**：为隔离分布定位本身的作用，只改造 localization branch，保留 stock 分类头、查询选择、六层 Decoder attention/FFN、Hungarian matching 与后处理合同；同时不引入 LQE、DDF、GO-LSD 或 Decoder widening。
-2. **stock-head-informed preliminary geometry**：为避免随机粗框分支破坏原有回归起点，从 stock 第一层框头复制 preliminary head，以既有回归几何初始化六层共享参考框。
-3. **normal/DN 匹配一致监督**：为避免分布监督和连续框监督学习不同的 query–GT 关系，FGL、preliminary-box L1/GIoU 与连续框损失沿用 stock criterion 已产生的逐层 assignment，不增加第二套 matcher，并把同一合同显式扩展到 normal 与 denoising 两条路径。
-4. **隔离初始化与公平比较合同**：为使新增头不改变对照模型的公共随机轨迹，分布头使用私有 RNG，避免改变公共参数初始化、数据顺序和后续训练随机状态。
+LRS-FDR 不增加第二套 matcher、query、分类分支、蒸馏教师或推理后处理。
 
-这四项结构与监督设计是本文对 AP-FDR 的原创主张，也是内部单因素消融需要验证的对象。
+## 2. NA-FDR：Native-Aligned FDR
 
-## 基础构件来源
+NA-FDR 不是“清理版”命名，而是 LRS-FDR 的原生对齐基础设计。它联合固定两个
+对齐合同。
 
-受 D-FINE 启发，AP-FDR 基于固定 commit `7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6` 已公开的边界分布基础构件。生产实现沿用 `weighting_function`、`Integral`、`translate_gt`、`bbox2distance`、`distance2bbox` 与 `unimodal_distribution_focal_loss` 的数学行为，并固定相应的 33-bin 表示和 FGL 设置。逐边离散表示、非均匀投影、Integral、相邻 bin FGL 与累计分布细化不作为本文原创点；D-FINE 的完整 detector、LQE、DDF、GO-LSD 和 Decoder widening 没有进入 AP-FDR。该段只界定基础机制的来源；本文方法主张仍由上一节四项 RT-DETR 专用结构与监督设计定义。
+### 2.1 原生 reference 对齐
 
-## 问题与模块位置
-
-VisDrone 中小目标密集、边界像素占比高，解码器直接输出四个连续框量时难以显式表达每条边的不确定性。AP-FDR 将细粒度分布建模限制在 Ultralytics RT-DETR-L 的框回归路径内；Backbone、Hybrid Encoder、300 个查询、六层解码器的注意力与 FFN、分类头、Hungarian 匹配及后处理合同保持原有实现。该 localization-only 设计避免把分类质量估计、额外蒸馏或 Decoder 扩宽混入 FDR 的主效应，使定位改造可以被独立验证。
-
-输入是三尺度编码特征和查询状态，输出仍为归一化 `cxcywh` 框及类别分数。每个解码层不再直接输出 4 个框量，而是输出左、上、右、下四条边各 33 个 bin 的 logits，即每查询 132 维。正式配置固定 `reg_max=32`、`reg_scale=4.0`、`up=0.5`、六个解码层和 300 个查询。
-
-## 定位表示与 preliminary box
-
-第一解码层先通过从 stock 框头私有复制的 preliminary head 生成初始框：
-
-\[
-b^{pre}=\sigma\!\left(h_{pre}(q_1)+\sigma^{-1}(b^0)\right).
-\]
-
-启用 `preliminary_box=true` 时，`b^{pre}` 经停止梯度后成为六层分布解码共享的参考框；它同时复用既有匹配结果接受 L1 与 GIoU 定位监督，不触发额外匹配。与完全独立初始化一个粗框分支不同，AP-FDR 从 stock 第一层框头复制 preliminary head，并使用私有随机源初始化新增分布头，从而保留公共参数初始化与训练随机序列的可比性。该设计把“参考位置”与“相对四边分布”分开，使后续层围绕同一初始框逐步细化。
-
-## 累积分布细化与 FGL
-
-第 \(l\) 层产生四边分布增量 \(\Delta z_l\)。正式模型按层累加 logits：
+NA-FDR 关闭 learned preliminary-box reference，直接使用 RT-DETR decoder 的
+原生 reference 组织逐层分布回归。第 (l) 层预测四边 33-bin 分布增量
+\(\Delta z_l\)，并保留累计细化：
 
 \[
-z_l=\sum_{j=1}^{l}\Delta z_j,\qquad
-d_l=\operatorname{Integral}(z_l),\qquad
-b_l=\operatorname{Decode}(b^{pre},d_l).
+z_l=\sum_{j=0}^{l}\Delta z_j,
+\qquad
+d_l=\operatorname{Integral}(z_l),
+\qquad
+b_l=\operatorname{Decode}(r_l,d_l),
 \]
 
-`Integral` 对每条边的 33-bin softmax 使用固定的非均匀投影值求期望，再由 `distance2bbox` 相对 `b^{pre}` 解码。层间框参考和查询残差在训练时按实现停止梯度，避免改变 stock 解码器层的梯度合同。`cumulative=false` 配置仅用于独立训练消融，不能用完整模型权重临时关闭开关来替代消融实验。
+其中 \(r_l\) 是原生 decoder reference。`preliminary_box=false` 同时移除
+preliminary-box L1/GIoU，不让额外粗框分支改变几何起点。
 
-FGL 将连续目标边距离映射到相邻两个 bin，以线性权重组合两项交叉熵，并用停止梯度的匹配框 IoU 加权：
+### 2.2 原生 assignment 与有效查询对齐
+
+NA-FDR 的 FGL 直接复用 stock criterion 已产生的逐层 Hungarian assignment，
+不调用第二套 matcher。额外细粒度分布监督只作用于 normal matched queries；
+`supervise_dn_fdr=false` 只取消扰动 DN queries 上额外的 FDR/FGL，stock RT-DETR
+的 DN 分类、L1 和 GIoU 仍完整存在。
+
+对正常匹配查询，连续目标边距离映射到相邻两个 bin。基础 FGL 为：
 
 \[
-\mathcal L_{FGL}=w_{IoU}\left(w_L\,CE(z,k)+w_R\,CE(z,k+1)\right).
+\mathcal L_{FGL}=q\left(w_L\,CE(z,k)+w_R\,CE(z,k+1)\right),
 \]
 
-正式配置的 FGL 权重为 0.15。对 normal queries，最后一层形成主 FGL 项，前五层求和形成辅助项；preliminary box 另接收 L1 与 GIoU。若存在 `dn_meta`，实现会把缓存的四边 logits 和 preliminary box 按查询维拆成 normal/DN 两部分，并对 DN queries 追加主/辅助 FGL 以及 preliminary-box L1/GIoU。两侧都复用 stock criterion 已产生的逐层匹配，不引入第二套 matcher。由此，连续框监督、逐边分布监督和粗框监督共享相同的 query–GT 关系，构成 AP-FDR 的 assignment-consistent supervision。新增的 FDR 监督可概括为：
+其中 \(q=\operatorname{sg}(IoU(b,g))\)。NA-FDR 保留 `fgl_weight=0.15`、
+33-bin 表示、non-uniform Integral 和累计分布细化，并关闭 EAW，避免在 LRS 内部
+消融中混入第二种权重机制。
+
+## 3. LRS-FGL：分层可靠性收缩
+
+### 3.1 动机
+
+浅层正常匹配的 IoU 较低时，基础 FGL 权重也较低；极端情况下 \(q=0\) 会使该
+查询得不到 FDR-specific 分布梯度，尽管 stock L1/GIoU 仍存在。直接提高所有低
+IoU 权重会改变总损失尺度并可能放大不可表示的边界目标，因此 LRS-FGL 只在固定
+可表示集合内做均值保持的权重收缩。
+
+### 3.2 可表示性防火墙
+
+对图像 (b)、decoder 层 (l) 的 normal matched-query 集合 (M_{b,l})，定义
+(R_{b,l}\) 为四条相邻-bin 目标索引都严格位于 FDR 支持内部的子集。任何一条边
+落在支持边界的匹配、DN query 和 unmatched query 都不参与收缩。
+
+### 3.3 均值保持变换
+
+对 (k\in R_{b,l})：
 
 \[
-\mathcal L_{FDR}=\mathcal L_{FGL}^{normal}+\mathcal L_{pre}^{normal}
-+\mathbf 1_{dn}\left(\mathcal L_{FGL}^{dn}+\mathcal L_{pre}^{dn}\right),
+q_{b,l,k}=\operatorname{sg}(IoU(b_{b,l,k},g_{b,l,k})),
 \]
 
-并与 stock VFL、L1、GIoU、辅助及去噪损失共同优化。
+\[
+\bar q^R_{b,l}=\frac{1}{|R_{b,l}|}\sum_{k\in R_{b,l}}q_{b,l,k},
+\]
 
-## 训练与推理
+\[
+\widetilde q_{b,l,k}=(1-\alpha_l)q_{b,l,k}+\alpha_l\bar q^R_{b,l},
+\qquad
+\alpha_l=\alpha_0\left(1-\frac{l}{L-1}\right).
+\]
 
-- 训练：保存六层累计四边 logits、共享参考框和 preliminary box；在 stock 损失之后，为 normal queries 增加 FGL 与可选 preliminary-box 定位项，并在 `dn_meta` 存在时对 DN queries 增加对应的 FGL 和 preliminary-box L1/GIoU。
-- 推理：分布头、累计细化、Integral 和框解码仍在图中；损失分支不执行，只输出 `eval_idx` 对应的框与类别结果。
-- FDR 会增加解码框头参数和推理计算，不能套用 BPDD 的“零推理参数增量”表述。
+正式配置固定 `alpha0=0.25`。六层日程为：
 
-## 可执行来源
+```text
+[0.25, 0.20, 0.15, 0.10, 0.05, 0.00]
+```
 
-- `src/fdr_head.py`：132 维分布头、preliminary box、六层累计细化和训练证据缓存。
-- `src/fdr_loss.py`：normal/DN 两侧的 FGL、preliminary-box L1/GIoU 监督以及 stock 匹配复用。
-- `src/rtdetr_fdr.py`：模型、训练损失和推理路径集成。
-- `src/fdr_math.py`：参考固定版本 D-FINE 公式实现的非均匀投影、Integral、距离编解码与 FGL 基础算子。
-- `configs/rtdetr-l-fdr.yaml`：正式结构与损失参数。
-- `configs/rtdetr-l-fdr-no-prebox.yaml`、`configs/rtdetr-l-fdr-no-dn.yaml`、`configs/rtdetr-l-fdr-no-prebox-loss.yaml`、`configs/rtdetr-l-fdr-no-fgl.yaml`、`configs/rtdetr-l-fdr-no-cumulative.yaml`：单因素消融入口。其中 no-DN 配置仅关闭额外 DN FDR 监督，stock DN 损失保持不变。
+不满足可表示条件的匹配保持 \(\widetilde q=q\)。最后一层
+\(\alpha_{L-1}=0\)，因此主 FGL 目标与 NA-FDR 完全相同；LRS 只调整前五层辅助
+FGL。每个图像、每个层满足：
 
-## 主张边界
+\[
+\sum_{k\in M_{b,l}}\widetilde q_{b,l,k}
+=\sum_{k\in M_{b,l}}q_{b,l,k}.
+\]
 
-允许表述：本文针对 stock RT-DETR-L 连续框路径缺少逐边不确定性表达、完整 detector 替换又会混入多项架构变化的问题，提出 AP-FDR；其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督与隔离初始化构成本文原创设计。受 D-FINE 启发的边界分布基础构件按上述来源边界明确归因。
+该守恒合同意味着 LRS 重新分配而不整体增加 FGL 权重。完整权重路径停止梯度，
+FP32 执行收缩，FP64 只用于计算亚 ULP 守恒残差。
 
-禁止表述：不得声称本文首次发明离散边界分布、FGL、Integral、相邻 bin 软标签或非均匀 weighting；不得把可加载消融 YAML 当作已完成的消融结果；不得把 `+7.055 pp` 拆分归因给尚未独立训练验证的任一内部开关；不得在没有实测时宣称零开销、特定延迟或特定参数增幅。
+## 4. 冻结配置与消融身份
+
+### 4.1 LRS-FDR 完整配置
+
+```yaml
+cumulative: true
+preliminary_box: false
+distribution_feedback: false
+
+fdr_loss:
+  fgl_weight: 0.15
+  supervise_pre_boxes: false
+  supervise_dn_fdr: false
+  edge_adaptive_fgl: false
+  reliability_shrinkage_alpha: 0.25
+```
+
+### 4.2 唯一直接内部消融
+
+NA-FDR 与完整 LRS-FDR 只差：
+
+```yaml
+reliability_shrinkage_alpha: 0.0  # NA-FDR / w/o LRS
+reliability_shrinkage_alpha: 0.25 # LRS-FDR / Full
+```
+
+`alpha0=0` 使用显式 legacy short path。模型参数、state dict、decoder 输出、
+matcher、VFL/L1/GIoU、DN 损失和推理图均不改变，因此 NA-FDR 是 LRS 的直接内部
+对照。Original FDR 则用于验证整个 NA-FDR → LRS-FDR 重构相对历史实现的总体
+效果。
+
+## 5. 训练、推理与模块兼容
+
+- **训练期**：NA-FDR 产生正常匹配的逐边分布损失；LRS 只改变浅层、可表示、
+  normal matched queries 的停止梯度 FGL 标量权重。
+- **推理期**：执行四边分布、累计细化、Integral 和框解码；LRS 权重分支不执行。
+- **参数与 checkpoint**：LRS 不增加参数或 state-dict key，NA-FDR 与 LRS-FDR
+  checkpoint schema 相同。
+- **BPDD**：BPDD 仍可读取逐层 FDR 分布；LRS 不改变 BPDD 输入张量或蒸馏公式。
+- **FIA**：FIA 位于 P3 特征路径，接口上与 LRS-FDR 的 decoder 输入兼容。
+
+兼容性只说明接口和计算图合同；现有 AP-FDR+BPDD/FIA checkpoint 不能重命名为
+LRS-FDR 组合结果，最终组合仍需按 LRS-FDR 配置重新训练或明确标成历史证据。
+
+## 6. 已登记证据
+
+统一冻结评估结果见 [LRS-FDR 结果页](../results/LRS_FDR_RESULTS_ZH.md) 和
+[证据包](../evidence/lrs_fdr_formal100_20260828/README.md)。关键结果为：
+
+| 方法 | Precision | Recall | AP50 | AP75 | mAP50-95 |
+|---|---:|---:|---:|---:|---:|
+| Original FDR | 0.570249 | 0.491417 | 0.484700 | 0.294070 | 0.290698 |
+| NA-FDR | **0.587045** | 0.498339 | **0.493119** | 0.301061 | 0.296855 |
+| LRS-FDR | 0.579512 | **0.500606** | 0.491805 | **0.305773** | **0.296968** |
+
+- NA-FDR 相对 Original FDR：mAP `+0.616 pp`、AP75 `+0.699 pp`；
+- LRS-FDR 相对 NA-FDR：mAP `+0.011 pp`、AP75 `+0.471 pp`、Recall
+  `+0.227 pp`；
+- LRS-FDR 相对 Original FDR：mAP `+0.627 pp`、AP75 `+1.170 pp`、Recall
+  `+0.919 pp`。
+
+## 7. 原创性与主张边界
+
+### 允许主张
+
+1. NA-FDR 将 FDR 的几何锚点和分布监督范围统一对齐到 stock RT-DETR 的原生
+   reference、assignment 和正常匹配查询；
+2. LRS-FGL 在固定可表示集合内进行同图像、同层、总权重守恒的可靠性收缩，并
+   沿 decoder 深度退火到完全不变的最终层；
+3. LRS-FDR 是上述设计组成的统一定位模块，且相对 Original FDR 在总体
+   Precision、Recall、AP50、AP75 和 mAP 上均为正。
+
+### 必须限定
+
+- LRS 相对 NA-FDR 的 mAP 只有 `+0.011 pp`，只能描述为数值非负；
+- LRS 相对 NA-FDR 的 Tiny/Small mAP 分别下降 `0.851/0.181 pp`，不得声称全尺度
+  或 Tiny 全面增强；
+- epoch 91--100 平均 mAP 低于 NA-FDR，不能声称终末平台更稳；
+- 当前证据是 VisDrone、seed 0 的描述性消融，不是统计显著性或跨数据集泛化
+  证明。
+
+### 禁止主张
+
+- 本文首次提出离散四边分布、non-uniform Integral、累计 FDR 或基础 FGL；
+- NA-FDR 的收益等于 LRS 的收益；
+- 删除 preliminary/DN-FDR 本身自动构成创新；创新主张必须落在原生对齐的统一
+  设计与对应正向证据上；
+- 现有 AP-FDR+BPDD/FIA 结果等同于 LRS-FDR+BPDD/FIA。
+
+## 8. 来源、实现和可复训入口
+
+- 冻结设计：[`2026-08-28-lrs-fdr-material-freeze-design.md`](../../docs/superpowers/specs/2026-08-28-lrs-fdr-material-freeze-design.md)
+- 算法设计源：source commit `9fa9078011d92cc23fc1f0eec06ff34983986ff0`
+- LRS 配置：`configs/rtdetr-l-lrs-fdr.yaml`（实验源码分支 `codex/lrs-fgl`）
+- LRS 损失：`src/fdr_loss.py`（同一 source commit）
+- Formal100 启动器：`scripts/train_lrs_fdr.py`（同一 source commit）
+- Gate0：`scripts/audit_lrs_fgl_gate0.py`（同一 source commit）
+- 训练 authority、参数、日志与冻结评估：
+  [`lrs_fdr_formal100_20260828`](../evidence/lrs_fdr_formal100_20260828/README.md)
+
+D-FINE commit `7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6` 是 33-bin 边界表示、
+non-uniform Integral、累计细化和基础 FGL 的来源边界；LRS-FDR 不声称重新发明
+这些基础构件。
