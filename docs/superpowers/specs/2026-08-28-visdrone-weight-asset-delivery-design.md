@@ -1,8 +1,11 @@
 # VisDrone Weight Asset Delivery Design
 
-**Date:** 2026-08-28  
-**Status:** Approved approach; awaiting written-spec review  
-**Target repository:** `kkc236/icassp2027-fdr-bpdd-fia-material`  
+**Date:** 2026-08-28
+
+**Status:** Approved approach; awaiting written-spec review
+
+**Target repository:** `kkc236/icassp2027-fdr-bpdd-fia-material`
+
 **Target branch:** `codex/lrs-fdr-material-freeze`
 
 ## Goal
