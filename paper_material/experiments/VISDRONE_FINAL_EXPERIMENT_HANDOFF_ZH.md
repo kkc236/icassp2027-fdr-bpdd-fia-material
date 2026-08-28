@@ -164,11 +164,11 @@ release 提供，训练前仍需按 Gate 0 复核其关闭态与运行 authority
 - `configs/rtdetr-l-lrs-fdr-fia.yaml`
 - `configs/rtdetr-l-lrs-fdr-bpdd-fia.yaml`
 - `scripts/train_visdrone_lrs_system.py`
-- `scripts/evaluate_visdrone_lrs_system.py`
-- `scripts/compare_visdrone_lrs_system.py`
-- `tests/test_visdrone_lrs_system_configs.py`
-- `tests/test_visdrone_lrs_system_launcher.py`
-- `tests/test_visdrone_lrs_system_evaluation.py`
+- `src/rtdetr_lrs_system.py`
+- `tests/test_lrs_system_configs.py`
+- `tests/test_lrs_system_fia.py`
+- `tests/test_lrs_system_launcher.py`
+- `tests/test_lrs_system_models.py`
 
 不得修改已有 LRS、BPDD、FIA 的原始证据文件。若需要组合模型类，应新建明确的
 LRS 身份文件，不能让旧 `rtdetr_fdr_bpdd*.py` 的默认行为静默改变。
@@ -191,10 +191,10 @@ LRS 身份文件，不能让旧 `rtdetr_fdr_bpdd*.py` 的默认行为静默改�
 
 ### 统一启动器接口
 
-`scripts/train_visdrone_lrs_system.py` 必须提供：
+`scripts/train_visdrone_lrs_system.py` 已提供：
 
 ```text
---variant {lrs_fdr,lrs_fdr_bpdd,lrs_fdr_fia,full}
+--arm {g,h,i}
 --dataset-root PATH
 --initial-state PATH
 --output-root PATH
@@ -206,19 +206,15 @@ LRS 身份文件，不能让旧 `rtdetr_fdr_bpdd*.py` 的默认行为静默改�
 不完整的数据集以及从非零 epoch 伪装的新 Formal100。允许恢复时必须从本臂自己的
 `last.pt` 精确恢复，并保留原 run ID。
 
-### 统一评估器接口
+### 论文定稿评估 gate（尚未签入）
 
-`scripts/evaluate_visdrone_lrs_system.py` 必须提供：
-
-```text
---variant {lrs_fdr,lrs_fdr_bpdd,lrs_fdr_fia,full}
---checkpoint PATH
---dataset-root PATH
---split {val,test}
---output PATH
-```
-
-总体、十类别和四尺度必须来自同一次预测缓存，不能为不同指标重复推理后再拼表。
+该 release 尚未签入新的 unified independent evaluator/comparator。能够生成 AP75、
+逐类/逐尺度结果并进行同协议差值比较的脚本路径目前不存在，不能在本手册中虚构
+`evaluate_visdrone_lrs_system.py`、`compare_visdrone_lrs_system.py` 或相应测试文件。
+这不是训练 blocker：在 relaxed reference standard 下，训练与 best-val 选择使用
+release launcher 的同 Trainer validation 和 `results.csv`。论文定稿前必须把统一
+evaluator/comparator（含 AP75、per-class、scale、identity/protocol checks）签入
+源码并单独复核；在该 gate 通过前，不得把 G/H/I 的 AP75 或逐类结果写入正式论文表。
 
 ## 4. Gate 0：训练前工程门
 
@@ -623,9 +619,10 @@ done
 选择记录必须包含：variant、best epoch、best val mAP、checkpoint SHA-256、
 results.csv SHA-256 和选择脚本 source commit。
 
-## 9. Task 4：统一 val 复评
+## 9. Task 4：统一 val 复评（论文定稿 gate）
 
-冻结参数：
+以下是待签入 unified independent evaluator 的冻结参数；它们不是 release launcher 的
+训练前置条件：
 
 | 参数 | 值 |
 |---|---:|
@@ -641,49 +638,7 @@ results.csv SHA-256 和选择脚本 source commit。
 | rect | false |
 | prediction passes | 1 / checkpoint |
 
-```bash
-cd "$REPO_ROOT"
-mkdir -p "$RUN_ROOT/evaluation"
-
-for variant in lrs_fdr lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/evaluate_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --checkpoint "$RUN_ROOT/formal-seed0-${variant}-v1/weights/best.pt" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --split val \
-    --output "$RUN_ROOT/evaluation/${variant}-val.json"
-done
-```
-
-若采用算力受限方案，冻结控制 checkpoint 固定为既有 LRS-FDR best，先核验其哈希，
-再评估控制臂和三个新臂：
-
-```bash
-cd "$REPO_ROOT"
-export FROZEN_LRS_BEST="/data/uav/runs/lrs-fdr-9fa90780/formal-seed0-lrs-fdr-v1/weights/best.pt"
-
-test -f "$FROZEN_LRS_BEST"
-test "$(sha256sum "$FROZEN_LRS_BEST" | awk '{print toupper($1)}')" = \
-  "BA5CDFFE8E2A0E147CE0D6D30CCBD3A0D25E31A7DCF69F8B247D2A079B492DFA"
-
-python scripts/evaluate_visdrone_lrs_system.py \
-  --variant lrs_fdr \
-  --checkpoint "$FROZEN_LRS_BEST" \
-  --dataset-root "$VISDRONE_ROOT" \
-  --split val \
-  --output "$RUN_ROOT/evaluation/lrs_fdr-val.json"
-
-for variant in lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/evaluate_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --checkpoint "$RUN_ROOT/formal-seed0-${variant}-v1/weights/best.pt" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --split val \
-    --output "$RUN_ROOT/evaluation/${variant}-val.json"
-done
-```
-
-每个 JSON 必须同时包含：
+release 当前不能执行该 independent evaluation。gate 签入后，每个 JSON 必须同时包含：
 
 - Overall：Precision、Recall、F1、AP50、AP75、mAP50-95；
 - Scale：Tiny、Small、Medium、Large 的 GT/AP50/AP75/mAP；
@@ -691,62 +646,22 @@ done
 - Identity：checkpoint path/SHA、variant、source commit、dataset signature；
 - Protocol：全部冻结评估参数和 prediction pass 数量。
 
-## 10. Task 5：统一 test 复评
+## 10. Task 5：统一 test 复评（论文定稿 gate）
 
-只有四臂 val 评估和 best 选择全部冻结后，才运行 test：
-
-```bash
-cd "$REPO_ROOT"
-
-for variant in lrs_fdr lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/evaluate_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --checkpoint "$RUN_ROOT/formal-seed0-${variant}-v1/weights/best.pt" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --split test \
-    --output "$RUN_ROOT/evaluation/${variant}-test.json"
-done
-```
-
-算力受限方案使用已在 Task 4 核验过的 `FROZEN_LRS_BEST`：
-
-```bash
-cd "$REPO_ROOT"
-
-test -f "$FROZEN_LRS_BEST"
-python scripts/evaluate_visdrone_lrs_system.py \
-  --variant lrs_fdr \
-  --checkpoint "$FROZEN_LRS_BEST" \
-  --dataset-root "$VISDRONE_ROOT" \
-  --split test \
-  --output "$RUN_ROOT/evaluation/lrs_fdr-test.json"
-
-for variant in lrs_fdr_bpdd lrs_fdr_fia full; do
-  python scripts/evaluate_visdrone_lrs_system.py \
-    --variant "$variant" \
-    --checkpoint "$RUN_ROOT/formal-seed0-${variant}-v1/weights/best.pt" \
-    --dataset-root "$VISDRONE_ROOT" \
-    --split test \
-    --output "$RUN_ROOT/evaluation/${variant}-test.json"
-done
-```
+只有 unified independent evaluator 签入并完成 val gate 后，才运行 test。当前 release
+不提供该 evaluator，因此本任务保持 pending，不得伪造命令或 JSON。test 仍必须使用
+val 冻结后的 best checkpoint，且 AP75、逐类/逐尺度结果和 identity/protocol checks
+必须由同一签入 evaluator 生成。
 
 当前仓库的 test 口径是本地 held-out，**不是 VisDrone 官方 challenge server**。
 论文和材料必须明确写出这一点；若未来提交官方服务器，单独登记官方结果，不能覆盖
 本地 held-out 文件。
 
-## 11. Task 6：结果比较与判定
+## 11. Task 6：结果比较与判定（论文定稿 gate）
 
-```bash
-cd "$REPO_ROOT"
-
-python scripts/compare_visdrone_lrs_system.py \
-  --evaluation-root "$RUN_ROOT/evaluation" \
-  --output-json "$RUN_ROOT/evaluation/comparison.json" \
-  --output-csv "$RUN_ROOT/evaluation/comparison.csv"
-```
-
-比较器必须验证评估协议、数据签名、source commit 和 split 一致后才计算差值。
+unified comparator 尚未签入 release。定稿 gate 必须在 evaluator 之后提供，并验证
+评估协议、数据签名、source commit 和 split 一致后才计算差值；在此之前不生成 G/H/I
+的 AP75、逐类/逐尺度 comparison JSON/CSV，也不将其结果写入 Formal100 主表。
 
 ### 科学结果等级
 
