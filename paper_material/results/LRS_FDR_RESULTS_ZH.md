@@ -162,14 +162,18 @@ Strong paper-level GO 没有通过。LRS-FGL 可以保留为 LRS-FDR 内部的 A
 
 ## 8. 下一实验
 
-第二数据集不复制所有内部开关。冻结矩阵为：
+第二数据集正式名称为 **UAVDT**（不是 UAT），不复制 VisDrone 的内部开关；冻结矩阵
+只有两个同域、协议匹配的臂：
 
-1. Baseline；
-2. Baseline + NA-FDR；
-3. Baseline + 完整投稿方法（包含 LRS-FDR）。
+1. **Baseline**：作者已确认完成，但 artifact identity 与 metrics 必须先绑定既有
+   authority；
+2. **Full**：Baseline + 完整投稿方法，尚未完成，不填数。
 
-主数据集负责内部归因，第二数据集负责整体泛化。第二数据集完成前，论文结论限定
-为 VisDrone。
+UAVDT 不运行 NA-FDR、LRS-only、G/H 或其他模块级消融。主数据集负责内部归因，UAVDT
+只支持 matched in-domain 的第二数据集 effectiveness / multi-dataset applicability
+描述性判断，不支持 zero-shot transfer 或 module-level attribution；单 seed 也不提供
+稳定性证明。annotation conversion、split 和 protocol matching 必须随 UAVDT authority
+单独登记，不能把 VisDrone 结果当作 UAVDT 结果。
 
 ## 9. 机器材料
 

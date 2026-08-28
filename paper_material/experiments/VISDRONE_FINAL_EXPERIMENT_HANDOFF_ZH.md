@@ -63,22 +63,34 @@ COCO 风格评估器。
 - [FIA 方法](../methods/FIA_ZH.md)
 - [当前路线状态](../CURRENT_RERUN_STATUS_ZH.md)
 
-### 1.3 当前硬阻塞：禁止直接启动旧组合
+### 1.3 已发布的最终源码冻结（组合身份已解决）
 
-在开始训练前必须先完成新组合实现。当前已知状态：
+最终 LRS 系统源码已经在公开仓库中按 branch/tag/commit 冻结；本节只登记来源和
+验证入口，不把 Formal100 训练或 G/H/I 结果标记为完成。
 
-- LRS-FDR 的冻结算法源为 commit
-  `9fa9078011d92cc23fc1f0eec06ff34983986ff0`，配置为
-  `configs/rtdetr-l-lrs-fdr.yaml`，启动器为 `scripts/train_lrs_fdr.py`；
-- 现有 `scripts/train_rtdetr_bpdd.py` 绑定的是旧
-  `configs/rtdetr-l-fdr-bpdd.yaml`，其中 `preliminary_box=true`、
-  `supervise_pre_boxes=true`，不是 LRS-FDR；
-- 现有 `configs/rtdetr-l-fdr-fia.yaml` 与
-  `configs/rtdetr-l-fdr-bpdd-fia.yaml` 也是旧 FDR 身份；
-- 当前 LRS 分支没有可直接使用的 LRS-FDR+FIA / Full 正式配置和启动器。
+| 项目 | 冻结值 |
+|---|---|
+| Repository | `https://github.com/kkc236/uav-detection-baselines` |
+| Source branch | `codex/lrs-system-visdrone-rebuild` |
+| Release tag | `visdrone-lrs-system-v1` |
+| Release commit | `445120b7337dad0ccc41d18ad081b6b33580dcd2` |
+| Launcher | `scripts/train_visdrone_lrs_system.py` |
+| Runbook | [`docs/VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md`](https://github.com/kkc236/uav-detection-baselines/blob/visdrone-lrs-system-v1/docs/VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md) |
 
-**因此，禁止用旧 BPDD/FIA 启动器跑完后把目录改名为 LRS-FDR。** 那样不能形成
-新系统证据。
+该 release 已签入组合配置与启动器；source-focused verification suites 已通过。
+材料只保留这一结论并绑定 release tag，不合并其他 review 的测试计数。正式
+VisDrone G/H/I（对应下表的 `lrs_fdr_bpdd` / `lrs_fdr_fia` / `full`）仍为待训练、
+待评估，不能填入 Formal100 结果。
+
+| 标签 | 方法身份 | 配置 |
+|---|---|---|
+| `g` | LRS-FDR+BPDD | `configs/rtdetr-l-lrs-fdr-bpdd.yaml` |
+| `h` | LRS-FDR+FIA | `configs/rtdetr-l-lrs-fdr-fia.yaml` |
+| `i` | LRS-FDR+BPDD+FIA（Full） | `configs/rtdetr-l-lrs-fdr-bpdd-fia.yaml` |
+
+旧配置仍然禁止用于新系统证据：`configs/rtdetr-l-fdr-bpdd.yaml`、
+`configs/rtdetr-l-fdr-fia.yaml`、`configs/rtdetr-l-fdr-bpdd-fia.yaml` 及其旧启动器
+保持历史身份。不得用旧 BPDD/FIA 运行目录改名为 LRS-FDR。
 
 ### 1.4 GitHub 凭据安全合同
 
@@ -143,24 +155,20 @@ gh auth status --hostname github.com
 
 ## 3. Task 0：建立最终同身份实现
 
-### 源码装配边界
+### 源码装配边界（release 复核入口）
 
-从冻结 LRS commit `9fa9078011d92cc23fc1f0eec06ff34983986ff0` 建立专用分支
-`codex/lrs-system-visdrone`。旧 BPDD 和 FIA 实现与该 LRS commit 不在同一祖先链，
-不得整提交盲目 cherry-pick；只迁移已经审计的 BPDD 损失/运行统计与 FIA P3-only
-模块，并通过本节 Gate 0 证明组合后没有改变 LRS-FDR 的关闭态。
+从上节指定的 release tag checkout；不要重新装配或混用旧分支。以下文件已经由
+release 提供，训练前仍需按 Gate 0 复核其关闭态与运行 authority：
 
-**目标文件：**
-
-- 创建 `configs/rtdetr-l-lrs-fdr-bpdd.yaml`
-- 创建 `configs/rtdetr-l-lrs-fdr-fia.yaml`
-- 创建 `configs/rtdetr-l-lrs-fdr-bpdd-fia.yaml`
-- 创建 `scripts/train_visdrone_lrs_system.py`
-- 创建 `scripts/evaluate_visdrone_lrs_system.py`
-- 创建 `scripts/compare_visdrone_lrs_system.py`
-- 创建 `tests/test_visdrone_lrs_system_configs.py`
-- 创建 `tests/test_visdrone_lrs_system_launcher.py`
-- 创建 `tests/test_visdrone_lrs_system_evaluation.py`
+- `configs/rtdetr-l-lrs-fdr-bpdd.yaml`
+- `configs/rtdetr-l-lrs-fdr-fia.yaml`
+- `configs/rtdetr-l-lrs-fdr-bpdd-fia.yaml`
+- `scripts/train_visdrone_lrs_system.py`
+- `scripts/evaluate_visdrone_lrs_system.py`
+- `scripts/compare_visdrone_lrs_system.py`
+- `tests/test_visdrone_lrs_system_configs.py`
+- `tests/test_visdrone_lrs_system_launcher.py`
+- `tests/test_visdrone_lrs_system_evaluation.py`
 
 不得修改已有 LRS、BPDD、FIA 的原始证据文件。若需要组合模型类，应新建明确的
 LRS 身份文件，不能让旧 `rtdetr_fdr_bpdd*.py` 的默认行为静默改变。
@@ -282,13 +290,16 @@ Ultralytics 必须保持上述版本。若 GPU 型号改变，训练精度仍可
 获取后必须 checkout 到指定 commit；数据和初始权重无论从哪里传输都必须通过本文
 SHA-256。
 
-公开源码仓库不需要 PAT。首次装配最终源码：
+公开源码仓库不需要 PAT。训练服务器必须按已发布 branch/tag/commit 复核源码：
 
 ```bash
 set -euo pipefail
 
 export REPO_ROOT="/data/uav/code/uav-detection-baselines"
 export SOURCE_URL="https://github.com/kkc236/uav-detection-baselines.git"
+export SOURCE_BRANCH="codex/lrs-system-visdrone-rebuild"
+export SOURCE_TAG="visdrone-lrs-system-v1"
+export SOURCE_COMMIT="445120b7337dad0ccc41d18ad081b6b33580dcd2"
 
 if [ ! -d "$REPO_ROOT/.git" ]; then
   git clone --filter=blob:none "$SOURCE_URL" "$REPO_ROOT"
@@ -296,20 +307,20 @@ fi
 
 cd "$REPO_ROOT"
 test "$(git remote get-url origin)" = "$SOURCE_URL"
-git fetch --prune origin
-
-if git show-ref --verify --quiet refs/heads/codex/lrs-system-visdrone; then
-  git switch codex/lrs-system-visdrone
-elif git show-ref --verify --quiet refs/remotes/origin/codex/lrs-system-visdrone; then
-  git switch --track origin/codex/lrs-system-visdrone
-else
-  git switch --detach 9fa9078011d92cc23fc1f0eec06ff34983986ff0
-  git switch -c codex/lrs-system-visdrone
-fi
+git fetch --prune origin "$SOURCE_BRANCH" --tags
+test "$(git rev-parse "refs/remotes/origin/$SOURCE_BRANCH")" = "$SOURCE_COMMIT"
+test "$(git rev-list -n 1 "$SOURCE_TAG^{commit}")" = "$SOURCE_COMMIT"
+git switch --detach "$SOURCE_TAG"
+test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+test -f scripts/train_visdrone_lrs_system.py
+test -f configs/rtdetr-l-lrs-fdr-bpdd.yaml
+test -f configs/rtdetr-l-lrs-fdr-fia.yaml
+test -f configs/rtdetr-l-lrs-fdr-bpdd-fia.yaml
+test -f docs/VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md
 ```
 
-不要重新创建或强制覆盖已有分支。代码改完必须提交并推送，训练服务器只 checkout
-提交后的 clean commit。
+不要重新创建或强制覆盖已有分支，也不要在服务器上编辑 release 文件。训练服务器
+只 checkout 上述 detached tag，并将 `git rev-parse HEAD` 写入每个 authority。
 
 在首台可联网服务器构建 wheelhouse：
 

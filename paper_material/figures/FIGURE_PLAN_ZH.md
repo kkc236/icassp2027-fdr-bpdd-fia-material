@@ -115,7 +115,7 @@ Tiny/Small/Medium mAP 三组并列；Large 单独用浅色或补充表，因为�
 | Table 2 | Original FDR / NA-FDR / LRS-FDR 总体与内部消融 | 数据完整 |
 | Table 3 | 三臂 Tiny/Small/Medium/Large 与类别方向 | 数据完整，建议补充材料 |
 | Table 4 | LRS-FDR / +BPDD / +FIA / Full | 新组合未完成，不填数 |
-| Table 5 | 第二数据集 Baseline / NA-FDR / Full | 未运行，不填数 |
+| Table 5 | UAVDT Baseline / Full（两臂） | Baseline authority 待绑定；Full 未运行，不填数 |
 | Table 6 | 最终 Params/FLOPs/Latency | LRS 不增量已知；完整新组合待统一实测 |
 
 ## 禁止内容

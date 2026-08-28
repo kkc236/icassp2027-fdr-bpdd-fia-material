@@ -106,7 +106,9 @@ D-FINE；本文第一贡献是 NA-FDR 的原生对齐组织和 LRS-FGL 的具体
   才加入当前主表；
 - **4.6 External Comparison and Complexity**：按 split/input/协议分层，不声称
   不受控跨论文 SOTA；
-- **4.7 Second Dataset**：Baseline / Baseline+NA-FDR / 完整投稿方法三组。
+- **4.7 Second Dataset (UAVDT)**：仅比较 Baseline 与 Full 两臂；Baseline 的既有
+  authority/metrics 必须绑定，Full 未完成前不填数。annotation conversion、split、
+  evaluator 和 protocol matching 随 UAVDT authority 单独记录。
 
 ### 5. Conclusion and Limitations
 
@@ -114,6 +116,9 @@ D-FINE；本文第一贡献是 NA-FDR 的原生对齐组织和 LRS-FGL 的具体
 提供主要基础增益，LRS 进一步形成 AP75/Recall 取向。限制明确写单 seed、第二
 数据集尚未完成、Tiny/Small 内部回落、LRS 末十轮平台不优于 NA-FDR，以及最终
 BPDD/FIA 新组合仍需训练。
+UAVDT 的 Baseline-vs-Full 只能支持 matched in-domain 的第二数据集 effectiveness /
+multi-dataset applicability 描述性判断，不得写成 zero-shot transfer 或 module-level
+attribution；单 seed 不支持稳定性结论。
 
 ## 4. 正文 FDR 表格
 
@@ -150,7 +155,7 @@ BPDD/FIA 新组合仍需训练。
 ## 6. 投稿前实验优先级
 
 1. 固定并训练 LRS-FDR + BPDD + FIA 的最终 VisDrone 组合；
-2. 执行第二数据集三组矩阵；
+2. 绑定既有 UAVDT Baseline authority 并执行第二数据集 Baseline-vs-Full 两臂矩阵；
 3. 对最终组合统一测 Params/FLOPs/Latency；
 4. 若剩余算力足够，再为 NA-FDR/LRS-FDR 关键臂补多 seed；
 5. 不继续调 `alpha0`，不恢复 EAW/DCF，不增加第四个定位机制。

@@ -58,16 +58,19 @@ Original FDR
 
 旧结果保留为机制有效性和兼容性历史证据，不直接重命名。
 
-### 2. 第二数据集
+### 2. 第二数据集：UAVDT
 
-当前证据只覆盖 VisDrone、seed 0。第二数据集冻结三组为：
+第二数据集正式名称为 **UAVDT**（不是 UAT）。最终只保留两个同域、协议匹配的实验臂：
 
-1. Baseline；
-2. Baseline + NA-FDR；
-3. Baseline + 完整投稿方法。
+1. **Baseline**：作者已确认完成；artifact identity 与 metrics 仍必须绑定既有
+   authority 后才能进入正式表；
+2. **Full**：Baseline + 完整投稿方法，尚未完成，不填结果。
 
-第二数据集不重复 Original FDR、EQuAL、DCF、NA-FDR/LRS 内部更多开关或全部模块
-组合。其职责是泛化验证，VisDrone 负责内部归因。
+UAVDT 不运行或不登记 NA-FDR、LRS-only、G/H 或其他内部消融臂，也不复制
+VisDrone 的三臂归因。其作用仅是 matched in-domain 的第二数据集 effectiveness /
+multi-dataset applicability 检查；它不支持 zero-shot transfer 或 module-level attribution。
+UAVDT 的 annotation conversion、split、评估器和协议匹配必须随其 authority 记录源/转换
+标注哈希、数据签名和 evaluator 参数；不能把 VisDrone 的证据或协议默认移植为 UAVDT 结果。
 
 ### 3. 统计稳定性
 
@@ -92,8 +95,8 @@ Original FDR
 [VisDrone 最终实验交接](experiments/VISDRONE_FINAL_EXPERIMENT_HANDOFF_ZH.md)。
 
 1. 固定 LRS-FDR + BPDD + FIA 的完整 VisDrone 组合配置；
-2. 以 Baseline / NA-FDR / 完整方法三组执行第二数据集；
-3. 对最终 VisDrone 组合和第二数据集 best checkpoint 使用同一声明协议复评；
+2. 绑定既有 UAVDT Baseline authority，并按同一声明协议完成 UAVDT Full；
+3. 对最终 VisDrone 组合和 UAVDT Full best checkpoint 使用各自冻结协议复评；
 4. 更新完整主表、复杂度表和论文英文稿；
 5. 若算力允许，再补关键臂多 seed，而不是扩展新的 FDR 机制。
 

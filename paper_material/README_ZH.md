@@ -19,6 +19,14 @@
 BPDD/FIA 的最终组合尚未按新 FDR 身份重训，因此旧 AP-FDR 组合只作兼容性和历史
 证据，不直接改名。
 
+最终源码已发布并冻结：仓库
+`https://github.com/kkc236/uav-detection-baselines`，branch
+`codex/lrs-system-visdrone-rebuild`，tag `visdrone-lrs-system-v1`，commit
+`445120b7337dad0ccc41d18ad081b6b33580dcd2`。组合运行入口为
+`scripts/train_visdrone_lrs_system.py`；中文 runbook 为
+[`VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md`](https://github.com/kkc236/uav-detection-baselines/blob/visdrone-lrs-system-v1/docs/VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md)。
+Source-focused verification suites 已通过；这不等同于 G/H/I 的 Formal100 结果。
+
 ## 当前阅读顺序
 
 1. [当前重跑与证据状态](CURRENT_RERUN_STATUS_ZH.md)
@@ -92,14 +100,15 @@ NA-FDR 是有独立正向证据的基础设计；历史运行标识 “Clean FDR
 ## 下一实验矩阵
 
 主数据集 VisDrone 已承担 Original FDR / NA-FDR / LRS-FDR 的内部归因。第二数据集
-只需承担泛化验证，冻结为三组：
+正式名称为 **UAVDT**，只冻结两个同域、协议匹配的臂：
 
-1. Baseline；
-2. Baseline + NA-FDR；
-3. Baseline + 完整投稿方法（包含 LRS-FDR）。
+1. **Baseline**（作者已确认完成；artifact identity 与 metrics 仍待既有 authority 绑定）；
+2. **Full**（Baseline + 完整投稿方法，尚未完成，不填数）。
 
-在第三组启动前，必须先固定完整投稿方法是否包含 BPDD 与 FIA，并保证其配置与
-VisDrone 最终组合一致。第二数据集不复制所有历史 FDR 开关。
+UAVDT 不运行 NA-FDR、LRS-only、G/H 或其他模块级消融。Baseline-vs-Full 仅支持第二
+数据集 effectiveness / multi-dataset applicability 的描述性判断，不支持 zero-shot
+transfer 或 module-level attribution；单 seed 结果仍为 descriptive。annotation conversion、
+split 与 protocol matching 必须在 UAVDT authority 中单独记录，不能借用 VisDrone 结果。
 
 ## 当前机器材料
 

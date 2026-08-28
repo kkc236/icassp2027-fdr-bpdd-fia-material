@@ -80,7 +80,7 @@ LRS-FGL 对同图像、同浅层、四边目标均可表示的 normal matches，
 | 第一创新大量借用 D-FINE | 高 | Related Work 主动归因基础分布算子；只主张 NA 对齐组织和 LRS 变换 | 来源表、公式差异、代码 commit |
 | LRS-FDR 与 BPDD/FIA 未共同重训 | 高 | 旧组合保持历史名称；新组合结果为空，不提前改名或填表 | 当前状态页、最终组合 protocol |
 | 单 seed 无统计稳定性 | 中 | 使用 descriptive/fixed-seed wording；若算力允许补关键臂 seed | seed0 authority、限制段 |
-| 单数据集无法证明泛化 | 中 | 第二数据集采用 Baseline / NA-FDR / Full 三组，不复制全部消融；完成前结论限定 VisDrone | 第二数据集冻结矩阵 |
+| 单数据集无法证明泛化 | 中 | UAVDT 仅采用 matched in-domain Baseline / Full 两臂，不复制内部消融；它支持第二数据集 effectiveness / multi-dataset applicability，不支持 zero-shot transfer 或 module-level attribution | UAVDT 两臂冻结矩阵 |
 | Large 波动异常 | 中 | Large 仅 130 GT，不作为主张；重点报告总体和 Tiny/Small/Medium | scale GT count |
 | 三模块只是工程堆叠 | 高 | 画出依赖：LRS-FDR 产生分布，BPDD 消费分布，FIA 提供 P3；分别绑定机制证据 | Overall architecture + 分层消融 |
 
@@ -97,7 +97,7 @@ LRS-FGL 对同图像、同浅层、四边目标均可表示的 normal matches，
 ### 当前未满足
 
 - LRS-FDR+BPDD+FIA 的同身份完整训练；
-- 第二数据集泛化；
+- UAVDT Full 与既有 Baseline 的第二数据集验证；
 - 多 seed 稳定性；
 - LRS 预注册 strong GO；
 - low-IoU next-layer mechanism diagnostic。
@@ -169,7 +169,7 @@ universal、significant、across datasets”。
 
 1. 不再修改 LRS 公式、`alpha0=0.25` 或六层日程；
 2. 先完成 LRS-FDR+BPDD+FIA 的 VisDrone 最终组合，确认三个创新能共同工作；
-3. 第二数据集只跑 Baseline / NA-FDR / Full；
+3. UAVDT 只绑定既有 Baseline 并运行 Full；
 4. 正文第一创新使用 Original / NA / LRS 三行，详细类别和尺度放补充材料；
 5. 时间不足时优先第二数据集而不是全面多 seed 或更多 FDR 开关；
 6. 全文用 “descriptive fixed-seed gain”，不使用统计显著措辞。

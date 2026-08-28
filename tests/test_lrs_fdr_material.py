@@ -157,4 +157,4 @@ def test_paper_facing_material_uses_lrs_fdr_identity_without_rebranding_history(
     assert "历史运行标识 “Clean FDR” 不再作为论文" in readme
     assert "旧 AP-FDR+BPDD/FIA checkpoint" in readme
     assert "LRS-FDR+BPDD+FIA 的同身份完整训练" in audit
-    assert "第二数据集只跑 Baseline / NA-FDR / Full" in audit
+    assert "UAVDT 只绑定既有 Baseline 并运行 Full" in audit
