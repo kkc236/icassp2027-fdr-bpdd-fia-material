@@ -1,33 +1,136 @@
-# ICASSP 2027 四图规划
+# ICASSP 2027 图表规划：LRS-FDR / BPDD / FIA
 
-## 图 1：整体架构
+> 图中论文名称统一为 NA-FDR / LRS-FDR。历史运行别名、EQuAL、DCF 和官方
+> D-FINE-S 替代路线不进入当前主图；需要追踪时只在补充材料的 identity map 中
+> 展示。
 
-- 目的：展示 RT-DETR-L Backbone/Hybrid Encoder、三尺度特征、EQuAL localization、训练期 BPDD 和修改后 FIA 的目标关系。
-- 当前可画：EQuAL standalone 的 native query/reference、四边离散分布和 edge-adaptive FGL；BPDD/FIA 的最终连线必须等 EQuAL 组合重训后按真实计算图确认。旧 AP-FDR 组合图只作为历史版本保留。
-- FIA 部分：按当前源码画成 P3 上的恒等安全增强块；fresh FIA-only 与 P3-only 三模块中，FIA 层 22 读取上一层 21，层 23 也显式读取原始 P3（`f=21`），decoder 使用 `[22,25,28]`。
-- 禁止标签：BPDD inference branch、FGL/Integral invented here、额外检测头，或把层 23 仍为 `f=-1` 的旧 cascading checkpoint 画成 P3-only。
+## 图 1：完整方法依赖图
 
-## 图 2：EQuAL 与 BPDD 解码器监督
+### 目的
 
-- 目的：左侧展示 EQuAL 以原生 reference 锚定 clean matched queries 并按四边难度分配 FGL；右侧展示 BPDD 对相邻 decoder layer 分布进行教师筛选与渐进蒸馏。
-- 必须标注：训练期监督、教师停止梯度、有效边激活条件、BPDD 不进入推理图。
-- 源码依据：src/bpdd_loss.py、src/rtdetr_fdr_bpdd.py 及对应配置。
-- 禁止标签：feature distillation、trainable teacher、denoising-query BPDD、standalone BPDD 或无条件激活全部教师边。
+展示三个创新不是任意堆叠：FIA 增强 P3，LRS-FDR 产生逐层四边分布，BPDD 在
+训练期消费这些分布并监督早期 decoder 层。
 
-## 图 3：FIA 模块
+### 固定结构
 
-- 目的：呈现修改后 FIA 的真实特征增强结构。
-- 当前可画：两个 `FIABaseBlock` 顺序细化后接通道/空间联合注意力，外层使用零初始化标量残差 `Y=X+α(F(X)−X)`。
-- 必须标注：`1×1—DWConv 3×3—1×1`、每块两条内部残差、通道平均池化门控、mean/max 空间门控、P3 输入输出和构造期 RNG 隔离。
-- 禁止标签：未经测量的参数量/延迟，或把既有 FDR+FIA cascading 结果身份标成 P3-only。
+```text
+Image
+  -> RT-DETR-L Backbone / Hybrid Encoder
+  -> P3 -- FIA --> enhanced P3
+  -> P4 / P5 unchanged paths
+  -> Decoder queries + native references
+  -> LRS-FDR boundary distributions (six layers)
+       -> boxes / scores (train and inference)
+       -> BPDD future-layer teachers (training only)
+```
 
-## 图 4：结果比较
+图中必须：
 
-- 最新定位子图：展示 AP-FDR 与 EQuAL 的 val/test AP75、mAP，明确 EQuAL 的 `+0.850/+0.646 pp` AP75 和 `+0.472/+0.661 pp` mAP 为非 fresh-paired 算术差。
-- 正式系统子图：组合重训前继续展示 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD 三条历史核心结果；EQuAL+BPDD 完成后再替换，不提前绘制结果柱。
-- 消融附图：可加入 fresh P3-only FIA-only `0.227056` 与既有 cascading FDR+FIA `0.294940` 的独立 val，分别标注相对 canonical baseline `+0.7946 pp`、相对 FDR `+0.5280 pp`，同时标明 topology 不同。
-- test 附图：可加入 FIA-only / FDR+FIA 的 mAP50–95 `0.185517` / `0.234645` 与 AP75 `0.182011` / `0.235879`；fresh FIA-only 可标注相对 protocol-comparable canonical test baseline 的 `+0.8101 pp`，但不得跨 val/test 计算。若画逐类图，fresh FIA-only 只使用新 exact JSON/CSV 中与 checkpoint SHA `c00cae89…` 绑定的十类结果，不复用旧 cascading 行。
-- 三模块标记：正确 P3-only 的四位小数 val/test mAP50–95 分别为 0.2961（+0.384 pp）和 0.2337（+0.204 pp），两者均为正增长；可同时展示 AP75=0.3042/0.2327，证据标为 `user_supplied_text_report_4dp`。
-- 禁止内容：把既有 FDR+FIA cascading best.pt 标成 P3-only、把旧 FIA-only cascading 数值当作当前结果、混写 val/test、伪造误差条或显著性符号、把算术差写成严格配对因果结果。
+- 用实线表示推理路径；
+- 用虚线表示 LRS weight transform 与 BPDD training-only losses；
+- 把 BPDD 标为 removed at inference；
+- 不把 LRS-FDR+BPDD+FIA 画成已有结果行，直到新组合训练完成；
+- 不沿用旧 AP-FDR 的 preliminary-box 分支或 DN-FDR 分布监督。
 
-FIA 图与结果图的启用条件见 [FIA 结果状态](../results/FIA_RESULTS_STATUS_ZH.md)。
+## 图 2：NA-FDR 原生对齐
+
+左右对比 Original FDR 与 NA-FDR：
+
+| 元素 | Original FDR | NA-FDR |
+|---|---|---|
+| Distribution anchor | learned preliminary reference | native decoder reference |
+| Preliminary loss | L1/GIoU enabled | absent |
+| Normal-query FGL | enabled | enabled, stock assignment reused |
+| Extra DN-FDR | enabled | absent; stock DN losses preserved |
+| EAW | absent/历史开关 | absent |
+| Cumulative 33-bin FDR | enabled | enabled |
+
+主视觉应突出“reference alignment + effective-query supervision”，不要把 NA-FDR
+画成只有两个关闭符号的配置截图。
+
+## 图 3：LRS-FGL 机制图
+
+按一次图像、一个浅层 decoder 的 normal matches 展示：
+
+```text
+matched boxes + GT
+  -> detached IoU q
+  -> four-edge target-bin representability check
+       ineligible: q unchanged
+       eligible: group mean q_bar
+                 -> q_tilde = (1-alpha_l) q + alpha_l q_bar
+  -> repeat one query weight over four edges
+  -> adjacent-bin FGL
+```
+
+图中同时标出：
+
+- 六层 alpha：`0.25, 0.20, 0.15, 0.10, 0.05, 0.00`；
+- final layer identity；
+- per-image/per-layer sum conservation；
+- saturated target、DN、unmatched 不参与；
+- no parameters / no inference operation。
+
+建议用一组低/中/高 IoU 圆点展示向均值收缩，但不使用未经记录的实际 IoU 数值。
+
+## 图 4：三臂结果与 trade-off
+
+### 4.1 总体子图
+
+只画同一冻结评估器的三组：
+
+| Method | Recall | AP50 | AP75 | mAP |
+|---|---:|---:|---:|---:|
+| Original FDR | 0.491417 | 0.484700 | 0.294070 | 0.290698 |
+| NA-FDR | 0.498339 | **0.493119** | 0.301061 | 0.296855 |
+| LRS-FDR | **0.500606** | 0.491805 | **0.305773** | **0.296968** |
+
+推荐分成两组柱：
+
+1. NA-FDR vs Original：表现基础对齐的均衡增益；
+2. LRS-FDR vs NA-FDR：表现 AP75/Recall 上升与 AP50/Precision 回落的 trade-off。
+
+不能用截断 y 轴夸大 `+0.011 pp` mAP。
+
+### 4.2 尺度子图
+
+Tiny/Small/Medium mAP 三组并列；Large 单独用浅色或补充表，因为只有 130 个 GT。
+图注必须指出 LRS 相对 NA 的 Tiny/Small 为负，不能只画 LRS 相对 Original。
+
+### 4.3 训练稳定性附图
+
+如版面允许，在补充材料画 epoch 91--100 mAP：
+
+- Original mean `0.289968`；
+- NA-FDR mean `0.296102`；
+- LRS-FDR mean `0.295253`。
+
+该图用于披露 best-point 与 tail 平台差异，不用于宣称 LRS 收敛更稳。
+
+## 表格计划
+
+| Table | 内容 | 当前状态 |
+|---|---|---|
+| Table 1 | VisDrone 外部会议方法比较 | 旧表可复用，需替换本文最终方法行 |
+| Table 2 | Original FDR / NA-FDR / LRS-FDR 总体与内部消融 | 数据完整 |
+| Table 3 | 三臂 Tiny/Small/Medium/Large 与类别方向 | 数据完整，建议补充材料 |
+| Table 4 | LRS-FDR / +BPDD / +FIA / Full | 新组合未完成，不填数 |
+| Table 5 | 第二数据集 Baseline / NA-FDR / Full | 未运行，不填数 |
+| Table 6 | 最终 Params/FLOPs/Latency | LRS 不增量已知；完整新组合待统一实测 |
+
+## 禁止内容
+
+- 把旧 AP-FDR+BPDD/FIA checkpoint 标成 LRS-FDR 组合；
+- 把 EQuAL 或 DCF 画成当前最终定位路径；
+- 伪造误差条、显著性标记或多 seed 阴影；
+- 隐藏 Tiny/Small 相对 NA-FDR 的回落；
+- 用 Large 130 GT 的波动支撑总体机制；
+- 把 val 与 test 或不同 evaluator 的数字画在同一无标注序列；
+- 把历史别名作为论文方法名。
+
+## 数据源
+
+- [LRS-FDR 结果页](../results/LRS_FDR_RESULTS_ZH.md)
+- [三臂 comparison JSON](../evidence/lrs_fdr_formal100_20260828/independent-evaluation/comparison.json)
+- [LRS-FDR 方法页](../methods/FDR_ZH.md)
+- [当前实验状态](../CURRENT_RERUN_STATUS_ZH.md)
