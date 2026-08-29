@@ -35,7 +35,7 @@ Source-focused verification suites 已通过；这不等同于 G/H/I 的 Formal1
 4. [LRS-FDR 三臂机器证据](evidence/lrs_fdr_formal100_20260828/README.md)
 5. [BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
 6. [FIA：高分辨率特征增强](methods/FIA_ZH.md)
-7. [论文写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+7. [论文蓝图与写作执行清单](writing/ICASSP2027_OUTLINE_ZH.md)
 8. [创新定位与对抗性审计](writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md)
 9. [图表规划](figures/FIGURE_PLAN_ZH.md)
 10. [冻结实验协议](experiments/PROTOCOL_ZH.md)
