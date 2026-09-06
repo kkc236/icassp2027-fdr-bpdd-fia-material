@@ -1,0 +1,145 @@
+{
+  "arms": {
+    "f": {
+      "amp_scale_after": 128.0,
+      "amp_scale_before": 128.0,
+      "bpdd_observed": false,
+      "grad_norm_before_clip": 1781.4447021484375,
+      "gradients_finite": true,
+      "loss": 54.697628021240234,
+      "loss_items": [
+        {
+          "finite": true,
+          "mean": 1.449247121810913,
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "minimum_decoded_height": 0.2001838982105255,
+      "minimum_decoded_width": 0.1990867406129837,
+      "optimizer": "MuSGD",
+      "peak_memory_bytes": 11184771072,
+      "prediction_finite": true,
+      "shared_mismatch_count": 0,
+      "shared_tensor_count": 950,
+      "status": "passed"
+    },
+    "g": {
+      "amp_scale_after": 128.0,
+      "amp_scale_before": 128.0,
+      "bpdd_observed": true,
+      "grad_norm_before_clip": 1778.722900390625,
+      "gradients_finite": true,
+      "loss": 54.6785774230957,
+      "loss_items": [
+        {
+          "finite": true,
+          "mean": 1.449247121810913,
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "minimum_decoded_height": 0.2001684159040451,
+      "minimum_decoded_width": 0.1990831196308136,
+      "optimizer": "MuSGD",
+      "peak_memory_bytes": 11181939712,
+      "prediction_finite": true,
+      "shared_mismatch_count": 0,
+      "shared_tensor_count": 950,
+      "status": "passed"
+    },
+    "h": {
+      "amp_scale_after": 128.0,
+      "amp_scale_before": 128.0,
+      "bpdd_observed": false,
+      "grad_norm_before_clip": 1797.55615234375,
+      "gradients_finite": true,
+      "loss": 54.62872314453125,
+      "loss_items": [
+        {
+          "finite": true,
+          "mean": 1.449247121810913,
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "minimum_decoded_height": 0.20021852850914001,
+      "minimum_decoded_width": 0.19906620681285858,
+      "optimizer": "MuSGD",
+      "peak_memory_bytes": 11532497920,
+      "prediction_finite": true,
+      "shared_mismatch_count": 0,
+      "shared_tensor_count": 950,
+      "status": "passed"
+    },
+    "i": {
+      "amp_scale_after": 128.0,
+      "amp_scale_before": 128.0,
+      "bpdd_observed": true,
+      "grad_norm_before_clip": 1786.449951171875,
+      "gradients_finite": true,
+      "loss": 54.6260986328125,
+      "loss_items": [
+        {
+          "finite": true,
+          "mean": 1.449247121810913,
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "minimum_decoded_height": 0.20022909343242645,
+      "minimum_decoded_width": 0.19906751811504364,
+      "optimizer": "MuSGD",
+      "peak_memory_bytes": 11532503040,
+      "prediction_finite": true,
+      "shared_mismatch_count": 0,
+      "shared_tensor_count": 950,
+      "status": "passed"
+    }
+  },
+  "batch": {
+    "files": [
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999937_00000_d_0000192.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999960_00000_d_0000108.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999955_00000_d_0000020.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999962_00000_d_0000086.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999964_00000_d_0000077.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999945_00000_d_0000035.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999962_00000_d_0000065.jpg",
+      "/root/sj-tmp/datasets/VisDrone/images/train/9999945_00000_d_0000067.jpg"
+    ],
+    "shape": [
+      8,
+      3,
+      640,
+      640
+    ],
+    "target_count": 1389
+  },
+  "dataset": {
+    "root": "/root/sj-tmp/datasets/VisDrone",
+    "sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB"
+  },
+  "fixed_subset_sha256": "52660F55552FFD953E2EE26F55FD0A1CB14217DBBEA0F5F3B981C3514F8D93A0",
+  "format_version": 1,
+  "initial_state": {
+    "path": "/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt",
+    "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B"
+  },
+  "method_revision": "v2-fp32-extent-logspace-ac-bpdd",
+  "runtime": {
+    "amp": true,
+    "amp_initial_scale": 128.0,
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "12.1",
+    "device": "cuda:0",
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "torch": "2.5.1+cu121"
+  },
+  "source_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+  "status": "passed"
+}

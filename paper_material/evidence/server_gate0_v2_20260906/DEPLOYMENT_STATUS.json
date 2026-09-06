@@ -1,0 +1,165 @@
+{
+  "archives": {
+    "VisDrone2019-DET-test-dev.zip": {
+      "bytes": 311251787,
+      "sha256": "B28A94B06DFD9E36CE77FF8155FB82B9D2C030F198A76105933BD56C6EA6A68D"
+    },
+    "VisDrone2019-DET-train.zip": {
+      "bytes": 1549875511,
+      "sha256": "86A77EBA93137BFC16E4993860DE9245B0675C0DBA0D3AB98FB458699E256F84"
+    },
+    "VisDrone2019-DET-val.zip": {
+      "bytes": 81638851,
+      "sha256": "ABEEA063037E5D20398837DEB11084E652402A34DDF4F207BDF541A6F2A35EF9"
+    }
+  },
+  "checks": {
+    "core_pytest": {
+      "command": "tests/test_lrs_system_models.py tests/test_lrs_system_launcher.py tests/test_lrs_system_local_execution.py tests/test_no_server_correctness.py",
+      "result": "86 passed"
+    },
+    "cuda_canary": {
+      "amp": "float16",
+      "arms": "fghi",
+      "batch": "1x3x128x128",
+      "finite_loss_and_gradients": true
+    },
+    "fdr_checkpoint_verify": {
+      "finite_output": true,
+      "missing_keys": 0,
+      "output_shape": [
+        1,
+        300,
+        6
+      ],
+      "path": "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-checkpoint-verify.json",
+      "strict_load": true,
+      "unexpected_keys": 0
+    },
+    "four_arm_dry_run": {
+      "arms": "fghi",
+      "same_dataset": true,
+      "same_frozen_training_settings": true,
+      "same_initial_state": true,
+      "same_source": true,
+      "status": "passed"
+    },
+    "four_arm_initial_state_load": {
+      "arms": "fghi",
+      "fg_full_state_equal": true,
+      "fia_private_tensor_count": 19,
+      "hi_full_state_equal": true,
+      "shared_mismatch_count": 0,
+      "status": "passed"
+    },
+    "four_arm_real_gate0": {
+      "amp": "cuda float16, initial scale 128",
+      "arms": "fghi",
+      "batch": "8x3x640x640",
+      "data": "real VisDrone fixed subset with training augmentation",
+      "finite_loss_gradients_and_prediction": true,
+      "optimizer": "MuSGD",
+      "report": "/root/sj-tmp/runs/visdrone-v2/gate0/four-arm-real-batch8-amp128.json",
+      "status": "passed"
+    },
+    "full_pytest": {
+      "non_core_failures": "historical D-FINE/pinned-authority tests and missing /tmp/D-FINE fixture",
+      "result": "2095 passed, 5 failed, 8 errors"
+    },
+    "lrs_directed_pytest": {
+      "command": "tests/test_lrs_system_configs.py tests/test_lrs_system_fia.py tests/test_lrs_system_models.py tests/test_lrs_system_launcher.py tests/test_lrs_system_local_execution.py",
+      "result": "76 passed"
+    }
+  },
+  "dataset": {
+    "file_count": 14038,
+    "sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB"
+  },
+  "environment": {
+    "cuda": "12.1",
+    "driver": "550.107.02",
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "python": "3.10.21",
+    "torch": "2.5.1+cu121",
+    "torchvision": "0.20.1+cu121",
+    "ultralytics": "8.4.90"
+  },
+  "external_sources": {
+    "dfine_official_clone": {
+      "commit": "7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6",
+      "path": "/root/sj-tmp/lrs-v2/external/D-FINE-7fe2f888",
+      "status": "clean"
+    }
+  },
+  "formal100_queue": {
+    "current_arm": "f",
+    "current_optimizer_steps_observed": 263,
+    "log": "/root/sj-tmp/runs/visdrone-v2/logs/formal100-queue.log",
+    "order": [
+      "f",
+      "g",
+      "h",
+      "i"
+    ],
+    "pid": 8254,
+    "status": "running"
+  },
+  "github_scan": {
+    "branches_checked": 41,
+    "fdr_release_assets_checked": true,
+    "historical_initial_state_found": false,
+    "initial_state_commit_history_hits": false,
+    "repository": "kkc236/uav-detection-baselines",
+    "source_tree_pt_hits": false,
+    "yaml_bundle_checked": true,
+    "yaml_overlay_checked": true
+  },
+  "historical_initial_state": {
+    "previously_expected_sha256": "51AAB2EB3FB7D123501C69C7B8DC90FF3EA0B9344A108EDEEF2C7D6DDCDBB742D",
+    "reason": "current four-arm comparison uses a fresh common seed0 authority on the current server",
+    "status": "not_used"
+  },
+  "images": {
+    "test": 1610,
+    "train": 6471,
+    "val": 548
+  },
+  "initial_state": {
+    "bytes": 261864454,
+    "fdr_private_tensor_count": 42,
+    "fia_private_seed": 20000,
+    "historical_hash_required": false,
+    "path": "/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt",
+    "policy": "fresh_current_server_shared_seed0",
+    "private_seed": 10000,
+    "public_tensor_count": 908,
+    "seed": 0,
+    "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B",
+    "status": "generated_and_validated",
+    "tensor_count": 950
+  },
+  "paths": {
+    "dataset_root": "/root/sj-tmp/datasets/VisDrone",
+    "formal_data_yaml": "/root/sj-tmp/runs/visdrone-v2/authority/data/formal-data.yaml",
+    "freeze": "/root/sj-tmp/lrs-v2/environment.freeze.txt",
+    "repo": "/root/sj-tmp/lrs-v2/code"
+  },
+  "release_checkpoints": {
+    "control": {
+      "bytes": 197665100,
+      "path": "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+      "release": "fdr-formal-control-d97e1eb7-live",
+      "sha256": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7"
+    },
+    "fdr": {
+      "bytes": 200024985,
+      "path": "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-fdr-d97e1eb7-epoch-0100.pt",
+      "release": "fdr-formal-d97e1eb7-live",
+      "sha256": "C2F638744508ADFE7B6C4A1EF3E08C503273F628062E4650AD59FFFF4C6588C2"
+    }
+  },
+  "source": {
+    "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+    "tree_sha256": "8126CE642BDA43B4CA825C169DA875C369E0DB41DD315132ED238358D9A89DC1"
+  }
+}

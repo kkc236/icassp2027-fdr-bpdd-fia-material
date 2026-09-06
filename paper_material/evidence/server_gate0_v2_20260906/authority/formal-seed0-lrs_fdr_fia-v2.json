@@ -1,0 +1,70 @@
+{
+  "arm": "h",
+  "config": {
+    "path": "/root/sj-tmp/lrs-v2/code/configs/rtdetr-l-lrs-fdr-fia.yaml",
+    "sha256": "9EC7181DFC3D6C5CB58485121B7FB1FEB55818D50941E69FEEFEB6ABA4A44AAC"
+  },
+  "dataset": {
+    "file_count": 14038,
+    "sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB"
+  },
+  "format_version": 2,
+  "initial_state": {
+    "path": "/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt",
+    "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B"
+  },
+  "method": "lrs_fdr_fia",
+  "method_revision": "v2-fp32-extent-logspace-ac-bpdd",
+  "settings": {
+    "amp": true,
+    "batch": 8,
+    "cache": false,
+    "close_mosaic": 10,
+    "copy_paste": 0.0,
+    "cos_lr": false,
+    "cutmix": 0.0,
+    "data": "/root/sj-tmp/runs/visdrone-v2/authority/data/formal-data.yaml",
+    "degrees": 0.0,
+    "deterministic": true,
+    "device": "0",
+    "epochs": 100,
+    "exist_ok": false,
+    "fliplr": 0.5,
+    "flipud": 0.0,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "imgsz": 640,
+    "lr0": 0.01,
+    "lrf": 0.01,
+    "max_det": 300,
+    "mixup": 0.0,
+    "model": "/root/sj-tmp/lrs-v2/code/configs/rtdetr-l-lrs-fdr-fia.yaml",
+    "momentum": 0.937,
+    "mosaic": 1.0,
+    "name": "formal-seed0-lrs_fdr_fia-v2",
+    "nbs": 64,
+    "nms": false,
+    "optimizer": "MuSGD",
+    "perspective": 0.0,
+    "plots": true,
+    "pretrained": false,
+    "project": "/root/sj-tmp/runs/visdrone-v2",
+    "save": true,
+    "save_period": -1,
+    "scale": 0.5,
+    "seed": 0,
+    "shear": 0.0,
+    "translate": 0.1,
+    "val": true,
+    "warmup_bias_lr": 0.0,
+    "warmup_epochs": 3.0,
+    "warmup_momentum": 0.8,
+    "weight_decay": 0.0005,
+    "workers": 8
+  },
+  "source": {
+    "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+    "tree_sha256": "8126CE642BDA43B4CA825C169DA875C369E0DB41DD315132ED238358D9A89DC1"
+  }
+}
