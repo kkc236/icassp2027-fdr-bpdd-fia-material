@@ -3,3 +3,5 @@ paper_material/evidence/fdr_bpdd_fia_test.txt -text
 paper_material/evidence/bpdd_strict_pair_20260819/** -text
 paper_material/evidence/lrs_fdr_formal100_20260828/** -text
 paper_material/evidence/no_server_correctness_v2_20260906/** -text
+# Preserve original pytest trace whitespace as hashed evidence, not source style.
+paper_material/evidence/no_server_correctness_v2_20260906/*.xml -whitespace
