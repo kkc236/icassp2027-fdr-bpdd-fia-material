@@ -1,0 +1,19 @@
+{
+  "format_version": 1,
+  "date": "2026-09-06",
+  "method_revision": "v2-fp32-extent-logspace-ac-bpdd",
+  "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+  "source_branch": "codex/no-server-correctness-v2",
+  "source_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+  "source_tree": "8570e13c96f388b3f122efd4968f62e58b70e098",
+  "implementation_base_commit": "521a5325",
+  "prior_executable_commit": "5e3d54734d64d5b38d712d3f6ec56ee679484f78",
+  "archive": "source.zip",
+  "archive_sha256": "bd6d5fbbb2d7ccc7a007be5a7cdce90059f334c0f78f92810abedd71342e2dde",
+  "archive_size_bytes": 1883294,
+  "tracked_file_count": 602,
+  "archive_comment_matches_commit": true,
+  "all_archive_files_match_git_blob_ids": true,
+  "archive_command": "git -c core.autocrlf=false -c core.eol=lf archive --format=zip --prefix=uav-detection-baselines/ --output=source.zip f56b210798acab96d628308a5127a2e1399d00dc",
+  "scope": "all tracked files at source_commit; no untracked dataset, weights, credentials, or local-validation output"
+}

@@ -1,0 +1,159 @@
+{
+  "format_version": 1,
+  "date": "2026-09-06",
+  "source_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+  "method_revision": "v2-fp32-extent-logspace-ac-bpdd",
+  "environment": {
+    "os": "Windows 10.0.26200",
+    "python": "3.10.11",
+    "pytorch": "2.13.0+cpu",
+    "ultralytics": "8.4.90",
+    "pytest": "9.1.1",
+    "OMP_NUM_THREADS": 2,
+    "MKL_NUM_THREADS": 2
+  },
+  "final_regression": {
+    "passed": 176,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 204.72,
+    "junit": "regression-final.xml",
+    "command": "python -m pytest tests/test_no_server_correctness.py tests/test_fdr_feasible_geometry.py tests/test_bpdd_loss.py tests/test_fdr_math.py tests/test_fdr_head.py tests/test_lrs_system_configs.py tests/test_lrs_system_models.py tests/test_lrs_system_fia.py tests/test_lrs_system_launcher.py tests/test_uavdt_full_launcher.py tests/test_bpdd_fdr_integration.py tests/test_lrs_system_local_execution.py -q -p no:cacheprovider --tb=short --junitxml=local-validation/regression-final.xml",
+    "scope": "selected affected numerical, model, launcher, integration, runtime and pinned primitive tests; not all historical repository tests"
+  },
+  "full_graph_checks": {
+    "arms": [
+      "f",
+      "g",
+      "h",
+      "i"
+    ],
+    "precisions": [
+      "fp32",
+      "cpu-bf16"
+    ],
+    "count": 8
+  },
+  "full_graph_contract": {
+    "image_shape": [
+      1,
+      3,
+      128,
+      128
+    ],
+    "data": "synthetic random image and two boxes",
+    "steps": [
+      "train forward",
+      "real criterion",
+      "backward with finite gradients",
+      "one SGD step",
+      "eval forward with finite boxes and positive XYXY extents"
+    ],
+    "accuracy_evidence": false
+  },
+  "cpu_fp16_execution": "rejected_explicitly_after_nonfinite_grid_sample_reproduction",
+  "cpu_fp16_guard_tests": 2,
+  "cpu_fp16_probe": {
+    "first_nonfinite_operation": "stock cross-attention torch.nn.functional.grid_sample",
+    "value_shape": [
+      8,
+      32,
+      16,
+      16
+    ],
+    "grid_shape": [
+      8,
+      300,
+      4,
+      2
+    ],
+    "both_inputs_finite": true,
+    "value_abs_max": 0.010986328125,
+    "grid_abs_max": 0.9873046875,
+    "same_input_fp32_result_finite": true,
+    "mha_fastpath_disable_resolved": false,
+    "mkldnn_disable_resolved": false,
+    "scope": "local observed kernel boundary; not a verified upstream fix or CUDA finding"
+  },
+  "cuda_verified": false,
+  "formal100_completed": false,
+  "metrics": null,
+  "pinned_dfine_commit": "7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6",
+  "dry_run_scope": "launcher tests use temporary/mocked authority artifacts; actual dataset and server initial state unverified",
+  "junit_history": {
+    "half-green.xml": {
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "half-guard-red.xml": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "half-red.xml": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "red.xml": {
+      "tests": 30,
+      "failures": 19,
+      "errors": 0,
+      "skipped": 0
+    },
+    "regression-final.xml": {
+      "tests": 177,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "material-regression.xml": {
+      "tests": 45,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "note": "first material pass found a removed representability firewall term; term restored, assertions not weakened"
+    },
+    "material-regression-final.xml": {
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "evidence_sha256": {
+    "ADVERSARIAL_AUDIT_ZH.md": "a7e15226c38e42a7bd60030720dcb6d1d7cc4f65835067628a3eb49023cc5023",
+    "half-green.xml": "fd255abc328efbb41a7bb70d51d5fac0c5ca7c616184c33483f2f6e97fa5c5ff",
+    "half-guard-red.xml": "b588a88680cb8c2ee1a702e783877dca94f16f64dd01dad5bda07688f9cfd323",
+    "half-red.xml": "111b3fa2b9be3ed99560e3318cd86f02724126f2a3d45d3c4480a7fde282172d",
+    "red.xml": "4626dd9324232dd72f81a550d9f0dbf6a7f425740ce09b028610078d77cf51b8",
+    "regression-final.xml": "cd5a57823f06f856a16a3ad5dfdd638d5c74c910ea2460b041867f5b558fc937",
+    "RUNBOOK_ZH.md": "21a6eb00ce688119df0ea499857c6a2567cd193cdd0eda90c4ced42dedcdfd2d",
+    "material-regression.xml": "df958b4e0bf8be8c3f522c1490962632ff110e7e2883580ee267d02f018c3fe6",
+    "material-regression-final.xml": "d98fff5bd741fc4f2055db7736270aec8b7c7bf77501d912222b34f854899627"
+  },
+  "limitations": [
+    "CUDA FP16/AMP pending",
+    "real dataset and initial-state artifacts pending",
+    "640 resolution batch8 training pending",
+    "F/G/H/I v2 Formal100 pending",
+    "UAVDT Full pending",
+    "exported engine pending",
+    "no AP or convergence conclusion"
+  ],
+  "review_disclosure": "internal single-model adversarial review; criteria_binding_unavailable; no external expert endorsement",
+  "material_regression": {
+    "passed": 45,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 0.87,
+    "junit": "material-regression-final.xml",
+    "command": "python -m pytest tests/test_material_integrity.py tests/test_lrs_fdr_material.py tests/test_equal_material.py tests/test_dfine_equal_fia_material.py tests/test_no_server_v2_deployment.py -q -p no:cacheprovider --tb=short --junitxml=paper_material/evidence/no_server_correctness_v2_20260906/material-regression-final.xml"
+  },
+  "source_remote_commit_verified": "f56b210798acab96d628308a5127a2e1399d00dc"
+}

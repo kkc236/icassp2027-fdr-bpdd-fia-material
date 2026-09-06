@@ -19,13 +19,21 @@
 BPDD/FIA 的最终组合尚未按新 FDR 身份重训，因此旧 AP-FDR 组合只作兼容性和历史
 证据，不直接改名。
 
-最终源码已发布并冻结：仓库
+当前执行源码已升级为 v2：branch `codex/no-server-correctness-v2`，commit
+`f56b210798acab96d628308a5127a2e1399d00dc`。
+[部署包与对抗性审计](evidence/no_server_correctness_v2_20260906/README_ZH.md)
+包含全部 tracked 源码 ZIP、校验清单、原始失败与最终测试记录。本次相关代码回归
+176 通过、1 项 CUDA 跳过；四臂 FP32/CPU BF16 完整图验证通过，CPU 纯 FP16
+因本机 grid_sample 非有限输出而明确禁用。F/G/H/I v2 Formal100 均待服务器，
+不能用旧 LRS-FDR 精度填入 v2 的 F。
+
+以下为此前 v1 的历史冻结身份，不再是当前部署入口：仓库
 `https://github.com/kkc236/uav-detection-baselines`，branch
 `codex/lrs-system-visdrone-rebuild`，tag `visdrone-lrs-system-v1`，commit
 `445120b7337dad0ccc41d18ad081b6b33580dcd2`。组合运行入口为
 `scripts/train_visdrone_lrs_system.py`；中文 runbook 为
 [`VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md`](https://github.com/kkc236/uav-detection-baselines/blob/visdrone-lrs-system-v1/docs/VISDRONE_LRS_SYSTEM_RUNBOOK_ZH.md)。
-Source-focused verification suites 已通过；这不等同于 G/H/I 的 Formal100 结果。
+当时 Source-focused verification suites 已通过；这不等同于 G/H/I 的 Formal100 结果。
 
 ## 当前阅读顺序
 

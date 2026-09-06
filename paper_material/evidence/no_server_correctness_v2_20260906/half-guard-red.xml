@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="20.845" timestamp="2026-09-06T12:44:24.250228+08:00" hostname="kkc"><testcase classname="tests.test_lrs_system_local_execution" name="test_full_half_cpu_model_fails_explicitly_before_unreliable_grid_sample[f]" time="7.852"><failure message="Failed: DID NOT RAISE ValueError">tests\test_lrs_system_local_execution.py:53: in test_full_half_cpu_model_fails_explicitly_before_unreliable_grid_sample
+    with torch.no_grad(), pytest.raises(ValueError, match="CPU FP16.*FP32.*BF16"):
+E   Failed: DID NOT RAISE ValueError</failure></testcase><testcase classname="tests.test_lrs_system_local_execution" name="test_full_half_cpu_model_fails_explicitly_before_unreliable_grid_sample[i]" time="7.990"><failure message="Failed: DID NOT RAISE ValueError">tests\test_lrs_system_local_execution.py:53: in test_full_half_cpu_model_fails_explicitly_before_unreliable_grid_sample
+    with torch.no_grad(), pytest.raises(ValueError, match="CPU FP16.*FP32.*BF16"):
+E   Failed: DID NOT RAISE ValueError</failure></testcase></testsuite></testsuites>

@@ -1,5 +1,27 @@
 # BPDD：训练期渐进式分布蒸馏
 
+## 当前 v2 实现与历史版本的区别（2026-09-06）
+
+当前组合代码使用 **AC-BPDD**，方法修订为
+`v2-fp32-extent-logspace-ac-bpdd`。下文保留旧 AP-FDR 配对实验的 final-assignment
+BPDD 公式与数值，不能将旧 `weight=0.5` 的结果直接当成当前组合结果。
+
+当前 AC-BPDD 的输入为累计边 logits、固定初始原生 reference、GT 及 stock
+逐层 normal-query assignment。每个源层只选择未来层中“同一图像、同一 query
+仍匹配同一 GT”的教师；不新增 matcher，不使用 DN query。四臂中 g/i 的
+`weight=0.15`、`temperature=0.5`、`margin=0.02`；f/h 不启用 BPDD。
+
+候选 NLL、softmin 权重归一化、教师混合与教师 NLL 都在 log-space 中计算，
+教师整条路径停止梯度。无稳定教师时门控严格为零；归一化分母包含全部源层
+候选匹配边，而非仅激活边。better-only 表示插值目标边 NLL 改善，不保证框
+IoU、AP 或泛化改善。原先概率裁剪在 NLL20/NLL40 反例中会错误激活门控，
+本次修正有失败与回归证据，不能倒推历史训练因此一定无效。
+
+此修正不改变作者对 BPDD 数学构造独立提出的声明，也不表示复用了 GO-LSD 算法。
+源码与测试见[部署证据入口](../evidence/no_server_correctness_v2_20260906/README_ZH.md)。
+
+## 以下为历史 final-assignment BPDD 的定义与配对证据
+
 ## 问题与最小宿主
 
 受 D-FINE/GO-LSD 对跨层定位知识传递问题的启发，我们注意到一个更细的缺口：后续解码层并非对每个目标、每条边都稳定优于当前层，因此固定使用最终层作为教师可能把不可靠知识反向传给早期层。BPDD 针对这一缺口，利用同一次前向中所有未来解码层的分布，为较早层构造按目标边质量加权的动态教师，不增加独立教师网络。

@@ -24,10 +24,10 @@ LRS-FDR 用一个统一模块解决这两个问题：
 RT-DETR decoder query + native reference
   -> 4 × 33-bin boundary logits
   -> cumulative distribution refinement
-  -> normal Hungarian matched-query FGL
-  -> representability firewall
-  -> layerwise reliability shrinkage (shallow layers only)
   -> non-uniform Integral and box decoding
+  -> stock normal-query Hungarian assignment (training)
+  -> representability firewall (mask) + layerwise reliability shrinkage (shallow layers only)
+  -> weighted matched-query FGL (training)
 ```
 
 LRS-FDR 不增加第二套 matcher、query、分类分支、蒸馏教师或推理后处理。
@@ -48,10 +48,12 @@ z_l=\sum_{j=0}^{l}\Delta z_j,
 \qquad
 d_l=\operatorname{Integral}(z_l),
 \qquad
-b_l=\operatorname{Decode}(r_l,d_l),
+b_l=\operatorname{Decode}(r_0,d_l),
 \]
 
-其中 \(r_l\) 是原生 decoder reference。`preliminary_box=false` 同时移除
+其中 \(r_0\) 是固定的初始原生 decoder reference，所有层累计分布共用该
+解码锚点；attention 使用的 reference 仍逐层更新，不能与分布解码锚点混同。
+`preliminary_box=false` 同时移除
 preliminary-box L1/GIoU，不让额外粗框分支改变几何起点。
 
 ### 2.2 原生 assignment 与有效查询对齐
@@ -167,6 +169,9 @@ matcher、VFL/L1/GIoU、DN 损失和推理图均不改变，因此 NA-FDR 是 LR
 LRS-FDR 组合结果，最终组合仍需按 LRS-FDR 配置重新训练或明确标成历史证据。
 
 ## 6. 已登记证据
+
+本节数值绑定历史 Formal100 源码，不是 2026-09-06 v2 数值修复的重新训练结果。
+当前 v2 的四臂与本地验证见[无服务器部署证据](../evidence/no_server_correctness_v2_20260906/README_ZH.md)。
 
 统一冻结评估结果见 [LRS-FDR 结果页](../results/LRS_FDR_RESULTS_ZH.md) 和
 [证据包](../evidence/lrs_fdr_formal100_20260828/README.md)。关键结果为：

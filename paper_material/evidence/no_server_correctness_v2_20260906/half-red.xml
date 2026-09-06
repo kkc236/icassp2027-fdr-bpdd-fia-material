@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="42.349" timestamp="2026-09-06T12:26:51.640938+08:00" hostname="kkc"><testcase classname="tests.test_lrs_system_local_execution" name="test_full_half_model_eval_retains_fp32_box_output[f]" time="4.775"><failure message="RuntimeError: mat1 and mat2 must have the same dtype, but got Float and Half">tests\test_lrs_system_local_execution.py:54: in test_full_half_model_eval_retains_fp32_box_output
+    output, _ = model(torch.rand(1, 3, 128, 128).half())
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\tasks.py:154: in forward
+    return self.predict(x, *args, **kwargs)
+src\rtdetr_fdr.py:363: in predict
+    output = super().predict(
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\tasks.py:934: in predict
+    x = head([y[j] for j in head.f], batch)  # head inference
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\modules\head.py:1575: in forward
+    dec_bboxes, dec_scores = self.decoder(
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+src\fdr_head.py:342: in forward
+    pos_mlp(reference),
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\modules\transformer.py:412: in forward
+    x = getattr(self, "act", nn.ReLU())(layer(x)) if i &lt; self.num_layers - 1 else layer(x)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\linear.py:134: in forward
+    return F.linear(input, self.weight, self.bias)
+E   RuntimeError: mat1 and mat2 must have the same dtype, but got Float and Half</failure></testcase><testcase classname="tests.test_lrs_system_local_execution" name="test_full_half_model_eval_retains_fp32_box_output[i]" time="4.650"><failure message="RuntimeError: mat1 and mat2 must have the same dtype, but got Float and Half">tests\test_lrs_system_local_execution.py:54: in test_full_half_model_eval_retains_fp32_box_output
+    output, _ = model(torch.rand(1, 3, 128, 128).half())
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\tasks.py:154: in forward
+    return self.predict(x, *args, **kwargs)
+src\rtdetr_fdr.py:363: in predict
+    output = super().predict(
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\tasks.py:934: in predict
+    x = head([y[j] for j in head.f], batch)  # head inference
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\modules\head.py:1575: in forward
+    dec_bboxes, dec_scores = self.decoder(
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+src\fdr_head.py:342: in forward
+    pos_mlp(reference),
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\ultralytics\nn\modules\transformer.py:412: in forward
+    x = getattr(self, "act", nn.ReLU())(layer(x)) if i &lt; self.num_layers - 1 else layer(x)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1778: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\module.py:1789: in _call_impl
+    return forward_call(*args, **kwargs)
+..\..\..\..\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\torch\nn\modules\linear.py:134: in forward
+    return F.linear(input, self.weight, self.bias)
+E   RuntimeError: mat1 and mat2 must have the same dtype, but got Float and Half</failure></testcase></testsuite></testsuites>
