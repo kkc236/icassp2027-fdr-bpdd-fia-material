@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "filename": "initial-state-seed0.pt",
+  "bytes": 261864454,
+  "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B",
+  "method_revision": "v2-fp32-extent-logspace-ac-bpdd",
+  "dataset_signature": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB",
+  "seed": 0,
+  "epochs": 100,
+  "batch": 8,
+  "imgsz": 640,
+  "fresh_start": true,
+  "binary_policy": "transfer separately; do not commit to GitHub"
+}
