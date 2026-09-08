@@ -6,7 +6,6 @@
 |---|---:|---:|---|
 | FDR+geometry | 0.29361 | — | 几何校正控制项 |
 | LRS-GFDR | 0.29620 | +0.259 pp | LRS-FDR 几何校正版的等价封装 |
-| LRS-GFDR+BPDD | 0.29628 | +0.008 pp | 已完成 LRS-FDR+AC-BPDD 的显式命名封装 |
+| LRS-GFDR+AC-BPDD | 0.29628 | +0.008 pp | 已完成 LRS-FDR+AC-BPDD 的显式命名封装 |
 
 完整来源、epoch、运行目录和证据边界见 [`evidence/lrs_gfdr_track_20260909/RESULTS.md`](../evidence/lrs_gfdr_track_20260909/RESULTS.md)。
-
