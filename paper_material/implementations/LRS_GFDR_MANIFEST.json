@@ -1,0 +1,19 @@
+{
+  "name": "LRS-GFDR transfer track",
+  "material_commit_base": "4fd17336",
+  "runtime_repository": "https://github.com/kkc236/uav-detection-baselines",
+  "runtime_commit": "1db154cc",
+  "methods": [
+    "FDR+geometry",
+    "LRS-GFDR",
+    "LRS-GFDR+BPDD"
+  ],
+  "configs": [
+    "configs/rtdetr-l-lrs-gfdr.yaml",
+    "configs/rtdetr-l-lrs-gfdr-bpdd.yaml"
+  ],
+  "checkpoint_policy": "not included",
+  "dataset_policy": "not included",
+  "credential_policy": "not included",
+  "status": "packaged; no duplicate GFDR rerun claimed"
+}
