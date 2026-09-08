@@ -6,11 +6,11 @@
   "methods": [
     "FDR+geometry",
     "LRS-GFDR",
-    "LRS-GFDR+BPDD"
+    "LRS-GFDR+AC-BPDD"
   ],
   "configs": [
     "configs/rtdetr-l-lrs-gfdr.yaml",
-    "configs/rtdetr-l-lrs-gfdr-bpdd.yaml"
+    "configs/rtdetr-l-lrs-gfdr-ac-bpdd.yaml"
   ],
   "checkpoint_policy": "not included",
   "dataset_policy": "not included",
