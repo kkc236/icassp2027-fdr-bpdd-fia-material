@@ -1,4 +1,4 @@
-# RT-DETR-L LRS-GFDR plus training-only BPDD.
+# RT-DETR-L LRS-GFDR plus training-only AC-BPDD (compatibility alias).
 # LRS-GFDR = Layerwise Reliability Shrinkage + Feasible Geometry FDR.
 # This is the explicit material name for the completed historical
 # LRS-FDR+AC-BPDD run; geometry is enabled in the decoder contract below.
