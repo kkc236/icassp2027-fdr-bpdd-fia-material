@@ -25,6 +25,14 @@
 17. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
 18. [创新定位、核心文案与对抗性审计](writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md)
 19. [四图规划](figures/FIGURE_PLAN_ZH.md)
+20. [LRS-GFDR 方法说明](methods/LRS_GFDR_ZH.md)
+21. [LRS-GFDR+BPDD 方法说明](methods/LRS_GFDR_BPDD_ZH.md)
+22. [LRS-GFDR 迁移实验轨迹](experiments/LRS_GFDR_MATERIAL_TRACK_ZH.md)
+23. [LRS-GFDR 结果汇总](results/LRS_GFDR_RESULTS_ZH.md)
+
+## LRS-GFDR 迁移材料轨迹（2026-09-09）
+
+在保留 EQuAL 主路线与历史 AP-FDR 材料的前提下，本仓库新增一条已冻结的 FDR/LRS 迁移轨迹：`FDR+geometry` 控制项、`LRS-GFDR`、`LRS-GFDR+BPDD`。其中 LRS-GFDR 是已完成 LRS-FDR 几何校正版的正式封装名；LRS-GFDR+BPDD 是已完成 LRS-FDR+AC-BPDD 运行的显式配置与命名封装，不声称额外重训。重复 GFDR 训练因用户确认无需重跑而不纳入正式结果。
 
 ## 当前结果口径
 
