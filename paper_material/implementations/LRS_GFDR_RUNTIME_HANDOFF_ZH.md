@@ -4,9 +4,8 @@
 
 - 仓库：<https://github.com/kkc236/uav-detection-baselines>
 - 冻结提交：`1db154cc`（`codex/bpdd-decoded-iou-candidate`）
-- 配置：`configs/rtdetr-l-lrs-gfdr.yaml`、`configs/rtdetr-l-lrs-gfdr-fia.yaml`、`configs/rtdetr-l-lrs-fdr-bpdd.yaml`
+- 配置：`configs/rtdetr-l-lrs-gfdr.yaml`、`configs/rtdetr-l-lrs-gfdr-fia.yaml`；AC-BPDD 运行时对应 `configs/rtdetr-l-lrs-fdr-bpdd.yaml`
 - 核心实现：`src/rtdetr_lrs_system.py`、`src/fdr_head.py`、`src/fdr_math.py`、`src/fdr_loss.py`、`src/rtdetr_fdr.py`、`src/rtdetr_fdr_bpdd.py`
 - 启动脚本：`scripts/train_lrs_gfdr.py`、`scripts/train_visdrone_lrs_system.py`
 
-本材料仓新增的 `configs/rtdetr-l-lrs-gfdr-bpdd.yaml` 是显式几何开关版本，便于他人复现封装后的命名。两仓之间以配置内容和提交号核对，不上传 `.pt`、数据集或服务器凭据。
-
+本材料仓新增的 `configs/rtdetr-l-lrs-gfdr-ac-bpdd.yaml` 是显式几何开关版本，便于他人复现封装后的 AC-BPDD 命名；旧 `...-gfdr-bpdd.yaml` 仅作为兼容别名保留。两仓之间以配置内容和提交号核对，不上传 `.pt`、数据集或服务器凭据。
