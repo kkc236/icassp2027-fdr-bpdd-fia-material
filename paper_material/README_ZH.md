@@ -29,6 +29,7 @@
 21. [LRS-GFDR+AC-BPDD 方法说明](methods/LRS_GFDR_AC_BPDD_ZH.md)
 22. [LRS-GFDR 迁移实验轨迹](experiments/LRS_GFDR_MATERIAL_TRACK_ZH.md)
 23. [LRS-GFDR 结果汇总](results/LRS_GFDR_RESULTS_ZH.md)
+24. [LRS-GFDR 全指标总表](results/LRS_GFDR_ALL_METRICS_ZH.md)
 
 ## LRS-GFDR 迁移材料轨迹（2026-09-09）
 
