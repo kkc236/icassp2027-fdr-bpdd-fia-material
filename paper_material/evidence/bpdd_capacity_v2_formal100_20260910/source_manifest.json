@@ -1,0 +1,42 @@
+{
+  "schema": "bpdd-capacity-v2-source-manifest/v1",
+  "experiment": "formal-seed0-lrs_gfdr_capacity_v2_bpdd",
+  "status": "COMPLETED",
+  "remote_tree": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-code",
+  "remote_commit": "4fd54d2e926b93107304a9ba51ba66edd7d75c99",
+  "public_baseline_commit": "0ec7f48987dfe91b335f1750a420468c9ee08621",
+  "dataset": "/root/sj-tmp/datasets/VisDrone",
+  "initial_state": {
+    "path": "/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt",
+    "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B"
+  },
+  "run": {
+    "result_dir": "/root/sj-tmp/results/lrs-gfdr-capacity-v2/formal-seed0-lrs_gfdr_capacity_v2_bpdd",
+    "results_rows": 100,
+    "best_epoch": 87,
+    "best_map50_95": 0.29848,
+    "final_map50_95": 0.29511,
+    "selection_metric": "metrics/mAP50-95(B)"
+  },
+  "remote_files": {
+    "configs/rtdetr-l-lrs-gfdr-capacity-v2-bpdd.yaml": "9b023fd8b58d8b5a52cba4e512ba6c1709e4001972cc37ba4946fb18f097db66",
+    "src/bpdd_capacity.py": "38df591604ac891219a66ad9e4ff48240880c9711d4b81e1672c80c8ef3b8db9",
+    "src/bpdd_capacity_loss.py": "caa04d4836721bfcc7dc7c27cb365c29a5801edc8e321ce331c41714dc8fc3f9",
+    "src/rtdetr_bpdd_capacity.py": "06d1adbf8dbfea3825d9308e631c23fb50e8146c2207f5881d2be05c452c25ed",
+    "src/fdr_head.py": "8d212acd993bf104766db1aab2e95d4d4da990e22f4dbfe9f11f5ed5a7108df0",
+    "src/fdr_loss.py": "9e980b04958436b821657b86530500a7b514f3d54121917c9af11f3d93108bb8",
+    "src/rtdetr_fdr.py": "1519782f35016db758acf303031d47fc20a6c17ba04a5b1f8912d8e5db340a5a",
+    "scripts/train_lrs_gfdr_capacity_v2.py": "0b50b09fcdc83e063353d28ef55f1cd02d9ce6473dcc460ba4b2dd4a7d5d5114"
+  },
+  "checkpoint_hashes_remote_only": {
+    "weights/best.pt": "0671c0d39304bd7815855d3be972d77cea07ccbeb26d1e26e63b046a82d623e0",
+    "weights/last.pt": "3ef7b14837e08a7b2b839e4f5456d34928379e266a48db121a254b5eb1addf44"
+  },
+  "uploaded_artifacts": {
+    "config/rtdetr-l-lrs-gfdr-capacity-v2-bpdd.yaml": "9b023fd8b58d8b5a52cba4e512ba6c1709e4001972cc37ba4946fb18f097db66",
+    "result/args.yaml": "d44c6bbb8c6e01e0fd197a8562a6e74963fdf347aedbf15dee4c3ce7693f1bf3",
+    "result/results.csv": "626001f2b0b262223cc95e71836b1e1806a9fcb52e36aacb9662d17edb8701d2",
+    "result/full-runtime.jsonl": "5e206e33cf422352aa610f20416e37123eecc098efdb095570ce2156aed5a3cd"
+  },
+  "checkpoint_policy": "pt files are intentionally not uploaded to Git; hashes and remote paths are retained"
+}

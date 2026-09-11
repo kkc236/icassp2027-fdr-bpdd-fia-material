@@ -25,6 +25,8 @@
 17. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
 18. [创新定位、核心文案与对抗性审计](writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md)
 19. [四图规划](figures/FIGURE_PLAN_ZH.md)
+20. [BPDD Capacity v2 实测方法说明](methods/BPDD_CAPACITY_V2_ZH.md)
+21. [BPDD Capacity v2 Formal100 结果](results/BPDD_CAPACITY_V2_RESULTS_ZH.md)
 
 ## 当前结果口径
 
@@ -53,6 +55,8 @@
 - [统一复杂度机器合同](results/complexity_results.json)
 - [统一复杂度原始 1,500 个延迟样本](evidence/unified_complexity_20260820/unified_complexity_raw.json)
 - [组合状态与总体结果](results/split_gain_comparison.json)
+- [BPDD Capacity v2 证据目录](evidence/bpdd_capacity_v2_formal100_20260910/)
+- [BPDD Capacity v2 源码/运行校验清单](evidence/bpdd_capacity_v2_formal100_20260910/source_manifest.json)
 - [val/test 总体 CSV](results/split_overall_results.csv)
 - [尺度 CSV](results/split_scale_results.csv)
 - [类别 CSV](results/split_class_results.csv)
