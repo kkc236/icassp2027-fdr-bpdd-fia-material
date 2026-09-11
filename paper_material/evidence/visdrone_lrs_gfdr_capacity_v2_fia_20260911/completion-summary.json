@@ -1,0 +1,37 @@
+{
+  "completed_epoch": 100,
+  "files": [
+    {
+      "bytes": 1887,
+      "name": "args.yaml",
+      "sha256": "e62064b88d3de3d1cecf70e480eef7f7ef91a6681314f98ac345e988aafbb6d8"
+    },
+    {
+      "bytes": 2022,
+      "name": "formal-seed0-lrs_gfdr_capacity_v2_bpdd_fia.json",
+      "sha256": "bb2c1d918fb5566961c0b04e16f2cbc11414e48d702eed931d7baa7979e4f591"
+    },
+    {
+      "bytes": 75952,
+      "name": "full-runtime.jsonl",
+      "sha256": "345d08d72dc6ff5749f0e8f450d37e2496e84443fe0d65e9413fbffb99cb9e77"
+    },
+    {
+      "bytes": 2969143,
+      "name": "optimizer-evidence.jsonl",
+      "sha256": "65d20d11f10a2eff563a18dcf5b6e2485305b01df608571becc474b04054b48d"
+    },
+    {
+      "bytes": 16344,
+      "name": "results.csv",
+      "sha256": "23fe362e7b4c5c81e4ec221ea7ccf6ff3605e9224713bb1c61a74e10ee327bc2"
+    },
+    {
+      "bytes": 434,
+      "name": "source-tracking-correction.json",
+      "sha256": "970399b486d8bde3a36729acf28daf39b2fee7a56ce237a2a1290d258380023b"
+    }
+  ],
+  "generated_at_utc": "2026-09-11T20:51:27.218495+00:00",
+  "source_remote_run": "/root/sj-tmp/results/lrs-gfdr-capacity-v2-fia/formal-seed0-lrs_gfdr_capacity_v2_bpdd_fia"
+}
