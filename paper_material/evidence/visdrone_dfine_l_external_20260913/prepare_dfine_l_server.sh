@@ -83,7 +83,7 @@ replacements = {
 text = template.read_text(encoding="utf-8")
 for token, value in replacements.items():
     text = text.replace(token, value)
-if "__" in text:
+if any(token in text for token in replacements):
     raise SystemExit("unresolved config placeholder")
 output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(text, encoding="utf-8", newline="\n")
