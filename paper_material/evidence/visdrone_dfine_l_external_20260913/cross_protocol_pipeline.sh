@@ -7,7 +7,10 @@ COCO_ROOT="${COCO_ROOT:-/root/sj-tmp/datasets/VisDrone-coco}"
 DFINE_ROOT="${DFINE_ROOT:-/root/sj-tmp/dfine-official}"
 DFINE_ENV_ROOT="${DFINE_ENV_ROOT:-/root/sj-tmp/venvs/dfine-l}"
 DFINE_OUTPUT="${DFINE_OUTPUT:-/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914}"
-CODE_ROOT="${CODE_ROOT:-/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code}"
+# Use the frozen Ultralytics checkout that contains the FIA integration and
+# prediction contract used by the joint checkpoint.  The lrs-v2 workspace is
+# the BPDD training tree and intentionally does not carry the FIA exporter.
+CODE_ROOT="${CODE_ROOT:-/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16}"
 JOINT_CHECKPOINT="${JOINT_CHECKPOINT:-/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt}"
 JOINT_MODEL_YAML="${JOINT_MODEL_YAML:-$CODE_ROOT/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml}"
 EVAL_ROOT="${EVAL_ROOT:-/root/sj-tmp/eval/visdrone_dfine_l_external_20260914}"
