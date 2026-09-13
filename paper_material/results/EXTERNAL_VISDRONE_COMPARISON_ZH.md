@@ -4,11 +4,19 @@
 
 会议等级按 CCF 当前目录标为 A/B：AAAI、CVPR、ICCV、IJCAI 为 CCF A；ICASSP、ICME、ICRA、IROS 为 CCF B。目录依据：[人工智能](https://www.ccf.org.cn/Academic_Evaluation/AI/)；[图形学与多媒体](https://www.ccf.org.cn/Academic_Evaluation/CGAndMT/)。
 
-排序规则固定为：先列“综合不高于本文”，再列“综合高于本文”，最后列“不可排序”；综合指标仅指同一已报告 split 的 mAP50–95。本文参照是 val=`0.2961`、test=`0.2337`。组内“不高于”按 mAP 从高到低排列，“高于”按从低到高排列，优先显示最接近本文的结果。这个标签只是绝对值位置，不是严格公平比较：不同输入、预训练、数据处理、训练周期和 evaluator 仍可能不同。不同 split 不计算涨点，跨论文也不写成因果提升；本文不宣称 SOTA。参数量不是筛选条件，只保留为规模上下文。
+排序规则固定为：先列“综合不高于本文”，再列“综合高于本文”，最后列“不可排序”；综合指标仅指同一已报告 split 的 mAP50–95。当前联合主记录的 val 参照是 `0.30109`（E97），test 尚未在同一新 authority 下登记；旧 `0.2961/0.2337` 只作为历史 AP-FDR 三模块参照。组内“不高于”按 mAP 从高到低排列，“高于”按从低到高排列，优先显示最接近本文的结果。这个标签只是绝对值位置，不是严格公平比较：不同输入、预训练、数据处理、训练周期和 evaluator 仍可能不同。不同 split 不计算涨点，跨论文也不写成因果提升；本文不宣称 SOTA。参数量不是筛选条件，只保留为规模上下文。
+
+## 当前联合参照
+
+| 方法 | 状态 | Input | P | R | AP50 | mAP50–95 | 证据 |
+|---|---|---:|---:|---:|---:|---:|---|
+| **LRS-GFDR + Capacity-BPDD-v3-Safe + FIA** | current joint Formal100, best E97 | 640 | 0.60482 | 0.49693 | 0.49890 | **0.30109** | [`joint-results.csv`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv) |
+
+下方旧的 `RT-DETR-L + FDR + BPDD + FIA` 外部排序表保留为历史快照，不能与当前联合臂混用。
 
 ResBiDet 与 VARDet 是最直接的同会任务邻居。ResBiDet 发表于 ICASSP 2026，正式摘要报告 VisDrone2019 AP50=`0.387`，低于本文 AP50=`0.4898`；但可访问摘要未给 mAP50–95、split、精确双分辨率输入或完整 evaluator，因此只能作为同会 AP50 位置证据，不能并入 mAP 排名。VARDet 同样发表于 ICASSP 2026，其 Table 1 采用作者统一重实现的 ResNet-50、1333×800、COCO-style 协议；本文采用 RT-DETR-L、640×640 的冻结协议。因此下表登记其绝对结果，但标为非严格可比，不能把 `0.3650−0.2961` 写成方法本身带来的公平差距。
 
-## 1. VisDrone val 参照
+## 1. 历史 AP-FDR 三模块 VisDrone val 参照（已 superseded）
 
 | 方法 | 本文 | Input | P | R | AP50 | AP75 | mAP50–95 | Params (M) |
 |---|---|---|---:|---:|---:|---:|---:|---:|

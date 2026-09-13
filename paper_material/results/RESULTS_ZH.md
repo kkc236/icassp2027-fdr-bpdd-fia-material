@@ -2,6 +2,12 @@
 
 本页是论文结果的统一入口。正式核心结果、FIA standalone 消融和三模块 P3-only 观察按证据等级分开，val/test 不混写。
 
+## 当前三模块联合主记录（2026-09-12）
+
+原 `RT-DETR-L + FDR + BPDD + FIA` 三模块记录已由新的联合臂替换为：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`。该臂完成 VisDrone Formal100（seed0），best 为 epoch 97：P=`0.60482`、R=`0.49693`、AP50=`0.49890`、mAP50–95=`0.30109`；E100 为 P=`0.59526`、R=`0.50472`、AP50=`0.50005`、mAP50–95=`0.30065`。完整曲线、authority、冻结参数和配置见 [`当前联合证据包`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
+
+该新联合臂与历史 AP-FDR A–D 行不构成严格配对，因此不从旧行计算新模块因果增益。旧三模块 val/test 文本、截图和 checkpoint 仅作为 `superseded_history` 保留；论文主结果应优先引用本节和当前联合证据包。
+
 ## 0. EQuAL 最新定位方法结果（2026-08-21）
 
 EQuAL seed0 Formal100 已连续完成 100 epochs。使用同一个 best epoch 91 checkpoint（SHA-256 `06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca`）完成一次统一 val/test exact 复评：
@@ -99,7 +105,7 @@ test 使用 VisDrone 1,610 images / 75,102 instances，冻结参数为 `imgsz=64
 
 fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence/fia_p3_only_20260819/fia-only-p3-test.json)，没有复用旧 cascading checkpoint。两臂完整精确小数及 P/R/AP50 见 [`fia_existing_best_test_results.csv`](fia_existing_best_test_results.csv)；使用时必须按 checkpoint SHA 核对。
 
-## 3. 三模块 P3-only 观察
+## 3. 历史三模块 P3-only 观察（已被当前联合替换）
 
 正确 P3-only 的 FDR+BPDD+FIA checkpoint 已确认 `model[23].f=21`。checkpoint 内嵌 best-val 为 P=`0.56996`、R=`0.49848`、AP50=`0.48982`、mAP50–95=`0.29618`；相对当前 FDR+BPDD val 数值为 `+0.3922 pp` 的非严格观察。
 

@@ -4,6 +4,8 @@
 
 本目录汇总面向 VisDrone 密集小目标的三层方法链。当前定位方法候选已由 AP-FDR 重构为 EQuAL；BPDD 改善早期 Decoder 层的分布监督，FIA 补充 P3 高分辨率表征。EQuAL standalone 已完成 Formal100 和 exact val/test，但新组合仍待重训，因此旧 AP-FDR 组合结果与新 EQuAL 结果严格分代保存。材料按“问题—设计—证据”组织；val/test、方法代际、P3-only/cascading 以及 strict/non-paired 不得混写。
 
+**最新三模块联合主记录**：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 已完成 VisDrone Formal100，best E97 的 mAP50–95 为 `0.30109`。它已替换旧的 `RT-DETR-L + FDR + BPDD + FIA` 作为当前联合结果；旧记录仍保留但标为历史，不得混入新联合的增量计算。入口见 [`当前联合证据包`](evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
+
 ## 阅读顺序
 
 1. [EQuAL：边缘自适应、查询对齐定位](methods/EQUAL_ZH.md)
@@ -36,7 +38,7 @@
 - 同一 FIA-only checkpoint 的独立 test 为 `P=0.4482592210、R=0.3776360333、F1=0.3954178960、AP50=0.3366417705、AP75=0.1820114030、mAP=0.1855174641`；相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。该值只作 test 内算术比较，不从 val/test 之间推导涨点。
 - fresh FIA-only 图为正确 P3-only：FIA 层 22 的 `f=-1` 读取上一层 21，层 23 显式 `f=21`，decoder 输入为 `[22,25,28]`。checkpoint SHA-256 为 `c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6`，源码 SHA 为 `118ad631eff93ad806f85ea47819578e6e00bfc5`。旧 FIA-only cascading（层 23 `f=-1`）结果已被取代，仅可作历史记录。
 - FDR+FIA 仍采用既有发布版 cascading `best.pt`：val/test mAP50–95 为 `0.2949403207/0.2346453866`，相对 FDR 的 val/test 算术差为 `+0.5280/+0.6644 pp`；不得把该 checkpoint 标成 P3-only。
-- FDR+BPDD+FIA 已补入与终端截图对应的四位小数文本记录。val 为 `P=0.5693、R=0.4991、F1=0.5285、AP50=0.4898、AP75=0.3042、mAP=0.2961`（相对 BPDD `+0.384 pp`）；test 为 `P=0.5189、R=0.4361、F1=0.4634、AP50=0.4081、AP75=0.2327、mAP=0.2337`（`+0.204 pp`）。checkpoint `0.29618` 与终端截图作为互证。
+- 旧 FDR+BPDD+FIA 三模块文本记录（val `0.2961`、test `0.2337`）已被新的 LRS-GFDR + Capacity-BPDD-v3-Safe + FIA 联合 Formal100 结果替换为当前主记录；原文本和截图仅保留作 `superseded_history`，不再作为当前联合指标。
 - 统一复杂度与实时性已完成：在同一 RTX 4090、640、batch=1、FP32 端到端协议下，Baseline/FDR/FDR+BPDD/三模块分别为 `28.85/25.73/25.77/25.21 FPS`。严格配对 FDR 与 FDR+BPDD 的 Params/FLOPs/峰值显存完全一致；FIA 仅增加 `0.861 ms` 中位延迟与 `0.301 M` 参数。
 - 外部 VisDrone 正式表收录 CCF A/B 类会议 full/regular paper，并标明会议等级与相对本文的绝对 mAP 位置。当前覆盖 AAAI、CVPR、ICCV、IJCAI、ICASSP、ICRA、ICME、IROS；同 split 的结果分成“不高于本文/高于本文”，split 或 input 未报告的结果单列为不可排序。IJCAI 2025 RAFDE 已作为 640 近邻上界登记；ICASSP 2026 ResBiDet 的正式摘要 AP50 和 VARDet 的 1333×800 结果作为带边界的同会参照。期刊、预印本与来源不明结果不进入正式表。
 

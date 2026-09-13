@@ -1,5 +1,7 @@
 # FIA 结果状态
 
+> 主仓库当前三模块联合已替换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`，其 Formal100 best E97 val mAP50–95=`0.30109`。本页下方原 `FDR+BPDD+FIA` 记录仅作 superseded history，不能覆盖当前联合 authority。
+
 ## 当前裁定
 
 FIA-only 的 fresh P3-only `best.pt` 已在冻结 evaluator 下完成独立 exact val 与 exact test 复评；不存在 FIA-only 结果 pending。FDR+FIA 继续采用 GitHub Release `DFR-BDPP-FIA` 中的既有 cascading `best.pt`，其已登记 exact val/test 保持不变。

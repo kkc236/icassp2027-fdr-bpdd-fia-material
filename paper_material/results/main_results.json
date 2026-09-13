@@ -49,6 +49,26 @@
       "source_id": "bpdd_val"
     }
   ],
+  "current_joint_replacement": {
+    "split": "VisDrone val",
+    "method": "LRS-GFDR+Capacity-BPDD-v3-Safe+FIA",
+    "status": "current_joint_formal100",
+    "best_epoch": 97,
+    "precision": 0.60482,
+    "recall": 0.49693,
+    "map50": 0.49890,
+    "map": 0.30109,
+    "final_epoch": 100,
+    "final_precision": 0.59526,
+    "final_recall": 0.50472,
+    "final_map50": 0.50005,
+    "final_map": 0.30065,
+    "evidence_level": "fresh_formal100_authority",
+    "source_id": "visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913",
+    "evidence_path": "evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv",
+    "strict_paired_to_superseded_three_module": false,
+    "supersedes": "fia_updated_three_module_text_val"
+  },
   "equal_redesign_candidate": {
     "status": "standalone_gate_pass_combination_retraining_pending",
     "paper_method": "RT-DETR-L+EQuAL",
@@ -166,7 +186,7 @@
       "fdr": true,
       "bpdd": true,
       "fia": true,
-      "status": "updated_text_report_val_available",
+      "status": "superseded_by_current_joint_replacement",
       "precision": 0.5693,
       "recall": 0.4991,
       "f1": 0.5285,
@@ -178,6 +198,7 @@
       "delta_strict_paired": false,
       "evidence_level": "user_supplied_text_report_4dp",
       "source_id": "fia_updated_three_module_text_val",
+      "superseded_by": "visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913",
       "formal_delta_allowed": false
     },
     {
@@ -186,7 +207,7 @@
       "fdr": true,
       "bpdd": true,
       "fia": true,
-      "status": "updated_text_report_test_available",
+      "status": "superseded_by_current_joint_replacement",
       "precision": 0.5189,
       "recall": 0.4361,
       "f1": 0.4634,
@@ -198,6 +219,7 @@
       "delta_strict_paired": false,
       "evidence_level": "user_supplied_text_report_4dp",
       "source_id": "fia_updated_three_module_text_test",
+      "superseded_by": "visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913",
       "formal_delta_allowed": false
     }
   ],

@@ -1,5 +1,7 @@
 # FDR、BPDD、FIA 的 val/test 涨点总对比
 
+> 当前三模块联合主记录已切换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`（VisDrone val best E97 mAP50–95=`0.30109`）。本页中旧 `FDR+BPDD+FIA` 数值仍作为历史 authority 快照保存，不能替代当前联合记录或与其拼接计算增量。
+
 ## 证据状态
 
 正式核心表保留 RT-DETR-L、RT-DETR-L+FDR 和 RT-DETR-L+FDR+BPDD。fresh P3-only FIA-only 与既有 cascading FDR+FIA `best.pt` 均已完成冻结 evaluator 独立 exact val/test。正确 P3-only 三模块已有与终端截图逐项吻合的四位小数文本结果：val mAP50–95=`0.2961`，test mAP50–95=`0.2337`，两者均为正增长；checkpoint 的 val `0.29618` 和终端截图作为交叉印证。

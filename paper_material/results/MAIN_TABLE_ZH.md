@@ -1,5 +1,17 @@
 # VisDrone val 主消融表
 
+## 当前三模块联合主记录（已替换旧联合）
+
+当前论文材料中的三模块联合主记录已切换为新的、可复现的 Formal100 authority：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`。它与下方历史 AP-FDR A–E 表不是同一代配置，因此不把旧 A–D 数值与新联合臂拼成严格增量。
+
+| 配置 | best epoch | Precision | Recall | AP50 | mAP50–95 | 状态 | 证据 |
+|---|---:|---:|---:|---:|---:|---|---|
+| LRS-GFDR + Capacity-BPDD-v3-Safe + FIA | 97 | 0.60482 | 0.49693 | 0.49890 | **0.30109** | 当前联合主记录 | [`joint-results.csv`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv) |
+
+E100 final 为 `P=0.59526、R=0.50472、AP50=0.50005、mAP50–95=0.30065`。best 以验证集 `mAP50–95` 选择。旧 `RT-DETR-L + FDR + BPDD + FIA` 的 `0.2961` 及其 test 文本记录保留在历史证据中，但不再作为当前三模块联合结果。
+
+## 历史 AP-FDR A–E 表（旧三模块联合已 superseded）
+
 论文主消融表固定使用以下 A–E 顺序。术语统一为 `BPDD`；E 行采用与标准截图对应的四位小数 val 文本记录，并补齐 F1、AP75 和逐类别证据。
 
 | 编号 | 模型 | FDR | BPDD | FIA | Precision | Recall | AP50 | AP75 | mAP50–95 | 相对上一有效配置 |
