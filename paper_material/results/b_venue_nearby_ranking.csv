@@ -1,0 +1,7 @@
+"rank","method","venue","venue_rank","split","input_size","map50_95","delta_pp","abs_delta_pp","source_row_id","source_url","comparability"
+"0","LRS-GFDR + Capacity-BPDD-v3-Safe + FIA","project","project","val","640x640","0.30109","0","0","project_current_joint","https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/blob/main/paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv","current project reference"
+"1","YOLOv5x + EMA","ICASSP 2023","B","val","640x640","0.304","0.291","0.291","ema_yolov5x_val","https://doi.org/10.1109/ICASSP49357.2023.10096516","nearby value; partial pretraining and evaluator details differ"
+"2","UAV-DETR-R18","IROS 2025","B","val","640x640","0.298","-0.309","0.309","uav_detr_r18_val","https://doi.org/10.1109/IROS60139.2025.11246176","nearby value; training/evaluator details differ"
+"3","UAV-DETR-R50","IROS 2025","B","val","640x640","0.315","1.391","1.391","uav_detr_r50_val","https://doi.org/10.1109/IROS60139.2025.11246176","nearby value; backbone and training/evaluator differ"
+"4","UAV-DETR-EV2","IROS 2025","B","val","640x640","0.287","-1.409","1.409","uav_detr_ev2_val","https://doi.org/10.1109/IROS60139.2025.11246176","nearby value; EfficientFormerV2 backbone and training/evaluator differ"
+"5","RT-DETR-R50","IROS 2025","B","val","640x640","0.284","-1.709","1.709","iros_study_rtdetr_r50_val","https://doi.org/10.1109/IROS60139.2025.11246176","nearby value; baseline re-benchmark and evaluator differ"

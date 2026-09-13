@@ -12,6 +12,21 @@
 |---|---|---:|---:|---:|---:|---:|---|
 | **LRS-GFDR + Capacity-BPDD-v3-Safe + FIA** | current joint Formal100, best E97 | 640 | 0.60482 | 0.49693 | 0.49890 | **0.30109** | [`joint-results.csv`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv) |
 
+### 当前联合的 CCF-B 近邻排位
+
+为回答“当前联合版在 B 会结果中的相近位置”，这里单独以当前联合 val `0.30109` 为基准，只纳入 **CCF-B、明确 VisDrone val、明确 mAP50–95** 的论文报告值，并按绝对差值从小到大排序。差值单位为百分点（pp）；这是绝对位置参照，不是严格公平对比、统计显著性检验或 SOTA 声明。完整机器可读记录见 [`b_venue_nearby_ranking.json`](b_venue_nearby_ranking.json) 和 [`b_venue_nearby_ranking.csv`](b_venue_nearby_ranking.csv)。
+
+| 排位 | 方法 | 会议 | Input | mAP50–95 | 相对当前联合 | 绝对差距 | 证据与边界 |
+|---:|---|---|---|---:|---:|---:|---|
+| 基准 | **LRS-GFDR + Capacity-BPDD-v3-Safe + FIA** | 本项目 | 640×640 | **0.30109** | — | 0.000 pp | 当前 Formal100，best E97；[`joint-results.csv`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv) |
+| 1 | YOLOv5x + EMA | [ICASSP 2023](https://doi.org/10.1109/ICASSP49357.2023.10096516) | 640×640 | 0.304 | +0.291 pp | 0.291 pp | 部分预训练、评测器和训练细节不同；原论文仓库保留该行的 VisDrone 数值（[实现与表格](https://github.com/YOLOonMe/EMA-attention-module)） |
+| 2 | UAV-DETR-R18 | [IROS 2025](https://doi.org/10.1109/IROS60139.2025.11246176) | 640×640 | 0.298 | −0.309 pp | 0.309 pp | 同为 640-val 的论文报告值，但训练和 evaluator 不同 |
+| 3 | UAV-DETR-R50 | [IROS 2025](https://doi.org/10.1109/IROS60139.2025.11246176) | 640×640 | 0.315 | +1.391 pp | 1.391 pp | backbone、训练周期和 evaluator 不同 |
+| 4 | UAV-DETR-EV2 | [IROS 2025](https://doi.org/10.1109/IROS60139.2025.11246176) | 640×640 | 0.287 | −1.409 pp | 1.409 pp | EfficientFormerV2 路线，协议细节不同 |
+| 5 | RT-DETR-R50 | [IROS 2025](https://doi.org/10.1109/IROS60139.2025.11246176) | 640×640 | 0.284 | −1.709 pp | 1.709 pp | 原论文重测 baseline，训练和 evaluator 不同 |
+
+因此，按公开数值的“近邻位置”，当前联合版位于 **0.298–0.304 的 B 会密集区间中间**：与 YOLOv5x+EMA、UAV-DETR-R18 的绝对差距均小于 `0.31 pp`。`NRQO=0.321` 因 split/input 未报告不进入排位；`VARDet=0.365` 虽为同会，但使用 1333×800，作为高分辨率上下文而非同协议名次。HIC-YOLOv5 等更远结果继续保留在下方历史/测试表中。
+
 下方旧的 `RT-DETR-L + FDR + BPDD + FIA` 外部排序表保留为历史快照，不能与当前联合臂混用。
 
 ResBiDet 与 VARDet 是最直接的同会任务邻居。ResBiDet 发表于 ICASSP 2026，正式摘要报告 VisDrone2019 AP50=`0.387`，低于本文 AP50=`0.4898`；但可访问摘要未给 mAP50–95、split、精确双分辨率输入或完整 evaluator，因此只能作为同会 AP50 位置证据，不能并入 mAP 排名。VARDet 同样发表于 ICASSP 2026，其 Table 1 采用作者统一重实现的 ResNet-50、1333×800、COCO-style 协议；本文采用 RT-DETR-L、640×640 的冻结协议。因此下表登记其绝对结果，但标为非严格可比，不能把 `0.3650−0.2961` 写成方法本身带来的公平差距。
