@@ -24,6 +24,7 @@ CATEGORY_NAMES = (
     "motor",
 )
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
+BOUNDARY_EPSILON = 1e-6
 
 
 def _images_for_split(root: Path, split: str) -> list[Path]:
@@ -56,7 +57,12 @@ def _parse_label_line(line: str, path: Path, line_number: int) -> tuple[int, flo
         raise ValueError(f"{path}:{line_number}: normalized width/height outside (0,1]")
     if not 0 <= cx <= 1 or not 0 <= cy <= 1:
         raise ValueError(f"{path}:{line_number}: normalized center outside [0,1]")
-    if cx - width / 2 < 0 or cx + width / 2 > 1 or cy - height / 2 < 0 or cy + height / 2 > 1:
+    if (
+        cx - width / 2 < -BOUNDARY_EPSILON
+        or cx + width / 2 > 1 + BOUNDARY_EPSILON
+        or cy - height / 2 < -BOUNDARY_EPSILON
+        or cy + height / 2 > 1 + BOUNDARY_EPSILON
+    ):
         raise ValueError(f"{path}:{line_number}: normalized box extends outside image")
     return category, cx, cy, width, height
 
@@ -70,8 +76,16 @@ def _read_labels(label_path: Path, image_path: Path, image_width: int, image_hei
         if not line:
             continue
         category, cx, cy, width, height = _parse_label_line(line, label_path, line_number)
-        box_width, box_height = width * image_width, height * image_height
-        x, y = (cx - width / 2) * image_width, (cy - height / 2) * image_height
+        # A few source labels land 5e-7 outside the boundary due to decimal
+        # rounding (e.g. ``cy + h/2 == 1.0000005``).  Keep the original YOLO
+        # files untouched, but clip only this numerical noise in the COCO
+        # projection so D-FINE receives valid pixel boxes.
+        x0 = max(0.0, cx - width / 2)
+        y0 = max(0.0, cy - height / 2)
+        x1 = min(1.0, cx + width / 2)
+        y1 = min(1.0, cy + height / 2)
+        x, y = x0 * image_width, y0 * image_height
+        box_width, box_height = (x1 - x0) * image_width, (y1 - y0) * image_height
         annotations.append({
             "area": box_width * box_height,
             "bbox": [x, y, box_width, box_height],

@@ -80,3 +80,16 @@ def test_convert_split_rejects_missing_label_file(tmp_path: Path) -> None:
     (tmp_path / "labels" / "train" / "a.txt").unlink()
     with pytest.raises(FileNotFoundError, match="a.txt"):
         module.convert_split(tmp_path, "train", tmp_path / "out.json")
+
+
+def test_convert_split_clips_rounding_noise_at_image_boundary(tmp_path: Path) -> None:
+    module = _load_module()
+    _make_dataset(tmp_path)
+    (tmp_path / "labels" / "train" / "a.txt").write_text(
+        "3 0.5 0.98000025 0.2 0.0400005\n", encoding="utf-8"
+    )
+    module.convert_split(tmp_path, "train", tmp_path / "out.json")
+    payload = json.loads((tmp_path / "out.json").read_text(encoding="utf-8"))
+    annotation = payload["annotations"][0]
+    assert annotation["bbox"][1] == pytest.approx(76.8)
+    assert annotation["bbox"][3] == pytest.approx(3.2)
