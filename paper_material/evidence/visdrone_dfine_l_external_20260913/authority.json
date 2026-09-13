@@ -1,0 +1,22 @@
+{
+  "format_version": 1,
+  "status": "not_started",
+  "scope": "external D-FINE-L evaluation adapter for VisDrone",
+  "ultralytics_checkpoint": null,
+  "dfine_commit": null,
+  "dataset_sha256": null,
+  "config_sha256": null,
+  "prediction_sha256": null,
+  "evaluation_contract": {
+    "split": "val",
+    "imgsz": 640,
+    "conf": 0.001,
+    "max_det": 300,
+    "tta": false,
+    "nms": false,
+    "classes": 10,
+    "coordinate_format": "original-pixel-xyxy",
+    "category_ids": "zero-based-0-to-9"
+  },
+  "provenance_note": "Metadata only; raw data and model weights stay on the server."
+}

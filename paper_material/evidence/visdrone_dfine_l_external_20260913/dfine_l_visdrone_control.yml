@@ -1,0 +1,11 @@
+__include__: [
+  './dfine_hgnetv2_l_coco.yml',
+]
+
+# This file is a server-side starting point. The official D-FINE repository is
+# supplied separately; do not import it into the Ultralytics source tree.
+num_classes: 10
+remap_mscoco_category: False
+eval_spatial_size: [640, 640]
+epochs: 100
+seed: 0
