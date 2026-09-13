@@ -9,7 +9,7 @@ import torch
 PACKAGE = Path(__file__).parents[1] / "paper_material" / "evidence" / "visdrone_dfine_l_external_20260913"
 sys.path.insert(0, str(PACKAGE))
 
-from export_dfine_predictions import dfine_output_to_contract_row  # noqa: E402
+from export_dfine_predictions import dfine_output_to_contract_row, disable_external_pretraining  # noqa: E402
 
 
 def test_dfine_output_uses_native_pixel_xyxy_and_zero_based_labels() -> None:
@@ -36,3 +36,9 @@ def test_dfine_output_rejects_category_outside_visdrone() -> None:
             width=640,
             height=480,
         )
+
+
+def test_checkpoint_loading_disables_external_hgnet_pretraining() -> None:
+    config = {"HGNetv2": {"pretrained": True}}
+    disable_external_pretraining(config)
+    assert config["HGNetv2"]["pretrained"] is False

@@ -14,6 +14,14 @@ import torch
 from prediction_contract import validate_row, write_jsonl
 
 
+def disable_external_pretraining(config: Mapping[str, Any]) -> None:
+    """Prevent a checkpoint evaluation from downloading/loading HGNet weights."""
+
+    backbone = config.get("HGNetv2")
+    if isinstance(backbone, dict):
+        backbone["pretrained"] = False
+
+
 def dfine_output_to_contract_row(*, labels: torch.Tensor, boxes: torch.Tensor, scores: torch.Tensor,
                                  image_id: str, width: int, height: int) -> dict[str, Any]:
     labels = labels.detach().long().cpu()
@@ -69,6 +77,7 @@ def export_predictions(*, dfine_root: Path, config: Path, checkpoint: Path, imag
     from PIL import Image
 
     cfg = YAMLConfig(str(config), resume=str(checkpoint), num_classes=10)
+    disable_external_pretraining(cfg.yaml_cfg)
     state = _state_from_checkpoint(torch.load(checkpoint, map_location="cpu", weights_only=False))
     cfg.model.load_state_dict(state, strict=True)
     model = cfg.model.deploy().to(device).eval()
