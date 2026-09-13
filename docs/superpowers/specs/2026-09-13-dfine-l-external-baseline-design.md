@@ -115,3 +115,9 @@ D-FINE 的 HGNetv2-B4、D-FINE Transformer、FDR 和 GO-LSD 保持官方实现�
 ## 完成标准
 
 准备工作完成的定义是：服务器可按 README 执行；配置、脚本和数据转换均通过静态/单元检查；能够生成独立输出目录和审计模板；现有联合版文件、结果和主表没有被修改。完整训练结果只有在服务器实际运行结束并通过 checkpoint、日志和评测复核后才登记。
+
+## 排队执行与跨协议收尾
+
+当前 Capacity-BPDD 单臂训练完成后，由独立 watcher 原子地确认训练进程已退出、`results.csv` 已达到 100 个 epoch 且 `last.pt`/`best.pt` 非空，再启动 D-FINE-L。watcher 不杀进程、不覆盖已有运行目录；任一步骤失败都写入状态文件并停止后续步骤。
+
+D-FINE-L 使用官方 D-FINE checkout 与独立环境，先把 VisDrone YOLO 标注确定性转换为 COCO，转换结果绑定数据计数和 SHA-256。训练结束后按 val 的 `mAP50-95` 选 `best_stg2.pth`，再分别导出 D-FINE-L 与只读的当前三模块联合 checkpoint，统一写入每图 JSONL，并由同一个 COCO evaluator 生成 val/test 报告。该结果只作为 controlled external baseline；不同框架、优化器和训练实现的差异必须在表格中显式标注，不能计算成严格配对增益。
