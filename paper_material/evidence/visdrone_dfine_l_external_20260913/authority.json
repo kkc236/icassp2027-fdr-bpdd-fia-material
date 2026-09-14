@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "status": "dfine_training_failed_pre_evaluation",
+  "status": "dfine_training_repair_fp32_pending",
   "scope": "external D-FINE-L evaluation adapter for VisDrone",
   "ultralytics_checkpoint": null,
   "dfine_commit": null,
@@ -24,6 +24,20 @@
     "error": "AssertionError in generalized_box_iou: boxes1[:, 2:] >= boxes1[:, :2]",
     "log": "/root/sj-tmp/eval/dfine_l_train_20260914.log",
     "status_snapshot": "queued-run-status-20260914.json"
+  },
+  "repair": {
+    "date": "2026-09-14",
+    "root_cause": "FP16 autocast overflow in a denoising decoder output during from-scratch VisDrone training; raw COCO boxes were validated finite, positive, and in bounds",
+    "change": "Set use_amp=False and removed the --use-amp override; official D-FINE model, loss, data pipeline, seed, batch size, resolution, and evaluation contract are unchanged",
+    "smoke_replay": {
+      "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914/last.pth",
+      "epochs_replayed": 1,
+      "batches_completed": 808,
+      "invalid_box_event": false,
+      "nonfinite_parameter_event": false,
+      "log": "/root/sj-tmp/eval/dfine_l_noamp_smoke.log"
+    },
+    "formal_output_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914-fp32"
   },
   "provenance_note": "Metadata only; raw data and model weights stay on the server. No D-FINE metric is registered because training failed before a valid checkpoint/evaluation."
 }

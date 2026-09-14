@@ -14,7 +14,10 @@ remap_mscoco_category: False
 eval_spatial_size: [640, 640]
 epochs: 100
 seed: 0
-use_amp: True
+# VisDrone from-scratch D-FINE-L is numerically unstable under FP16 autocast
+# (the DN decoder can overflow before the loss guard). Keep the official
+# computation in FP32 for a reproducible, finite external baseline.
+use_amp: False
 use_ema: True
 
 HGNetv2:

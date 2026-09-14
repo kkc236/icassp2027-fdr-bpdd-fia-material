@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "status": "formal_run_ready",
+  "message": "FP32 repair validated through the complete previously failing epoch; formal D-FINE-L run is ready in a new output directory.",
+  "updated_at": "2026-09-14T09:00:00+08:00",
+  "validation": {
+    "raw_coco_train": {"images": 6471, "annotations": 343204, "invalid_boxes": 0},
+    "raw_coco_val": {"images": 548, "annotations": 38759, "invalid_boxes": 0},
+    "smoke_replay": {"amp": false, "epoch": 2, "batches": 808, "invalid_box_event": false, "nonfinite_parameter_event": false}
+  },
+  "formal": {
+    "status_file": "queued-run-status.json",
+    "output_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914-fp32",
+    "epochs": 100,
+    "seed": 0,
+    "batch": 8,
+    "imgsz": 640,
+    "use_amp": false
+  }
+}
