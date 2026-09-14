@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "status": "not_started",
+  "status": "dfine_training_failed_pre_evaluation",
   "scope": "external D-FINE-L evaluation adapter for VisDrone",
   "ultralytics_checkpoint": null,
   "dfine_commit": null,
@@ -18,5 +18,12 @@
     "coordinate_format": "original-pixel-xyxy",
     "category_ids": "zero-based-0-to-9"
   },
-  "provenance_note": "Metadata only; raw data and model weights stay on the server."
+  "failure": {
+    "date": "2026-09-14",
+    "stage": "official D-FINE-L training, epoch 2",
+    "error": "AssertionError in generalized_box_iou: boxes1[:, 2:] >= boxes1[:, :2]",
+    "log": "/root/sj-tmp/eval/dfine_l_train_20260914.log",
+    "status_snapshot": "queued-run-status-20260914.json"
+  },
+  "provenance_note": "Metadata only; raw data and model weights stay on the server. No D-FINE metric is registered because training failed before a valid checkpoint/evaluation."
 }

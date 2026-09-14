@@ -1,6 +1,6 @@
 # FDR、BPDD、FIA 的 val/test 涨点总对比
 
-> 当前三模块联合主记录已切换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`（VisDrone val best E97 mAP50–95=`0.30109`）。本页中旧 `FDR+BPDD+FIA` 数值仍作为历史 authority 快照保存，不能替代当前联合记录或与其拼接计算增量。
+> 当前三模块联合主记录已切换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`（VisDrone val best E97 mAP50–95=`0.30109`）。最新 BPDD-only Formal100 已完成（best E80=`0.29277`），但独立 test 待评估。本页中旧 `FDR+BPDD+FIA` 数值仍作为历史 authority 快照保存，不能替代当前联合记录或与其拼接计算增量。
 
 ## 证据状态
 
@@ -8,14 +8,18 @@
 
 新增 BPDD 严格配对已全部完成：同 authority、同 seed、同 evaluator 的 best.pt 复评中，BPDD 在 val/test 的 mAP50–95 分别提高 **+0.239/+0.283 pp**，AP75 分别提高 **+0.072/+0.276 pp**。下方标准总体表仍保留既有展示口径，严格配对完整结果单列如下。
 
-### EQuAL standalone 最新结果
+### 最新 Capacity-BPDD-v3-Safe 训练观测
+
+最新 `LRS-GFDR + Capacity-BPDD-v3-Safe` Formal100 的验证曲线在 E80 达到 mAP50–95=`0.29277`，E100 为 `0.28939`。该 observation 的原始 CSV、args、权重 SHA-256 和 authority 见 [`当前联合证据包`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)；在独立 test 完成前，它不升级为新的严格配对增量。
+
+### 历史 EQuAL standalone 结果
 
 | split | P | R | F1 | AP50 | AP75 | mAP50–95 | ΔmAP vs 登记 AP-FDR |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | val | 0.594055 | 0.488666 | 0.536231 | 0.490477 | 0.301026 | **0.294378** | **+0.472 pp** |
 | test | 0.521576 | 0.428839 | 0.470683 | 0.406246 | 0.235363 | **0.234610** | **+0.661 pp** |
 
-EQuAL 在两个 split 的 AP75 与 mAP 上同向提高，standalone 门槛通过。它是对 AP-FDR 的候选替换，不是 A–E 组合矩阵中的新增外挂；现有 BPDD/FIA 组合仍属于旧 AP-FDR 代际，必须重新训练后才能形成 EQuAL 组合行。差值为非 fresh-paired 算术比较。
+EQuAL 在两个 split 的 AP75 与 mAP 上同向提高，standalone 门槛通过；它现作为历史/外部候选保留，不替换当前 LRS-GFDR/Capacity/FIA 联合主结果。差值为非 fresh-paired 算术比较。
 
 ### BPDD 严格配对 best.pt 精确结果
 

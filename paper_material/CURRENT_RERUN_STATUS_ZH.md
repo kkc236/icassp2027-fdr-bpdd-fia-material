@@ -1,38 +1,37 @@
-# 当前重跑状态（2026-08-22）
+# 当前重跑状态（2026-09-14）
 
-## 当前唯一论文主线
+## 当前论文主线
 
-论文实验现切换为官方 D-FINE-S 路线。首个运行固定为官方代码提交 `7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6`、HGNetv2-B0 stage1、VisDrone 10 类、640 输入、batch 8、seed 0、132 epochs 和 AMP。训练使用官方损失、匹配与多尺度训练配置，不混入旧 Ultralytics 实现。
+当前主系统是 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100。它使用固定 VisDrone authority、seed0、100 epochs、640 输入、batch8、MuSGD、`pretrained=false`、AMP 和 deterministic；best val mAP50–95 为 `0.30109`（E97）。同系列 BPDD-only 已完成 100/100，best E80=`0.29277`，但独立 test 尚待评估。
 
-当前运行目录为 `/home/ubuntu/dfine-runs/dfine-s-visdrone-seed0-official7fe2`。正式结果必须来自该运行的 best checkpoint，并在冻结的 val/test 评估协议下复评后才能写入论文表格。
+D-FINE-L 仅作为外部论文对照/跨协议实验；2026-09-14 最近一次官方训练在 epoch 2 因 `generalized_box_iou` 的非法框几何断言失败，尚无可用 checkpoint 或指标。修复并重新启动前不写入正式结果表。D-FINE-S 旧路线和 EQuAL standalone 作为历史/外部定位材料保留。
 
 ## 当前不得作为新稿结论的内容
 
-- EQuAL、AP-FDR 和旧 FDR 的 standalone 数值；
-- 基于旧 Ultralytics RT-DETR-L 的 A–E 主表及其涨点；
-- 旧 FDR+BPDD、FDR+FIA、FDR+BPDD+FIA 的组合数值；
-- 由不同源码、训练 authority 或拓扑拼接得到的算术增量；
+- 未完成或仅跨协议的 D-FINE 训练数值；
+- 不同 authority、拓扑或 evaluator 拼接得到的算术增量；
+- 旧 AP-FDR A–E 行直接改名为当前 LRS-GFDR/Capacity 组合；
 - 围绕旧结果形成的当前论文提纲、主张和图表安排。
 
 这些内容只作为历史审计材料保留，不再从当前论文入口引用。Git 历史、原始日志、checkpoint 哈希和机器证据不删除，避免后续无法复核。
 
 ## 继续保留并复用的内容
 
+- 最新 LRS-GFDR、Capacity-BPDD-v3-Safe 和 FIA 的训练期实现与联合结果；
 - BPDD 的训练期渐进式边界分布蒸馏思想与实现；
 - FIA 的 P3-only 高分辨率增强思想与实现；
 - VisDrone 数据映射、原始 val/test 文本和逐类证据；
 - 外部 VisDrone 正式论文比较资料及来源；
 - 复杂度测量脚本、证据清单和完整 Git 历史。
 
-保留不等于沿用旧数值。BPDD 和 FIA 接入官方 D-FINE 后必须重新训练与评估，旧组合权重不能改名复用。
+保留不等于沿用旧数值。当前联合与 BPDD-only 的 authority、曲线和限制说明以当前联合证据包为准；D-FINE 外部对照仍须完成独立评估后才可排序。
 
-## 结果替换顺序
+## 结果使用顺序
 
-1. 官方 D-FINE-S / VisDrone 基线；
-2. 同源码、同 seed、同协议的 D-FINE-S + BPDD；
-3. 同条件的 D-FINE-S + FIA；
-4. D-FINE-S + BPDD + FIA；
-5. 对四个 best checkpoint 做统一 val/test 与 Params/FLOPs/Latency 复评；
-6. 仅用新结果重建论文主表、消融表、复杂度表和写作提纲。
+1. 论文主结果引用当前 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` Formal100 best；
+2. BPDD 因果增益引用 2026-08-19 同 authority 严格 FDR/FDR+BPDD val/test 配对；
+3. 最新 BPDD-only 曲线作为训练观测，待独立 test 后再升级证据等级；
+4. D-FINE-L 完成后，按同一 VisDrone split/input 记录为外部跨协议对照，不回写当前 Ultralytics 消融表；
+5. 只有在 evaluator、split、checkpoint 和 authority 全部一致时，才计算严格增量。
 
-在第 6 步完成前，`results/`、`experiments/` 和 `writing/` 中的旧路线页面均视为历史快照，而不是当前投稿定稿。
+旧路线页面继续作为历史快照；当前投稿定稿优先引用 `results/RESULTS_ZH.md`、`results/MAIN_TABLE_ZH.md` 和当前联合证据包。

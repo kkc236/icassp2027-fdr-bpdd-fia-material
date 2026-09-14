@@ -1,5 +1,7 @@
 # EQuAL：边缘自适应、查询对齐定位
 
+> **状态（2026-09-14）**：EQuAL standalone 的 val/test exact 结果作为历史/外部定位候选保留；当前论文主系统已切换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`，未形成 EQuAL 组合主结果。
+
 EQuAL（Edge-adaptive Query-Aligned Localization）是对原 AP-FDR 训练组织的整体重构，不是附加在 FDR 外部的新分支。它保留逐边离散分布、非均匀 Integral、相邻 bin FGL 和累计细化等受 D-FINE 启发的定位基础，但重新规定分布锚点、监督查询范围与四边梯度分配方式。
 
 ## 1. 统一设计
@@ -62,4 +64,4 @@ w_e = detach(IoU_box) * m_e
 
 D-FINE 应被引用为离散四边表示、non-uniform Integral 和基础相邻-bin FGL 的来源。本文可主张的是 EQuAL 的统一组织：原生 query/reference 对齐、clean-query 分布监督和框内逐边难度均衡。不得声称本文首次提出离散分布回归、Integral 或基础 FGL。
 
-EQuAL standalone 已通过 val mAP/AP75 和 test 方向门槛；它与 BPDD/FIA 的新组合仍需重训。旧 AP-FDR+BPDD、AP-FDR+FIA 与三模块 checkpoint 不能只改名为 EQuAL 组合结果。
+EQuAL standalone 已通过 val mAP/AP75 和 test 方向门槛；它与 BPDD/FIA 的组合未形成当前主线结果。旧 AP-FDR+BPDD、AP-FDR+FIA 与三模块 checkpoint 不能只改名为 EQuAL 组合结果；当前主结果见 [论文结果统一汇总](../results/RESULTS_ZH.md)。

@@ -29,17 +29,17 @@
 
 这些差值属于相同 split、相同 evaluator 协议下的登记 authority 算术比较，但不是同一新源码提交下同时重跑的 fresh strict pair。机器记录保留 `strict_paired=false`。
 
-## 4. 当前采用状态
+## 4. 历史采用状态
 
-EQuAL standalone 判定为 `pass`，可以作为新的第一定位方法候选。论文完整系统尚未闭环，因为现有 BPDD/FIA 组合 checkpoint 均由旧 AP-FDR 路径训练得到：
+EQuAL standalone 判定为 `pass`，曾作为新的第一定位方法候选。随后完成的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100 已成为当前论文主系统，因此本页结果作为历史/外部定位候选保留；不能将旧 checkpoint 改名为当前联合组合：
 
 | 下一实验 | 状态 | 用途 |
 |---|---|---|
-| EQuAL + BPDD | **待重训，最高优先级** | 验证主要原创 BPDD 与新定位方法兼容并继续正增益 |
-| EQuAL + FIA | 待决定 | 若篇幅/算力允许，用于隔离 FIA 在 EQuAL context 下的贡献 |
-| EQuAL + BPDD + FIA | 待重训 | 生成最终论文完整系统的 val/test 主结果 |
+| EQuAL + BPDD | 未列入当前主线 | 旧候选组合，未形成当前论文证据 |
+| EQuAL + FIA | 未列入当前主线 | 旧候选组合，未形成当前论文证据 |
+| EQuAL + BPDD + FIA | 未列入当前主线 | 当前主系统已由 LRS-GFDR/Capacity/FIA Formal100 替代 |
 
-不能把旧 `AP-FDR+BPDD/FIA` checkpoint 直接改名为 EQuAL 组合。组合重训完成前，A–E 标准表仍是 AP-FDR 代际的历史完整链，EQuAL exact 结果单独呈现。
+不能把旧 `AP-FDR+BPDD/FIA` checkpoint 直接改名为 EQuAL 组合。A–E 标准表仍是 AP-FDR 代际的历史完整链，EQuAL exact 结果单独呈现；当前主结果请转到 [论文结果统一汇总](RESULTS_ZH.md)。
 
 ## 5. 证据入口
 

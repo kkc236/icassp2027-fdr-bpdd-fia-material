@@ -69,8 +69,34 @@
     "strict_paired_to_superseded_three_module": false,
     "supersedes": "fia_updated_three_module_text_val"
   },
+  "latest_bpdd_training_observation": {
+    "split": "VisDrone val",
+    "method": "LRS-GFDR+Capacity-BPDD-v3-Safe",
+    "status": "completed_formal100_pending_exact_test",
+    "run_id": "formal-seed0-capacity-v3-safe-bpdd",
+    "completed_epochs": 100,
+    "best_epoch": 80,
+    "best": {
+      "precision": 0.59826,
+      "recall": 0.48524,
+      "map50": 0.48783,
+      "map": 0.29277
+    },
+    "final_epoch": 100,
+    "final": {
+      "precision": 0.60235,
+      "recall": 0.48596,
+      "map50": 0.48627,
+      "map": 0.28939
+    },
+    "evidence_level": "latest_formal100_training_record",
+    "source_id": "visdrone_lrs_gfdr_capacity_v3_safe_bpdd_20260914",
+    "evidence_path": "evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json",
+    "independent_exact_test_pending": true,
+    "strict_causal_delta_allowed": false
+  },
   "equal_redesign_candidate": {
-    "status": "standalone_gate_pass_combination_retraining_pending",
+    "status": "historical_standalone_gate_pass_superseded_as_current_candidate",
     "paper_method": "RT-DETR-L+EQuAL",
     "source_id": "equal_formal100_best_exact_20260821",
     "source_commit": "fca7763679b6e10ed68f98971a362a054ecd4853",
@@ -97,7 +123,7 @@
       "delta_strict_paired": false
     },
     "formal_a_to_e_replacement_allowed": false,
-    "next_required_experiment": "EQuAL+BPDD Formal100 seed0"
+    "next_required_experiment": null
   },
   "strict_bpdd_pair_20260819": {
     "status": "best_checkpoint_exact_val_test_complete",

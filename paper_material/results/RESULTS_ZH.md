@@ -1,14 +1,25 @@
 # VisDrone 结果汇总（论文写作版）
 
-本页是论文结果的统一入口。正式核心结果、FIA standalone 消融和三模块 P3-only 观察按证据等级分开，val/test 不混写。
+本页是论文结果的统一入口。当前联合主记录、最新 BPDD-only 训练记录、严格配对证据以及历史消融按证据等级分开，val/test 不混写。
 
-## 当前三模块联合主记录（2026-09-12）
+## 当前三模块联合主记录（2026-09-12，最新主结果）
 
 原 `RT-DETR-L + FDR + BPDD + FIA` 三模块记录已由新的联合臂替换为：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`。该臂完成 VisDrone Formal100（seed0），best 为 epoch 97：P=`0.60482`、R=`0.49693`、AP50=`0.49890`、mAP50–95=`0.30109`；E100 为 P=`0.59526`、R=`0.50472`、AP50=`0.50005`、mAP50–95=`0.30065`。完整曲线、authority、冻结参数和配置见 [`当前联合证据包`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
 
 该新联合臂与历史 AP-FDR A–D 行不构成严格配对，因此不从旧行计算新模块因果增益。旧三模块 val/test 文本、截图和 checkpoint 仅作为 `superseded_history` 保留；论文主结果应优先引用本节和当前联合证据包。
 
-## 0. EQuAL 最新定位方法结果（2026-08-21）
+## 最新 BPDD-only 训练记录（2026-09-14）
+
+`LRS-GFDR + Capacity-BPDD-v3-Safe` 的 VisDrone Formal100（seed0）已完成 100/100。按验证集 `metrics/mAP50-95(B)` 选出的 best 为 E80，E100 作为 final 保留：
+
+| 选择 | Epoch | Precision | Recall | AP50 | mAP50–95 |
+|---|---:|---:|---:|---:|---:|
+| best | 80 | 0.59826 | 0.48524 | 0.48783 | **0.29277** |
+| final | 100 | 0.60235 | 0.48596 | 0.48627 | 0.28939 |
+
+逐 epoch 原始记录、Ultralytics 解析参数、权重尺寸/SHA-256 和证据边界见 [`当前联合证据包/BPDD 完成摘要`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json)。该记录是最新训练观测，独立 test 尚未完成，不能把 `0.29277` 直接表述为新的严格因果增益；论文中的 BPDD 因果结论继续引用下方 2026-08-19 同 authority 严格配对结果。
+
+## 历史 EQuAL standalone 定位结果（2026-08-21）
 
 EQuAL seed0 Formal100 已连续完成 100 epochs。使用同一个 best epoch 91 checkpoint（SHA-256 `06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca`）完成一次统一 val/test exact 复评：
 
@@ -19,7 +30,7 @@ EQuAL seed0 Formal100 已连续完成 100 epochs。使用同一个 best epoch 91
 
 两个 split 的 AP50、AP75 和 mAP50–95 均正向，EQuAL standalone 采用门槛通过；Recall 略降，不能写成全部指标全面提高。差值以材料仓已登记 AP-FDR authority 为参照，属于同 split、同 evaluator 协议的非严格算术比较，不是 fresh strict pair。
 
-现有 A–E 表及 BPDD/FIA 组合仍属于 AP-FDR 代际，不能改名为 EQuAL 结果。完整系统状态为 `combination_retraining_pending`：先重训 **EQuAL + BPDD**，通过后再重训 **EQuAL + BPDD + FIA**。完整精确数值和逐类结果见 [EQuAL 专页](EQUAL_RESULTS_ZH.md)。
+现有 A–E 表及 BPDD/FIA 组合仍属于 AP-FDR 代际，不能改名为 EQuAL 结果。该 standalone 记录作为历史候选保留；之后已完成的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` Formal100 是当前论文主系统，因此不再把 EQuAL 标为当前优先方案。完整精确数值和逐类结果见 [EQuAL 专页](EQUAL_RESULTS_ZH.md)。
 
 ## 1. 正式核心结果
 
@@ -126,11 +137,11 @@ fresh FIA-only 的逐类数据直接来自本次 [`exact test JSON`](../evidence
 
 ## 5. 论文可用结论
 
-- EQuAL 已在 standalone val/test 的 mAP 与 AP75 上同时超过登记 AP-FDR，成为当前优先定位方案；组合链尚未重训，因此最终论文系统仍保留“待组合验证”状态。
-- 原 AP-FDR 仍是现有 BPDD/FIA 组合证据的定位底座，在 EQuAL 组合完成前不能从 A–E 表删除或把旧权重改名。
+- 当前论文主系统为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`，Formal100 best val mAP50–95=`0.30109`；EQuAL standalone 作为历史候选保留，不替换当前联合结果。
+- 原 AP-FDR 仍是历史 BPDD/FIA 组合证据的定位底座；A–E 表和旧权重继续保留为历史 authority，不能改名为当前 LRS-GFDR/Capacity 组合。
 - AP-FDR 是论文的第一项方法创新，其 localization-only 结构、stock-head-informed preliminary 分支、normal/DN 匹配一致监督和公平初始化合同共同取得相对 baseline 的大幅定位增益。BPDD 是第二项跨层优化创新，在 AP-FDR 上继续提供小幅稳定正增益，并且只在训练期工作、不增加推理分支。严格 best.pt 配对复评确认 val/test mAP50–95 分别 `+0.239/+0.283 pp`，AP75 分别 `+0.072/+0.276 pp`；历史 `+0.260 pp/+0.557 pp` 只保留为 cross-authority 背景观察。
 - fresh P3-only FIA-only 在 val mAP50–95 上相对 canonical baseline `0.21911` 提高 `+0.7946 pp`；test mAP50–95=`0.1855174641`，相对 protocol-comparable canonical test baseline `0.1774164317` 为 `+0.8101 pp`。两个差值均限于各自 split。旧 FIA-only cascading 负向结果已 superseded。FDR+FIA 和完整三模块继续作为不同 topology/authority 下的正向兼容性观察。
-- 三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。
+- 历史三模块 P3-only 在 val/test 均有正向观察；正文消融使用文本记录 `0.2961（+0.384 pp）` 和 `0.2337（+0.204 pp）`，checkpoint `0.29618` 与终端截图作为互证材料。它们已被当前联合主记录 supersede，不与新联合臂拼接为严格增量。
 
 完整状态见 [FIA 结果状态](FIA_RESULTS_STATUS_ZH.md)，全部组合和 split 涨点见 [val/test 涨点总对比](SPLIT_GAIN_COMPARISON_ZH.md)，正式主表见 [val 主结果表](MAIN_TABLE_ZH.md)，效率实测结果见 [统一复杂度与实时性表](COMPLEXITY_ZH.md)。
 

@@ -1,13 +1,13 @@
 # VisDrone Formal100：LRS-GFDR + Capacity-BPDD-v3-Safe（含 FIA）
 
-本目录是 2026-09-13 整理的可复现证据包，记录服务器上当前联合实验的完整结果，以及随后启动的 BPDD-only 对照。它只包含结果、启动参数、权威记录、配置和启动脚本；不包含模型权重、初始权重文件、数据集或缓存。
+本目录是 2026-09-14 更新的可复现证据包，记录服务器上当前联合实验的完整结果，以及最新完成的 BPDD-only 对照。它包含逐 epoch 结果、启动参数、权威记录、配置、启动脚本和权重校验信息；不包含模型权重、初始权重文件、数据集或缓存。
 
 ## 实验身份
 
 | 臂 | 方法 | 状态 | 服务器输出目录 |
 |---|---|---|---|
 | Joint | `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` | 已完成 100/100 | `/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia` |
-| BPDD-only | `LRS-GFDR + Capacity-BPDD-v3-Safe`（去除 FIA） | 运行中；尚无 epoch 结果 | `/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd` |
+| BPDD-only | `LRS-GFDR + Capacity-BPDD-v3-Safe`（去除 FIA） | 已完成 100/100；独立 test 待评估 | `/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd` |
 
 ## Joint 已完成结果
 
@@ -19,6 +19,19 @@
 | final（E100） | 0.59526 | 0.50472 | 0.50005 | 0.30065 |
 
 best 选择规则必须以验证集 `metrics/mAP50-95(B)` 为准；不要用最后一轮替代 best。
+
+## 最新 BPDD-only 结果（2026-09-14）
+
+服务器上的 v3-safe formal100 已完整写出 100 个 epoch。按验证集 `metrics/mAP50-95(B)` 选择 best 为 E80；E100 仅作为最终状态保留：
+
+| 选择 | Epoch | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|---:|
+| best | 80 | 0.59826 | 0.48524 | 0.48783 | **0.29277** |
+| final | 100 | 0.60235 | 0.48596 | 0.48627 | 0.28939 |
+
+原始逐 epoch 文件为 `bpdd-current-results.csv`，Ultralytics 实际解析参数为 `bpdd-current-args.yaml`，完整机器可读摘要为 `bpdd-current-completion.json`。best/last 权重不上传仓库，仅记录尺寸和 SHA-256，便于在服务器侧核验。
+
+这是一条“最新训练观测”证据，尚未对固定 test split 做同一 checkpoint、同一 evaluator 的独立精确评估；因此不能把 0.29277 直接写成新的严格因果增益。严格的 FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair_20260819` 为准。
 
 ## 协议与可复现锚点
 
@@ -35,11 +48,9 @@ best 选择规则必须以验证集 `metrics/mAP50-95(B)` 为准；不要用最�
 - 代码仓库：`/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code`。
 - 本目录同时保存两个配置、两个正式启动脚本以及 BPDD-only 的排队脚本，便于从上述 commit 复核。
 
-## BPDD-only 当前状态
+## BPDD-only 复核状态
 
-在本包生成时，远端父进程仍在运行（PID 39900，含 dataloader 子进程），`results.csv` 尚未生成，因此不记录任何尚未观测到的指标。完成后应从服务器下载完整 `results.csv`、最终 authority 和 best/last 权重的尺寸/哈希，再追加到新的完成证据提交中。
-
-启动日志：`/root/sj-tmp/logs/formal-seed0-capacity-v3-safe-bpdd-lrsv2.log`。
+该臂已完成 100/100。服务器启动日志为 `/root/sj-tmp/logs/formal-seed0-capacity-v3-safe-bpdd-lrsv2.log`；权重校验、运行目录、配置和源代码身份均集中记录在 `bpdd-current-completion.json` 与 `bpdd-authority.json`。独立 test 评估完成后，应在本目录追加 test 结果和 evaluator 版本，不覆盖当前 val 训练记录。
 
 ## 传输与异常记录
 
@@ -48,9 +59,11 @@ BPDD-only 启动前曾存在一次不同源 commit 产生的 dry-run authority�
 ## 文件索引
 
 - `joint-results.csv`：Joint 的逐 epoch 训练/验证曲线。
+- `bpdd-current-results.csv`：最新 BPDD-only 的逐 epoch 训练/验证曲线（E1–E100）。
+- `bpdd-current-args.yaml`：最新 BPDD-only 的 Ultralytics 实际解析参数。
+- `bpdd-current-completion.json`：best/final 指标、权重 SHA-256、运行目录和证据边界。
 - `joint-args.yaml`、`bpdd-args.yaml`：Ultralytics 实际解析后的完整参数。
 - `joint-authority.json`、`bpdd-authority.json`：数据、初始状态、配置和源代码身份锚点。
 - `rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml`、`rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd.yaml`：两个臂的模型配置。
 - `train_lrs_gfdr_capacity_v3_safe_fia.py`、`train_lrs_gfdr_capacity_v3_safe_bpdd.py`：正式启动器。
 - `queue_v3_safe_bpdd_after_joint.sh`：BPDD-only 启动脚本（当前已手动启动，脚本仅作复核材料）。
-

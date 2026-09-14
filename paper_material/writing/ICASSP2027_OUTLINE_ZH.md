@@ -1,6 +1,6 @@
 # ICASSP 2027 写作提纲
 
-> **2026-08-21 方法代际状态**：EQuAL standalone exact val/test 已通过替换门槛，计划取代 AP-FDR 成为第一定位方法。下文 AP-FDR 组合叙事仍对应已有 BPDD/FIA 权重和结果，不能直接改名；先完成 EQuAL+BPDD，再完成 EQuAL+BPDD+FIA，随后一次性把 Method、贡献条目和主表切换到 EQuAL。EQuAL 的当前方法与结果分别见 [`EQUAL_ZH.md`](../methods/EQUAL_ZH.md) 和 [`EQUAL_RESULTS_ZH.md`](../results/EQUAL_RESULTS_ZH.md)。
+> **2026-09-14 方法代际状态**：当前投稿主线为 Ultralytics `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100（best val mAP50–95=`0.30109`）。EQuAL standalone exact val/test 和官方 D-FINE 运行材料分别作为历史/外部对照；不得把未重训的 EQuAL 组合改名或拼接进当前主表。BPDD 严格因果增益引用同 authority 配对结果，最新 v3-safe BPDD-only 曲线单独标注为 training observation。
 
 ## 论文主线
 

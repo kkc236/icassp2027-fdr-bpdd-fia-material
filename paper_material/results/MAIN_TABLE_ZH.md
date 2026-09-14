@@ -10,6 +10,10 @@
 
 E100 final 为 `P=0.59526、R=0.50472、AP50=0.50005、mAP50–95=0.30065`。best 以验证集 `mAP50–95` 选择。旧 `RT-DETR-L + FDR + BPDD + FIA` 的 `0.2961` 及其 test 文本记录保留在历史证据中，但不再作为当前三模块联合结果。
 
+### 最新 BPDD-only 训练观测（非严格新增因果行）
+
+同一当前系列的 `LRS-GFDR + Capacity-BPDD-v3-Safe` 已完成 Formal100；best E80 的 val mAP50–95=`0.29277`，E100 为 `0.28939`。这是最新逐 epoch 训练记录，独立 test 尚待完成，不能与历史 FDR 行直接拼接成严格增量。原始曲线和权重校验见 [`bpdd-current-completion.json`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json)。
+
 ## 历史 AP-FDR A–E 表（旧三模块联合已 superseded）
 
 论文主消融表固定使用以下 A–E 顺序。术语统一为 `BPDD`；E 行采用与标准截图对应的四位小数 val 文本记录，并补齐 F1、AP75 和逐类别证据。
@@ -24,9 +28,9 @@ E100 final 为 `P=0.59526、R=0.50472、AP50=0.50005、mAP50–95=0.30065`。bes
 
 证据等级：A/B 为 `strict`；C 为 `cross_authority_exact`；D 为 `best_checkpoint_independent_val_exact`；E 为 `user_supplied_text_report_4dp`。D 行及其 `+0.528 pp` 不升级为严格配对；E 行文本记录与归档终端截图逐项吻合，截图只是三位小数显示。checkpoint 内的 `0.29618/+0.3922 pp` 仍作为另一条补充正向记录，不替换本行四位小数结果。
 
-## EQuAL replacement candidate
+## 历史 EQuAL standalone 候选
 
-EQuAL 是对 B 行 AP-FDR 训练组织的最新整体重构。其 standalone exact 结果已经通过采用门槛，但 EQuAL+BPDD/FIA 尚未重训，所以暂不把 A–E 表的 B–E 行改名或拼接成新的组合序列。
+EQuAL 是对 B 行 AP-FDR 训练组织的历史整体重构。其 standalone exact 结果通过采用门槛，但之后已完成的 LRS-GFDR/Capacity-BPDD/FIA 联合 Formal100 才是当前主系统；不把 EQuAL 与当前联合或 A–E 表拼接成新的严格组合序列。
 
 | split | 方法 | P | R | F1 | AP50 | AP75 | mAP50–95 | 相对登记 AP-FDR |
 |---|---|---:|---:|---:|---:|---:|---:|---|

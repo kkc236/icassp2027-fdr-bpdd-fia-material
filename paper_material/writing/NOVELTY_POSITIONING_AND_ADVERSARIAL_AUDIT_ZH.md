@@ -1,8 +1,8 @@
 # ICASSP 2027 创新定位、核心文案与对抗性审计
 
-> **2026-08-21 当前决策**：EQuAL 已在 standalone val/test 的 AP75 与 mAP 上同时超过登记 AP-FDR，成为新的第一方法候选。它把原 AP-FDR 中未获支持的 preliminary-reference 和额外 DN-FDR 监督移出有效路径，改用 native query/reference、clean-query supervision 与 edge-adaptive FGL。本文以下 AP-FDR 完整系统文案暂作为历史工作稿；只有 EQuAL+BPDD 和 EQuAL+BPDD+FIA 重训通过后，才能把旧组合表和英文核心文案整体替换为 EQuAL 版本。
+> **2026-09-14 当前决策**：论文主系统采用已完成的 Ultralytics `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` Formal100（best val mAP50–95=`0.30109`）。最新 BPDD-only 已完成 E100（best E80=`0.29277`，独立 test pending）；严格 BPDD 因果结论继续引用同 authority 配对证据。EQuAL standalone 仍保留为历史/外部候选，不把未重训的 EQuAL 组合写入主表。
 
-当前最稳的 EQuAL 原创主张是“统一的查询对齐与逐边梯度组织”，不是基础离散分布算子本身。D-FINE 的四边离散表示、non-uniform Integral 与基础 adjacent-bin FGL 继续明确归因；现有 AP-FDR+BPDD/FIA 数值不得作为 EQuAL 组合证据。
+当前最稳的主张是“架构保持型逐边分布定位 + 训练期跨层边界蒸馏 + P3 高分辨率交互”的协同设计，而不是把基础离散分布算子本身宣称为原创。D-FINE 的四边离散表示、non-uniform Integral 与基础 adjacent-bin FGL 继续明确归因；历史 EQuAL 与 AP-FDR 组合数字按各自 authority 保存，不互相改名。
 
 ## 1. 一句话决策
 

@@ -88,8 +88,8 @@
     "val_map_gate": "pass",
     "val_ap75_non_degradation_gate": "pass",
     "test_direction_gate": "pass",
-    "paper_system_status": "combination_retraining_pending",
-    "next_required_experiment": "EQuAL+BPDD Formal100 seed0 with the frozen evaluator",
+    "paper_system_status": "historical_standalone_candidate_superseded_by_current_joint",
+    "next_required_experiment": null,
     "old_ap_fdr_combinations_relabel_allowed": false
   },
   "evidence_level": "best_checkpoint_independent_val_and_test_exact",

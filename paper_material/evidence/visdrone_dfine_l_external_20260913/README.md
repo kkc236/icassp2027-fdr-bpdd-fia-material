@@ -11,8 +11,11 @@ writes one JSONL row per image. Both exporters use zero-based VisDrone class IDs
 0..9 and the same 640/300/no-TTA/no-NMS evaluation contract.
 
 The exporter does not train either model. D-FINE-L training is a separate,
-explicitly authorized step; until its checkpoint exists, its status is
-`not_started`, not a fabricated result.
+explicitly authorized step. The 2026-09-14 attempt reached epoch 2 and then
+failed in the official `generalized_box_iou` assertion because a box had
+invalid geometry (`x2 < x1` or `y2 < y1`); no D-FINE checkpoint or metric is
+registered. The exact status snapshot is `queued-run-status-20260914.json` and
+the server log remains `/root/sj-tmp/eval/dfine_l_train_20260914.log`.
 
 ## 自动排队训练（服务器）
 
@@ -33,8 +36,10 @@ echo $! > /root/sj-tmp/eval/dfine_l_after_bpdd_20260914.pid
 ```
 
 状态文件为 `queued-run-status.json`，状态依次为
-`waiting → validating → preparing → training → evaluating → complete`；任何
-失败都会记录 `failed` 和原因。重复启动时如果 D-FINE 输出目录非空，脚本会拒绝覆盖。
+`waiting → validating → preparing → training → evaluating → complete`；本次
+最新状态为 `failed`，原因和时间见 `queued-run-status-20260914.json` 与
+`authority.json`。重复启动时如果 D-FINE 输出目录非空，脚本会拒绝覆盖，
+因此修复数据/几何校验后需使用新的、明确命名的输出目录。
 
 Example on the server after copying the package and checking paths:
 
