@@ -7,7 +7,7 @@ COCO_ROOT="${COCO_ROOT:-/root/sj-tmp/datasets/VisDrone-coco}"
 DFINE_ROOT="${DFINE_ROOT:-/root/sj-tmp/dfine-official}"
 SOURCE_TARBALL="${SOURCE_TARBALL:-/root/sj-tmp/dfine-source/dfine-source-267a6da.tar.gz}"
 DFINE_ENV_ROOT="${DFINE_ENV_ROOT:-/root/sj-tmp/venvs/dfine-l}"
-DFINE_OUTPUT="${DFINE_OUTPUT:-/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914-fp32}"
+DFINE_OUTPUT="${DFINE_OUTPUT:-/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914-fp32-bs4}"
 BASE_PYTHON="${BASE_PYTHON:-/root/miniconda3/envs/lrs-v2/bin/python}"
 SOURCE_COMMIT="${SOURCE_COMMIT:-267a6da6d04c8ad52e54120692896515b9e55981}"
 EXPECTED_SOURCE_SHA256="${EXPECTED_SOURCE_SHA256:-543EDFF31A28658B71BC987CFE689A3DE3D920057C232A0520F04F222B35BA7B}"
@@ -118,7 +118,7 @@ manifest = {
         ("test", coco / "annotations" / "instances_test.json"),
     )},
     "python": str(env / "bin" / "python"),
-    "training": {"epochs": 100, "seed": 0, "imgsz": [640, 640], "total_batch_size": 8, "pretrained": False, "use_amp": False, "stability_note": "FP32 required after FP16 DN-decoder overflow at epoch 2 on VisDrone from-scratch run"},
+    "training": {"epochs": 100, "seed": 0, "imgsz": [640, 640], "total_batch_size": 4, "pretrained": False, "use_amp": False, "stability_note": "FP32 required after FP16 DN-decoder overflow; batch 4 avoids a high-target batch FP32 OOM on the 24GB GPU"},
 }
 (package / "server-preflight.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 print(json.dumps(manifest, ensure_ascii=False, sort_keys=True))

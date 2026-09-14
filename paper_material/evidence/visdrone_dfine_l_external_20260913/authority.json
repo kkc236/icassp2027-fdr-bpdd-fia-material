@@ -28,7 +28,7 @@
   "repair": {
     "date": "2026-09-14",
     "root_cause": "FP16 autocast overflow in a denoising decoder output during from-scratch VisDrone training; raw COCO boxes were validated finite, positive, and in bounds",
-    "change": "Set use_amp=False and removed the --use-amp override; official D-FINE model, loss, data pipeline, seed, batch size, resolution, and evaluation contract are unchanged",
+    "change": "Set use_amp=False, removed the --use-amp override, and set total_batch_size=4 to avoid a high-target FP32 OOM on the 24GB GPU; official D-FINE model, loss, data pipeline, seed, resolution, and evaluation contract are unchanged",
     "smoke_replay": {
       "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914/last.pth",
       "epochs_replayed": 1,
@@ -37,7 +37,7 @@
       "nonfinite_parameter_event": false,
       "log": "/root/sj-tmp/eval/dfine_l_noamp_smoke.log"
     },
-    "formal_output_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914-fp32"
+    "formal_output_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-20260914-fp32-bs4"
   },
   "provenance_note": "Metadata only; raw data and model weights stay on the server. No D-FINE metric is registered because training failed before a valid checkpoint/evaluation."
 }

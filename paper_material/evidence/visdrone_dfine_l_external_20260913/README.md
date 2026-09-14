@@ -22,16 +22,18 @@ and its log remains `/root/sj-tmp/eval/dfine_l_train_20260914.log`.
 The repair keeps the official model/loss/data code unchanged and disables
 AMP (`use_amp: False`) for this external baseline. A same-checkpoint replay
 completed the entire failing epoch (808/808 batches, no invalid-box or
-non-finite-parameter event), so the formal run uses a new output directory
-and a fresh provenance record. This is a numerical-stability correction, not
-an accuracy intervention or a change to the evaluation contract.
+non-finite-parameter event). The formal run additionally uses total batch 4
+because a high-target batch can exceed a 24-GB GPU in FP32; this changes only
+the memory-safe minibatch size, not the model or evaluation contract. The
+formal run uses a new output directory and a fresh provenance record. This is
+a numerical-stability correction, not an accuracy intervention.
 
 ## 自动排队训练（服务器）
 
 本包现在包含三个服务器脚本：
 
 - `prepare_dfine_l_server.sh`：部署固定官方源码包、独立 venv、YOLO→COCO 标注和渲染后的 10 类配置；使用清华 PyPI 镜像补齐依赖。
-- `run_dfine_l_after_bpdd.sh`：等待当前 Capacity-BPDD 进程退出，确认 `results.csv` 达到 E100 后才启动 D-FINE-L（FP32 稳定模式，禁用 AMP）。
+- `run_dfine_l_after_bpdd.sh`：等待当前 Capacity-BPDD 进程退出，确认 `results.csv` 达到 E100 后才启动 D-FINE-L（FP32 稳定模式，禁用 AMP，batch=4）。
 - `cross_protocol_pipeline.sh`：训练完成后导出 D-FINE-L 与只读 Ultralytics 联合 checkpoint，并用同一 COCO evaluator 评测 val/test。
 
 部署包不会包含数据、权重或凭据。服务器上先将固定源码归档复制到
