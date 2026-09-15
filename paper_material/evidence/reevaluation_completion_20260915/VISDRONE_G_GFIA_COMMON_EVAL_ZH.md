@@ -38,6 +38,19 @@
 0.40 pp。论文主表应优先报告 test 结果，并将 val 正增益作为开发集现象或补充材料，
 不能宣称 FIA 在两个 split 上稳定提升。
 
+## Full（三模块）Test 评估（2026-09-15）
+
+服务器上最新的 `rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia` checkpoint（LRS-GFDR +
+Capacity-BPDD + FIA）也已在同一 test authority 下完成评估：
+
+| 臂 | P | R | mAP50 | mAP50-95 | 参数量 |
+|---|---:|---:|---:|---:|---:|
+| Full（三模块） | 53.848% | 43.644% | 41.242% | **23.602%** | 34.42M |
+
+相对本次共同 test 的 LRS-GFDR 基座，Full 为 **−0.020 pp** mAP50-95；相对 G+F，
+Full 为 **+0.383 pp**。Full 使用 Capacity-BPDD/FIA 专用源码 checkout，故这些是
+matched-test 性能差异，不应写成严格 single-variable 增益。
+
 ## 已核对的限制
 
 主材料仓仍只保存 V06/V09 的 `results.csv` 汇总；本次共同复评使用的是服务器上的
