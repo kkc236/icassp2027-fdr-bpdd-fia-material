@@ -1,8 +1,10 @@
 # ICASSP 2027 论文材料入口
 
-> **当前整理版本：2026-09-14。** 论文主结果已收敛到 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100；官方 D-FINE 路线和 EQuAL standalone 作为外部/历史对照保留。当前联合 best E97 的 val mAP50–95 为 `0.30109`，最新 BPDD-only 已完成 E100（best E80=`0.29277`，独立 test 待评估）。旧路线、旧拓扑和跨 authority 算术差值均保留审计链，但不得混入严格增量。
+> **当前整理版本：2026-09-15。** 论文主结果已收敛到 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100；官方 D-FINE 路线和 EQuAL standalone 作为外部/历史对照保留。当前联合 best E97 的 val mAP50–95 为 `0.30109`，最新 BPDD-only 已完成 E100（best E80=`0.29277`，独立 test 待评估）。旧路线、旧拓扑和跨 authority 算术差值均保留审计链，但不得混入严格增量。
 
 本目录汇总面向 VisDrone 密集小目标的三层方法链：LRS-GFDR 负责架构保持型逐边分布定位，Capacity-BPDD-v3-Safe 负责训练期跨层定位蒸馏，FIA 负责 P3 高分辨率表征增强。材料按“问题—设计—证据”组织；val/test、方法代际、P3-only/cascading 以及 strict/non-paired 不得混写。
+
+**全部实验总表**：见 [ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md](results/ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md)，机器可读索引见 [all_experiments_summary.json](results/all_experiments_summary.json)。该总表同时列出当前正式结果、严格配对、跨协议共同评估、失败/短跑路线和 UAVDT 分开结果，并为每行标注证据等级。
 
 **最新三模块联合主记录**：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 已完成 VisDrone Formal100，best E97 的 mAP50–95 为 `0.30109`。它已替换旧的 `RT-DETR-L + FDR + BPDD + FIA` 作为当前联合结果；旧记录仍保留但标为历史，不得混入新联合的增量计算。入口见 [`当前联合证据包`](evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
 
