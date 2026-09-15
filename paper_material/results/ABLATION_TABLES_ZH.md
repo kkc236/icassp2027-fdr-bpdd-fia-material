@@ -32,7 +32,8 @@ V13 是目前论文主系统，但 V01–V06 与 V13 不是同一 authority 的�
 | V12 | Capacity-BPDD-v3-Safe | — | 80 | 0.29277 | 0.28939 | 安全修复版；另有 test@300=0.241106 |
 | V13 | Capacity-BPDD-v3-Safe | ✓ | 97 | **0.30109** | **0.30065** | 当前联合，不是 BPDD-only |
 
-V12/V13 的验证差为 `+0.831 pp`。E（V12）和 F（V13）是**协议匹配的 FIA-off/on
+V12/V13 的验证差为 `+0.831 pp`。两臂共用 protocol authority
+`visdrone-formal100-lrsv2-seed0-fia-off-on-20260913`；E（V12）和 F（V13）是**协议匹配的 FIA-off/on
 受控组件对照**：数据集哈希、初始状态哈希、seed、训练预算、batch、输入尺寸、优化器、AMP、
 增强、close_mosaic 和确定性设置一致；F 只额外打开 FIA。两条 authority 的源码提交与
 配置哈希不同（E：source `5ef57473...`、config `50E490...`；F：source `a43056af...`、

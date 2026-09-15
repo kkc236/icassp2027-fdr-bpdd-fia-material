@@ -44,7 +44,8 @@ FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair_20260819` 为准。
 - 初始状态：统一 `seed=0` 的 `/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt`；本包只记录 SHA-256，不上传该文件。
 - Formal100：100 epochs、batch 8、imgsz 640、MuSGD、`pretrained=false`、AMP、deterministic、`close_mosaic=10`、workers 8、`cache=false`、device 0。
 - LRS-GFDR 使用现有几何可行域修复和 LRS-FGL（alpha=0.25）。Capacity-BPDD-v3-Safe 使用 localization KD，`loc_weight=0.15`，warmup 10–20、decay 80–100；classification KD 关闭（`cls_weight=0`）。联合臂额外启用 FIA；BPDD-only 不启用 FIA。
-- `joint-authority.json` 与 `bpdd-authority.json` 是启动时写入的 authority record，包含配置、数据、初始状态、源代码 commit/tree hash 及冻结训练设置。
+- `joint-authority.json` 与 `bpdd-authority.json` 是启动时写入的 per-run authority record，包含配置、数据、初始状态、源代码 commit/tree hash 及冻结训练设置。
+- `fia_controlled_pair_authority.json` 是两臂共用的 protocol authority：它把相同数据、初始状态和训练合同绑定到同一个 `protocol_authority_id`，同时原样保留两次运行各自的 source/config 哈希。这样可以做真实的 FIA-off/on 受控对照，不用“改哈希”伪造同一源码。
 
 ## 源代码对应关系
 
