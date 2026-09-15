@@ -33,7 +33,12 @@
 | LRS-GFDR + Capacity-BPDD-v3-Safe | 0.29277 | BPDD-only，best E80；test@300=0.241106 |
 | **LRS-GFDR + Capacity-BPDD-v3-Safe + FIA** | **0.30109** | 当前联合主记录 |
 
-版本不一致时不计算“逐项累加收益”。完整内部表和失败候选见 [内部消融与模块证据表](ABLATION_TABLES_ZH.md)。
+E（BPDD-only）与 F（Full）在训练主体协议上是一致的：数据集、初始状态、seed=0、
+100 epochs、batch=8、640、MuSGD、AMP、增强和确定性设置均相同；F 相比 E 额外打开
+FIA。两次记录的 best 轮为 E80/F97，但 final 也同方向（0.28939→0.30065，+1.126 pp）。
+由于两条 authority 的源码提交和配置哈希不同，表 2 的 `+0.831 pp` 应写成
+“协议匹配的 Full vs BPDD-only 受控对照”，而不是无条件宣称纯 FIA 的严格因果增益。
+完整内部表和失败候选见 [内部消融与模块证据表](ABLATION_TABLES_ZH.md)。
 
 ## 表 3：BPDD 严格配对证据（唯一可写因果增益）
 

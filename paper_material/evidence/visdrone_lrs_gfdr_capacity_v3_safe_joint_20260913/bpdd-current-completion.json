@@ -70,7 +70,7 @@
     },
     "prediction_sha256": "B83D3B0F2CF62CB548650A23191E3C61E2C03297C6DEA003234D9D56D9B1078F",
     "evidence_level": "latest_formal100_training_record_plus_common_eval_test",
-    "comparison_note": "The fixed best checkpoint was independently evaluated on the test split. This supplements the training observation but must not be presented as a new strict causal delta against V13 because the two checkpoints are not a single-variable paired intervention.",
+    "comparison_note": "The fixed best checkpoint was independently evaluated on the test split. V12 and V13 share the dataset/initial-state/seed/training-budget/optimizer/AMP/augmentation contract and are suitable for a protocol-matched Full-versus-BPDD-only controlled comparison. Because their source commits and configuration hashes differ, the +0.831 pp best-val difference should not be presented as an unconditional cryptographic single-variable FIA causal delta.",
     "historical_strict_pair": "The strict FDR versus FDR+BPDD causal comparison remains the 2026-08-19 authority package; this record does not replace it."
   }
 }
