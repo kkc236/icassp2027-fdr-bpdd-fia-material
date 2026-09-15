@@ -97,23 +97,28 @@ P01–P04 是旧 BPDD 的严格配对证据，不能改名为当前 v3-Safe 的�
 
 ## 5. UAVDT 结果（独立于 VisDrone）
 
-UAVDT 只有部分结果以服务器评估截图/交接记录形式保存，因此不把它们和 VisDrone
-数值混排。当前能确认的总指标如下：
+UAVDT 与 VisDrone 分开统计。原服务器截图提供 baseline 和联合模型的 rounded 总指标，
+`C:\Users\16946\Downloads\exp\exp` 导出的 `paper_data.txt` 又补齐了联合模型的四位
+小数、逐类别指标以及复杂度/速度；它们是同一 H12 实验的两种证据表现，不新增训练臂。
 
-| 方法 | 完成/来源 | P | R | AP50 | mAP50-95 | 备注 |
-|---|---|---:|---:|---:|---:|---|
-| RT-DETR-L baseline | 79 epochs，服务器验证截图 | 0.527 | 0.310 | 0.277 | **0.156** | truck AP50-95=0.0621 |
-| LRS-GFDR + Capacity-BPDD-v3-Safe + FIA | 100 epochs，服务器验证截图 | 0.417 | 0.331 | 0.292 | **0.170** | truck AP50-95=0.0212，truck 学不出来 |
+| 方法 | 完成/来源 | P | R | F1 | AP50 | AP75 | mAP50-95 | 备注 |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| RT-DETR-L baseline | 79 epochs，服务器验证截图 | 0.5270 | 0.3100 | — | 0.2770 | — | **0.1560** | truck mAP50-95=0.0621 |
+| LRS-GFDR + Capacity-BPDD-v3-Safe + FIA | 100 epochs，`paper_data.txt` 精确导出 | 0.4169 | 0.3310 | 0.3690 | 0.2916 | 0.1750 | **0.1696** | truck mAP50-95=0.0406 |
+| 联合 − baseline | 同上两条已登记记录的算术差 | −11.01 pp | +2.10 pp | — | +1.46 pp | — | **+1.36 pp** | truck 变化 −2.15 pp |
 
-相对截图 baseline，联合模型总 mAP50-95 为 **+1.4 pp**，但 truck 从 0.0621
-降至 0.0212，说明 UAVDT 的类别级泛化存在明显风险；这不能被 VisDrone 的正结果
-掩盖。UAVDT 当前包见 `evidence/uavdt_capacity_v3_safe_joint_20260913/`。
+联合模型逐类 mAP50-95 为 `car=0.3465、truck=0.0406、bus=0.1219`。总体 mAP 有所
+提高，但 truck 低于 baseline，因此 UAVDT 只能作为“总体迁移有效、类别级存在风险”的
+泛化证据，不能掩盖 VisDrone 的类别失败。原始曲线、混淆矩阵和验证样例图见
+[`UAVDT 精确导出`](../evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/)，
+整理后的专页见 [`UAVDT_RESULTS_ZH.md`](UAVDT_RESULTS_ZH.md)。
 
 ## 6. 论文使用建议
 
 主表建议只放 V01–V13 中 authority 清楚的行，另设严格配对表放 P01–P10；第 3 节
-作为外部共同评估表，第 4 节放补充材料。V13 的 0.30109 是当前训练主结果，
-共同评估中的 0.30727 是另一套推理/evaluator 结果，不能互换。所有表都应写清楚
-数据集、best 选择规则、训练轮数和证据等级。
+作为外部共同评估表，第 4 节放补充材料。UAVDT 另用 [论文可直接使用的实验结果包](PAPER_READY_RESULTS_ZH.md)
+中的表 5，不和 VisDrone 数值混排。V13 的 0.30109 是当前训练主结果，共同评估中的
+0.30727 是另一套推理/evaluator 结果，不能互换。所有表都应写清楚数据集、best 选择
+规则、训练轮数和证据等级。
 
 机器可读索引见 [all_experiments_summary.json](all_experiments_summary.json)。

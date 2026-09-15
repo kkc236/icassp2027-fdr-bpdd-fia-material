@@ -4,30 +4,36 @@
 
 本目录汇总面向 VisDrone 密集小目标的三层方法链：LRS-GFDR 负责架构保持型逐边分布定位，Capacity-BPDD-v3-Safe 负责训练期跨层定位蒸馏，FIA 负责 P3 高分辨率表征增强。材料按“问题—设计—证据”组织；val/test、方法代际、P3-only/cascading 以及 strict/non-paired 不得混写。
 
+**论文可直接写作包**：见 [PAPER_READY_RESULTS_ZH.md](results/PAPER_READY_RESULTS_ZH.md)，其中已把主结果、内部消融、严格配对、跨协议和 UAVDT 分成独立表格。
+
 **全部实验总表**：见 [ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md](results/ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md)，机器可读索引见 [all_experiments_summary.json](results/all_experiments_summary.json)。该总表同时列出当前正式结果、严格配对、跨协议共同评估、失败/短跑路线和 UAVDT 分开结果，并为每行标注证据等级。
 
 **最新三模块联合主记录**：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 已完成 VisDrone Formal100，best E97 的 mAP50–95 为 `0.30109`。它已替换旧的 `RT-DETR-L + FDR + BPDD + FIA` 作为当前联合结果；旧记录仍保留但标为历史，不得混入新联合的增量计算。入口见 [`当前联合证据包`](evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
 
 ## 阅读顺序
 
-1. [论文结果统一汇总](results/RESULTS_ZH.md)
-2. [val 主结果表](results/MAIN_TABLE_ZH.md)
-3. [当前联合证据包](evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)
-4. [LRS-GFDR 方法](methods/FDR_ZH.md)
-5. [BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
-6. [FIA：高分辨率特征增强](methods/FIA_ZH.md)
-7. [冻结实验协议](experiments/PROTOCOL_ZH.md)
-8. [BPDD 严格配对补充实验](experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md)
-9. [FIA 消融实验入口](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
-10. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
-11. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
-12. [统一复杂度与实时性表](results/COMPLEXITY_ZH.md)
-13. [VisDrone CCF A/B 会外部方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
-14. [历史 EQuAL standalone](methods/EQUAL_ZH.md)
-15. [EQuAL Formal100 与 exact val/test](results/EQUAL_RESULTS_ZH.md)
-16. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
-17. [创新定位、核心文案与对抗性审计](writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md)
-18. [四图规划](figures/FIGURE_PLAN_ZH.md)
+1. [论文可直接使用的实验结果包](results/PAPER_READY_RESULTS_ZH.md)
+2. [论文结果统一汇总](results/RESULTS_ZH.md)
+3. [全部实验总表](results/ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md)
+4. [内部消融与模块证据表](results/ABLATION_TABLES_ZH.md)
+5. [UAVDT 结果与论文表](results/UAVDT_RESULTS_ZH.md)
+6. [val 主结果表](results/MAIN_TABLE_ZH.md)
+7. [当前联合证据包](evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)
+8. [LRS-GFDR 方法](methods/FDR_ZH.md)
+9. [BPDD：渐进式分布蒸馏](methods/BPDD_ZH.md)
+10. [FIA：高分辨率特征增强](methods/FIA_ZH.md)
+11. [冻结实验协议](experiments/PROTOCOL_ZH.md)
+12. [BPDD 严格配对补充实验](experiments/BPDD_STRICT_PAIR_PROTOCOL_ZH.md)
+13. [FIA 消融实验入口](experiments/FIA_ABLATION_SCAFFOLD_ZH.md)
+14. [FIA 证据状态](results/FIA_RESULTS_STATUS_ZH.md)
+15. [val/test 涨点总对比](results/SPLIT_GAIN_COMPARISON_ZH.md)
+16. [统一复杂度与实时性表](results/COMPLEXITY_ZH.md)
+17. [VisDrone CCF A/B 会外部方法对比](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
+18. [历史 EQuAL standalone](methods/EQUAL_ZH.md)
+19. [EQuAL Formal100 与 exact val/test](results/EQUAL_RESULTS_ZH.md)
+20. [ICASSP 2027 写作提纲](writing/ICASSP2027_OUTLINE_ZH.md)
+21. [创新定位、核心文案与对抗性审计](writing/NOVELTY_POSITIONING_AND_ADVERSARIAL_AUDIT_ZH.md)
+22. [四图规划](figures/FIGURE_PLAN_ZH.md)
 
 ## 当前结果口径
 
@@ -40,6 +46,7 @@
 - fresh FIA-only 图为正确 P3-only：FIA 层 22 的 `f=-1` 读取上一层 21，层 23 显式 `f=21`，decoder 输入为 `[22,25,28]`。checkpoint SHA-256 为 `c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6`，源码 SHA 为 `118ad631eff93ad806f85ea47819578e6e00bfc5`。旧 FIA-only cascading（层 23 `f=-1`）结果已被取代，仅可作历史记录。
 - FDR+FIA 仍采用既有发布版 cascading `best.pt`：val/test mAP50–95 为 `0.2949403207/0.2346453866`，相对 FDR 的 val/test 算术差为 `+0.5280/+0.6644 pp`；不得把该 checkpoint 标成 P3-only。
 - 旧 FDR+BPDD+FIA 三模块文本记录（val `0.2961`、test `0.2337`）已被新的 LRS-GFDR + Capacity-BPDD-v3-Safe + FIA 联合 Formal100 结果替换为当前主记录；原文本和截图仅保留作 `superseded_history`，不再作为当前联合指标。
+- UAVDT 当前联合导出已补齐：总体 `P=0.4169、R=0.3310、F1=0.3690、AP50=0.2916、AP75=0.1750、mAP=0.1696`；逐类 mAP 为 `car/truck/bus=0.3465/0.0406/0.1219`。它与旧服务器截图一致但精度更高，truck 低于 baseline 的 `0.0621`，已作为迁移风险写入 UAVDT 专页，不与 VisDrone 结果混排。
 - 统一复杂度与实时性已完成：在同一 RTX 4090、640、batch=1、FP32 端到端协议下，Baseline/FDR/FDR+BPDD/三模块分别为 `28.85/25.73/25.77/25.21 FPS`。严格配对 FDR 与 FDR+BPDD 的 Params/FLOPs/峰值显存完全一致；FIA 仅增加 `0.861 ms` 中位延迟与 `0.301 M` 参数。
 - 外部 VisDrone 正式表收录 CCF A/B 类会议 full/regular paper，并标明会议等级与相对本文的绝对 mAP 位置。当前覆盖 AAAI、CVPR、ICCV、IJCAI、ICASSP、ICRA、ICME、IROS；同 split 的结果分成“不高于本文/高于本文”，split 或 input 未报告的结果单列为不可排序。IJCAI 2025 RAFDE 已作为 640 近邻上界登记；ICASSP 2026 ResBiDet 的正式摘要 AP50 和 VARDet 的 1333×800 结果作为带边界的同会参照。期刊、预印本与来源不明结果不进入正式表。
 
@@ -71,6 +78,10 @@
 - [外部 VisDrone 对比说明](results/EXTERNAL_VISDRONE_COMPARISON_ZH.md)
 - [外部 VisDrone 对比 JSON](results/external_visdrone_comparison.json)
 - [外部 VisDrone 对比 CSV](results/external_visdrone_comparison.csv)
+- [论文可直接使用的实验结果包](results/PAPER_READY_RESULTS_ZH.md)
+- [内部消融与模块证据表](results/ABLATION_TABLES_ZH.md)
+- [UAVDT 结果与论文表](results/UAVDT_RESULTS_ZH.md)
+- [UAVDT 当前联合精确导出](evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/)
 - [FIA 状态机](evidence/fia_results_status.json)
 - [来源清单](evidence/source_manifest.json)
 
