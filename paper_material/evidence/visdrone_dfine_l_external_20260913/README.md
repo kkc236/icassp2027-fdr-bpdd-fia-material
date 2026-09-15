@@ -1,5 +1,15 @@
 # VisDrone D-FINE-L external evaluation package
 
+## 2026-09-14 batch=4 跨协议方案
+
+当前新方案见 [CROSS_PROTOCOL_BS4_ZH.md](CROSS_PROTOCOL_BS4_ZH.md)。入口为
+`run_bs4_cross.sh`，配置为 `dfine_l_visdrone_bs4_scratch.yml`，自动评测为
+`cross_protocol_bs4_pipeline.sh`。这是从头训练适配后的官方 D-FINE-L，
+与现有联合模型作统一评测；公开 batch、有效batch、优化器、精度和增强差异。
+此前的控制配置和排队脚本保留作历史记录，不是本次新运行入口。
+旧导出器/公共评测器已修复非正方形坐标、COCO图像ID映射及AP@300摘要问题；
+新方案使用 `export_joint_common.py` 和D-FINE相同的PIL直接拉伸预处理。
+
 This package is an external comparison adapter. The existing Ultralytics
 LRS-GFDR + Capacity-BPDD + FIA checkpoint remains read-only and is exported by
 `tmp-work/bpdd-capacity-v2-fia/scripts/export_joint_predictions.py`.
@@ -68,5 +78,21 @@ python export_dfine_predictions.py \
 ```
 
 Before execution, verify the official D-FINE commit, the 10-class config,
-the VisDrone image list, and checkpoint hash. Do not upload raw data or model
-weights to the materials repository.
+the VisDrone image list, and checkpoint hash. Do not upload raw data or
+credentials. The final cross-protocol package publishes only two evaluation
+checkpoints in a dedicated GitHub Release (the validation global-best and the
+epoch-100 EMA snapshot); their SHA-256 values and roles are fixed in
+`DFINE_L_ASSET_MANIFEST_20260915.json`. The full optimizer-resume `last.pth`
+remains omitted because it is not needed for scoring. See
+[DFINE_L_FINAL_RESULTS_20260915_ZH.md](DFINE_L_FINAL_RESULTS_20260915_ZH.md)
+and the lightweight server evidence under `server_final_20260915/`.
+
+## 2026-09-15 final server evidence
+
+The formal batch=4 run completed 100/100 epochs. The global-best was epoch 93
+(AP50-95 28.7726%, AP50 47.1488%); the epoch-100 final snapshot was AP50-95
+28.4742%, AP50 46.6781%. These are D-FINE-native validation values and are
+reported as an external common-evaluation reference, not a same-protocol
+leaderboard result. The release is
+`dfine-l-visdrone-bs4-cross-20260914`; the branch copy contains the summary,
+manifest, and complete JSONL evidence needed to reproduce the comparison.

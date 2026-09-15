@@ -1,0 +1,8 @@
+{
+  "elapsed_seconds": 55844.45109639224,
+  "epoch_completed": 93,
+  "epoch_zero_based": 92,
+  "max_cuda_allocated_bytes": 14553597952,
+  "max_cuda_reserved_bytes": 15541993472,
+  "native_val_ap": 0.2877259732381475
+}

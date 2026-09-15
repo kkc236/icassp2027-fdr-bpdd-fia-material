@@ -59,14 +59,10 @@ def _state_from_checkpoint(checkpoint: Mapping[str, Any]) -> dict[str, torch.Ten
     raise ValueError("D-FINE checkpoint has no loadable tensor state")
 
 
-class _PadToSize:
-    def __init__(self, size: tuple[int, int], fill: int = 114) -> None:
-        self.size, self.fill = size, fill
-
-    def __call__(self, image):
-        import torchvision.transforms.functional as F
-        width, height = F.get_image_size(image)
-        return F.pad(image, (0, 0, self.size[0] - width, self.size[1] - height), self.fill)
+def preprocess_image(image):
+    """Match the official validation Resize([640,640]) followed by /255."""
+    import torchvision.transforms.functional as F
+    return F.to_tensor(F.resize(image, [640, 640]))
 
 
 def export_predictions(*, dfine_root: Path, config: Path, checkpoint: Path, images: Path,
@@ -82,18 +78,15 @@ def export_predictions(*, dfine_root: Path, config: Path, checkpoint: Path, imag
     cfg.model.load_state_dict(state, strict=True)
     model = cfg.model.deploy().to(device).eval()
     postprocessor = cfg.postprocessor.deploy().to(device).eval()
-    transform = T.Compose([
-        T.Resize(size=639, max_size=640), _PadToSize((640, 640)), T.ToTensor(),
-    ])
     rows: list[dict[str, Any]] = []
     with torch.inference_mode():
-        for image_path in sorted(images.glob("*.jpg")):
+        for image_path in sorted(p for p in images.iterdir() if p.suffix.lower() in {'.jpg','.jpeg','.png'}):
             image = Image.open(image_path).convert("RGB")
             width, height = image.size
-            tensor = transform(image).unsqueeze(0).to(device)
+            tensor = preprocess_image(image).unsqueeze(0).to(device)
             original_size = torch.tensor([[width, height]], device=device)
             labels, boxes, scores = postprocessor(model(tensor), original_size)
-            keep = scores[0] >= score_threshold
+            keep = scores[0] > score_threshold
             rows.append(dfine_output_to_contract_row(
                 labels=labels[0][keep], boxes=boxes[0][keep], scores=scores[0][keep],
                 image_id=image_path.stem, width=width, height=height,
@@ -105,6 +98,7 @@ def export_predictions(*, dfine_root: Path, config: Path, checkpoint: Path, imag
         "checkpoint": str(checkpoint.resolve()), "checkpoint_sha256": _sha256(checkpoint),
         "images": str(images.resolve()), "processed_images": len(rows),
         "prediction_file": str(output.resolve()), "num_classes": 10,
+        "evaluation": {"imgsz": 640, "resize": "stretch_xy", "conf": score_threshold, "precision": "fp32"},
         "postprocess": {"use_focal_loss": True, "num_top_queries": 300, "remap_mscoco_category": False},
     }
     output.with_suffix(".report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")

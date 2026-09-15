@@ -1,0 +1,400 @@
+{
+  "accumulation_steps": 1,
+  "backbone_batchnorm_layers": 80,
+  "backbone_frozen_parameters": [],
+  "comparison_type": "cross_training_protocol_common_evaluation",
+  "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+  "config_sha256": "50359501038ac1eebf86ef92bab235e7b1175d3a1a92337119a0b9617a037ac0",
+  "cuda": "12.1",
+  "format_version": 2,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "optimizer_groups": [
+    {
+      "lr": 0.00025,
+      "parameters": 13507680,
+      "weight_decay": 0.000125
+    },
+    {
+      "lr": 0.00025,
+      "parameters": 85632,
+      "weight_decay": 0.0
+    },
+    {
+      "lr": 0.00025,
+      "parameters": 17552684,
+      "weight_decay": 0.000125
+    }
+  ],
+  "parameters": 31145998,
+  "pid": 425321,
+  "resolved_config": {
+    "DFINE": {
+      "backbone": "HGNetv2",
+      "decoder": "DFINETransformer",
+      "encoder": "HybridEncoder"
+    },
+    "DFINECriterion": {
+      "alpha": 0.75,
+      "gamma": 2.0,
+      "losses": [
+        "vfl",
+        "boxes",
+        "local"
+      ],
+      "matcher": {
+        "alpha": 0.25,
+        "gamma": 2.0,
+        "type": "HungarianMatcher",
+        "weight_dict": {
+          "cost_bbox": 5,
+          "cost_class": 2,
+          "cost_giou": 2
+        }
+      },
+      "reg_max": 32,
+      "weight_dict": {
+        "loss_bbox": 5,
+        "loss_ddf": 1.5,
+        "loss_fgl": 0.15,
+        "loss_giou": 2,
+        "loss_vfl": 1
+      }
+    },
+    "DFINEPostProcessor": {
+      "num_top_queries": 300
+    },
+    "DFINETransformer": {
+      "box_noise_scale": 1.0,
+      "cross_attn_method": "default",
+      "eval_idx": -1,
+      "feat_channels": [
+        256,
+        256,
+        256
+      ],
+      "feat_strides": [
+        8,
+        16,
+        32
+      ],
+      "hidden_dim": 256,
+      "label_noise_ratio": 0.5,
+      "layer_scale": 1,
+      "num_denoising": 100,
+      "num_layers": 6,
+      "num_levels": 3,
+      "num_points": [
+        3,
+        6,
+        3
+      ],
+      "num_queries": 300,
+      "query_select_method": "default",
+      "reg_max": 32,
+      "reg_scale": 4
+    },
+    "HGNetv2": {
+      "freeze_at": -1,
+      "freeze_norm": false,
+      "freeze_stem_only": true,
+      "local_model_dir": "weight/hgnetv2/",
+      "name": "B4",
+      "pretrained": false,
+      "return_idx": [
+        1,
+        2,
+        3
+      ]
+    },
+    "HybridEncoder": {
+      "act": "silu",
+      "depth_mult": 1,
+      "dim_feedforward": 1024,
+      "dropout": 0.0,
+      "enc_act": "gelu",
+      "expansion": 1.0,
+      "feat_strides": [
+        8,
+        16,
+        32
+      ],
+      "hidden_dim": 256,
+      "in_channels": [
+        512,
+        1024,
+        2048
+      ],
+      "nhead": 8,
+      "num_encoder_layers": 1,
+      "use_encoder_idx": [
+        2
+      ]
+    },
+    "__include__": [
+      "../dataset/custom_detection.yml",
+      "../runtime.yml",
+      "./include/dataloader.yml",
+      "./include/optimizer.yml",
+      "./include/dfine_hgnetv2.yml"
+    ],
+    "checkpoint_freq": 12,
+    "clip_max_norm": 0.1,
+    "criterion": "DFINECriterion",
+    "device": "cuda:0",
+    "ema": {
+      "decay": 0.9999,
+      "start": 0,
+      "type": "ModelEMA",
+      "warmups": 1000
+    },
+    "epochs": 100,
+    "eval_spatial_size": [
+      640,
+      640
+    ],
+    "evaluator": {
+      "iou_types": [
+        "bbox"
+      ],
+      "type": "CocoEvaluator"
+    },
+    "exp_name": "baseline",
+    "find_unused_parameters": false,
+    "lr_scheduler": {
+      "gamma": 0.1,
+      "milestones": [
+        500
+      ],
+      "type": "MultiStepLR"
+    },
+    "lr_warmup_scheduler": {
+      "type": "LinearWarmup",
+      "warmup_duration": 500
+    },
+    "model": "DFINE",
+    "num_classes": 10,
+    "optimizer": {
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "lr": 0.00025,
+      "params": [
+        {
+          "lr": 0.00025,
+          "params": "^(?=.*backbone)(?!.*(?:norm|bn)).*$"
+        },
+        {
+          "params": "^(?=.*(?:norm|bn)).*$",
+          "weight_decay": 0.0
+        }
+      ],
+      "type": "AdamW",
+      "weight_decay": 0.000125
+    },
+    "output_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914",
+    "postprocessor": "DFINEPostProcessor",
+    "print_freq": 100,
+    "project_name": "D-FINE",
+    "remap_mscoco_category": false,
+    "scaler": {
+      "enabled": true,
+      "type": "GradScaler"
+    },
+    "seed": 0,
+    "sync_bn": true,
+    "task": "detection",
+    "train_dataloader": {
+      "collate_fn": {
+        "base_size": 640,
+        "base_size_repeat": 3,
+        "stop_epoch": 72,
+        "type": "BatchImageCollateFunction"
+      },
+      "dataset": {
+        "ann_file": "/root/sj-tmp/datasets/VisDrone-coco/annotations/instances_train.json",
+        "img_folder": "/root/sj-tmp/datasets/VisDrone/images/train",
+        "return_masks": false,
+        "transforms": {
+          "ops": [
+            {
+              "p": 0.5,
+              "type": "RandomPhotometricDistort"
+            },
+            {
+              "fill": 0,
+              "type": "RandomZoomOut"
+            },
+            {
+              "p": 0.8,
+              "type": "RandomIoUCrop"
+            },
+            {
+              "min_size": 1,
+              "type": "SanitizeBoundingBoxes"
+            },
+            {
+              "type": "RandomHorizontalFlip"
+            },
+            {
+              "size": [
+                640,
+                640
+              ],
+              "type": "Resize"
+            },
+            {
+              "min_size": 1,
+              "type": "SanitizeBoundingBoxes"
+            },
+            {
+              "dtype": "float32",
+              "scale": true,
+              "type": "ConvertPILImage"
+            },
+            {
+              "fmt": "cxcywh",
+              "normalize": true,
+              "type": "ConvertBoxes"
+            }
+          ],
+          "policy": {
+            "epoch": 72,
+            "name": "stop_epoch",
+            "ops": [
+              "RandomPhotometricDistort",
+              "RandomZoomOut",
+              "RandomIoUCrop"
+            ]
+          },
+          "type": "Compose"
+        },
+        "type": "CocoDetection"
+      },
+      "drop_last": true,
+      "num_workers": 8,
+      "shuffle": true,
+      "total_batch_size": 4,
+      "type": "DataLoader"
+    },
+    "use_amp": false,
+    "use_ema": true,
+    "use_focal_loss": true,
+    "use_wandb": false,
+    "val_dataloader": {
+      "collate_fn": {
+        "type": "BatchImageCollateFunction"
+      },
+      "dataset": {
+        "ann_file": "/root/sj-tmp/datasets/VisDrone-coco/annotations/instances_val.json",
+        "img_folder": "/root/sj-tmp/datasets/VisDrone/images/val",
+        "return_masks": false,
+        "transforms": {
+          "ops": [
+            {
+              "size": [
+                640,
+                640
+              ],
+              "type": "Resize"
+            },
+            {
+              "dtype": "float32",
+              "scale": true,
+              "type": "ConvertPILImage"
+            }
+          ],
+          "type": "Compose"
+        },
+        "type": "CocoDetection"
+      },
+      "drop_last": false,
+      "num_workers": 8,
+      "shuffle": false,
+      "total_batch_size": 4,
+      "type": "DataLoader"
+    }
+  },
+  "selection": "native validation AP50:95 global best over chronological epochs 0..99; final snapshot also retained",
+  "source_files": {
+    "src/__init__.py": "0df91981fa95c4c0cd14608cd8bef4cc7d4b750fb1a53b4ddd21625f15a094c8",
+    "src/core/__init__.py": "a2e2f021dd8a16e1de7c0f6b877960f2abc7387a0f53f2f3cfddcbc56eac4fb2",
+    "src/core/_config.py": "8897a1c4394e832bd5a9ffd136fc1c9df93da669a8ed14dec0f3f44479165b7e",
+    "src/core/workspace.py": "46cc833acbe05aead429a7690f583446e5d77a96ff5bbe15953c86c1117a7ad9",
+    "src/core/yaml_config.py": "a4a25ff62cb5649d06fda802f916c11b29110538d128cbfb331a98a105985ddb",
+    "src/core/yaml_utils.py": "a0efb8720753d6b40f2775056039c560cb002b59dad85072efd9e4f476f022f0",
+    "src/data/__init__.py": "aaf76ba6e2d53e1d81933a50c99ce69822e3e7deadc9cac9984144bc0bb9ba18",
+    "src/data/_misc.py": "a3d7ee830034853aced727634e1331548b78f85ff921a0ea75e1c62646f19414",
+    "src/data/dataloader.py": "8034ee2d2a0426753fea2d03b158188eb3a23225f875f6a9632cb7d81eff82d3",
+    "src/data/dataset/__init__.py": "7dc15c213e4bce1af41a7b4267a58f633a9f82b434a3339a74719aa33bcdf8dd",
+    "src/data/dataset/_dataset.py": "d9983ea6d985c45085c49dc568cd781f429168c8ca600c4a913e355553d28e49",
+    "src/data/dataset/cifar_dataset.py": "624d7f65891d1667bb275baf78e80254b69bc0b59f8c21e00a345117345de519",
+    "src/data/dataset/coco_dataset.py": "0a42982eee8c80e0e64232e24ce8ce97124f941963c5bca6e43be59e7810017e",
+    "src/data/dataset/coco_eval.py": "95c85dbeb8d4ddd7e7aa9b129db0543b8324ead550241d0a248b8f2c942c3a57",
+    "src/data/dataset/coco_utils.py": "f9260d9469dee20a11031724b6d8d66cfa6cad83d57e90514d9f8e754d91bf50",
+    "src/data/dataset/voc_detection.py": "378f726f192154bab6f73eacbde89219f6683c4713c2265ce6d03b027515a55c",
+    "src/data/dataset/voc_eval.py": "f6686f31abf5fe388f30e6c0a6953a520a3dacd518bd0ed11a2924b9770ba831",
+    "src/data/transforms/__init__.py": "ff1318a0600dc076546f1e9a8a09b1a3365080c7814f0ed7f433d7f7fef03018",
+    "src/data/transforms/_transforms.py": "5f51c131dc3040d8cef1c9fef96ebce0b74aff0e47294e985d313859805442b0",
+    "src/data/transforms/container.py": "6cb6a777b8dcf8ff8d4abb50341e922bd0522a7ae84e3d90231231912c9c6d17",
+    "src/data/transforms/functional.py": "11c013d0c5e030770557cd8d0e42f77737058b6e99a1051e99aceabd82683e59",
+    "src/data/transforms/mosaic.py": "081298935e8c35616063ca2bedb06316fbe1f208ab0e15d927e00a6160db5179",
+    "src/data/transforms/presets.py": "adcc042c4c68305925177dc9a98972eac91e5abdb36d9aff4597c188aa837d4b",
+    "src/misc/__init__.py": "bc7c44cc1de01449331be8fe4aea8aca6c9c3792c3b8cfa7c3d461c50123ba05",
+    "src/misc/box_ops.py": "2395a979466acb524039e7dbecfc9e8acf8dac4c7dff667f8a462e5f07a189b8",
+    "src/misc/dist_utils.py": "f473affbf76e18868c168bf3ad8ab6d77c486e2c69969b9968b4359c263cc529",
+    "src/misc/lazy_loader.py": "91252475010baa3b80e7eb0c4d841b17c3f278a7b8be1fc73353d3ab6ff66cff",
+    "src/misc/logger.py": "593b3a807107d104c5e1b8c7c2c30266836a446c707036b6be061d0dea7cddd1",
+    "src/misc/profiler_utils.py": "87b291e60ee91df384419f8da4615a5e55f5bcc571ee44c2003d2c7626d21ac1",
+    "src/misc/visualizer.py": "5c242a0b04edc3c577db90ae61f162d4df326fed65ca9e31ec62ee50bfb43a87",
+    "src/nn/__init__.py": "409be10929e4a0899f480957bd01c5a8856cde9a8ff1a113cb200a2cbe864893",
+    "src/nn/arch/__init__.py": "54c71d1365a882c369fa79d8a711d17e52c66655c7f9a2f023c0edcfcf559865",
+    "src/nn/arch/classification.py": "ecc3516b99f937df33dcbc371cf2f70a5da04e11bed5402936dd28bb81333b32",
+    "src/nn/arch/yolo.py": "544518eb39e6356742b5297482af079c881380c983360de1d6503d44db05482e",
+    "src/nn/backbone/__init__.py": "f18bb56bb4d8cae08a657af53d86f639fdbdbd38d2dc6713feb82b528d432311",
+    "src/nn/backbone/common.py": "3b4540353177bffb2857d6d41cd21ff87348a1c0579a9c06fb11f81cdf3d2b94",
+    "src/nn/backbone/csp_darknet.py": "244101fd5db2628c4c4d06abd150cf650ebfad72f4c19b530e935dc7ff6328d9",
+    "src/nn/backbone/csp_resnet.py": "d8d619e6dcfe8cd3c00ad1f66b77f4f9d94c1d850fcc79cc997dfb1c04972f77",
+    "src/nn/backbone/hgnetv2.py": "f5fc4c628b3900775f4df46d0901d7b18fb8c4adee63a5a7bb1c196803003c6a",
+    "src/nn/backbone/presnet.py": "1a17793ef4bea8deb4099e1a9a53404cfa20bc2d96bcecacf2b090a6b7ac1bed",
+    "src/nn/backbone/test_resnet.py": "291f5627e708954c4e147550afa65a472a2e3ea136a292c463c58e75f5052b18",
+    "src/nn/backbone/timm_model.py": "610b99efc3e5749eaa94e7c9132110b18db0f69fbb1a42faa960a9ab01c8b0aa",
+    "src/nn/backbone/torchvision_model.py": "0a5493de92479d348abdc57fcf2ab62d3fd362a7a132cfb15b3723505f1b296f",
+    "src/nn/backbone/utils.py": "1bc6df1477b48c7df882ee5725353544babc04fe16c632f5be478dd5a8c0bf3c",
+    "src/nn/criterion/__init__.py": "3ca44fa35fcd01923bc45f0e7ce981900e8280d1468caa374a1cc70ce1a49c28",
+    "src/nn/criterion/det_criterion.py": "d3995fdfe924b7ed1c2a2555b26cdf946f00e0fcd372ce6965ae6c94e169eef2",
+    "src/nn/postprocessor/__init__.py": "0f4dc1f8a23bc9d09bed16d1b9c5c3a13bc1650fc7ba383ef4782f7940908bf7",
+    "src/nn/postprocessor/box_revert.py": "c551f87c60dc389fcc793e7a3904295b573b0c861c0aa65be9106b135a90e0e2",
+    "src/nn/postprocessor/detr_postprocessor.py": "4ffe23bc1ca73c07bce94ece3ce592ecc54a05434e1e21282e873351d7cffcbc",
+    "src/nn/postprocessor/nms_postprocessor.py": "87b361dafac76d7d692d768df1f3c484c798f49d1f05c1a8792e1c7da22cf05e",
+    "src/optim/__init__.py": "83aceafe68117323449e4f6e63ed65d9b6bd99037a25922f1bcc557598ee1eef",
+    "src/optim/amp.py": "c19121f1983271f2fa65f74d32fef47338295db0f8a703a8e2abc1d9a526ff20",
+    "src/optim/ema.py": "1fc8bb7b52a97af61e08ff8e93e7c6a753ad20138c0f4b62f9fee8e663b6e046",
+    "src/optim/optim.py": "489c26284aa1232ff3d1bfe044023e8071748364072628eda69d50ba832f82a0",
+    "src/optim/warmup.py": "7778c846f7b0fa7ba139dd8aa57aacf1812a28b9da7920e42340bafd610aa3e3",
+    "src/solver/__init__.py": "4d5ad56ab1da7d7190e89ff6c8294a3ddc610c35f3bdbbeeb5e99f5b8416f498",
+    "src/solver/_solver.py": "489f55332160b62c0b2fd72a4c33df9fb98a0afcb273b0eeed59f610775d6379",
+    "src/solver/clas_engine.py": "a849cf03fd54667cacb385b66a8b4282aec107abc26910d57ab1403fc462b844",
+    "src/solver/clas_solver.py": "63880a985763f79690887f84d54a26f96e55410eee8a79869173e5fd0afa6374",
+    "src/solver/det_engine.py": "edf6d5aa98bea4617c16c29f45b59c983f6f12b2063f942683646483c7a90762",
+    "src/solver/det_solver.py": "cec76c0b41c4be34425dfa557c6f23a739eff43b6824534db2ae68f4782fc0e5",
+    "src/solver/validator.py": "1b10bf92b90cf359e300564bd2fdd49ee1fb4ee89a88a7377094299db6febd57",
+    "src/zoo/__init__.py": "4636cb03ad981f6c9b263dffc81a28349bd79e8e04085cdadf1c28ed9ce6a11d",
+    "src/zoo/dfine/__init__.py": "f3468938e14a00d710277755dcaf879c4838be4abb26bbbb485c2724d3c3b388",
+    "src/zoo/dfine/box_ops.py": "d807f7b9578b38faae9da1908cd3fa0490b72bba15b8a1dcc8017d4238d0733f",
+    "src/zoo/dfine/denoising.py": "aef7172a5bf4caa625c63dc182e45f53df0e77edaddd167678a23fdfdf801681",
+    "src/zoo/dfine/dfine.py": "3ed4ec1b356cf4916f2052cf0f87839ff9436a0b3267f0eb6fc360ad4fd0df80",
+    "src/zoo/dfine/dfine_criterion.py": "ca9938808c8ba59fa2e7aeb3754ddbc415efd51127f7ffdd83e0f68be3423908",
+    "src/zoo/dfine/dfine_decoder.py": "7fe0e798493d18ea71a3c337f3116a48a0fd28b20b3dbba5d27e75d8bc6bac14",
+    "src/zoo/dfine/dfine_utils.py": "d05209405e6c680620fcd847fa62c37a445b1a5838a55ba6c8b6f738aee576d8",
+    "src/zoo/dfine/hybrid_encoder.py": "18ea6aafcf9a22b0a8b7b56811a1307dd0d03290ad0ac3b7681640e5f78b417b",
+    "src/zoo/dfine/matcher.py": "76f06875e64f495b626ec5fbce2dadb81755f47e3b9b22f76d476a6f40600b08",
+    "src/zoo/dfine/postprocessor.py": "11d8559a4a10711282e9fe3b607056ee1be7432b35a290ed5c016146e1b25dd0",
+    "src/zoo/dfine/utils.py": "511c0f0f20bb99f18b8ec989730b7d17e8e772bfe2304341b4c6bb2e9d8391a3"
+  },
+  "started_at": "2026-09-14T14:56:01+0800",
+  "status": "preflight_passed",
+  "torch": "2.5.1+cu121",
+  "trainable_parameters": 31145996,
+  "training_protocol": "scratch-adapted official D-FINE; FP32, batch4; official stage resets retained"
+}

@@ -8,6 +8,14 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 
+def stretch_boxes_to_original(boxes, width, height, input_width=640, input_height=640):
+    """Invert RT-DETR's independent x/y resize; never apply letterbox offsets."""
+    result = boxes.detach().float().clone()
+    result[:, [0, 2]] *= float(width) / input_width
+    result[:, [1, 3]] *= float(height) / input_height
+    return result
+
+
 def validate_row(row: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(row, Mapping):
         raise ValueError("prediction row must be an object")

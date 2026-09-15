@@ -1,0 +1,74 @@
+{
+  "format_version": 1,
+  "created_at": "2026-09-15",
+  "experiment": "VisDrone D-FINE-L batch4 scratch cross-protocol",
+  "release_tag": "dfine-l-visdrone-bs4-cross-20260914",
+  "remote_run_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914",
+  "status": "complete",
+  "epochs_completed": 100,
+  "global_best_epoch_1based": 93,
+  "metrics": {
+    "global_best": {
+      "ap50_95": 0.2877259732381475,
+      "ap50": 0.47148750578125703,
+      "ap75": 0.2926915941690069,
+      "parameters": 30715991
+    },
+    "final_epoch_100": {
+      "ap50_95": 0.284742003287835,
+      "ap50": 0.46678131205971346,
+      "ap75": 0.2913431974636675,
+      "parameters": 30715991
+    }
+  },
+  "assets": [
+    {
+      "name": "dfine-l-visdrone-bs4-scratch-global_best.pth",
+      "role": "global-best inference checkpoint, epoch 93",
+      "bytes": 125531359,
+      "sha256": "7b2e19b7244a128882710f35589c85b0b9841e08d4e355b26e5b6a98972f8d00"
+    },
+    {
+      "name": "dfine-l-visdrone-bs4-scratch-last_evaluated.pth",
+      "role": "final epoch-100 EMA inference snapshot",
+      "bytes": 125535124,
+      "sha256": "c9a535bfb8ff6ad9187d6acf7512a8b0f3dcc376353e3f49915cd84b672b2a42"
+    },
+    {
+      "name": "evidence/dfine_l_bs4_run-authority.json",
+      "role": "authoritative run configuration and environment record",
+      "bytes": 15199,
+      "sha256": "a956173737c00d3879f795b587ed97dad8bed3678c3c32a9df9a94e8d3ed78d3"
+    },
+    {
+      "name": "evidence/dfine_l_bs4_global-best.json",
+      "role": "global-best metadata",
+      "bytes": 218,
+      "sha256": "d6746999a01b40a7d4f2871bb9cebab4f90a42bb71400f137277c666124fbbad"
+    },
+    {
+      "name": "evidence/dfine_l_bs4_progress.json",
+      "role": "completion and resource snapshot",
+      "bytes": 286,
+      "sha256": "56869d597319d844909f7661e36299448804438d7336a84af18e5755b2203139"
+    },
+    {
+      "name": "evidence/dfine_l_bs4_chronological-validation.jsonl",
+      "role": "per-epoch validation history",
+      "bytes": 20471,
+      "sha256": "5d4d39763ebaa3b0ffce7b63699d72cd2a326feea11a92de12805e870407f878"
+    },
+    {
+      "name": "evidence/dfine_l_bs4_log.jsonl",
+      "role": "complete JSONL train/validation log",
+      "bytes": 335806,
+      "sha256": "e44840bfac92f4106809a0daea110d02ce36e3007ab51200d98b4eaff29545a3"
+    }
+  ],
+  "omitted": [
+    {
+      "name": "last.pth",
+      "reason": "full optimizer-resume checkpoint is not required for cross-protocol scoring; omit from focused material release"
+    }
+  ]
+}

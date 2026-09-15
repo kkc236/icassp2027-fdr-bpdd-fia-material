@@ -28,16 +28,16 @@ HGNetv2:
   freeze_norm: True
   pretrained: False
 
-  train_dataloader:
+train_dataloader:
   dataset:
     img_folder: __TRAIN_IMG_FOLDER__
     ann_file: __TRAIN_ANN_FILE__
-    total_batch_size: 4
+  total_batch_size: 4
   num_workers: 8
 
 val_dataloader:
   dataset:
     img_folder: __VAL_IMG_FOLDER__
     ann_file: __VAL_ANN_FILE__
-    total_batch_size: 4
+  total_batch_size: 4
   num_workers: 8
