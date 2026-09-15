@@ -72,7 +72,7 @@
   "latest_bpdd_training_observation": {
     "split": "VisDrone val",
     "method": "LRS-GFDR+Capacity-BPDD-v3-Safe",
-    "status": "completed_formal100_pending_exact_test",
+    "status": "completed_formal100_and_exact_test",
     "run_id": "formal-seed0-capacity-v3-safe-bpdd",
     "completed_epochs": 100,
     "best_epoch": 80,
@@ -89,10 +89,16 @@
       "map50": 0.48627,
       "map": 0.28939
     },
+    "test": {
+      "evaluator": "pycocotools.COCOeval 2.0.11",
+      "max_det_300": 0.2411058094663223,
+      "max_det_100": 0.24078632159711785,
+      "image_count": 1610
+    },
     "evidence_level": "latest_formal100_training_record",
     "source_id": "visdrone_lrs_gfdr_capacity_v3_safe_bpdd_20260914",
     "evidence_path": "evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json",
-    "independent_exact_test_pending": true,
+    "independent_exact_test_pending": false,
     "strict_causal_delta_allowed": false
   },
   "equal_redesign_candidate": {

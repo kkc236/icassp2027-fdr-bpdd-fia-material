@@ -1,6 +1,6 @@
 # ICASSP 2027 论文材料入口
 
-> **当前整理版本：2026-09-15。** 论文主结果已收敛到 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100；官方 D-FINE 路线和 EQuAL standalone 作为外部/历史对照保留。当前联合 best E97 的 val mAP50–95 为 `0.30109`，最新 BPDD-only 已完成 E100（best E80=`0.29277`，独立 test 待评估）。旧路线、旧拓扑和跨 authority 算术差值均保留审计链，但不得混入严格增量。
+> **当前整理版本：2026-09-15。** 论文主结果已收敛到 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100；官方 D-FINE 路线和 EQuAL standalone 作为外部/历史对照保留。当前联合 best E97 的 val mAP50–95 为 `0.30109`，最新 BPDD-only 已完成 E100（best E80=`0.29277`），并已补齐独立 test（mAP50–95@300=`0.24111`）。旧路线、旧拓扑和跨 authority 算术差值均保留审计链，但不得混入严格增量。
 
 本目录汇总面向 VisDrone 密集小目标的三层方法链：LRS-GFDR 负责架构保持型逐边分布定位，Capacity-BPDD-v3-Safe 负责训练期跨层定位蒸馏，FIA 负责 P3 高分辨率表征增强。材料按“问题—设计—证据”组织；val/test、方法代际、P3-only/cascading 以及 strict/non-paired 不得混写。
 
@@ -32,7 +32,7 @@
 ## 当前结果口径
 
 - 当前三模块联合 Formal100 已完成 100 epochs，best E97 val 为 `P=0.60482、R=0.49693、AP50=0.49890、mAP=0.30109`；这是当前论文主系统。EQuAL standalone 的 exact val/test 只作为历史候选和外部定位参照。
-- 最新 `LRS-GFDR + Capacity-BPDD-v3-Safe` BPDD-only Formal100 已完成 100 epochs，best E80 val mAP=`0.29277`，E100=`0.28939`；该记录的独立 test 尚待评估，不能替代严格配对 BPDD 证据。完整原始 CSV、args、权重 SHA 和边界说明见当前联合证据包。
+- 最新 `LRS-GFDR + Capacity-BPDD-v3-Safe` BPDD-only Formal100 已完成 100 epochs，best E80 val mAP=`0.29277`，E100=`0.28939`；固定 test 独立评估 mAP@300=`0.24111`（@100=`0.24079），不能替代严格配对 BPDD 证据。完整原始 CSV、args、权重 SHA 和边界说明见当前联合证据包。
 - RT-DETR-L、FDR、FDR+BPDD 是正式核心行。新增同 authority、同 seed 的 FDR/FDR+BPDD 配对训练及 best.pt 统一 val/test 复评均已完成：BPDD 的 val/test mAP50–95 增益为 `+0.239/+0.283 pp`，AP75 增益为 `+0.072/+0.276 pp`。A–E 表的旧 C 行继续作为用户确认的 cross-authority 标准展示值；BPDD 的主要因果增益引用新严格配对表。
 - A–E val 主表的 D 行已与统一结果页对齐：FDR+FIA 为 `P=0.57752、R=0.49089、AP50=0.48631、AP75=0.29972、mAP=0.29494`，相对 FDR 为 `+0.528 pp` 的非严格配对算术差，不再保留“待整理”占位。
 - FIA-only 已切换到 fresh P3-only `best.pt`。冻结 evaluator 独立 val 为 `P=0.4871962209、R=0.4253173434、F1=0.4509443663、AP50=0.3987451873、AP75=0.2218076018、mAP=0.2270563951`；相对 canonical baseline `0.21911` 为 `+0.7946 pp` 的同 split 算术差。

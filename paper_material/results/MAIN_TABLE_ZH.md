@@ -12,7 +12,7 @@ E100 final 为 `P=0.59526、R=0.50472、AP50=0.50005、mAP50–95=0.30065`。bes
 
 ### 最新 BPDD-only 训练观测（非严格新增因果行）
 
-同一当前系列的 `LRS-GFDR + Capacity-BPDD-v3-Safe` 已完成 Formal100；best E80 的 val mAP50–95=`0.29277`，E100 为 `0.28939`。这是最新逐 epoch 训练记录，独立 test 尚待完成，不能与历史 FDR 行直接拼接成严格增量。原始曲线和权重校验见 [`bpdd-current-completion.json`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json)。
+同一当前系列的 `LRS-GFDR + Capacity-BPDD-v3-Safe` 已完成 Formal100；best E80 的 val mAP50–95=`0.29277`，E100 为 `0.28939`。固定 test 独立评估 mAP50–95@300=`0.24111`，不能与历史 FDR 行直接拼接成严格增量。原始曲线、test 报告和权重校验见 [`bpdd-current-completion.json`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json)。
 
 ## 历史 AP-FDR A–E 表（旧三模块联合已 superseded）
 

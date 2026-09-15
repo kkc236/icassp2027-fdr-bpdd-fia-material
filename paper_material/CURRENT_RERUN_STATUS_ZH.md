@@ -2,7 +2,7 @@
 
 ## 当前论文主线
 
-当前主系统是 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100。它使用固定 VisDrone authority、seed0、100 epochs、640 输入、batch8、MuSGD、`pretrained=false`、AMP 和 deterministic；best val mAP50–95 为 `0.30109`（E97）。同系列 BPDD-only 已完成 100/100，best E80=`0.29277`，但独立 test 尚待评估。
+当前主系统是 Ultralytics RT-DETR-L 的 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` 联合 Formal100。它使用固定 VisDrone authority、seed0、100 epochs、640 输入、batch8、MuSGD、`pretrained=false`、AMP 和 deterministic；best val mAP50–95 为 `0.30109`（E97）。同系列 BPDD-only 已完成 100/100，best E80=`0.29277`，固定 test 独立评估 mAP@300=`0.24111`。
 
 D-FINE-L 仅作为外部论文对照/跨协议实验；2026-09-14 最近一次官方训练在 epoch 2 因 `generalized_box_iou` 的非法框几何断言失败，尚无可用 checkpoint 或指标。修复并重新启动前不写入正式结果表。D-FINE-S 旧路线和 EQuAL standalone 作为历史/外部定位材料保留。
 
@@ -30,7 +30,7 @@ D-FINE-L 仅作为外部论文对照/跨协议实验；2026-09-14 最近一次�
 
 1. 论文主结果引用当前 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` Formal100 best；
 2. BPDD 因果增益引用 2026-08-19 同 authority 严格 FDR/FDR+BPDD val/test 配对；
-3. 最新 BPDD-only 曲线作为训练观测，待独立 test 后再升级证据等级；
+3. 最新 BPDD-only 曲线与独立 test 报告一并作为当前版本证据；严格因果仍引用同 authority 配对；
 4. D-FINE-L 完成后，按同一 VisDrone split/input 记录为外部跨协议对照，不回写当前 Ultralytics 消融表；
 5. 只有在 evaluator、split、checkpoint 和 authority 全部一致时，才计算严格增量。
 

@@ -7,7 +7,7 @@
 | 臂 | 方法 | 状态 | 服务器输出目录 |
 |---|---|---|---|
 | Joint | `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` | 已完成 100/100 | `/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia` |
-| BPDD-only | `LRS-GFDR + Capacity-BPDD-v3-Safe`（去除 FIA） | 已完成 100/100；独立 test 待评估 | `/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd` |
+| BPDD-only | `LRS-GFDR + Capacity-BPDD-v3-Safe`（去除 FIA） | 已完成 100/100；独立 test 已完成 | `/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd` |
 
 ## Joint 已完成结果
 
@@ -31,7 +31,10 @@ best 选择规则必须以验证集 `metrics/mAP50-95(B)` 为准；不要用最�
 
 原始逐 epoch 文件为 `bpdd-current-results.csv`，Ultralytics 实际解析参数为 `bpdd-current-args.yaml`，完整机器可读摘要为 `bpdd-current-completion.json`。best/last 权重不上传仓库，仅记录尺寸和 SHA-256，便于在服务器侧核验。
 
-这是一条“最新训练观测”证据，尚未对固定 test split 做同一 checkpoint、同一 evaluator 的独立精确评估；因此不能把 0.29277 直接写成新的严格因果增益。严格的 FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair_20260819` 为准。
+该臂已补充固定 test split 的独立精确评估：1610 张图、PIL 640、FP32、无 TTA/NMS，使用
+`pycocotools.COCOeval 2.0.11`。maxDet=300 的 test mAP50–95 为 `0.2411058095`，maxDet=100
+为 `0.2407863216`。这补齐了 V12 的 test 证据，但不能把它改写成与 V13 的严格单变量
+FIA 因果增益；严格的 FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair_20260819` 为准。
 
 ## 协议与可复现锚点
 
@@ -50,7 +53,10 @@ best 选择规则必须以验证集 `metrics/mAP50-95(B)` 为准；不要用最�
 
 ## BPDD-only 复核状态
 
-该臂已完成 100/100。服务器启动日志为 `/root/sj-tmp/logs/formal-seed0-capacity-v3-safe-bpdd-lrsv2.log`；权重校验、运行目录、配置和源代码身份均集中记录在 `bpdd-current-completion.json` 与 `bpdd-authority.json`。独立 test 评估完成后，应在本目录追加 test 结果和 evaluator 版本，不覆盖当前 val 训练记录。
+该臂已完成 100/100，并已完成独立 test。服务器启动日志为 `/root/sj-tmp/logs/formal-seed0-capacity-v3-safe-bpdd-lrsv2.log`；
+权重校验、运行目录、配置和源代码身份均集中记录在 `bpdd-current-completion.json` 与 `bpdd-authority.json`。
+test 报告见 `bpdd-independent-test-cap300.json`、`bpdd-independent-test-cap100.json` 和
+`bpdd-independent-test-manifest.json`；服务器预测文件只保留 SHA-256，不上传原始预测大文件。
 
 ## 传输与异常记录
 
@@ -62,6 +68,9 @@ BPDD-only 启动前曾存在一次不同源 commit 产生的 dry-run authority�
 - `bpdd-current-results.csv`：最新 BPDD-only 的逐 epoch 训练/验证曲线（E1–E100）。
 - `bpdd-current-args.yaml`：最新 BPDD-only 的 Ultralytics 实际解析参数。
 - `bpdd-current-completion.json`：best/final 指标、权重 SHA-256、运行目录和证据边界。
+- `bpdd-independent-test-cap300.json`、`bpdd-independent-test-cap100.json`：固定 test split 的 COCOeval 报告。
+- `bpdd-independent-test-report.json`：test 导出模型、checkpoint 和预测文件校验信息。
+- `bpdd-independent-test-manifest.json`：test 评估协议、文件关系和服务器预测路径。
 - `joint-args.yaml`、`bpdd-args.yaml`：Ultralytics 实际解析后的完整参数。
 - `joint-authority.json`、`bpdd-authority.json`：数据、初始状态、配置和源代码身份锚点。
 - `rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml`、`rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd.yaml`：两个臂的模型配置。

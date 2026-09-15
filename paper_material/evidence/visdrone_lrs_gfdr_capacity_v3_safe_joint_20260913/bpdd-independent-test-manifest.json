@@ -1,0 +1,26 @@
+{
+  "format_version": 1,
+  "status": "complete",
+  "method": "LRS-GFDR + Capacity-BPDD-v3-Safe",
+  "checkpoint_sha256": "661A27E0BE7BD7E7685E7A8AC889D558E0051306FF0BB72ACC8F154C023A377A",
+  "prediction_sha256": "B83D3B0F2CF62CB548650A23191E3C61E2C03297C6DEA003234D9D56D9B1078F",
+  "dataset": "VisDrone test",
+  "image_count": 1610,
+  "evaluation": {
+    "imgsz": 640,
+    "resize": "PIL bilinear stretch_xy",
+    "precision": "fp32",
+    "conf": 0.001,
+    "max_det": [100, 300],
+    "nms": false,
+    "tta": false,
+    "evaluator": "pycocotools.COCOeval 2.0.11"
+  },
+  "reports": {
+    "max_det_100": "bpdd-independent-test-cap100.json",
+    "max_det_300": "bpdd-independent-test-cap300.json",
+    "export": "bpdd-independent-test-report.json"
+  },
+  "export_script": "../visdrone_dfine_l_external_20260913/export_bpdd_common.py",
+  "server_prediction_path": "/root/sj-tmp/eval/visdrone_bpdd_v12_test_20260915_v5/v12_bpdd_test.jsonl"
+}
