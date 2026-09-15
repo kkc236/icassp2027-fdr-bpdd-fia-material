@@ -355,8 +355,8 @@
     {
       "id": "U1",
       "group": "pending",
-      "title": "UAVDT 总体结果：已填数，待统一数据统计",
-      "caption_en": "UAVDT registered results pending split reconciliation.",
+      "title": "UAVDT 总体结果：当前联合模型，待统一评估复核",
+      "caption_en": "Current UAVDT joint-model results pending common-evaluation reconciliation.",
       "headers": [
         "Run",
         "P",
@@ -375,7 +375,7 @@
           79
         ],
         [
-          "Joint export (identity pending)",
+          "Current joint model export",
           41.69,
           33.1,
           29.16,
@@ -383,8 +383,8 @@
           100
         ]
       ],
-      "note": "baseline 是可靠服务器报告。其17165张/342686目标与联合历史截图16592张/375883目标不一致；新导出没有同等完整数据清单，不能据此确认相同评估样本。联合记录还需 best.pt/配置与当前 v3-Safe 身份绑定。15.60→16.96 的 +1.36 pp 暂不进入摘要或主结论。该实验属于第二数据集训练/验证，不写零样本迁移。",
-      "caption_note_en": "Registered baseline and joint exports are shown for reconciliation only. Reported image/instance counts differ; the joint export also lacks a complete checkpoint/configuration identity binding. Do not claim a matched improvement or zero-shot transfer from this table.",
+      "note": "联合臂的方法身份已由作者确认，为当前 LRS-GFDR + Capacity-BPDD-v3-Safe + FIA。baseline 是可靠服务器报告；但 baseline 的17165张/342686目标与联合臂的16592张/375883目标不一致，因此尚未通过“同一评估清单”核验。15.60→16.96 的 +1.36 pp 不进入摘要或正文主结论；本表仅保留为复评前审计记录。该实验属于第二数据集训练/验证，不写零样本迁移。",
+      "caption_note_en": "The author confirms that the joint export is the current LRS-GFDR + Capacity-BPDD-v3-Safe + FIA method. However, the reported image/instance totals differ between baseline and joint evaluation. Until both checkpoints are evaluated against one frozen manifest, this table is an audit record only and must not be reported as a matched improvement or zero-shot transfer.",
       "sources": [
         "paper_material/results/all_experiments_summary.json#H11",
         "paper_material/results/all_experiments_summary.json#H12",
@@ -417,8 +417,8 @@
           12.19
         ]
       ],
-      "note": "与 U1 相同的评估身份待核对。truck 的低 AP 必须保留讨论；不同样本分布下的类别差值不能归因于模块。",
-      "caption_note_en": "The split and identity caveats of U1 apply. Low truck AP should be discussed; differences across unmatched samples cannot be attributed to individual components.",
+      "note": "与 U1 相同的评估清单问题仍待复核。truck 的低 AP 必须保留讨论；不同样本分布下的类别差值不能归因于模块。",
+      "caption_note_en": "The common-manifest caveat of U1 applies. Low truck AP should be discussed; differences across unmatched samples cannot be attributed to individual components.",
       "sources": [
         "paper_material/results/all_experiments_summary.json#H11",
         "paper_material/results/all_experiments_summary.json#H12"

@@ -108,19 +108,19 @@ add('S2','support','末轮稳健性：共同评估下的 best 与 final',
   'Best checkpoints were selected on native validation AP, whereas final denotes epoch 100. Test results were not used for checkpoint selection. Common-evaluator validation differs from the native training metric.',
   ['dfine','joint'].flatMap(n=>['best','final'].flatMap(s=>['val','test'].map(p=>cp+`${n}_${s}_${p}.cap300.json`))));
 const uBase=R('H11'), uFull=R('H12');
-add('U1','pending','UAVDT 总体结果：已填数，待统一数据统计',
-  'UAVDT registered results pending split reconciliation.',
+add('U1','pending','UAVDT 总体结果：当前联合模型，待统一评估复核',
+  'Current UAVDT joint-model results pending common-evaluation reconciliation.',
   ['Run','P','R','AP50','AP','Epochs'],
-  [uBase,uFull].map((r,i)=>[i?'Joint export (identity pending)':'RT-DETR-L baseline',pct(r.val.precision),pct(r.val.recall),pct(r.val.ap50),pct(r.val.map50_95),r.epochs_completed]),
-  'baseline 是可靠服务器报告。其17165张/342686目标与联合历史截图16592张/375883目标不一致；新导出没有同等完整数据清单，不能据此确认相同评估样本。联合记录还需 best.pt/配置与当前 v3-Safe 身份绑定。15.60→16.96 的 +1.36 pp 暂不进入摘要或主结论。该实验属于第二数据集训练/验证，不写零样本迁移。',
-  'Registered baseline and joint exports are shown for reconciliation only. Reported image/instance counts differ; the joint export also lacks a complete checkpoint/configuration identity binding. Do not claim a matched improvement or zero-shot transfer from this table.',
+  [uBase,uFull].map((r,i)=>[i?'Current joint model export':'RT-DETR-L baseline',pct(r.val.precision),pct(r.val.recall),pct(r.val.ap50),pct(r.val.map50_95),r.epochs_completed]),
+  '联合臂的方法身份已由作者确认，为当前 LRS-GFDR + Capacity-BPDD-v3-Safe + FIA。baseline 是可靠服务器报告；但 baseline 的17165张/342686目标与联合臂的16592张/375883目标不一致，因此尚未通过“同一评估清单”核验。15.60→16.96 的 +1.36 pp 不进入摘要或正文主结论；本表仅保留为复评前审计记录。该实验属于第二数据集训练/验证，不写零样本迁移。',
+  'The author confirms that the joint export is the current LRS-GFDR + Capacity-BPDD-v3-Safe + FIA method. However, the reported image/instance totals differ between baseline and joint evaluation. Until both checkpoints are evaluated against one frozen manifest, this table is an audit record only and must not be reported as a matched improvement or zero-shot transfer.',
   [summaryPath+'#H11',summaryPath+'#H12','paper_material/evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/paper_data.txt','paper_material/evidence/uavdt_capacity_v3_safe_joint_20260913/baseline_reference_20260915/rtdetr_baseline_test_results.md']);
 add('U2','pending','UAVDT 类别诊断',
   'UAVDT per-class AP in the registered exports.',
   ['Run','Car AP','Truck AP','Bus AP'],
   [['RT-DETR-L baseline',...['car','truck','bus'].map(c=>pct(uBase.val.class_metrics[c].map50_95))],['Joint export',...['car','truck','bus'].map(c=>pct(uFull.class_metrics[c].map50_95))]],
-  '与 U1 相同的评估身份待核对。truck 的低 AP 必须保留讨论；不同样本分布下的类别差值不能归因于模块。',
-  'The split and identity caveats of U1 apply. Low truck AP should be discussed; differences across unmatched samples cannot be attributed to individual components.',
+  '与 U1 相同的评估清单问题仍待复核。truck 的低 AP 必须保留讨论；不同样本分布下的类别差值不能归因于模块。',
+  'The common-manifest caveat of U1 applies. Low truck AP should be discussed; differences across unmatched samples cannot be attributed to individual components.',
   [summaryPath+'#H11',summaryPath+'#H12']);
 // Register every referenced local source and preserve immutable input hashes in the package.
 for(const t of tables) for(const ref of t.sources) read(ref.split('#')[0]);

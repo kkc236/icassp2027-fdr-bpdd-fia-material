@@ -5,13 +5,18 @@
   "received_at": "2026-09-15",
   "dataset": "UAVDT",
   "experiment": "LRS-GFDR + Capacity-BPDD-v3-Safe + FIA",
+  "method_identity": {
+    "status": "author_confirmed_current_joint",
+    "confirmed_at": "2026-09-15",
+    "scope": "The user confirms this export is the current UAVDT joint method. This attestation identifies the method but does not supply a checkpoint or frozen evaluation manifest."
+  },
   "split": "val",
   "training_completion": "100 epochs (as reported in server screenshot/context)",
   "metrics_source": "paper_data.txt",
   "selection_status": "exact_export_of_existing_H12_run; not a new training arm",
   "metric_notes": [
     "The export reports all-class averages at four decimal places.",
-    "The rounded values agree with the previously archived server screenshot.",
+    "The export is retained as the exact four-decimal record for the current joint method.",
     "No best epoch, seed, dataset manifest, checkpoint, or raw prediction files are present in this local export."
   ],
   "files": {

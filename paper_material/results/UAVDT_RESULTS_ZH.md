@@ -4,17 +4,17 @@
 
 - **材料类型**：实验结果整理 / 跨数据集迁移证据
 - **数据集**：UAVDT，3 类，类别顺序 `car / truck / bus`
-- **当前联合模型**：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`
-- **证据边界**：baseline 有完整服务器测试报告（best.pt/last.pt、运行名、环境、数据量和逐类指标）并有截图互证；联合模型有服务器截图和用户导出的精确验证报告。联合导出目录没有 checkpoint、seed、原始预测或 best epoch，因此不把它标为新的独立训练臂。
+- **当前联合模型**：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`（作者于 2026-09-15 确认 H12 即该当前联合臂）
+- **证据边界**：baseline 有完整服务器测试报告（best.pt/last.pt、运行名、环境、数据量和逐类指标）并有截图互证；联合模型有服务器截图和用户导出的精确验证报告。联合导出目录没有 checkpoint、seed、原始预测或 best epoch；方法身份已由作者确认，但尚不能独立复跑评估。
 - **原始材料**：[`baseline_reference_20260915`](../evidence/uavdt_capacity_v3_safe_joint_20260913/baseline_reference_20260915/)、[`user_export_20260915`](../evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/)，配置/代码交接包见 [`uavdt_capacity_v3_safe_joint_20260913`](../evidence/uavdt_capacity_v3_safe_joint_20260913/README.md)。
 
-## 表 U1：UAVDT 主结果（可直接放论文）
+## 表 U1：UAVDT 总体结果（审计记录，暂不作为正文表 4）
 
 | 方法 | 训练完成 | Precision | Recall | F1 | AP50 | AP75 | mAP50–95 | 证据口径 |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | RT-DETR-L baseline | 79 epochs | 0.5270 | 0.3100 | — | 0.2770 | — | **0.1560** | 完整服务器报告，截图互证 |
-| LRS-GFDR + Capacity-BPDD-v3-Safe + FIA | 100 epochs | 0.4169 | 0.3310 | 0.3690 | 0.2916 | 0.1750 | **0.1696** | 用户导出的四位小数报告，并与截图一致 |
-| 联合 − baseline | — | −11.01 pp | **+2.10 pp** | — | **+1.46 pp** | — | **+1.36 pp** | 同一已登记 UAVDT 结果之间的算术差 |
+| LRS-GFDR + Capacity-BPDD-v3-Safe + FIA | 100 epochs | 0.4169 | 0.3310 | 0.3690 | 0.2916 | 0.1750 | **0.1696** | 当前联合模型的用户导出；方法身份由作者确认 |
+| 联合 − baseline | — | −11.01 pp | **+2.10 pp** | — | **+1.46 pp** | — | **+1.36 pp** | 未匹配评估集上的算术差，不能作为模块增益 |
 
 这里的 `pp` 是百分点。baseline 报告的 best.pt 还给出验证集 `17,165` 张图、`342,686`
 个实例以及逐类别结果；报告明确记录了 `uavdt-formal100-seed0-rtdetr-baseline`、
@@ -22,10 +22,10 @@ Ultralytics 8.4.90、RTX 4090 和 best/last 权重，因此 baseline 本身可�
 对照。由于报告没有 AP75/F1，空白不是零。训练轮数和 best epoch 的选择规则没有在
 `exp` 联合导出中出现，因此 U1 不声称是“best-to-best”比较。
 
-需要注意的是，baseline 报告统计 `17,165/342,686`（图像/实例），而联合截图统计
-`16,592/375,883`。这说明两次运行的验证统计口径或标签过滤尚未完全对齐；它影响
-“严格同口径”的资格，不影响 baseline 报告自身的可靠性。论文中应把 U1 写为
-“可靠 baseline 与当前联合运行的跨 run 比较”，不要写成严格 paired ablation。
+需要注意的是，baseline 报告统计 `17,165/342,686`（图像/实例），而当前联合臂统计
+`16,592/375,883`。两组数字同时改变，不能由四舍五入或显示差异解释，说明评估清单、
+标签版本或过滤规则至少有一项不同。它不影响 baseline 或联合臂各自结果的真实性，但
+阻止将 U1 写为严格配对比较。待将两份 `best.pt` 对同一冻结清单复评后，才可升为正文表 4。
 
 ## 表 U2：UAVDT 逐类别结果
 
