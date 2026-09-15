@@ -1,0 +1,130 @@
+{
+  "source": "paper_material/submission_tables_20260915/tables.json",
+  "source_sha256": "9a4ba30caf4fe02e4f6d0fca8fceadceda9de883cf76e2e2a2a05372261bf65b",
+  "main_table_count": 3,
+  "main_panel_count": 4,
+  "groups": [
+    {
+      "number": "1",
+      "title": "VisDrone test 外部方法比较",
+      "group": "main",
+      "file": "table_1_external.tex",
+      "source_ids": [
+        "T1"
+      ],
+      "sources": [
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/bs4-run-authority.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.report.json"
+      ]
+    },
+    {
+      "number": "2",
+      "title": "VisDrone val 大模块组合消融",
+      "group": "main",
+      "file": "table_2_components.tex",
+      "source_ids": [
+        "T2"
+      ],
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#V01",
+        "paper_material/results/all_experiments_summary.json#V06",
+        "paper_material/results/all_experiments_summary.json#V09",
+        "paper_material/results/all_experiments_summary.json#V12",
+        "paper_material/results/all_experiments_summary.json#V13",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-authority.json",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-authority.json",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-results.csv",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv"
+      ]
+    },
+    {
+      "number": "3",
+      "title": "内部设计对照：定位设计与 BPDD 联合兼容性",
+      "group": "main",
+      "file": "table_3_internal.tex",
+      "source_ids": [
+        "T3",
+        "T4"
+      ],
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#V02",
+        "paper_material/results/all_experiments_summary.json#V03",
+        "paper_material/results/all_experiments_summary.json#V04",
+        "paper_material/results/all_experiments_summary.json#V06",
+        "paper_material/results/all_experiments_summary.json#V10",
+        "paper_material/results/all_experiments_summary.json#V11",
+        "paper_material/results/all_experiments_summary.json#V12",
+        "paper_material/results/all_experiments_summary.json#V13"
+      ]
+    },
+    {
+      "number": "S1",
+      "title": "FIA 开关的独立 test 检验",
+      "group": "supplement",
+      "file": "table_s1_test.tex",
+      "source_ids": [
+        "S1"
+      ],
+      "sources": [
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-independent-test-cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.cap300.json",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-independent-test-manifest.json"
+      ]
+    },
+    {
+      "number": "S2",
+      "title": "best 与 final 的共同评估结果",
+      "group": "supplement",
+      "file": "table_s2_final.tex",
+      "source_ids": [
+        "S2"
+      ],
+      "sources": [
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_best_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_final_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_final_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_final_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_final_test.cap300.json"
+      ]
+    },
+    {
+      "number": "4",
+      "title": "UAVDT 总体结果（预留，待统一评估复核）",
+      "group": "pending",
+      "file": "table_4_uavdt_DRAFT.tex",
+      "source_ids": [
+        "U1"
+      ],
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#H11",
+        "paper_material/results/all_experiments_summary.json#H12",
+        "paper_material/evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/paper_data.txt",
+        "paper_material/evidence/uavdt_capacity_v3_safe_joint_20260913/baseline_reference_20260915/rtdetr_baseline_test_results.md"
+      ]
+    },
+    {
+      "number": "S3",
+      "title": "UAVDT 逐类别 AP（补充表预留）",
+      "group": "pending",
+      "file": "table_s3_uavdt_DRAFT.tex",
+      "source_ids": [
+        "U2"
+      ],
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#H11",
+        "paper_material/results/all_experiments_summary.json#H12"
+      ]
+    }
+  ],
+  "validation": {
+    "extraction_only": true,
+    "new_evaluation": false,
+    "latex_compilation": "not_performed",
+    "uavdt_not_in_main": true
+  }
+}

@@ -1,0 +1,22 @@
+% Source tables: T2
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Component comparison on native VisDrone validation results.}
+\label{tab:selected-2}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Model & G & B & F & P & R & AP50 & AP \\
+\midrule
+Base & -- & -- & -- & 46.761 & 41.731 & 38.663 & 21.911 \\
+G & + & -- & -- & 59.480 & 49.366 & 49.382 & 29.620 \\
+G+F & + & -- & + & 59.391 & 50.049 & 49.548 & 29.773 \\
+G+B & + & + & -- & 59.826 & 48.524 & 48.783 & 29.277 \\
+Full & + & + & + & 60.482 & 49.693 & 49.890 & 30.109 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize G: LRS-GFDR; B: Capacity-BPDD-v3-Safe; F: P3-only FIA. All metrics in a row are from the same validation-AP-best epoch. Base, G and G+F are registered reference runs; G+B and Full share recorded data, initialization and training settings. Source-path equivalence remains to be audited. The table is not a fully verified factorial experiment.\end{minipage}
+\par\medskip
+\end{table*}

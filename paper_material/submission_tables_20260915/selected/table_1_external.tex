@@ -1,0 +1,20 @@
+% Source tables: T1
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Comparison on the project VisDrone test split under a common evaluator.}
+\label{tab:selected-1}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Method & Params (M) & AP & AP50 & AP75 & APs & APm & APl \\
+\midrule
+D-FINE-L (retrained) & 31.146 & 22.679 & 38.940 & 22.713 & 13.478 & 32.226 & 40.858 \\
+Ours (Full) & 35.244 & 24.229 & 42.009 & 24.208 & 14.618 & 34.290 & 44.873 \\
+Delta (pp) & -- & 1.550 & 3.069 & 1.495 & 1.140 & 2.064 & 4.016 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize AP values are percentages. Both checkpoints were selected by native validation AP and evaluated on the same 1,610 project test images using YOLO-derived COCO annotations, 640 input, FP32 and maxDet=300, without TTA or extra NMS. Training recipes differ: D-FINE uses batch 4, AdamW and FP32; ours uses batch 8, MuSGD and AMP. Parameters are registered model totals, not deployment-pruned counts. This is not an official challenge ranking.\end{minipage}
+\par\medskip
+\end{table*}

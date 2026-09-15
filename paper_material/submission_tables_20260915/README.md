@@ -4,6 +4,7 @@
 
 ## 直接使用
 
+- **短篇论文选用版**：[正文 3 张表](selected/MAIN_TABLES.md)、[选用表预览](selected/preview.html)、[正文 LaTeX](selected/main_tables.tex)。原 T3/T4 合为表 3 的两个子表；[UAVDT 表 4 预留稿](selected/UAVDT_TABLE_4_DRAFT.md)已填原报告值，待统一评估复核。
 - [整套表格预览](preview.html)：本地浏览器打开，可打印。
 - [主结果与大模块消融](MAIN_TABLES_ZH.md)：T1、T2。
 - [内部设计消融](INTERNAL_ABLATIONS_ZH.md)：T3、T4。
@@ -23,10 +24,10 @@
 | T4 | BPDD 修改为何与联合训练有关？ | Capacity v2/v3-Safe × FIA off/on | 内部设计消融 |
 | S1 | FIA 验证增益能否延伸到 test？ | 当前 G+B 与 Full 的独立 test | 建议正文简述，完整表可放补充 |
 | S2 | 提升是否只出现在 best？ | 外部共同评估的 best/final | 补充材料 |
-| U1 | 第二数据集总体表现？ | UAVDT baseline 与新导出 | 待数据统计和模型身份核对 |
+| U1 | 第二数据集总体表现？ | UAVDT baseline 与当前联合导出（作者确认） | 待统一评估复核 |
 | U2 | 第二数据集哪些类别有问题？ | UAVDT car/truck/bus AP | 同 U1 |
 
-短篇正文优先放 T1、T2、T3、T4，并在文字中报告 S1 的 test 增量；版面允许时将 S1 独立成表。不要把两个不同问题的表格合成一个排名榜。
+短篇正文使用选用版的表 1、2、3：分别对应 T1、T2、T3/T4。表 3 中两项内部设计分别列为 (a)/(b)，各自保留指标和表注。正文同时简述 S1 的 test 增量，S1/S2 的完整表放补充；UAVDT 复核通过后可加入预留表 4。
 
 ## 统计与来源规则
 

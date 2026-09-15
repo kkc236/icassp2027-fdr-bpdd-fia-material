@@ -1,0 +1,20 @@
+% Source tables: S1
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Held-out test comparison of the current FIA-off/on pair.}
+\label{tab:selected-s1}
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & AP & AP50 & AP75 & APs & APm & APl \\
+\midrule
+G+B & 24.111 & 41.668 & 24.197 & 14.334 & 34.136 & 44.423 \\
+Full & 24.229 & 42.009 & 24.208 & 14.618 & 34.290 & 44.873 \\
+Delta (pp) & 0.118 & 0.341 & 0.011 & 0.284 & 0.155 & 0.451 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize The checkpoints selected by native validation AP are evaluated once under the common test protocol. Test AP improves by 0.118 percentage points, compared with 0.832 points in native validation. These single-seed observations do not establish statistical significance.\end{minipage}
+\par\medskip
+\end{table*}

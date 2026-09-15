@@ -1,0 +1,36 @@
+% Source tables: T3, T4
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Internal design comparisons on native VisDrone validation results.}
+\label{tab:selected-3}
+\textbf{(a) Localization design}\par\smallskip
+\begin{tabular}{lrrrr}
+\toprule
+Variant & Geometry & LRS & AP50 & AP \\
+\midrule
+Original FDR & reference & reference & 48.473 & 29.078 \\
+Clean-FDR & -- & -- & 49.320 & 29.696 \\
+Clean-FDR + geometry & + & -- & 49.130 & 29.361 \\
+LRS-GFDR & + & + & 49.382 & 29.620 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize These are registered design variants, not a fully source-matched toggle experiment. Geometry reduces validation AP relative to Clean-FDR in these runs; LRS recovers part of that difference. The table does not establish a standalone accuracy gain from geometry or prove a second-dataset stability claim. Reference denotes switches not mapped to the current implementation.\end{minipage}
+\par\medskip
+\textbf{(b) BPDD recipe and FIA compatibility}\par\smallskip
+\begin{tabular}{lrrr}
+\toprule
+BPDD recipe & FIA & AP50 & Best AP \\
+\midrule
+Capacity v2 & -- & 49.620 & 29.848 \\
+Capacity v2 & + & 49.585 & 29.736 \\
+Capacity v3-Safe & -- & 48.783 & 29.277 \\
+Capacity v3-Safe & + & 49.890 & 30.109 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize The v2-to-v3-Safe change is a recipe bundle, not an isolated toggle for each distillation or scheduling choice. The v3-Safe BPDD-only run is worse than v2, while its joint run is better. These results motivate compatibility-oriented design rather than universally improved standalone BPDD.\end{minipage}
+\par\medskip
+\end{table*}

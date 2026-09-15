@@ -1,0 +1,21 @@
+% Source tables: S2
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Best and final checkpoints under the common evaluator.}
+\label{tab:selected-s2}
+\begin{tabular}{lrrr}
+\toprule
+Model & Checkpoint & Val AP & Test AP \\
+\midrule
+D-FINE-L & best & 28.796 & 22.679 \\
+D-FINE-L & final & 28.501 & 22.554 \\
+Full & best & 30.727 & 24.229 \\
+Full & final & 30.528 & 24.133 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize Best checkpoints were selected on native validation AP, whereas final denotes epoch 100. Test results were not used for checkpoint selection. Common-evaluator validation differs from the native training metric.\end{minipage}
+\par\medskip
+\end{table*}

@@ -1,0 +1,20 @@
+% Source tables: U1
+% DRAFT ONLY: do not include before evaluation reconciliation.
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{DRAFT ONLY: UAVDT reported results pending evaluation alignment.}
+\label{tab:selected-4}
+\begin{tabular}{lrrrrr}
+\toprule
+Run & P & R & AP50 & AP & Epochs \\
+\midrule
+RT-DETR-L baseline & 52.700 & 31.000 & 27.700 & 15.600 & 79.000 \\
+Current joint model export & 41.690 & 33.100 & 29.160 & 16.960 & 100.000 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.97\textwidth}\footnotesize The author confirms that the joint export is the current LRS-GFDR + Capacity-BPDD-v3-Safe + FIA method. However, the reported image/instance totals differ between baseline and joint evaluation. Until both checkpoints are evaluated against one frozen manifest, this table is an audit record only and must not be reported as a matched improvement or zero-shot transfer.\end{minipage}
+\par\medskip
+\end{table*}
