@@ -3,8 +3,9 @@
 ## 目的
 
 原计划补齐 `G=LRS-GFDR`（V06）与 `G+F=LRS-GFDR+FIA P3-only`（V09）的同一评估器
-test 结果，用于检查 FIA 在 G 基座上的贡献。复核后发现 V06 权重标签与实际配置不一致，
-因此本文件同时保留诊断结果并明确撤销该配对结论。此操作是**验证已有权重**，不是重新训练。
+test 结果，用于检查 FIA 在 G 基座上的贡献。最新运行时核对确认 V06/V09 解码器的
+`feasible_geometry` 都为 True。此前仅凭 YAML 缺项否认 V06 几何校正的判断已纠正。
+此操作是**验证已有权重**，不是重新训练。完整审计见 `EVALUATION_RUNTIME_AUDIT_ZH.md`。
 
 ## 已完成的共同复评（2026-09-15）
 
@@ -27,24 +28,21 @@ test 结果，用于检查 FIA 在 G 基座上的贡献。复核后发现 V06 �
 
 随后使用完整的 VisDrone test 标注（1610 张图、75102 个实例）完成同一脚本的 test
 评估。test authority 为 `/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml`，
-校验信息见 `output/common_test_evaluation.json`。复核模型摘要后发现，该文件中的第一臂
-实际加载的是 `rtdetr-l-lrs-fdr`，没有显式 `feasible_geometry: true`，不能命名为 GFDR。
+校验信息见 `output/common_test_evaluation.json`。第一臂保留旧名称 `rtdetr-l-lrs-fdr`，
+但实际解码器 `model.28.decoder.feasible_geometry=True`；第二臂相应开关也为 True。
 
 | 臂 | P | R | mAP50 | mAP50-95 |
 |---|---:|---:|---:|---:|
-| LRS-FDR（无显式 geometry，诊断用） | 52.586% | 43.768% | 41.103% | 23.622% |
+| G（历史 LRS-FDR，运行时带几何） | 52.586% | 43.768% | 41.103% | 23.622% |
 | LRS-GFDR+FIA | 52.719% | 43.281% | 40.617% | 23.219% |
 
-这两行不是严格的 G 与 G+F 配对，不得计算 FIA 增益。真正的 `rtdetr-l-lrs-gfdr` 训练
-目录只完成到第 14 轮，当前没有可用于正式 test 对比的已训练 GFDR checkpoint。
-
-此前基于错误基座标签得出的“FIA −0.403 pp”必须撤回，不能宣称 FIA 在两个 split 上
-稳定提升。
+这两份冻结权重在本次原生评估下相差 −0.403 pp。该数值是观测差异，训练期几何路径和
+源码等价性仍需历史证据确认。显式 GFDR 命名的另一个运行只有14轮，不等于历史100轮
+基座没有几何校正。不能仅凭目录名或 YAML 缺项撤销历史实验。
 
 作为评估链路的交叉检查，独立的 `Clean-FDR+Geometry` checkpoint 在同一 test 口径下
-得到 mAP50-95=23.812%，结果记录于 `output/clean_fdr_geometry_common_test.json`。这说明
-test 评估器和标签转换链路可以正常工作；当前缺的不是评估器，而是训练到足够轮数的
-真正 LRS-GFDR checkpoint。
+得到 mAP50-95=23.812%，结果记录于 `output/clean_fdr_geometry_common_test.json`。
+成功跑完另一模型只说明流程能执行，不能单独证明评估器或标签转换完全正确。
 
 ## Full（三模块）Test 评估（2026-09-15）
 
@@ -55,7 +53,7 @@ Capacity-BPDD + FIA）也已在同一 test authority 下完成评估：
 |---|---:|---:|---:|---:|---:|
 | Full（三模块） | 53.848% | 43.644% | 41.242% | **23.602%** | 34.42M |
 
-相对本次共同 test 的 LRS-FDR 诊断基座，Full 为 **−0.020 pp** mAP50-95；相对 G+F，
+相对本次原生 test 的 G 基座，Full 为 **−0.020 pp** mAP50-95；相对 G+F，
 Full 为 **+0.383 pp**。Full 使用 Capacity-BPDD/FIA 专用源码 checkout，故这些是
 matched-test 性能差异，不应写成严格 single-variable 增益。
 

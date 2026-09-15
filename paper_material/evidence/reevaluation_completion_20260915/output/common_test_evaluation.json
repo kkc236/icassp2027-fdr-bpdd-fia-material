@@ -5,7 +5,9 @@
   "data_yaml_sha256": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63",
   "contract": {"imgsz": 640, "batch": 8, "workers": 8, "conf": 0.001, "max_det": 300, "half": false, "cache": false},
   "arms": {
-    "lrs_fdr_no_explicit_geometry_diagnostic": {
+    "g_lrs_gfdr": {
+      "runtime_geometry_verified": true,
+      "identity_note": "Legacy YAML omits feasible_geometry; loaded decoder.feasible_geometry is True. Training-time path requires historical source audit.",
       "checkpoint": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
       "checkpoint_sha256": "DF76A0C8BD5B215D378ACB87EB240D7D1DFB44190167CD8C1E19F86FA18C969D",
       "parameters": 32334278,
