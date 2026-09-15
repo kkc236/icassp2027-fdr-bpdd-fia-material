@@ -22,11 +22,28 @@
 “FIA 在 G 基座上带来约 0.15 pp mAP50-95 增益”的报告；它不是重新训练的单变量因果
 消融，也不是 test 集结果。
 
+## Test 共同复评（2026-09-15）
+
+随后使用完整的 VisDrone test 标注（1610 张图、75102 个实例）完成同一脚本的 test
+评估。test authority 为 `/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml`，
+校验信息见 `output/common_test_evaluation.json`。
+
+| 臂 | P | R | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|
+| LRS-GFDR 基座 | 52.586% | 43.768% | 41.103% | 23.622% |
+| LRS-GFDR+FIA | 52.719% | 43.281% | 40.617% | 23.219% |
+| FIA − G | +0.134 pp | −0.487 pp | −0.486 pp | **−0.403 pp** |
+
+当前冻结 checkpoint 的 test 结论是：FIA 的 val 增益没有迁移到 test，test 上下降约
+0.40 pp。论文主表应优先报告 test 结果，并将 val 正增益作为开发集现象或补充材料，
+不能宣称 FIA 在两个 split 上稳定提升。
+
 ## 已核对的限制
 
 主材料仓仍只保存 V06/V09 的 `results.csv` 汇总；本次共同复评使用的是服务器上的
-checkpoint，并已将其校验信息写入 `output/common_evaluation.json`。目前完成的是 val
-口径，不能把它写成 test 数字，也不能把 V09 的历史非 LRS `FDR+FIA` release 代替它。
+checkpoint，并已将 val/test 的校验信息分别写入 `output/common_evaluation.json` 与
+`output/common_test_evaluation.json`。V09 的历史非 LRS `FDR+FIA` release 不能代替本次
+test 结果。
 
 ## 需要从原服务器取回的最小文件
 
