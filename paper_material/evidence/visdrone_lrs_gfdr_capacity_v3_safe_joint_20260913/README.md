@@ -33,8 +33,10 @@ best 选择规则必须以验证集 `metrics/mAP50-95(B)` 为准；不要用最�
 
 该臂已补充固定 test split 的独立精确评估：1610 张图、PIL 640、FP32、无 TTA/NMS，使用
 `pycocotools.COCOeval 2.0.11`。maxDet=300 的 test mAP50–95 为 `0.2411058095`，maxDet=100
-为 `0.2407863216`。这补齐了 V12 的 test 证据，但不能把它改写成与 V13 的严格单变量
-FIA 因果增益；严格的 FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair_20260819` 为准。
+为 `0.2407863216`。V12 与 V13 是由同一工作流按同一数据、初始状态和训练主体协议部署的
+FIA-off/on 受控组件对照；V12 test 与 V13 test 的差值可作为该对照的支持性观察。由于两次
+启动记录保存的是不同时间点的源码提交，当前材料不宣称“字节级严格单变量因果增益”；严格的
+FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair_20260819` 为准。
 
 ## 协议与可复现锚点
 
@@ -49,7 +51,9 @@ FIA 因果增益；严格的 FDR→FDR+BPDD 因果结论仍以 `bpdd_strict_pair
 - Joint authority source commit：`a43056af2a843ec9bae109d3420367c13f3bcef6`。
 - BPDD-only authority source commit：`5ef57473e89e3b91aa5236a18066aed99f5afc0f`。
 - 代码仓库：`/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code`。
-- 本目录同时保存两个配置、两个正式启动脚本以及 BPDD-only 的排队脚本，便于从上述 commit 复核。
+- 两次实验均由同一工作树和同一操作流程部署；提交号不同表示 FIA 运行前后代码处于不同时间点，
+  不等于“换了实验人员或换了训练协议”。本目录保存两个配置、两个正式启动脚本以及 BPDD-only
+  的排队脚本，便于继续做逐文件 active-path 复核。
 
 ## BPDD-only 复核状态
 
