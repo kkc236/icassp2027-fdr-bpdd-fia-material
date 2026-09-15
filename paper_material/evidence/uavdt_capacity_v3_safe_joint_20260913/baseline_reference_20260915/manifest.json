@@ -1,0 +1,24 @@
+{
+  "format_version": 1,
+  "source_type": "user_supplied_baseline_report_and_protocol",
+  "received_at": "2026-09-15",
+  "dataset": "UAVDT",
+  "method": "RT-DETR-L baseline",
+  "run_name": "uavdt-formal100-seed0-rtdetr-baseline",
+  "training_epochs_completed": 79,
+  "checkpoint_reported": ["weights/best.pt", "weights/last.pt"],
+  "evidence_level": "server_report_best_checkpoint",
+  "reliability_notes": [
+    "The report identifies the run, framework, environment, GPU, model size, checkpoint names and validation counts.",
+    "The reported best.pt metrics include overall and per-class values, including truck mAP50-95=0.0621.",
+    "The 100-epoch protocol document records the intended seed, data mapping, augmentation and evaluator settings; the observed run completed 79 epochs."
+  ],
+  "comparability_boundary": [
+    "The archived joint screenshot reports a different validation image/instance count, so the two results remain a cross-run comparison until the split manifests are reconciled.",
+    "This boundary does not imply that the baseline metrics themselves are unreliable."
+  ],
+  "files": {
+    "rtdetr_baseline_test_results.md": {"sha256": "601468164752970CDB53B5CB5C853E066EB1CF45537C0A6EF991C91295C317D2"},
+    "UAVDT_Baseline实验方案.md": {"sha256": "176651A486C8D073449966ECA8BD80F71C7937543AEA9EA881ECFDC1DA896F74"}
+  }
+}

@@ -66,8 +66,8 @@
 | 当前三模块联合 | 0.4169 | 0.3310 | 0.3690 | 0.2916 | 0.1750 | **0.1696** |
 | 联合 − baseline | −11.01 pp | +2.10 pp | — | +1.46 pp | — | **+1.36 pp** |
 
-UAVDT 的 baseline 主要来自服务器截图，联合行来自 `exp/paper_data.txt` 精确导出；
-两者的总体指标属于已登记结果之间的算术比较。联合模型逐类 `car/truck/bus` mAP
+UAVDT 的 baseline 来自完整服务器测试报告并由截图互证，联合行来自 `exp/paper_data.txt`
+精确导出；两者的总体指标属于已登记结果之间的算术比较。联合模型逐类 `car/truck/bus` mAP
 分别为 `0.3465/0.0406/0.1219`，其中 truck 低于 baseline 的 `0.0621`，应作为
 论文限制披露。完整表见 [UAVDT 结果与论文表](UAVDT_RESULTS_ZH.md)。
 
@@ -78,7 +78,7 @@ UAVDT 的 baseline 主要来自服务器截图，联合行来自 `exp/paper_data
 | A | V13 当前 VisDrone Formal100 | 正文主表 | 否（主结果，不是配对消融） |
 | B | P01–P04 FDR/BPDD 严格配对 | 消融表 | **是，限旧版 BPDD** |
 | C | X01–X04 D-FINE 共同评估 | 外部比较 | 否，跨训练协议 |
-| D | UAVDT U1/U2 | 泛化/迁移实验 | 否，baseline 证据不完整 |
+| D | UAVDT U1/U2 | 泛化/迁移实验 | 否，联合 checkpoint/manifest 不完整且验证统计待对齐 |
 | E | H04–H10 失败/筛选 | 补充材料 | 否，短跑/负结果不排位 |
 
 ## 可直接粘贴到论文的结果段落

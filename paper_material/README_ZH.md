@@ -47,6 +47,7 @@
 - FDR+FIA 仍采用既有发布版 cascading `best.pt`：val/test mAP50–95 为 `0.2949403207/0.2346453866`，相对 FDR 的 val/test 算术差为 `+0.5280/+0.6644 pp`；不得把该 checkpoint 标成 P3-only。
 - 旧 FDR+BPDD+FIA 三模块文本记录（val `0.2961`、test `0.2337`）已被新的 LRS-GFDR + Capacity-BPDD-v3-Safe + FIA 联合 Formal100 结果替换为当前主记录；原文本和截图仅保留作 `superseded_history`，不再作为当前联合指标。
 - UAVDT 当前联合导出已补齐：总体 `P=0.4169、R=0.3310、F1=0.3690、AP50=0.2916、AP75=0.1750、mAP=0.1696`；逐类 mAP 为 `car/truck/bus=0.3465/0.0406/0.1219`。它与旧服务器截图一致但精度更高，truck 低于 baseline 的 `0.0621`，已作为迁移风险写入 UAVDT 专页，不与 VisDrone 结果混排。
+- UAVDT baseline 已升级为完整服务器报告证据：运行名 `uavdt-formal100-seed0-rtdetr-baseline`，79 轮完成，best.pt/last.pt、Ultralytics 8.4.90、RTX 4090、验证集统计和逐类指标均有记录；截图仅作互证，不再把 baseline 描述为“只有截图”。
 - 统一复杂度与实时性已完成：在同一 RTX 4090、640、batch=1、FP32 端到端协议下，Baseline/FDR/FDR+BPDD/三模块分别为 `28.85/25.73/25.77/25.21 FPS`。严格配对 FDR 与 FDR+BPDD 的 Params/FLOPs/峰值显存完全一致；FIA 仅增加 `0.861 ms` 中位延迟与 `0.301 M` 参数。
 - 外部 VisDrone 正式表收录 CCF A/B 类会议 full/regular paper，并标明会议等级与相对本文的绝对 mAP 位置。当前覆盖 AAAI、CVPR、ICCV、IJCAI、ICASSP、ICRA、ICME、IROS；同 split 的结果分成“不高于本文/高于本文”，split 或 input 未报告的结果单列为不可排序。IJCAI 2025 RAFDE 已作为 640 近邻上界登记；ICASSP 2026 ResBiDet 的正式摘要 AP50 和 VARDet 的 1333×800 结果作为带边界的同会参照。期刊、预印本与来源不明结果不进入正式表。
 
@@ -82,6 +83,7 @@
 - [内部消融与模块证据表](results/ABLATION_TABLES_ZH.md)
 - [UAVDT 结果与论文表](results/UAVDT_RESULTS_ZH.md)
 - [UAVDT 当前联合精确导出](evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/)
+- [UAVDT baseline 完整报告与实验方案](evidence/uavdt_capacity_v3_safe_joint_20260913/baseline_reference_20260915/)
 - [FIA 状态机](evidence/fia_results_status.json)
 - [来源清单](evidence/source_manifest.json)
 

@@ -97,13 +97,14 @@ P01–P04 是旧 BPDD 的严格配对证据，不能改名为当前 v3-Safe 的�
 
 ## 5. UAVDT 结果（独立于 VisDrone）
 
-UAVDT 与 VisDrone 分开统计。原服务器截图提供 baseline 和联合模型的 rounded 总指标，
-`C:\Users\16946\Downloads\exp\exp` 导出的 `paper_data.txt` 又补齐了联合模型的四位
-小数、逐类别指标以及复杂度/速度；它们是同一 H12 实验的两种证据表现，不新增训练臂。
+UAVDT 与 VisDrone 分开统计。baseline 现在有完整服务器测试报告（best.pt/last.pt、运行名、
+环境、数据量和逐类别指标），并有截图互证；`C:\Users\16946\Downloads\exp\exp` 导出的
+`paper_data.txt` 又补齐了联合模型的四位小数、逐类别指标以及复杂度/速度。联合导出和
+服务器截图是同一 H12 实验的两种证据表现，不新增训练臂。
 
 | 方法 | 完成/来源 | P | R | F1 | AP50 | AP75 | mAP50-95 | 备注 |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| RT-DETR-L baseline | 79 epochs，服务器验证截图 | 0.5270 | 0.3100 | — | 0.2770 | — | **0.1560** | truck mAP50-95=0.0621 |
+| RT-DETR-L baseline | 79 epochs，完整服务器报告（截图互证） | 0.5270 | 0.3100 | — | 0.2770 | — | **0.1560** | truck mAP50-95=0.0621 |
 | LRS-GFDR + Capacity-BPDD-v3-Safe + FIA | 100 epochs，`paper_data.txt` 精确导出 | 0.4169 | 0.3310 | 0.3690 | 0.2916 | 0.1750 | **0.1696** | truck mAP50-95=0.0406 |
 | 联合 − baseline | 同上两条已登记记录的算术差 | −11.01 pp | +2.10 pp | — | +1.46 pp | — | **+1.36 pp** | truck 变化 −2.15 pp |
 
