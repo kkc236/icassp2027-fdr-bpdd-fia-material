@@ -78,6 +78,7 @@ python scripts/train_uavdt_capacity_v3_safe_fia.py \
 用户补充的 `exp/exp` 目录已原样归档到
 [`user_export_20260915/`](user_export_20260915/)。其中 `paper_data.txt` 给出当前联合
 模型的精确验证汇总：`P=0.4169、R=0.3310、F1=0.3690、AP50=0.2916、AP75=0.1750、
-mAP50-95=0.1696`；逐类别结果和复杂度/速度也一并保留。该导出与已有服务器截图的
-rounded 数值一致，因此更新的是 H12 的证据精度，不是新增训练实验。由于导出不含
-checkpoint、seed、数据清单和原始预测，不能单独重跑评估或宣称 best-to-best 严格对比。
+mAP50-95=0.1696`；逐类别结果和复杂度/速度也一并保留。当前联合模型身份已由作者于
+2026-09-15 确认。由于导出不含 checkpoint、seed、数据清单和原始预测，不能单独重跑
+评估或宣称 best-to-best 严格对比。与 baseline 的图像/实例统计不同，详细判定见
+[UAVDT_AUDIT_20260915_ZH.md](UAVDT_AUDIT_20260915_ZH.md)。
