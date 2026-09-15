@@ -30,7 +30,7 @@ COCOeval 2.0.11 独立完成（maxDet=300），但仍不是与 V13 的严格单�
 ### 当前主线的直接观察
 
 - V13 相对 V10（同为 Capacity 系列中有 FIA 的当前联合）不是简单的单变量增量；V10 是 v2、V13 是 v3-Safe，二者应作为版本迁移观察。
-- V12（BPDD-only）与 V13（Full）共享数据集/初始状态/seed/训练预算/优化器/AMP/增强等主体协议，适合作为协议匹配的 FIA-off/on 受控组件对照。两条 authority 的源码提交和配置哈希不同，反映连续部署时的代码时间点，不等于换了训练协议；在逐文件 active-path 归档完成前，`+0.831 pp` 保持“受控对照观测”表述。best 轮 E80/F97 不是协议不一致，final 也同方向（+1.126 pp）。
+- V12（BPDD-only）与 V13（Full）共享 protocol authority `visdrone-formal100-lrsv2-seed0-fia-off-on-20260913`，以及数据集/初始状态/seed/训练预算/优化器/AMP/增强等主体协议，适合作为协议匹配的 FIA-off/on 受控组件对照。两条 per-run authority 的源码提交和配置哈希不同，反映连续部署时的代码时间点，不等于换了训练协议；在逐文件 active-path 归档完成前，`+0.831 pp` 保持“受控对照观测”表述。best 轮 E80/F97 不是协议不一致，final 也同方向（+1.126 pp）。
 - V13 的 best mAP 为 0.30109，较 V12 的 0.29277 高 **0.831 pp**；可写为同协议 FIA-off/on 受控对照中的观测增益，不写成字节级严格单变量因果增益。
 - V13 的末轮 mAP 0.30065，较 best 仅低 0.044 pp，曲线比 V12 的 best E80、final 0.28939 更稳定。
 - 同一 test 评估口径下，V12 为 0.24111，V13 联合为 0.24229，联合高 **0.118 pp**；这是
