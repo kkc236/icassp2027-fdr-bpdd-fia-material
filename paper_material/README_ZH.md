@@ -4,7 +4,7 @@
 
 本目录汇总面向 VisDrone 密集小目标的三层方法链：LRS-GFDR 负责架构保持型逐边分布定位，Capacity-BPDD-v3-Safe 负责训练期跨层定位蒸馏，FIA 负责 P3 高分辨率表征增强。材料按“问题—设计—证据”组织；val/test、方法代际、P3-only/cascading 以及 strict/non-paired 不得混写。
 
-**论文可直接写作包**：见 [PAPER_READY_RESULTS_ZH.md](results/PAPER_READY_RESULTS_ZH.md)，其中已把主结果、内部消融、严格配对、跨协议和 UAVDT 分成独立表格。
+**最新分类论文表**：见 [投稿表格交付包](submission_tables_20260915/README.md)。正文主结果与大模块消融、模块内部设计、支持性检验、UAVDT 待核对表分别整理；提供已填数 Markdown、英文 LaTeX、HTML 预览和逐项证据清单。旧编排保留在 [PAPER_READY_RESULTS_ZH.md](results/PAPER_READY_RESULTS_ZH.md)。
 
 **全部实验总表**：见 [ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md](results/ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md)，机器可读索引见 [all_experiments_summary.json](results/all_experiments_summary.json)。该总表同时列出当前正式结果、严格配对、跨协议共同评估、失败/短跑路线和 UAVDT 分开结果，并为每行标注证据等级。
 

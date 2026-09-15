@@ -1,0 +1,428 @@
+{
+  "generated_from": "registered evidence as of 2026-09-15",
+  "unit": "percentage, deltas in percentage points",
+  "tables": [
+    {
+      "id": "T1",
+      "group": "main",
+      "title": "外部方法：VisDrone test 共同评估",
+      "caption_en": "Cross-recipe comparison on the project VisDrone test split.",
+      "headers": [
+        "Method",
+        "Params (M)",
+        "AP",
+        "AP50",
+        "AP75",
+        "APs",
+        "APm",
+        "APl"
+      ],
+      "rows": [
+        [
+          "D-FINE-L (retrained)",
+          31.145998,
+          22.678525334,
+          38.940335854,
+          22.713403123,
+          13.478095575,
+          32.226001898,
+          40.857731466
+        ],
+        [
+          "Ours (Full)",
+          35.243576,
+          24.228513877,
+          42.009068189,
+          24.208027625,
+          14.618335123,
+          34.290298229,
+          44.873405151
+        ],
+        [
+          "Delta (pp)",
+          null,
+          1.549988543,
+          3.068732335,
+          1.494624502,
+          1.140239548,
+          2.064296332,
+          4.015673685
+        ]
+      ],
+      "note": "AP 指标为百分数。1610 张项目 test 图像；YOLO 标签转 COCO，maxDet=300、640、FP32、无 TTA/额外 NMS。两者都按各自原生 val AP 选择 best；训练配方不同（D-FINE batch=4/AdamW/FP32，本方法 batch=8/MuSGD/AMP）。这是本地共同评估结果，不是官方 VisDrone challenge 排名。参数为实际模型登记总量，不代表已剔除训练分支的部署开销。",
+      "caption_note_en": "AP values are percentages. Both checkpoints were selected by native validation AP and evaluated on the same 1,610 project test images using YOLO-derived COCO annotations, 640 input, FP32 and maxDet=300, without TTA or extra NMS. Training recipes differ: D-FINE uses batch 4, AdamW and FP32; ours uses batch 8, MuSGD and AMP. Parameters are registered model totals, not deployment-pruned counts. This is not an official challenge ranking.",
+      "sources": [
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/bs4-run-authority.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.report.json"
+      ]
+    },
+    {
+      "id": "T2",
+      "group": "main",
+      "title": "大模块消融：只比较 G、B、F 三个组件",
+      "caption_en": "Component comparison on native VisDrone validation results.",
+      "headers": [
+        "Model",
+        "G",
+        "B",
+        "F",
+        "P",
+        "R",
+        "AP50",
+        "AP"
+      ],
+      "rows": [
+        [
+          "Base",
+          "off",
+          "off",
+          "off",
+          46.761,
+          41.731,
+          38.663,
+          21.911
+        ],
+        [
+          "G",
+          "on",
+          "off",
+          "off",
+          59.48,
+          49.366,
+          49.382,
+          29.62
+        ],
+        [
+          "G+F",
+          "on",
+          "off",
+          "on",
+          59.391,
+          50.049,
+          49.548,
+          29.773
+        ],
+        [
+          "G+B",
+          "on",
+          "on",
+          "off",
+          59.826,
+          48.524,
+          48.783,
+          29.277
+        ],
+        [
+          "Full",
+          "on",
+          "on",
+          "on",
+          60.482,
+          49.693,
+          49.89,
+          30.109
+        ]
+      ],
+      "note": "G=LRS-GFDR，B=Capacity-BPDD-v3-Safe，F=FIA P3-only。各行所有指标取同一 AP-best 轮。Base/G/G+F 是已登记参考运行；G+B/Full 的数据、初始状态及已记录训练设置匹配。共同 protocol ID 是事后归档分组，不替代源码差异审计。无 G 的 B 依赖不存在，未运行的组合不填造数。",
+      "caption_note_en": "G: LRS-GFDR; B: Capacity-BPDD-v3-Safe; F: P3-only FIA. All metrics in a row are from the same validation-AP-best epoch. Base, G and G+F are registered reference runs; G+B and Full share recorded data, initialization and training settings. Source-path equivalence remains to be audited. The table is not a fully verified factorial experiment.",
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#V01",
+        "paper_material/results/all_experiments_summary.json#V06",
+        "paper_material/results/all_experiments_summary.json#V09",
+        "paper_material/results/all_experiments_summary.json#V12",
+        "paper_material/results/all_experiments_summary.json#V13",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-authority.json",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-authority.json",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-results.csv",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv"
+      ]
+    },
+    {
+      "id": "T3",
+      "group": "internal",
+      "title": "G 内部设计：迁移、Clean、几何修正与 LRS",
+      "caption_en": "Internal design comparison of the localization module.",
+      "headers": [
+        "Variant",
+        "Geometry",
+        "LRS",
+        "AP50",
+        "AP",
+        "Best epoch"
+      ],
+      "rows": [
+        [
+          "Original FDR",
+          "reference",
+          "reference",
+          48.473,
+          29.078,
+          92
+        ],
+        [
+          "Clean-FDR",
+          "off",
+          "off",
+          49.32,
+          29.696,
+          88
+        ],
+        [
+          "Clean-FDR + geometry",
+          "on",
+          "off",
+          49.13,
+          29.361,
+          91
+        ],
+        [
+          "LRS-GFDR",
+          "on",
+          "on",
+          49.382,
+          29.62,
+          92
+        ]
+      ],
+      "note": "此表是已登记内部设计版本对照，源码、初始化完整配对情况仍待逐项回溯。Clean→几何修正的 AP 为 -0.335 pp；几何修正→加 LRS 为 +0.259 pp。几何修正应解释为可行域约束；现有 VisDrone 精度不支持“几何修正单独涨点”。第二数据集崩溃原因及修复效果需对应日志，不能由本表推断。Original FDR 的开关未按当前实现映射，使用 reference。",
+      "caption_note_en": "These are registered design variants, not a fully source-matched toggle experiment. Geometry reduces validation AP relative to Clean-FDR in these runs; LRS recovers part of that difference. The table does not establish a standalone accuracy gain from geometry or prove a second-dataset stability claim. Reference denotes switches not mapped to the current implementation.",
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#V02",
+        "paper_material/results/all_experiments_summary.json#V03",
+        "paper_material/results/all_experiments_summary.json#V04",
+        "paper_material/results/all_experiments_summary.json#V06"
+      ]
+    },
+    {
+      "id": "T4",
+      "group": "internal",
+      "title": "B 内部设计：蒸馏方案与 FIA 联合兼容性",
+      "caption_en": "BPDD recipe comparison with and without FIA.",
+      "headers": [
+        "BPDD recipe",
+        "FIA",
+        "AP50",
+        "Best AP",
+        "Final AP",
+        "Best epoch"
+      ],
+      "rows": [
+        [
+          "Capacity v2",
+          "off",
+          49.62,
+          29.848,
+          29.511,
+          87
+        ],
+        [
+          "Capacity v2",
+          "on",
+          49.585,
+          29.736,
+          29.198,
+          83
+        ],
+        [
+          "Capacity v3-Safe",
+          "off",
+          48.783,
+          29.277,
+          28.939,
+          80
+        ],
+        [
+          "Capacity v3-Safe",
+          "on",
+          49.89,
+          30.109,
+          30.065,
+          97
+        ]
+      ],
+      "note": "v2→v3-Safe 是一组兼容性修改；目前不足以把定位蒸馏、分类蒸馏关闭、调度等因素逐个归因。保留同一路线联合退化行以说明设计选择。v3-Safe 的 BPDD-only 低于 v2；Full 优于 v2 联合。它支持“改善联合配置的表现”，不支持“新版 BPDD 在任何组合都更强”。",
+      "caption_note_en": "The v2-to-v3-Safe change is a recipe bundle, not an isolated toggle for each distillation or scheduling choice. The v3-Safe BPDD-only run is worse than v2, while its joint run is better. These results motivate compatibility-oriented design rather than universally improved standalone BPDD.",
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#V10",
+        "paper_material/results/all_experiments_summary.json#V11",
+        "paper_material/results/all_experiments_summary.json#V12",
+        "paper_material/results/all_experiments_summary.json#V13"
+      ]
+    },
+    {
+      "id": "S1",
+      "group": "support",
+      "title": "FIA 开关的独立 test 检验",
+      "caption_en": "Held-out test comparison of the current FIA-off/on pair.",
+      "headers": [
+        "Model",
+        "AP",
+        "AP50",
+        "AP75",
+        "APs",
+        "APm",
+        "APl"
+      ],
+      "rows": [
+        [
+          "G+B",
+          24.110580947,
+          41.668002588,
+          24.196751641,
+          14.334179353,
+          34.135734142,
+          44.422856355
+        ],
+        [
+          "Full",
+          24.228513877,
+          42.009068189,
+          24.208027625,
+          14.618335123,
+          34.290298229,
+          44.873405151
+        ],
+        [
+          "Delta (pp)",
+          0.11793293,
+          0.341065601,
+          0.011275984,
+          0.28415577,
+          0.154564087,
+          0.450548796
+        ]
+      ],
+      "note": "固定各自原生 val 选出的 best checkpoint，再以共同 test 口径评估。Full 相对 G+B 的 test AP 为 +0.118 pp，原生 val best 为 +0.832 pp；两者不能替换。单 seed 观测没有置信区间，不写统计显著。",
+      "caption_note_en": "The checkpoints selected by native validation AP are evaluated once under the common test protocol. Test AP improves by 0.118 percentage points, compared with 0.832 points in native validation. These single-seed observations do not establish statistical significance.",
+      "sources": [
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-independent-test-cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.cap300.json",
+        "paper_material/evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-independent-test-manifest.json"
+      ]
+    },
+    {
+      "id": "S2",
+      "group": "support",
+      "title": "末轮稳健性：共同评估下的 best 与 final",
+      "caption_en": "Best and final checkpoints under the common evaluator.",
+      "headers": [
+        "Model",
+        "Checkpoint",
+        "Val AP",
+        "Test AP"
+      ],
+      "rows": [
+        [
+          "D-FINE-L",
+          "best",
+          28.795887807,
+          22.678525334
+        ],
+        [
+          "D-FINE-L",
+          "final",
+          28.500954282,
+          22.554355939
+        ],
+        [
+          "Full",
+          "best",
+          30.726972994,
+          24.228513877
+        ],
+        [
+          "Full",
+          "final",
+          30.528177072,
+          24.133495713
+        ]
+      ],
+      "note": "best 来自原生验证选择，final 为第100轮；没有用 test 再选 checkpoint。共同评估 val 与训练日志 val 是不同口径。",
+      "caption_note_en": "Best checkpoints were selected on native validation AP, whereas final denotes epoch 100. Test results were not used for checkpoint selection. Common-evaluator validation differs from the native training metric.",
+      "sources": [
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_best_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_final_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dfine_final_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_best_test.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_final_val.cap300.json",
+        "paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/joint_final_test.cap300.json"
+      ]
+    },
+    {
+      "id": "U1",
+      "group": "pending",
+      "title": "UAVDT 总体结果：已填数，待统一数据统计",
+      "caption_en": "UAVDT registered results pending split reconciliation.",
+      "headers": [
+        "Run",
+        "P",
+        "R",
+        "AP50",
+        "AP",
+        "Epochs"
+      ],
+      "rows": [
+        [
+          "RT-DETR-L baseline",
+          52.7,
+          31,
+          27.7,
+          15.6,
+          79
+        ],
+        [
+          "Joint export (identity pending)",
+          41.69,
+          33.1,
+          29.16,
+          16.96,
+          100
+        ]
+      ],
+      "note": "baseline 是可靠服务器报告。其17165张/342686目标与联合历史截图16592张/375883目标不一致；新导出没有同等完整数据清单，不能据此确认相同评估样本。联合记录还需 best.pt/配置与当前 v3-Safe 身份绑定。15.60→16.96 的 +1.36 pp 暂不进入摘要或主结论。该实验属于第二数据集训练/验证，不写零样本迁移。",
+      "caption_note_en": "Registered baseline and joint exports are shown for reconciliation only. Reported image/instance counts differ; the joint export also lacks a complete checkpoint/configuration identity binding. Do not claim a matched improvement or zero-shot transfer from this table.",
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#H11",
+        "paper_material/results/all_experiments_summary.json#H12",
+        "paper_material/evidence/uavdt_capacity_v3_safe_joint_20260913/user_export_20260915/paper_data.txt",
+        "paper_material/evidence/uavdt_capacity_v3_safe_joint_20260913/baseline_reference_20260915/rtdetr_baseline_test_results.md"
+      ]
+    },
+    {
+      "id": "U2",
+      "group": "pending",
+      "title": "UAVDT 类别诊断",
+      "caption_en": "UAVDT per-class AP in the registered exports.",
+      "headers": [
+        "Run",
+        "Car AP",
+        "Truck AP",
+        "Bus AP"
+      ],
+      "rows": [
+        [
+          "RT-DETR-L baseline",
+          29.3,
+          6.21,
+          11.2
+        ],
+        [
+          "Joint export",
+          34.65,
+          4.06,
+          12.19
+        ]
+      ],
+      "note": "与 U1 相同的评估身份待核对。truck 的低 AP 必须保留讨论；不同样本分布下的类别差值不能归因于模块。",
+      "caption_note_en": "The split and identity caveats of U1 apply. Low truck AP should be discussed; differences across unmatched samples cannot be attributed to individual components.",
+      "sources": [
+        "paper_material/results/all_experiments_summary.json#H11",
+        "paper_material/results/all_experiments_summary.json#H12"
+      ]
+    }
+  ]
+}

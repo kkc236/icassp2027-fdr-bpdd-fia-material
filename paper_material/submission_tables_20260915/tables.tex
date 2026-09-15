@@ -1,0 +1,103 @@
+% Requires \usepackage{booktabs}; English captions; AP values are percentages.
+% T3/T4 are design comparisons; source equivalence is not fully verified.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Cross-recipe comparison on the project VisDrone test split. AP values are percentages. Both checkpoints were selected by native validation AP and evaluated on the same 1,610 project test images using YOLO-derived COCO annotations, 640 input, FP32 and maxDet=300, without TTA or extra NMS. Training recipes differ: D-FINE uses batch 4, AdamW and FP32; ours uses batch 8, MuSGD and AMP. Parameters are registered model totals, not deployment-pruned counts. This is not an official challenge ranking.}
+\label{tab:t1}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Method & Params (M) & AP & AP50 & AP75 & APs & APm & APl \\
+\midrule
+D-FINE-L (retrained) & 31.146 & 22.679 & 38.940 & 22.713 & 13.478 & 32.226 & 40.858 \\
+Ours (Full) & 35.244 & 24.229 & 42.009 & 24.208 & 14.618 & 34.290 & 44.873 \\
+Delta (pp) & -- & 1.550 & 3.069 & 1.495 & 1.140 & 2.064 & 4.016 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Component comparison on native VisDrone validation results. G: LRS-GFDR; B: Capacity-BPDD-v3-Safe; F: P3-only FIA. All metrics in a row are from the same validation-AP-best epoch. Base, G and G+F are registered reference runs; G+B and Full share recorded data, initialization and training settings. Source-path equivalence remains to be audited. The table is not a fully verified factorial experiment.}
+\label{tab:t2}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Model & G & B & F & P & R & AP50 & AP \\
+\midrule
+Base & off & off & off & 46.761 & 41.731 & 38.663 & 21.911 \\
+G & on & off & off & 59.480 & 49.366 & 49.382 & 29.620 \\
+G+F & on & off & on & 59.391 & 50.049 & 49.548 & 29.773 \\
+G+B & on & on & off & 59.826 & 48.524 & 48.783 & 29.277 \\
+Full & on & on & on & 60.482 & 49.693 & 49.890 & 30.109 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Internal design comparison of the localization module. These are registered design variants, not a fully source-matched toggle experiment. Geometry reduces validation AP relative to Clean-FDR in these runs; LRS recovers part of that difference. The table does not establish a standalone accuracy gain from geometry or prove a second-dataset stability claim. Reference denotes switches not mapped to the current implementation.}
+\label{tab:t3}
+\begin{tabular}{lrrrrr}
+\toprule
+Variant & Geometry & LRS & AP50 & AP & Best epoch \\
+\midrule
+Original FDR & reference & reference & 48.473 & 29.078 & 92 \\
+Clean-FDR & off & off & 49.320 & 29.696 & 88 \\
+Clean-FDR + geometry & on & off & 49.130 & 29.361 & 91 \\
+LRS-GFDR & on & on & 49.382 & 29.620 & 92 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{BPDD recipe comparison with and without FIA. The v2-to-v3-Safe change is a recipe bundle, not an isolated toggle for each distillation or scheduling choice. The v3-Safe BPDD-only run is worse than v2, while its joint run is better. These results motivate compatibility-oriented design rather than universally improved standalone BPDD.}
+\label{tab:t4}
+\begin{tabular}{lrrrrr}
+\toprule
+BPDD recipe & FIA & AP50 & Best AP & Final AP & Best epoch \\
+\midrule
+Capacity v2 & off & 49.620 & 29.848 & 29.511 & 87 \\
+Capacity v2 & on & 49.585 & 29.736 & 29.198 & 83 \\
+Capacity v3-Safe & off & 48.783 & 29.277 & 28.939 & 80 \\
+Capacity v3-Safe & on & 49.890 & 30.109 & 30.065 & 97 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Held-out test comparison of the current FIA-off/on pair. The checkpoints selected by native validation AP are evaluated once under the common test protocol. Test AP improves by 0.118 percentage points, compared with 0.832 points in native validation. These single-seed observations do not establish statistical significance.}
+\label{tab:s1}
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & AP & AP50 & AP75 & APs & APm & APl \\
+\midrule
+G+B & 24.111 & 41.668 & 24.197 & 14.334 & 34.136 & 44.423 \\
+Full & 24.229 & 42.009 & 24.208 & 14.618 & 34.290 & 44.873 \\
+Delta (pp) & 0.118 & 0.341 & 0.011 & 0.284 & 0.155 & 0.451 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Best and final checkpoints under the common evaluator. Best checkpoints were selected on native validation AP, whereas final denotes epoch 100. Test results were not used for checkpoint selection. Common-evaluator validation differs from the native training metric.}
+\label{tab:s2}
+\begin{tabular}{lrrr}
+\toprule
+Model & Checkpoint & Val AP & Test AP \\
+\midrule
+D-FINE-L & best & 28.796 & 22.679 \\
+D-FINE-L & final & 28.501 & 22.554 \\
+Full & best & 30.727 & 24.229 \\
+Full & final & 30.528 & 24.133 \\
+\bottomrule
+\end{tabular}
+\end{table*}
