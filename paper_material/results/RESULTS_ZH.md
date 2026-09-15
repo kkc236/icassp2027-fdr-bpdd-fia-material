@@ -4,6 +4,8 @@
 
 全部实验（含服务器短跑、失败候选、D-FINE 跨协议和 UAVDT 分开结果）见 [全部实验结果总表](ALL_EXPERIMENTS_SUMMARY_20260915_ZH.md)。本页继续作为 VisDrone 论文主结果页。
 
+需要直接排版时，优先使用 [论文可直接使用的实验结果包](PAPER_READY_RESULTS_ZH.md)；内部版本消融见 [ABLATION_TABLES_ZH.md](ABLATION_TABLES_ZH.md)，UAVDT 迁移及逐类别风险见 [UAVDT_RESULTS_ZH.md](UAVDT_RESULTS_ZH.md)。
+
 ## 当前三模块联合主记录（2026-09-12，最新主结果）
 
 原 `RT-DETR-L + FDR + BPDD + FIA` 三模块记录已由新的联合臂替换为：`LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`。该臂完成 VisDrone Formal100（seed0），best 为 epoch 97：P=`0.60482`、R=`0.49693`、AP50=`0.49890`、mAP50–95=`0.30109`；E100 为 P=`0.59526`、R=`0.50472`、AP50=`0.50005`、mAP50–95=`0.30065`。完整曲线、authority、冻结参数和配置见 [`当前联合证据包`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
