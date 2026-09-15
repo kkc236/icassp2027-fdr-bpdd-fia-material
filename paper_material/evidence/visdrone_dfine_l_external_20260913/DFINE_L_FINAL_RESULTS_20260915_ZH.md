@@ -23,8 +23,11 @@
 
 Release 中的两个 `.pth` 均为已校验完整文件：
 
-1. `dfine-l-visdrone-bs4-scratch-global_best.pth`：第 93 轮 global-best，跨协议主比较权重。
-2. `dfine-l-visdrone-bs4-scratch-last_evaluated.pth`：第 100 轮末次 EMA 推理快照，用于 final/last 口径复核。
+1. `dfine-l-visdrone-bs4-scratch-global_best.pth`：第 93 轮 global-best，预定次终点 best 对 best 的权重。
+2. `dfine-l-visdrone-bs4-scratch-last_evaluated.pth`：第 100 轮末次 EMA 推理快照，预定主终点 final 对 final 的权重。
+
+统一评估已于 2026-09-15 08:12 完成，见 [COMMON_EVALUATION_RESULTS_20260915_ZH.md](COMMON_EVALUATION_RESULTS_20260915_ZH.md)。
+主、次终点沿用训练前的 `CROSS_PROTOCOL_BS4_ZH.md`，此前本页将 best 称作“主比较”是文案错误，现已纠正。
 
 完整优化器恢复文件 `last.pth` 不是跨协议评分所必需，且体积显著更大，因此本次不上传；这不影响使用两个推理快照完成外部对比。若后续明确需要续训，再单独上传并记录其 SHA-256。
 

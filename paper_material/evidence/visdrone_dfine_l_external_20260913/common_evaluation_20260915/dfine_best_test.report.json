@@ -1,0 +1,24 @@
+{
+  "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/global_best.pth",
+  "checkpoint_sha256": "7B2E19B7244A128882710F35589C85B0B9841E08D4E355B26E5B6A98972F8D00",
+  "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+  "config_sha256": "50359501038AC1EEBF86EF92BAB235E7B1175D3A1A92337119A0B9617A037AC0",
+  "evaluation": {
+    "conf": 0.001,
+    "imgsz": 640,
+    "precision": "fp32",
+    "resize": "stretch_xy"
+  },
+  "format_version": 1,
+  "framework": "D-FINE",
+  "images": "/root/sj-tmp/datasets/VisDrone/images/test",
+  "num_classes": 10,
+  "postprocess": {
+    "num_top_queries": 300,
+    "remap_mscoco_category": false,
+    "use_focal_loss": true
+  },
+  "prediction_file": "/root/sj-tmp/eval/visdrone_dfine_bs4_results_20260914/dfine_best_test.jsonl",
+  "processed_images": 1610,
+  "status": "complete"
+}

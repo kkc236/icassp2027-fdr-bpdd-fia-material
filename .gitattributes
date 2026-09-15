@@ -1,3 +1,4 @@
 paper_material/evidence/fdr_bpdd_fia_val.txt -text
 paper_material/evidence/fdr_bpdd_fia_test.txt -text
 paper_material/evidence/bpdd_strict_pair_20260819/** -text
+paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/** -text

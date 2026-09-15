@@ -1,0 +1,974 @@
+{
+  "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/last_evaluated.pth",
+  "checkpoint_sha256": "C9A535BFB8FF6AD9187D6ACF7512A8B0F3DCC376353E3F49915CD84B672B2A42",
+  "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+  "config_sha256": "50359501038AC1EEBF86EF92BAB235E7B1175D3A1A92337119A0B9617A037AC0",
+  "evaluation": {
+    "conf": 0.001,
+    "imgsz": 640,
+    "precision": "fp32",
+    "resize": "stretch_xy"
+  },
+  "format_version": 1,
+  "framework": "D-FINE",
+  "images": "/root/sj-tmp/datasets/VisDrone/images/val",
+  "num_classes": 10,
+  "postprocess": {
+    "num_top_queries": 300,
+    "remap_mscoco_category": false,
+    "use_focal_loss": true
+  },
+  "prediction_file": "/root/sj-tmp/eval/visdrone_dfine_bs4_results_20260914/dfine_final_val.jsonl",
+  "processed_images": 548,
+  "status": "complete"
+}
+Overriding model.yaml nc=80 with nc=10
+WARNING ⚠️ no model scale passed. Assuming scale='l'.
+{"status": "complete", "framework": "Ultralytics", "checkpoint": {"model_class": "CapacityBPDDFIASafeDetectionModel", "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml", "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061", "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/last.pt", "checkpoint_sha256": "1E826E331AF4FF5E4B4B3A6459B45950418DC08A202188D101594A33AEE35B5A", "checkpoint_epoch": -1, "source_field": "model"}, "processed_images": 548, "parameters": 35243576, "prediction_sha256": "D946FC4FFF304873707EA558F9B702644873F1A7C7B00496FB9512CA74783D72", "evaluation": {"imgsz": 640, "resize": "PIL bilinear stretch_xy", "precision": "fp32", "conf": 0.001, "topk": 300, "nms": false, "tta": false}}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.39s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=48.27s).
+Accumulating evaluation results...
+DONE (t=1.97s).
+{
+  "AP50": 0.4668041867706945,
+  "AP75": 0.29143004466765016,
+  "AP_large": 0.4352488893131174,
+  "AP_medium": 0.38415339449320024,
+  "AP_small": 0.20547620251026588,
+  "AR": 0.43926472061483496,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.2847661095608445,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2570255281960878,
+    "1": 0.21041027062170278,
+    "2": 0.10746614458398425,
+    "3": 0.6067808452075527,
+    "4": 0.3673984701131889,
+    "5": 0.24313339450515478,
+    "6": 0.19399816228543068,
+    "7": 0.1249273307383938,
+    "8": 0.4466209414159815,
+    "9": 0.28990000794096776
+  },
+  "stats": [
+    0.2847661095608445,
+    0.4668041867706945,
+    0.29143004466765016,
+    0.20547620251026588,
+    0.38415339449320024,
+    0.4352488893131174,
+    0.11586655840154943,
+    0.33168344614201223,
+    0.43926472061483496,
+    0.3596882484290523,
+    0.5505896619263866,
+    0.6068233659909912
+  ]
+}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.38s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=50.46s).
+Accumulating evaluation results...
+DONE (t=1.97s).
+{
+  "AP50": 0.46765257679614186,
+  "AP75": 0.2919132200066535,
+  "AP_large": 0.43538134900821296,
+  "AP_medium": 0.3843976644336972,
+  "AP_small": 0.20577918048991303,
+  "AR": 0.4400988315532605,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.285009542822865,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2584498044503022,
+    "1": 0.2104094467185008,
+    "2": 0.10746614458398425,
+    "3": 0.6077943886153413,
+    "4": 0.3673984701131889,
+    "5": 0.24313339450515478,
+    "6": 0.19399816228543068,
+    "7": 0.1249273307383938,
+    "8": 0.4466209414159815,
+    "9": 0.2898973448023715
+  },
+  "stats": [
+    0.285009542822865,
+    0.46765257679614186,
+    0.2919132200066535,
+    0.20577918048991303,
+    0.3843976644336972,
+    0.43538134900821296,
+    0.11586655840154943,
+    0.33168344614201223,
+    0.4400988315532605,
+    0.3606337910385213,
+    0.5513523823418222,
+    0.6072581485996869
+  ]
+}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.38s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=47.44s).
+Accumulating evaluation results...
+DONE (t=1.93s).
+{
+  "AP50": 0.5052177225465786,
+  "AP75": 0.31037181854821827,
+  "AP_large": 0.48157051174059395,
+  "AP_medium": 0.41377245026813064,
+  "AP_small": 0.2206006729657964,
+  "AR": 0.45810846992340004,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.30501095688246216,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2792564788924991,
+    "1": 0.2167545047256521,
+    "2": 0.12247528833144974,
+    "3": 0.6101151737196613,
+    "4": 0.37602364885923506,
+    "5": 0.2989507139366757,
+    "6": 0.23352591971550862,
+    "7": 0.13478835210132747,
+    "8": 0.47236678432732115,
+    "9": 0.30585270421529137
+  },
+  "stats": [
+    0.30501095688246216,
+    0.5052177225465786,
+    0.31037181854821827,
+    0.2206006729657964,
+    0.41377245026813064,
+    0.48157051174059395,
+    0.12106019557557658,
+    0.3476674456054964,
+    0.45810846992340004,
+    0.3798501423050096,
+    0.572076662513568,
+    0.5956593861685974
+  ]
+}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.38s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=49.53s).
+Accumulating evaluation results...
+DONE (t=1.96s).
+{
+  "AP50": 0.5056105325993043,
+  "AP75": 0.31075374778226034,
+  "AP_large": 0.48156780264812443,
+  "AP_medium": 0.41392159579686044,
+  "AP_small": 0.22081678762502957,
+  "AR": 0.4587832032373364,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.30528177072331314,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2804605080946466,
+    "1": 0.21674711015151113,
+    "2": 0.12247528833144974,
+    "3": 0.6116278775436382,
+    "4": 0.37602364885923506,
+    "5": 0.2989506214742381,
+    "6": 0.23352591971550862,
+    "7": 0.13478835210132747,
+    "8": 0.47236678432732115,
+    "9": 0.3058515966342553
+  },
+  "stats": [
+    0.30528177072331314,
+    0.5056105325993043,
+    0.31075374778226034,
+    0.22081678762502957,
+    0.41392159579686044,
+    0.48156780264812443,
+    0.12106019557557658,
+    0.3476674456054964,
+    0.4587832032373364,
+    0.38070228686845575,
+    0.5725291932933219,
+    0.5956593861685974
+  ]
+}
+{
+  "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/last_evaluated.pth",
+  "checkpoint_sha256": "C9A535BFB8FF6AD9187D6ACF7512A8B0F3DCC376353E3F49915CD84B672B2A42",
+  "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+  "config_sha256": "50359501038AC1EEBF86EF92BAB235E7B1175D3A1A92337119A0B9617A037AC0",
+  "evaluation": {
+    "conf": 0.001,
+    "imgsz": 640,
+    "precision": "fp32",
+    "resize": "stretch_xy"
+  },
+  "format_version": 1,
+  "framework": "D-FINE",
+  "images": "/root/sj-tmp/datasets/VisDrone/images/test",
+  "num_classes": 10,
+  "postprocess": {
+    "num_top_queries": 300,
+    "remap_mscoco_category": false,
+    "use_focal_loss": true
+  },
+  "prediction_file": "/root/sj-tmp/eval/visdrone_dfine_bs4_results_20260914/dfine_final_test.jsonl",
+  "processed_images": 1610,
+  "status": "complete"
+}
+Overriding model.yaml nc=80 with nc=10
+WARNING ⚠️ no model scale passed. Assuming scale='l'.
+{"status": "complete", "framework": "Ultralytics", "checkpoint": {"model_class": "CapacityBPDDFIASafeDetectionModel", "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml", "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061", "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/last.pt", "checkpoint_sha256": "1E826E331AF4FF5E4B4B3A6459B45950418DC08A202188D101594A33AEE35B5A", "checkpoint_epoch": -1, "source_field": "model"}, "processed_images": 1610, "parameters": 35243576, "prediction_sha256": "3B366DD6B65EE89D70DE0FC2D1C3D09D8CA1FAF75AB5A61397F6EAE5098A6D29", "evaluation": {"imgsz": 640, "resize": "PIL bilinear stretch_xy", "precision": "fp32", "conf": 0.001, "topk": 300, "nms": false, "tta": false}}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.19s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=105.94s).
+Accumulating evaluation results...
+DONE (t=5.51s).
+{
+  "AP50": 0.38519930659718227,
+  "AP75": 0.22681059659944997,
+  "AP_large": 0.4202659115529818,
+  "AP_medium": 0.3208159852335134,
+  "AP_small": 0.133016003022598,
+  "AR": 0.39496303602162314,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.2251108040359532,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.14847033494021308,
+    "1": 0.09816815390201362,
+    "2": 0.07039878443530395,
+    "3": 0.5052773956061078,
+    "4": 0.29785272995478734,
+    "5": 0.27504424820871914,
+    "6": 0.12634739644450454,
+    "7": 0.12717542471696475,
+    "8": 0.4359648622075981,
+    "9": 0.16640870994331977
+  },
+  "stats": [
+    0.2251108040359532,
+    0.38519930659718227,
+    0.22681059659944997,
+    0.133016003022598,
+    0.3208159852335134,
+    0.4202659115529818,
+    0.09061003805145901,
+    0.2906477129656903,
+    0.39496303602162314,
+    0.2972286667682419,
+    0.5239937130975856,
+    0.6335291937062221
+  ]
+}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.19s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=131.85s).
+Accumulating evaluation results...
+DONE (t=5.71s).
+{
+  "AP50": 0.38655739674580103,
+  "AP75": 0.22720046059194085,
+  "AP_large": 0.4207660029120941,
+  "AP_medium": 0.321411411010954,
+  "AP_small": 0.13337504624292112,
+  "AR": 0.396785368050706,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.22554355939110077,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.15132130458677182,
+    "1": 0.09820735464438,
+    "2": 0.07039878443530395,
+    "3": 0.5065790481368689,
+    "4": 0.2977503051811949,
+    "5": 0.27510098738147515,
+    "6": 0.12634739644450454,
+    "7": 0.12717542471696475,
+    "8": 0.4359647856153406,
+    "9": 0.1665902027682033
+  },
+  "stats": [
+    0.22554355939110077,
+    0.38655739674580103,
+    0.22720046059194085,
+    0.13337504624292112,
+    0.321411411010954,
+    0.4207660029120941,
+    0.09061003805145901,
+    0.2906477129656903,
+    0.396785368050706,
+    0.29910405157162223,
+    0.5262260098709417,
+    0.6355316160370197
+  ]
+}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.21s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=108.42s).
+Accumulating evaluation results...
+DONE (t=5.59s).
+{
+  "AP50": 0.4176070079708431,
+  "AP75": 0.24031360897356835,
+  "AP_large": 0.44064105080494353,
+  "AP_medium": 0.34145536664039666,
+  "AP_small": 0.14535307305078035,
+  "AR": 0.4077032754901402,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.24097420009420725,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.1619078919563205,
+    "1": 0.10286059786760493,
+    "2": 0.08661807391604939,
+    "3": 0.515187776996106,
+    "4": 0.309869938319917,
+    "5": 0.2962824758253701,
+    "6": 0.16765293999072978,
+    "7": 0.1441620319172048,
+    "8": 0.4415443594981364,
+    "9": 0.1836559146546341
+  },
+  "stats": [
+    0.24097420009420725,
+    0.4176070079708431,
+    0.24031360897356835,
+    0.14535307305078035,
+    0.34145536664039666,
+    0.44064105080494353,
+    0.09376414578277074,
+    0.3013176454131418,
+    0.4077032754901402,
+    0.3110648900000267,
+    0.5314220866036213,
+    0.6393191255372352
+  ]
+}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.20s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=134.66s).
+Accumulating evaluation results...
+DONE (t=5.77s).
+{
+  "AP50": 0.41885191984203196,
+  "AP75": 0.2404417486927189,
+  "AP_large": 0.44169215789018784,
+  "AP_medium": 0.34197522410964687,
+  "AP_small": 0.14574960237519952,
+  "AR": 0.4092104307552443,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.24133495712514402,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.16488515096994863,
+    "1": 0.10285897581242692,
+    "2": 0.08661807391604939,
+    "3": 0.515722441785761,
+    "4": 0.3098424467291718,
+    "5": 0.29635679893055267,
+    "6": 0.16765293999072978,
+    "7": 0.1441620319172048,
+    "8": 0.4415443594981364,
+    "9": 0.18370635170145846
+  },
+  "stats": [
+    0.24133495712514402,
+    0.41885191984203196,
+    0.2404417486927189,
+    0.14574960237519952,
+    0.34197522410964687,
+    0.44169215789018784,
+    0.09376414578277074,
+    0.3013176454131418,
+    0.4092104307552443,
+    0.3125786482150598,
+    0.5330925663732934,
+    0.6417848005944434
+  ]
+}
+{
+  "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/global_best.pth",
+  "checkpoint_sha256": "7B2E19B7244A128882710F35589C85B0B9841E08D4E355B26E5B6A98972F8D00",
+  "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+  "config_sha256": "50359501038AC1EEBF86EF92BAB235E7B1175D3A1A92337119A0B9617A037AC0",
+  "evaluation": {
+    "conf": 0.001,
+    "imgsz": 640,
+    "precision": "fp32",
+    "resize": "stretch_xy"
+  },
+  "format_version": 1,
+  "framework": "D-FINE",
+  "images": "/root/sj-tmp/datasets/VisDrone/images/val",
+  "num_classes": 10,
+  "postprocess": {
+    "num_top_queries": 300,
+    "remap_mscoco_category": false,
+    "use_focal_loss": true
+  },
+  "prediction_file": "/root/sj-tmp/eval/visdrone_dfine_bs4_results_20260914/dfine_best_val.jsonl",
+  "processed_images": 548,
+  "status": "complete"
+}
+Overriding model.yaml nc=80 with nc=10
+WARNING ⚠️ no model scale passed. Assuming scale='l'.
+{"status": "complete", "framework": "Ultralytics", "checkpoint": {"model_class": "CapacityBPDDFIASafeDetectionModel", "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml", "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061", "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt", "checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6", "checkpoint_epoch": -1, "source_field": "model"}, "processed_images": 548, "parameters": 35243576, "prediction_sha256": "DF8974814E722EEDF58DD561B2AD7CE652B31F3C4D1862FD4BF5952529F51552", "evaluation": {"imgsz": 640, "resize": "PIL bilinear stretch_xy", "precision": "fp32", "conf": 0.001, "topk": 300, "nms": false, "tta": false}}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.38s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=47.08s).
+Accumulating evaluation results...
+DONE (t=1.95s).
+{
+  "AP50": 0.471496350633665,
+  "AP75": 0.29265703456990577,
+  "AP_large": 0.41671285901517924,
+  "AP_medium": 0.3868306117797846,
+  "AP_small": 0.209339295097312,
+  "AR": 0.4414001727433693,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.2877338083445882,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2608724817238418,
+    "1": 0.20998395615214005,
+    "2": 0.10900213694516148,
+    "3": 0.6070833757459618,
+    "4": 0.3680681580972322,
+    "5": 0.2501694429806762,
+    "6": 0.19796653137736706,
+    "7": 0.12193886107499893,
+    "8": 0.45973133850215003,
+    "9": 0.2925218008463531
+  },
+  "stats": [
+    0.2877338083445882,
+    0.471496350633665,
+    0.29265703456990577,
+    0.209339295097312,
+    0.3868306117797846,
+    0.41671285901517924,
+    0.11656381014693407,
+    0.3333268734103372,
+    0.4414001727433693,
+    0.3626407137992338,
+    0.5517827966752784,
+    0.6146548987220125
+  ]
+}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.38s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=51.03s).
+Accumulating evaluation results...
+DONE (t=1.97s).
+{
+  "AP50": 0.472477842884739,
+  "AP75": 0.29269361259327115,
+  "AP_large": 0.41681128905621506,
+  "AP_medium": 0.3869840899078145,
+  "AP_small": 0.20962222623390026,
+  "AR": 0.4421956894355797,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.28795887807283677,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2620818114179842,
+    "1": 0.20998761545430777,
+    "2": 0.10900213694516148,
+    "3": 0.6081190973462073,
+    "4": 0.3680681580972322,
+    "5": 0.2501694429806762,
+    "6": 0.19796653137736706,
+    "7": 0.12193886107499893,
+    "8": 0.45973133850215003,
+    "9": 0.2925237875322828
+  },
+  "stats": [
+    0.28795887807283677,
+    0.472477842884739,
+    0.29269361259327115,
+    0.20962222623390026,
+    0.3869840899078145,
+    0.41681128905621506,
+    0.11656381014693407,
+    0.3333268734103372,
+    0.4421956894355797,
+    0.36357587547350995,
+    0.5524112621285271,
+    0.6150896813307082
+  ]
+}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.39s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=46.59s).
+Accumulating evaluation results...
+DONE (t=1.96s).
+{
+  "AP50": 0.5076976522348858,
+  "AP75": 0.3127759683478609,
+  "AP_large": 0.4641310992460851,
+  "AP_medium": 0.41508252213105457,
+  "AP_small": 0.22236870409471077,
+  "AR": 0.4591543570245776,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.30702687682009566,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.2789364359910512,
+    "1": 0.21934705011264122,
+    "2": 0.12455350607997566,
+    "3": 0.6104486250296173,
+    "4": 0.37760306341688943,
+    "5": 0.30001302322754536,
+    "6": 0.2357164453885458,
+    "7": 0.13705019484401393,
+    "8": 0.48041709285851636,
+    "9": 0.30618333125216024
+  },
+  "stats": [
+    0.30702687682009566,
+    0.5076976522348858,
+    0.3127759683478609,
+    0.22236870409471077,
+    0.41508252213105457,
+    0.4641310992460851,
+    0.12144808756216408,
+    0.348660647184266,
+    0.4591543570245776,
+    0.3800984645022761,
+    0.5719246761349676,
+    0.6210186816721385
+  ]
+}
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.38s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=49.60s).
+Accumulating evaluation results...
+DONE (t=1.97s).
+{
+  "AP50": 0.5080316149250819,
+  "AP75": 0.31317061733177587,
+  "AP_large": 0.4641291408198826,
+  "AP_medium": 0.41524285232340485,
+  "AP_small": 0.22261249225868662,
+  "AR": 0.4597892208098104,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 548,
+  "mAP50_95": 0.3072697299369438,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.27987681245235685,
+    "1": 0.2193428415622545,
+    "2": 0.12455350607997566,
+    "3": 0.6119389930200727,
+    "4": 0.37760306341688943,
+    "5": 0.30001302322754536,
+    "6": 0.2357164453885458,
+    "7": 0.13705019484401393,
+    "8": 0.48041709285851636,
+    "9": 0.3061853265192674
+  },
+  "stats": [
+    0.3072697299369438,
+    0.5080316149250819,
+    0.31317061733177587,
+    0.22261249225868662,
+    0.41524285232340485,
+    0.4641291408198826,
+    0.12144808756216408,
+    0.348660647184266,
+    0.4597892208098104,
+    0.3809375907708391,
+    0.5724328413790934,
+    0.6210186816721385
+  ]
+}
+{
+  "checkpoint": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/global_best.pth",
+  "checkpoint_sha256": "7B2E19B7244A128882710F35589C85B0B9841E08D4E355B26E5B6A98972F8D00",
+  "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+  "config_sha256": "50359501038AC1EEBF86EF92BAB235E7B1175D3A1A92337119A0B9617A037AC0",
+  "evaluation": {
+    "conf": 0.001,
+    "imgsz": 640,
+    "precision": "fp32",
+    "resize": "stretch_xy"
+  },
+  "format_version": 1,
+  "framework": "D-FINE",
+  "images": "/root/sj-tmp/datasets/VisDrone/images/test",
+  "num_classes": 10,
+  "postprocess": {
+    "num_top_queries": 300,
+    "remap_mscoco_category": false,
+    "use_focal_loss": true
+  },
+  "prediction_file": "/root/sj-tmp/eval/visdrone_dfine_bs4_results_20260914/dfine_best_test.jsonl",
+  "processed_images": 1610,
+  "status": "complete"
+}
+Overriding model.yaml nc=80 with nc=10
+WARNING ⚠️ no model scale passed. Assuming scale='l'.
+{"status": "complete", "framework": "Ultralytics", "checkpoint": {"model_class": "CapacityBPDDFIASafeDetectionModel", "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml", "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061", "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt", "checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6", "checkpoint_epoch": -1, "source_field": "model"}, "processed_images": 1610, "parameters": 35243576, "prediction_sha256": "7C44097189145E55BAF6CC0D8D4E9B85E0984C4A9E70D942CC228918C80CA593", "evaluation": {"imgsz": 640, "resize": "PIL bilinear stretch_xy", "precision": "fp32", "conf": 0.001, "topk": 300, "nms": false, "tta": false}}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.20s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=109.18s).
+Accumulating evaluation results...
+DONE (t=5.49s).
+{
+  "AP50": 0.3881404119131914,
+  "AP75": 0.22675340910736855,
+  "AP_large": 0.4080674214000866,
+  "AP_medium": 0.32172555326250285,
+  "AP_small": 0.13441077456352607,
+  "AR": 0.39694623980089083,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.22637104285704207,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.15161018468563361,
+    "1": 0.1008824464435126,
+    "2": 0.07069669374666325,
+    "3": 0.5055682714304522,
+    "4": 0.2966522212808757,
+    "5": 0.2786231080214793,
+    "6": 0.12642654939797654,
+    "7": 0.12319159176105175,
+    "8": 0.4389246899575939,
+    "9": 0.17113467184518139
+  },
+  "stats": [
+    0.22637104285704207,
+    0.3881404119131914,
+    0.22675340910736855,
+    0.13441077456352607,
+    0.32172555326250285,
+    0.4080674214000866,
+    0.0910358658489465,
+    0.29120213683255397,
+    0.39694623980089083,
+    0.29877939151188765,
+    0.5249651775221104,
+    0.6121137045065594
+  ]
+}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.18s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=131.73s).
+Accumulating evaluation results...
+DONE (t=5.72s).
+{
+  "AP50": 0.3894033585413867,
+  "AP75": 0.2271340312281818,
+  "AP_large": 0.40857731465723796,
+  "AP_medium": 0.3222600189770762,
+  "AP_small": 0.13478095574909657,
+  "AR": 0.3986674239649727,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.22678525333944666,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.15455081917612215,
+    "1": 0.1008890293655089,
+    "2": 0.07069669374666325,
+    "3": 0.5068037144722438,
+    "4": 0.29656693635887954,
+    "5": 0.2786129662141979,
+    "6": 0.12642654939797654,
+    "7": 0.12319159176105175,
+    "8": 0.4389246899575939,
+    "9": 0.1711895429442292
+  },
+  "stats": [
+    0.22678525333944666,
+    0.3894033585413867,
+    0.2271340312281818,
+    0.13478095574909657,
+    0.3222600189770762,
+    0.40857731465723796,
+    0.0910358658489465,
+    0.29120213683255397,
+    0.3986674239649727,
+    0.30054234039323935,
+    0.5270470197658832,
+    0.6139984221761741
+  ]
+}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.20s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=105.49s).
+Accumulating evaluation results...
+DONE (t=5.52s).
+{
+  "AP50": 0.41863168858726396,
+  "AP75": 0.24195855621021364,
+  "AP_large": 0.44825645714524864,
+  "AP_medium": 0.3424229393523449,
+  "AP_small": 0.14576088225021958,
+  "AR": 0.4087590045994618,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.24189895957384286,
+  "max_det": 100,
+  "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.16212841982135065,
+    "1": 0.10376487609647857,
+    "2": 0.08780456518654976,
+    "3": 0.5158180766571584,
+    "4": 0.3100331878739835,
+    "5": 0.2974012502874171,
+    "6": 0.1674772200717552,
+    "7": 0.1479898049205232,
+    "8": 0.44275824316128753,
+    "9": 0.183813951661925
+  },
+  "stats": [
+    0.24189895957384286,
+    0.41863168858726396,
+    0.24195855621021364,
+    0.14576088225021958,
+    0.3424229393523449,
+    0.44825645714524864,
+    0.09476082248523822,
+    0.3021173886298647,
+    0.4087590045994618,
+    0.3109734982785672,
+    0.5327364230851149,
+    0.6509115550805957
+  ]
+}
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.20s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=129.35s).
+Accumulating evaluation results...
+DONE (t=5.74s).
+{
+  "AP50": 0.42009068188993237,
+  "AP75": 0.24208027625017603,
+  "AP_large": 0.4487340515089001,
+  "AP_medium": 0.34290298229333566,
+  "AP_small": 0.14618335122778175,
+  "AR": 0.4102609373268905,
+  "evaluator": "pycocotools.COCOeval",
+  "evaluator_version": "2.0.11",
+  "image_count": 1610,
+  "mAP50_95": 0.24228513876937524,
+  "max_det": 300,
+  "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+  "per_class_AP": {
+    "0": 0.1652634107307216,
+    "1": 0.10376360006350072,
+    "2": 0.08780456518654976,
+    "3": 0.5163429746709169,
+    "4": 0.31000758872409556,
+    "5": 0.2975444958335684,
+    "6": 0.1674772200717552,
+    "7": 0.1479898049205232,
+    "8": 0.44275824316128753,
+    "9": 0.18389948433083364
+  },
+  "stats": [
+    0.24228513876937524,
+    0.42009068188993237,
+    0.24208027625017603,
+    0.14618335122778175,
+    0.34290298229333566,
+    0.4487340515089001,
+    0.09476082248523822,
+    0.3021173886298647,
+    0.4102609373268905,
+    0.31255120271789966,
+    0.5343126315477432,
+    0.6520035108807894
+  ]
+}
+# Cross-protocol common evaluation
+
+Joint minus D-FINE deltas are percentage points. AP values below are percentages.
+
+| Endpoint | Split | maxDet | D-FINE AP | Joint AP | Delta pp |
+|---|---|---:|---:|---:|---:|
+| final | val | 100 | 28.477 | 30.501 | +2.024 |
+| final | val | 300 | 28.501 | 30.528 | +2.027 |
+| final | test | 100 | 22.511 | 24.097 | +1.586 |
+| final | test | 300 | 22.554 | 24.133 | +1.579 |
+| best | val | 100 | 28.773 | 30.703 | +1.929 |
+| best | val | 300 | 28.796 | 30.727 | +1.931 |
+| best | test | 100 | 22.637 | 24.190 | +1.553 |
+| best | test | 300 | 22.679 | 24.229 | +1.550 |
+
+Project YOLO-derived labels; ignored regions unavailable. Not official VisDrone challenge protocol. Test-set prior use is not certified.
+
+This is not a matched-training ablation or a multi-seed significance test.

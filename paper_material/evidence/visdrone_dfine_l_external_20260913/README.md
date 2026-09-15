@@ -1,5 +1,13 @@
 # VisDrone D-FINE-L external evaluation package
 
+## 2026-09-15：统一评估已完成
+
+训练后的自动评估已于北京时间 08:12 完成。完整结果与复评步骤见
+[COMMON_EVALUATION_RESULTS_20260915_ZH.md](COMMON_EVALUATION_RESULTS_20260915_ZH.md)，
+原始对比表及 16 份分项报告见 [common_evaluation_20260915/](common_evaluation_20260915/)。
+AP50-95@300：末轮对末轮 test 为联合模型 24.1335%、D-FINE 22.5544%；
+best 对 best test 为 24.2285%、22.6785%。训练原生验证指标与本表分别保留。
+
 ## 2026-09-14 batch=4 跨协议方案
 
 当前新方案见 [CROSS_PROTOCOL_BS4_ZH.md](CROSS_PROTOCOL_BS4_ZH.md)。入口为
