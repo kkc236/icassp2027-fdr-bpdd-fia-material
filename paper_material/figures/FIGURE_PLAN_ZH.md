@@ -23,7 +23,7 @@
 
 ## 图 4：结果比较
 
-- 最新系统子图：展示当前 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` best E97 val mAP50–95=`0.30109`，并单列最新 BPDD-only best E80=`0.29277`（独立 test pending）。
+- 最新系统子图：展示当前 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA` best E97 val mAP50–95=`0.30109`，并单列最新 BPDD-only best E80=`0.29277`、test mAP@300=`0.24111`。
 - 严格因果子图：展示同 authority FDR/FDR+BPDD val/test 的 `+0.239/+0.283 pp`，与当前联合的非配对 Formal100 结果分开标注。
 - 消融附图：可加入 fresh P3-only FIA-only `0.227056` 与既有 cascading FDR+FIA `0.294940` 的独立 val，分别标注相对 canonical baseline `+0.7946 pp`、相对 FDR `+0.5280 pp`，同时标明 topology 不同。
 - test 附图：可加入 FIA-only / FDR+FIA 的 mAP50–95 `0.185517` / `0.234645` 与 AP75 `0.182011` / `0.235879`；fresh FIA-only 可标注相对 protocol-comparable canonical test baseline 的 `+0.8101 pp`，但不得跨 val/test 计算。若画逐类图，fresh FIA-only 只使用新 exact JSON/CSV 中与 checkpoint SHA `c00cae89…` 绑定的十类结果，不复用旧 cascading 行。

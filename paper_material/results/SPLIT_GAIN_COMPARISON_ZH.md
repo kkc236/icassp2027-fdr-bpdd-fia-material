@@ -1,6 +1,6 @@
 # FDR、BPDD、FIA 的 val/test 涨点总对比
 
-> 当前三模块联合主记录已切换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`（VisDrone val best E97 mAP50–95=`0.30109`）。最新 BPDD-only Formal100 已完成（best E80=`0.29277`），但独立 test 待评估。本页中旧 `FDR+BPDD+FIA` 数值仍作为历史 authority 快照保存，不能替代当前联合记录或与其拼接计算增量。
+> 当前三模块联合主记录已切换为 `LRS-GFDR + Capacity-BPDD-v3-Safe + FIA`（VisDrone val best E97 mAP50–95=`0.30109`）。最新 BPDD-only Formal100 已完成（best E80=`0.29277`），固定 test 独立评估 mAP@300=`0.24111`。本页中旧 `FDR+BPDD+FIA` 数值仍作为历史 authority 快照保存，不能替代当前联合记录或与其拼接计算增量。
 
 ## 证据状态
 
@@ -10,7 +10,7 @@
 
 ### 最新 Capacity-BPDD-v3-Safe 训练观测
 
-最新 `LRS-GFDR + Capacity-BPDD-v3-Safe` Formal100 的验证曲线在 E80 达到 mAP50–95=`0.29277`，E100 为 `0.28939`。该 observation 的原始 CSV、args、权重 SHA-256 和 authority 见 [`当前联合证据包`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)；在独立 test 完成前，它不升级为新的严格配对增量。
+最新 `LRS-GFDR + Capacity-BPDD-v3-Safe` Formal100 的验证曲线在 E80 达到 mAP50–95=`0.29277`，E100 为 `0.28939`；固定 test 独立评估 mAP50–95@300=`0.24111`、@100=`0.24079`。它仍不升级为新的严格配对增量。原始 CSV、args、权重 SHA-256 和 test 报告见 [`当前联合证据包`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/README.md)。
 
 ### 历史 EQuAL standalone 结果
 

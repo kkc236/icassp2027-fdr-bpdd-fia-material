@@ -19,7 +19,14 @@
 | best | 80 | 0.59826 | 0.48524 | 0.48783 | **0.29277** |
 | final | 100 | 0.60235 | 0.48596 | 0.48627 | 0.28939 |
 
-逐 epoch 原始记录、Ultralytics 解析参数、权重尺寸/SHA-256 和证据边界见 [`当前联合证据包/BPDD 完成摘要`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json)。该记录是最新训练观测，独立 test 尚未完成，不能把 `0.29277` 直接表述为新的严格因果增益；论文中的 BPDD 因果结论继续引用下方 2026-08-19 同 authority 严格配对结果。
+固定 test 独立精确评估（COCOeval 2.0.11）如下：
+
+| split | maxDet | AP50 | AP75 | mAP50–95 | AR | 图像数 |
+|---|---:|---:|---:|---:|---:|---:|
+| test | 300 | 0.416680 | 0.241968 | **0.241106** | 0.408074 | 1610 |
+| test | 100 | 0.415703 | 0.241872 | **0.240786** | 0.406609 | 1610 |
+
+逐 epoch 原始记录、Ultralytics 解析参数、权重尺寸/SHA-256 和证据边界见 [`当前联合证据包/BPDD 完成摘要`](../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json)。该 test 补齐了当前 BPDD-only 的证据，但不能把它直接表述为相对 V13 的严格 FIA 因果增益；论文中的 BPDD 因果结论继续引用下方 2026-08-19 同 authority 严格配对结果。
 
 ## 历史 EQuAL standalone 定位结果（2026-08-21）
 

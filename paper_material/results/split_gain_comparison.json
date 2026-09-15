@@ -408,13 +408,16 @@
   "latest_training_observation": {
     "split": "val",
     "method": "LRS-GFDR+Capacity-BPDD-v3-Safe",
-    "status": "completed_formal100_pending_exact_test",
+    "status": "completed_formal100_and_exact_test",
     "best_epoch": 80,
     "best_map": 0.29277,
     "final_epoch": 100,
     "final_map": 0.28939,
+    "test_map_max_det_300": 0.2411058094663223,
+    "test_map_max_det_100": 0.24078632159711785,
+    "test_evaluator": "pycocotools.COCOeval 2.0.11",
     "evidence_path": "evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json",
     "strict_causal_delta_allowed": false
   },
-  "claim_boundary": "The current main result is LRS-GFDR + Capacity-BPDD-v3-Safe + FIA Formal100 (best val mAP50-95=0.30109). The newest BPDD-only formal100 record is a training observation (best E80=0.29277; exact test pending), not a new strict causal row. Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The fresh FIA-only best.pt has exact P3-only val/test supplementary metrics and non-paired arithmetic gains of +0.7946395144255269 pp on val and +0.8101032384120604 pp on protocol-comparable test. The older cascading FIA-only result is retained only as superseded evidence. The corrected P3-only three-module result retains its four-decimal val/test text-report boundary. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
+  "claim_boundary": "The current main result is LRS-GFDR + Capacity-BPDD-v3-Safe + FIA Formal100 (best val mAP50-95=0.30109). The newest BPDD-only formal100 record has best E80=0.29277 and an independent common-evaluator test mAP50-95 of 0.2411058095 at maxDet=300; it is not a new strict causal row against the joint model. Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The fresh FIA-only best.pt has exact P3-only val/test supplementary metrics and non-paired arithmetic gains of +0.7946395144255269 pp on val and +0.8101032384120604 pp on protocol-comparable test. The older cascading FIA-only result is retained only as superseded evidence. The corrected P3-only three-module result retains its four-decimal val/test text-report boundary. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
 }
