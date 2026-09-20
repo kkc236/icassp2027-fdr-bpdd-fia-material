@@ -1,0 +1,2 @@
+# Preserve evidence bytes, including original line endings and captured logs.
+* -text

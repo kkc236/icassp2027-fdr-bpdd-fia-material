@@ -1,0 +1,1256 @@
+
+===PDF PAGE 1===
+LME-DETR: Lightweight and Multi-Scale Feature-Enhanced End-to-End
+Object Detection for Aerial Images
+Feifei Xu1∗, Yu Xie 1∗, Dongyang Li 1†, Luobin Huang 1 , Zhihao Guo 2
+1School of Computer Science and Technology, Shanghai University of Electric Power, China
+2School of Computer Science and Technology, University of Technology Sydney, Australia
+xufeifei@shiep.edu.cn xieyusuep@mail.shiep.edu.cn dongyangli.ldy@shiep.edu.cn
+luobinhuang043@gmail.com zhihao.guo@uts.edu.au
+Abstract
+UA V-based object detection faces a fundamental
+challenge: achieving high accuracy on dense, tiny, and
+multi-scale objects while adhering to the stringent com-
+putational constraints of airborne platforms. To ad-
+dress this, we propose LME-DETR, a lightweight end-
+to-end Transformer detector co-designed for aerial per-
+ception and eﬀicient deployment. LME-DETR intro-
+duces three key innovations. The Lightweight Recep-
+tive Enhancement Network expands effective receptive
+fields with near-zero inference overhead through repa-
+rameterizable dilated convolutions and channel-spatial
+attention, significantly enhancing contextual awareness
+for small objects. The Scale-Robust Feature Interac-
+tion Module (SRFIM) explicitly models cross-scale de-
+pendencies via dynamic normalization and multi-kernel
+depthwise convolutions, enabling adaptive fusion of
+multi-granularity features and improving robustness
+to extreme scale variations. The Exponential Mov-
+ing A verage Slide Varifocal Loss (EMA-SVFL) adap-
+tively reweights hard, low-quality small-object sam-
+ples by tracking their diﬀiculty evolution during train-
+ing, effectively countering the dominance of easy neg-
+atives in cluttered scenes. Extensive experiments on
+the VisDrone and UA VVaste benchmarks show that
+LME-DETR outperforms baselines in both accuracy
+and eﬀiciency, while reducing parameters by 30% and
+GFLOPs by 19%, demonstrating a compelling balance
+of accuracy, eﬀiciency, and real-time deployability for
+UA V applications.
+Keywords: UA V object detection, Transformer,
+lightweight detector, Multi-scale feature interaction,
+Receptive field enhancement, Adaptive loss function
+∗These authors contributed equally to this work.
+†Corresponding author.
+Figure 1. Model performance comparison on VisDrone
+dataset. The bubble size represents computational com-
+plexity (GFLOPs). Our method LME-DETR achieves the
+best accuracy with relatively low parameters and computa-
+tional cost.
+1. Introduction
+Along with the rapid development of unmanned
+aerial vehicle (UA V) technology and the significant im-
+provement in remote sensing image quality, object de-
+tection from the UA V perspective has become increas-
+ingly important in various application scenarios, such
+as environmental monitoring, traﬀic management, and
+disaster relief. However, due to the complexity of UA V-
+captured scenes, object detection in this domain faces
+numerous challenge [ 1]. These include significant vari-
+ations in object scales and, most critically, the dense
+distribution of small targets, which are often defined
+as objects occupying an area of less than 32×32 pix-
+els. Such targets, prevalent in aerial imagery, push the
+limits of current detection methods.
+Typically, small objects occupy only a few pixels,
+and their semantic representation heavily relies on the
+1
+
+===PDF PAGE 2===
+surrounding contextual information [ 2]. If the model
+fails to capture suﬀicient semantic context within its
+receptive field, it is prone to missing or misclassify-
+ing the targets. Therefore, expanding the receptive
+field and enhancing the ability to model long-range de-
+pendencies are critical for small object detection [ 3].
+In particular, constructing a wider contextual percep-
+tion at shallow stages helps the model acquire complete
+semantic information early on, thereby enhancing the
+discriminability of small objects.
+Existing strategies for enlarging the receptive field
+can be broadly categorized into three representative
+types. Dilated Convolution[ 4, 5, 6], for instance, ex-
+pands the receptive field by introducing a dilation
+rate, offering advantages such as low parameter over-
+head and implementation simplicity. However, this
+method is prone to the gridding effect, resulting in dis-
+continuous feature sampling and consequently weak-
+ening the representation of small objects. Multi-
+branch structure integrates receptive fields of various
+sizes by paralleling convolutional kernels with different
+scales[7, 8, 9]. Although it is effective in addressing
+scale variation, its structure complexity and high com-
+putational cost hinder its applicability in lightweight
+or real-time detection scenarios. Feature Pyramid Net-
+works (FPN)[ 10, 11, 12, 13], and their variants intro-
+duce multi-scale semantics through cross-layer feature
+fusion and have become fundamental components in
+modern detection frameworks. However, FPN essen-
+tially functions as a feature aggregation mechanism and
+does not fundamentally expand the receptive field of
+a single layer. In particular, its capacity to enhance
+semantic representation at shallow stages remains lim-
+ited.
+In terms of long-range dependency modeling, at-
+tention mechanism is mainly employed. DEtection
+TRansformer(DETR) is designed for the first fully end-
+to-end, Transformer-based object detector, eliminat-
+ing manual operation like Non-Maximum Suppression
+(NMS). Its highlight lies in the encoder’s self-attention
+mechanism, achieving global context modeling by di-
+rectly associating all feature positions within an image.
+However, the original DETR and its early variants have
+diﬀiculty in slow convergence and high computational
+complexity. Especially, the quadratic complexity of
+global self-attention is particularly challenging for the
+high-resolution feature maps essential for small object
+detection, making these models ill-suited for real-time
+applications on resource-constrained UA V platforms.
+Therefore, it is necessary to design a lightweight de-
+tection framework that can effectively enlarge the re-
+ceptive field and enhance the ability to model long-
+range dependencies, thereby helping shallow-layer se-
+mantic modeling, while maintaining computational ef-
+ficiency. To this end, we propose an eﬀicient detec-
+tion Transformer framework[ 14] tailored for UA V im-
+ages, named LME-DETR. Compared with the base-
+line RT-DETR[ 15], LME-DETR features fewer train-
+ing parameters and reduced computational overhead.
+Extensive experiments conducted on typical UA V im-
+age benchmark datasets, such as VisDrone-2019[ 16]
+and UA VVaste[17], demonstrate that LME-DETR sig-
+nificantly outperforms existing state-of-the-art DETR
+series models in terms of the trade-off between accu-
+racy and computational eﬀiciency across various model
+scales. Our main contributions are summarized as fol-
+lows:
+• We propose the Lightweight Receptive Enhance-
+ment Network, a novel architecture that achieves
+superior object perception through a synergism of
+reparameterizable dilated convolutions for broad
+contextual modeling and the attention-based
+mechanism for precise feature focusing.
+• We present the Scale-Robust Feature Interaction
+Module to counteract feature degradation within
+Transformer encoders, achieving better feature
+preservation through a synergistic combination of
+a dynamic normalization strategy and multi-scale
+semantic fusion.
+• We define a novel loss function, Exponential Mov-
+ing A verage Slide Varifocal Loss, which employs
+a sliding average regulation mechanism to adap-
+tively shift the training focus and strengthen the
+optimization for hard-to-match small object sam-
+ples.
+• Finally, comprehensive comparisons with baselines
+and representative models designed for real-time
+aerial image detection demonstrate that our pro-
+posed LME-DETR achieves a superior balance be-
+tween detection accuracy and computational ef-
+ficiency, consistently delivering high-precision re-
+sults while meeting real-time processing require-
+ments.
+2. Related Work
+Considering the unique deployment environment of
+UA V platforms, the UA V-OD Unmanned Aerial Vehi-
+cle Object Detection(UA V-OD) task encounters chal-
+lenges such as dense small objects, severe occlusion,
+and complex backgrounds, which makes demand of bal-
+ancing model inference speed and computational re-
+source constraints. Therefore, designing a detection
+model that maintains high accuracy while achieving
+
+===PDF PAGE 3===
+real-time performance and lightweight characteristics
+has attracted many researchers’ attention.The main-
+stream methods can be broadly classified into three
+categories.
+Two-stage methods, exemplified by Faster R-
+CNN [ 18], follow a region-based paradigm known for
+high accuracy. This framework typically involves a
+Region Proposal Network (RPN) generating candidate
+regions, followed by feature extraction for subsequent
+classification and regression.
+The advantages of two-stage detectors lie in their
+precise localization and robustness. By decoupling re-
+gion proposal from classification and utilizing RoI pool-
+ing, they focus computation on promising regions to
+extract rich features, ensuring high accuracy even for
+small or occluded objects [ 19].
+However, these benefits come at the expense of eﬀi-
+ciency. The separate proposal generation and complex
+inference pipeline result in high latency and resource
+consumption, making them less suitable for deploy-
+ment on resource-constrained platforms like embedded
+UA V systems.
+However, these benefits come at the expense of com-
+putation eﬀiciency. The separate proposal generation
+and feature refinement result in high latency and re-
+source consumption, making two-stage frameworks less
+suitable for deployment on platforms with limited com-
+putational power, especially embedded UA V systems.
+Moreover, their inference pipelines are relatively com-
+plex and diﬀicult to optimize for real-time performance.
+One-stage methods typically perform intensive pre-
+dictions on feature maps at multiple scales, enabling
+effective detection of multi-scale objects. The YOLO
+series, for example, divides the input image into fixed
+grids for prediction and is widely adopted on edge
+devices due to its compact design and fast inference
+speed. Moreover, RetinaNet[ 20] addresses the issue of
+class imbalance by introducing Focal Loss, which en-
+hances the learning capability for hard samples such as
+small objects.
+One-stage detectors generally rely on predefined an-
+chor boxes and post-processing techniques such as Non-
+Maximum Suppression (NMS), which limit their flexi-
+bility and adaptability in dynamic aerial environments.
+These limitations become particularly evident when
+dealing with densely distributed small objects or oc-
+clusions, where the network often struggles to capture
+discriminative features, resulting in frequent false pos-
+itives and missed detections. Furthermore, the anchor-
+based matching mechanism tends to generalize poorly
+across varying object scales, imposing a bottleneck on
+model performance.
+DETR-based methods leverage the Transformer
+architecture to model long-range dependencies and
+global contextual relationships, enabling end-to-end
+object detection without predefined anchors or post-
+processing like Non-Maximum Suppression. Detection
+Transformer(DETR) [21] was the first to formulate ob-
+ject detection as a direct set prediction problem, signif-
+icantly simplifying the pipeline and distinct from tra-
+ditional anchor-based approaches.
+Despite its concise concept, DETR suffers from slow
+convergence and poor performance on small objects,
+largely due to its reliance on bipartite matching and
+insuﬀicient exploitation of multi-scale features. To ad-
+dress this, Deformable DETR [ 22] introduces a de-
+formable attention mechanism that restricts attention
+computation to relevant spatial positions, greatly im-
+proving training eﬀiciency and detection accuracy, es-
+pecially for small and densely objects. Following this,
+DAB-DETR [ 23] and DINO [ 24] further refine query
+initialization and training dynamics, respectively, thus
+improving convergence speed and robustness.
+Stemming from these foundational approaches,
+the Baidu team proposes Real-Time Detection
+Transformer(RT-DETR), a real-time end-to-end detec-
+tion model that eliminates the inference latency caused
+by Non-Maximum Suppression. While maintaining
+high detection accuracy, RT-DETR achieves eﬀicient
+real-time performance, demonstrating significant po-
+tential in practical applications—particularly in UA V-
+based object detection tasks, where rapid response is
+crucial. However, in aerial vision, small objects typi-
+cally occupy very few pixels, and their discriminability
+heavily relies on contextual information. Relying solely
+on local features makes it challenging to fully model
+the semantic relationships between objects.Although
+recent works have explored dynamic feature modula-
+tion strategies[ 25] to enhance representation capabil-
+ity in general visual tasks, these mechanisms have not
+been fully adapted to the specific challenges of extreme
+scale variation in aerial imagery.Therefore, effectively
+enhancing shallow semantic perception and modeling
+complex inter-object relationships while maintaining
+a lightweight structure remains a critical challenge in
+current UA V-OD research.
+Regarding these issues, we construct a Lightweight
+Receptive Enhancement Network for small objects that
+simultaneously expands the receptive field and pre-
+serves critical feature details, a Scale-Robust Feature
+Interaction module that dynamically retains multi-
+scale features, and an adaptive loss function that
+focuses on hard-to-match samples.The experimental
+results demonstrate the superiority of our method
+through the synergistic effect of these three aspects.
+
+===PDF PAGE 4===
+Self-Attention
+SANB
+FFN
+SANB
+(d) Scale-Robust Featur e
+ Interaction Module
+C2ERF
+Conv
+C2ERF
+Conv
+C2ERF
+Conv
+S3
+（ a ） LRENetwork
+80 × 80 × 256 40 × 40 ×384 20 × 20 ×384
+S4
+Conv
+Conv
+S5
+S4
+S5
+S3
+SRFIM
+IoU-aware Query
+Selection
+Decoder & Head
+Layer Norm
+Down Projection
+DW DW DW
+A
+UP  Projection
+Conv
+GELU
+ECM
+CBS,S=1,K=1 Split ERFB
+ERFB
+CBS,S=1,K=1c
+ERFB
+DWConv Norm Dilated 
+RepConv CBAM
+（ c ） Efficient Receptive Fied Block(ERFB)
+（ b ） Concatenate-to-Efficient Receptive Field
+(e) Selective Adaptive Normalization Block
+CCFM
+Input Output
+Figure 2. Overview of LME-DETR: (a) Lightweight Receptive Enhancement Network (LRENetwork), which includes the
+Concatenate-to-Eﬀicient Receptive Field (C2ERF) and Eﬀicient Receptive Field Block (ERFB), detailed in Section 3.1. (d)
+Scale-Robust Feature Interaction Module (SRFIM), and (e) Selective Adaptive Normalization Block (SANB), both detailed
+in Section 3.2. CCFM represents the Cross-Scale Feature Fusion Module.
+3. Method
+3.1. Lightweight Receptive Enhancement Network
+For object detection, particularly for applications
+like Unmanned Aerial Vehicle (UA V) vision, standard
+backbones such as ResNet[ 26], exhibit serious limita-
+tions. The traditional hierarchical structure, built on
+successive convolution and pooling layers, aggressively
+downsamples feature maps to build semantic depth.
+This process, however, leads to a significant loss of spa-
+tial resolution and fine-grained details, which is par-
+ticularly detrimental to detecting small objects that
+occupy only a few pixels. The network’s ability to per-
+ceive these targets will weaken at deeper layers, thereby
+affecting the detection accuracy.
+Additionally, small objects contain fewer intrin-
+sic features, which requires the model to highly rely
+on surrounding context during recognition[ 27]. How-
+ever, the receptive fields of Convolutional Neural
+Networks(CNNs)[28], expanded through stacked small
+kernels, are inherently dense and homogeneous. Al-
+though they are effective for locally clustered patterns,
+they cannot model the sparse, long-range dependen-
+cies critical for distinguishing a small object from its
+vast and often complex background[ 29]. However, sim-
+ply increasing the kernel size is a flawed solution. It
+not only incurs prohibitive computational costs but
+also fails to alter the basic characteristics of the re-
+ceptive fields, often blurring the very details it aims
+to contextualize[ 30]. In a network lacking the ability
+to build sparse, long-range connections, the pixels of a
+small object remain isolated and meaningless noise.
+To this end, a paradigm shift is needed from pas-
+sive information preservation to active contextual con-
+struction. The operation nature of standard convolu-
+tion treats all spatial regions with equal importance
+resulting in the faint signals of small objects to be sub-
+merged by irrelevant background. An effective back-
+bone must not only observe a wider region but also
+actively and selectively establish connections, focusing
+computational resources on the most remarkable in-
+formation. Therefore, an advanced architecture is re-
+quired to capture sparse long-range contextual depen-
+dencies while preserving high-resolution details within
+a lightweight framework suitable for real-time applica-
+tions, and adaptively prioritize the discriminative fea-
+tures.
+To overcome the challenges of information loss and
+inadequate contextual modeling in traditional CNNs
+for small object detection, We propose the Lightweight
+Receptive Enhancement Network named LRENetwork
+shown in Fig. 2(a) to achieve the paradigm shift from
+passive information aggregation to active contextual
+construction. LRENetwork fundamentally reshapes
+the feature extraction by alternately stacking stan-
+dard downsampling convolutional layers with our pro-
+
+===PDF PAGE 5===
+BN dilation 1
+input
+input
+dilation 1 dilation 1 dilation 2 dilation 3
+Re-parameterize
+dilation 1
+BN BN BN BN
++
+Figure 3. The Dilated RepConv is unfolded using an example with K=7. It employs multiple dilated convolutional branches
+to approximate a non-dilated large-kernel convolution, and additional dilated layers can be incorporated to support a larger
+effective kernel size K.
+posed Context-aware Eﬀicient Receptive Field Mod-
+ule (C2ERF). The convolutional layers are responsible
+for eﬀicient spatial downsampling, and C2ERF actively
+perform feature refinement and contextual enhance-
+ment at each scale. This hierarchical processing gen-
+erates a powerful feature pyramid, and we ultimately
+select the outputs from its three key stages (S3,S4,S5)
+to serve as multi-scale inputs for the subsequent hybrid
+encoder, providing a robust foundation for rich object
+perception and structural semantic modeling.
+The heart of our LRENetwork is the designed
+C2ERF module (Fig. 2(b)), whose internal structure
+is critical to achieving the dual goals of active con-
+struction and detail preservation. C2ERF employs an
+eﬀicient dual-path parallel architecture. After an ini-
+tial convolution, input features are bifurcated into two
+paths. A residual path acts as a shortcut to directly
+preserve the original features, ensuring that the fine-
+grained spatial details crucial for small objects are not
+diluted during deep propagation. Concurrently, a pri-
+mary path feeds the features into a series of cascaded
+Eﬀicient Receptive Field Blocks named ERFB shown in
+Fig.2(c), which is the key of our active contextual con-
+struction strategy. The outputs from these two paths
+are then fused through a residual connection and inte-
+grated by a final convolutional layer. This design en-
+ables C2ERF to significantly enhance feature represen-
+tation while maintaining minimal computational over-
+head, achieving a balance between performance and
+eﬀiciency.
+Eﬀicient Receptive Field Block is designed to di-
+rectly address the fundamental limitation of conven-
+tional convolutions—their uniform and non-selective
+receptive fields. It consists of three key com-
+ponents: a 3x3 depthwise convolution (DWConv)
+for eﬀicient local spatial modeling; a Dilated
+RepConv(DRC)[31]for building sparse, long-range con-
+textual connections; and a Convolutional Block Atten-
+tion Module(CABM)[ 32] for adaptively selecting and
+enhancing salient information.
+Small objects occupy only a limited number of pixels
+in an image. Motion blur, occlusions, or limited resolu-
+tion may result in incomplete appearance and weak dis-
+criminative features. As a result, their accurate recog-
+nition in UA V often relies heavily on rich contextual
+information. The semantic cues required for correct
+classification or localization are not necessarily concen-
+trated around the object itself, but are instead sparsely
+distributed across a broader spatial region. Therefore,
+it is essential to design a model capable of capturing
+such sparse long-range dependencies while maintaining
+computational eﬀiciency.
+Inspired by the convolutional enhancement strat-
+egy proposed by Xiaohan Ding et al. [ 33], which advo-
+cates combining parallel small-kernel convolutions with
+large-kernel convolutions to enhance fine-grained pat-
+tern modeling, we put in the Dilated RepConv(DRC).
+DRC adopts a training-inference decoupling mecha-
+nism and employs multiple small-kernel branches with
+varying dilation rates during training to capture multi-
+scale and sparse receptive field patterns.(see Fig. 3 e.g.,
+k = {5, 3, 3, 3} and r = {1, 1, 2, 3})
+Specifically, the branch with r = 1 focuses on local
+fine-grained structure modeling, while those with r > 1
+contribute to capturing sparse and spatially distant se-
+mantic responses, which are critical for small object
+detection. Each branch independently performs convo-
+lution and normalization, and their outputs are aggre-
+
+===PDF PAGE 6===
+gated in a weighted fashion to form a unified, context-
+enhanced feature representation. This promotes im-
+proved semantic awareness and multi-scale sensitivity.
+After training, all dilated branches are structurally
+reparameterized[34] into a single dense convolutional
+layer for eﬀicient inference. Each dilated kernel is first
+transformed into an equivalent non-dilated sparse ker-
+nel with effective size (k − 1)r + 1 , followed by batch
+normalization fusion. The resulting kernels are zero-
+padded to match target dimensions and summed to
+obtain a unified large-kernel convolution.
+However, although DRC effectively models sparse
+contextual patterns, it still applies a uniform convolu-
+tional operation across all spatial regions and channels.
+This lacks explicit modeling of region-specific impor-
+tance, potentially causing the crucial semantic cues of
+small targets to be overwhelmed by irrelevant back-
+ground activations. To address this limitation, we in-
+troduce the lightweight CBAM attention mechanism
+immediately after the DRC. By sequentially applying
+channel and spatial attention, CBAM adaptively recal-
+ibrates the feature map. It highlights informative chan-
+nels strongly correlated with target semantics and em-
+phasizes spatial regions likely to contain discriminative
+object patterns. This dual-attention mechanism guides
+the model to focus its computational resources on the
+most critical information while suppressing redundant
+or distracting background noise, thereby realizing the
+active, eﬀicient, and selective feature enhancement.
+3.2. Scale-Robust Feature Interaction Module
+The Attention-based Intra-scale Feature Interaction
+(AIFI) module in RT-DETR encoder is to enhance the
+representation of high-level semantic features. By per-
+forming self-attention independently on the high-level
+S5 feature layer, AIFI effectively captures semantic cor-
+relations among objects. This approach avoids redun-
+dant processing of low-level features, thereby reducing
+computational overheads and improving detection eﬀi-
+ciency.
+However, AIFI is constructed upon a standard
+Transformer encoder architecture, which consists of
+multi-head self-attention and a feed-forward network,
+utilizing a conventional Add & Norm layer for fea-
+ture fusion and normalization. This static normal-
+ization strategy demonstrates significant limitations in
+multi-scale detection scenarios, a challenge particularly
+prevalent in Unmanned Aerial Vehicle (UA V) aerial im-
+agery. The indiscriminate processing of features by the
+traditional Add & Norm layer may suppress the weak
+semantic representations of small targets, resulting in
+information being overshadowed by large, dominant
+objects and ultimately degrading small object detec-
+tion performance.
+To address the issue, we construct the Scale-
+Robust Feature Interaction Module (SRFIM) shown
+in Fig. 2(d), a novel architecture designed to enhance
+multi-scale modeling capabilities and improve the iden-
+tification and preservation of small target features.
+The innovative Selective Adaptive Normalization Block
+(SANB) shown in Fig. 2(e) and incorporated within
+SRFIM, integrates three key mechanisms: (1) a weak
+feature protection mechanism that employs dynamic
+normalization parameter estimation to prevent domi-
+nant features from overwhelming small-target seman-
+tics. (2) a multi-scale structural modeling strategy that
+establishes diverse feature pathways to improve adapt-
+ability to objects of varying sizes and (3) a channel-
+wise selection mechanism that enhances the semantic
+expressiveness of the fused multi-scale features.
+Grounded in the principle of structural decoupling,
+SANB separates the normalization from the residual in-
+formation fusion pathway and employs learnable scal-
+ing factors to dynamically weight these two compo-
+nents, thereby improving the preservation of subtle
+semantic information. Given the input feature x0 ∈
+RH×W ×Cin , it is first dynamically adjusted by a Layer
+Normalization (LN) followed by two learnable scaling
+weights S1 and S2:
+xnorm = LayerNorm(x0) · S1 + x0 · S2, (1)
+where, S1 ∈ RCin×1×1 is a learnable scaling parame-
+ter initialized to 1 × 10−6, while S2 ∈ RCin×1×1 is a
+learnable weight initialized to 1. This mechanism ef-
+fectively balances normalization with the retention of
+original semantics, aiding in the preservation of weak
+but crucial features during the fusion.
+To enhance the network’s adaptability to varying
+object sizes, the normalized feature xnorm is first com-
+pressed along the channel dimension to a fixed size
+of Cdim = 64 via a linear projection, denoted as
+xdown = DP (xnorm). This compressed representation
+is then simultaneously passed through three parallel
+depthwise separable convolutional branches, each with
+distinct kernel sizes:
+f (i)
+dw = DW ConvKi (xdown), i = 1, 2, 3, (2)
+where Ki ∈ {3, 5, 7} represents the receptive field scale
+of each branch. These multi-kernel branches allow the
+model to capture diverse contextual patterns across
+varying spatial ranges.
+The outputs from the three branches are subse-
+quently averaged and aligned in channel space through
+a point-wise convolution, followed by a residual skip
+connection to preserve the original low-level features.
+
+===PDF PAGE 7===
+The result is further activated by a GeLU function and
+upsampled via a learned projection layer:
+x = x0 + U l · σ(fpw(fdw(Dl(xnorm)))), (3)
+where Dl and U l denote the down- and up-projection
+layers in the lth SANB, and σ is the GeLU non-
+linearity. This hierarchical design ensures rich multi-
+scale feature modeling while maintaining computa-
+tional eﬀiciency.
+To further enhance the semantic expressiveness of
+the fused multi-scale features, we append a lightweight
+channel attention mechanism after the up-projection
+operation. Specifically, we adopt the Eﬀicient Chan-
+nel Attention module (ECA)[ 35], a parameter-eﬀicient
+yet effective attention design that adaptively empha-
+sizes informative channels while suppressing less rele-
+vant ones.
+Unlike conventional channel attention mechanisms
+such as Squeeze-and-Excitation (SE) [ 36] that rely on
+full channel compression followed by multi-layer per-
+ceptrons (MLPs), ECA avoids dimensionality reduc-
+tion and instead captures local cross-channel interac-
+tions through a 1D convolution with a carefully se-
+lected kernel size. This design eliminates the need for
+explicit channel squeezing, allowing ECA to better pre-
+serve channel-wise information continuity and avoid in-
+formation bottlenecks.
+Formally, given an input feature map F ∈ RC×H×W ,
+the ECA module first generates channel weights by ap-
+plying Global A verage Pooling (GAP), followed by a
+1D convolution (Conv1D k) and a sigmoid activation
+(σ). These weights are then applied back to the in-
+put feature map via channel-wise multiplication. This
+entire sequence can be compactly expressed as:
+F ′ = σ(Conv1Dk(GAP(F ))) ⊙ F, (4)
+where ⊙ denotes the channel-wise product, which
+broadcasts the generated channel weight vector across
+the spatial dimensions of F .
+We apply ECA after the up-projection operation
+rather than before, ensuring that the attention oper-
+ates in a semantically richer feature space with restored
+dimensionality. This ordering is critical, as it allows
+the attention mechanism to exploit more discriminative
+cues for highlighting target objects, especially when
+the feature stems from the multi-scale receptive field
+encoding established by our C2ERF module. ECA in-
+troduces negligible computational overhead and avoids
+dimensional mismatch when used in residual branches,
+making it highly suitable for our lightweight design.
+3.3. Exponential Moving Average Slide Varifocal Loss
+The training process for dense small object detection
+is hindered by two primary issues related to the quality
+of positive samples, which is typically measured by the
+Intersection-over-Union (IoU). The IoU quantifies the
+overlap between a predicted bounding box Bp and a
+ground-truth box Bgt, and is defined as:
+IoU(Bp, Bgt) = area(Bp ∩ Bgt)
+area(Bp ∪ Bgt) . (5)
+First, although positive samples are numerous, their
+IoU scores are highly imbalanced. Second, small ob-
+jects, due to their low matching quality (i.e., low
+IoU scores), are often misinterpreted as noisy samples,
+which degrades model performance. While Varifocal
+Loss (VFL) [ 37] addresses class imbalance by weighting
+samples based on their IoU, its static modulation struc-
+ture is a significant limitation. It applies a fixed weight-
+ing strategy regardless of the training stage, making it
+insuﬀiciently adaptive, especially in the early phases
+when IoU distributions are unstable and small objects
+are poorly matched.
+To overcome this rigidity, we propose the Exponen-
+tial Moving A verage Slide Varifocal Loss (EMA-SVFL),
+a novel loss function that introduces a dynamic, adap-
+tive training objective. The core principle is twofold:
+first, we establish a dynamic baseline of matching qual-
+ity by tracking a running average of positive sample
+IoUs. Second, we leverage this evolving baseline to im-
+plement a piecewise weighting strategy that intensifies
+supervision on hard-to-match samples (those with IoU
+below the baseline) and reduces focus on already well-
+matched samples.
+Specifically, at each training step t, we first estimate
+the global IoU center, denoted as µt. This is achieved
+by updating the previous center µt−1 (initialized as
+µ0 = 0 .5) with the average IoU of positive samples
+in the current batch, qt. The update rule is formulated
+as:
+µt = dt · µt−1 + (1 − dt) · qt, (6)
+where the dynamic momentum term dt = λ(1 − e−t/τ )
+controls the update rate. In early training ( t → 0),
+dt is small, making µt highly responsive to the current
+batch’s statistics. As training progresses ( t → ∞ ), dt
+approaches λ, ensuring a stable and smooth estimation.
+Based on this dynamic center µt, we introduce a
+three-phase modulation function, ω(q, µt), to adap-
+tively re-weight each foreground sample according to
+its relative matching quality:
+ω(q, µt) =
+
+
+
+1 + dt, if q ≤ µt − δ
+1, if µt − δ < q < µ t + δ
+1 − dt, if q ≥ µt + δ
+(7)
+
+===PDF PAGE 8===
+Here, δ is a hyperparameter defining the boundary of
+the ”medium-quality” region (we set δ = 0 .1). This
+function dynamically partitions positive samples into
+‘hard‘, ‘medium‘, and ‘easy‘ categories relative to the
+current training state, thus focusing the model’s learn-
+ing capacity where it is most needed.
+We integrate this adaptive weighting mechanism
+into the original VFL formulation. The complete
+EMA-SVFL is defined as the sum of the foreground
+loss Lpos and the background loss Lneg:
+LEMA-SVFL = 1
+Npos
+∑
+i∈P
+Lpos(pi, qi)+ 1
+Nneg
+∑
+j∈N
+Lneg(pj),
+(8)
+where P and N are the sets of positive and negative
+samples, with sizes Npos and Nneg, respectively. The
+individual loss terms are defined as:
+Lpos(p, q) = −ω(q, µt) · qγ log(p), (9)
+Lneg(p) = −αpγ log(1 − p). (10)
+In these equations, p is the predicted classification
+confidence, q is the IoU between the predicted and
+ground-truth boxes, and α and γ are the standard VFL
+hyperparameters. This design offers several key advan-
+tages: it adaptively enhances supervision for low-IoU
+samples without requiring manually-tuned IoU thresh-
+olds for loss modulation; it introduces no learnable pa-
+rameters, making it a lightweight and universally plug-
+gable module; and it demonstrates greater stability
+during the volatile early stages of training, facilitating
+faster convergence and superior final performance.
+4. Experiments
+4.1. Datasets and Experimental Conﬁguration
+To verify the effectiveness of our proposed LME-
+DETR, we conduct experiments on two representa-
+tive UA V vision datasets: VisDrone2019 [ 16] and
+UA VVaste[17]. VisDrone2019 contains 6,471 training
+images, 548 validation images, and 3,190 test images.
+All images were captured by UA Vs at various geo-
+graphic locations and flying altitudes. Each image is
+annotated with bounding boxes covering ten predefined
+object categories, including pedestrian, person, car,
+van, bus, truck, motorbike, bicycle, awning-tricycle,
+and tricycle. UA VVaste is a dataset specifically de-
+signed for aerial litter detection. It consists of 772 im-
+ages and 3,716 manually annotated instances of waste
+objects distributed across both urban and natural en-
+vironments, such as streets, parks, and grasslands.
+All models are trained on an NVIDIA RTX 5060 Ti
+GPU. For a total of 300 epochs with a batch size of 4
+respectively. An early stopping mechanism is adopted
+to prevent overfitting, with the patience value set to 20.
+We use AdamW [ 38] as the optimizer , with a learning
+rate of 1 × 10−4 and a momentum of 0.9.
+The A verage Precision (AP) is used for evaluating
+the model’s detection performance on a single category,
+defined as the area under the Precision-Recall curve,
+reflecting the model’s average performance across dif-
+ferent confidence thresholds. The calculation formula
+is as follows:
+AP =
+∫ 1
+0
+P (R)dR, (11)
+where P denotes Precision and R denotes Recall. In
+this study, we adopt AP 50 as the primary evaluation
+metric, which represents the A verage Precision calcu-
+lated at an IoU(Formula ( 5)) threshold of 0.5, used to
+assess the model’s fundamental object detection capa-
+bility.
+To further analyze the detection performance of ob-
+jects of different scales, we record AP S, AP M , and
+APL, which correspond to small, medium and large ob-
+jects, respectively. These metrics are defined based on
+the object area within the image: small objects refer to
+those with areas smaller than 32 2 pixels, medium ob-
+jects between 32 2 and 96 2, and large objects greater
+than 96 2. In UA V-based detection scenarios, small
+objects are especially prevalent and often suffer from
+appearance degradation due to resolution constraints,
+motion blur, and occlusion, making AP S a critical
+metric for performance assessment. Altogether, these
+metrics provide a multi-dimensional evaluation of both
+localization accuracy and detection robustness across
+various object sizes and scene complexities
+4.2. Experimental results and analysis
+4.2.1 Results on Visdrone Dataset
+We first conduct a comprehensive evaluation on the
+challenging VisDrone2019 benchmark, which is charac-
+terized by densely distributed, small-scale, and highly
+cluttered aerial targets. The results in Table 1 demon-
+strate that LME-DETR achieves an outstanding bal-
+ance between detection accuracy, computational eﬀi-
+ciency, and scale robustness.
+Compared with the direct baseline RT-DETR-R18,
+our method delivers a substantial performance im-
+provement. The overall AP increases by 11.6 per-
+cent, and AP 50 rises by 9.0 percent, reflecting a
+clear enhancement in both general precision and high-
+confidence detection capability. At the same time,
+LME-DETR reduces the parameter count by about
+thirty percent, the computational cost by nineteen per-
+cent, and achieves a twenty percent faster inference
+speed. This establishes our model as a more compact
+
+===PDF PAGE 9===
+Table 1. Comparison of representative object detectors with comparable parameter scales on VisDrone2019. * denotes the
+best performance and the underscore ’_’ denotes the second-best performance.
+Model Publication Input Shape GFlops Params FPS AP AP 50
+Two-stage Methods
+Faster-RCNN[18] TPAMI 2017 (768, 1344) 208G 41.39M 24 19.4 32.9
+Cascade-RCNN[39] CVPR 2018 (768, 1344) 236G 69.29M 18 19.7 32.6
+One-stage Methods
+YOLOv8s[40] ADICS 2024 (640, 640) 28G 11.13M 131 27.3 40.7
+YOLOv8m[40] ADICS 2024 (640, 640) 78G 25.85M 83 27.1 43.2
+YOLOv10s[41] NeurIPS 2024 (640, 640) 21G 7.22M 135 17.9 42.3
+YOLOv10m[41] NeurIPS 2024 (640, 640) 58G 15.32M 77 29.5 44.5
+YOLOv12s[42] arXiv 2025 (640, 640) 21G 9.23M 132 27.6 41.2
+YOLOv12m[42] arXiv 2025 (640, 640) 67G 20.11M 67.5 29.2 43.6
+FBRT-YOLO[43] AAAI 2025 (640, 640) 119G 14.60M 70 29.7 47.7
+End-to-End Methods
+DETR[21] ECCV 2020 (640, 640) 60G 187M 38 24.1 40.1
+Deformable DETR[ 22] ICLR 2020 (640, 640) 173G 40M 62 27.1 42.2
+RT-DETR-R18[15] CVPR 2024 (640, 640) 57G 20M 183 28.5 44.6
+D-Fine-M[44] ICLR 2025 (640, 640) 57G 19.9M 165 33.9* 41.6
+LME-DETR (Ours) - (640, 640) 46G 14M 220* 31.8 48.6*
+Table 2. COCO Size-based AP Metrics ( APS, APM , APL) on the VisDrone and UA VVaste Datasets. * denotes the best
+performance and the underscore ’_’ denotes the second-best performance.
+VisDrone UA VVaste
+Model APS APM APL APS APM APL
+Two-stage Methods
+Faster-RCNN 9.5 30.6 42.9 32.1 58.3 69.7
+Cascade-RCNN 9.9 30.7 40.6 29.8 55.2 67.4
+One-stage Methods
+YOLOv8s 8.8 28.1 40.2 33.5 60.1 70.5
+YOLOv8m 9.0 29.4 41.7 34.2 61.5 72.3
+YOLOv10s 9.2 28.9 40.1 34.1 60.8 70.2
+YOLOv10m 9.7 30.0 41.4 34.8 62.1 71.8
+YOLOv12s 9.1 28.5 37.5 34.7 61.9 69.0
+YOLOv12m 9.4 29.8 38.6 35.4 63.2 70.1
+FBRT-YOLO 9.4 30.9* 42.1 35.1 64.7 73.2
+End-to-End Methods
+DETR 11.1 23.5 40.6 31.8 57.9 68.4
+Deformable DETR 12.4 25.7 42.4 34.5 60.3 71.6
+RT-DETR-R18 11.3 27.5 42.3 35.8 64.8 75.7
+D-Fine-M 12.8 29.5 43.1 36.5 66.2 77.0
+LME-DETR (Ours) 13.2* 30.7 43.7* 37.4* 67.8* 78.9*
+yet stronger alternative within the real-time DETR
+family.
+Beyond the baseline comparison, LME-DETR
+also exhibits superiority against other state-of-the-art
+methods. In contrast to the recently proposed D-Fine-
+M, which attains a comparable average precision, our
+method achieves a much higher AP 50, surpassing it by
+16.8 percent, which indicates stronger detection relia-
+bility and more stable object localization under iden-
+tical resource constraints. When compared with the
+representative YOLOv12m, our model achieves an 8.9
+percent increase in AP, while maintaining a model
+size smaller by nearly one third. This demonstrates
+that the proposed design not only enhances accuracy
+
+===PDF PAGE 10===
+but also provides a favorable accuracy-to-cost trade-
+off, outperforming both transformer-based and convo-
+lutional architectures.
+To further analyze the source of these improve-
+ments, we investigate the performance across differ-
+ent object scales, as summarized in Table 2. The
+VisDrone2019 dataset contains a large proportion of
+small targets, which represents a major bottleneck for
+most detectors. Our method demonstrates clear domi-
+nance in this regime. LME-DETR achieves the highest
+APS of 13.2, significantly outperforming RT-DETR-
+R18 by 16.8 percent, the specialized small-object de-
+tector FBRT-YOLO by 40.4 percent, and even D-
+Fine-M by 3.1 percent. These improvements highlight
+the strong capability of LME-DETR to preserve fine-
+grained visual cues and enhance small-object percep-
+tion under complex aerial conditions.
+In addition to the small-object improvements, LME-
+DETR maintains competitive results on medium and
+large targets, achieving the highest AP L of 43.7 among
+all compared methods. This consistent advantage
+across scales confirms that the proposed Lightweight
+Receptive Enhancement design effectively expands the
+receptive field without introducing excessive computa-
+tional overhead. Consequently, LME-DETR not only
+excels at recognizing small, densely packed targets but
+also maintains stable performance on large-scale in-
+stances, revealing its robustness and scalability in real-
+world UA V perception scenarios.
+4.2.2 Results on UA VVaste Dataset
+To further validate the generalization and robustness of
+our method, we conduct experiments on the UA VVaste
+dataset, which features large scene diversity, complex
+illumination conditions, and frequent occlusions. The
+results summarized in Table 3 demonstrate that LME-
+DETR maintains its superior balance between accuracy
+and eﬀiciency when transferred to a new UA V scenario
+without additional fine-tuning.
+Among all compared approaches, LME-DETR
+achieves the highest overall AP of 37.6 and the top
+AP50 of 80.5, indicating remarkable detection reliabil-
+ity and stable localization quality. In contrast, the
+transformer-based models such as D-Fine-M and RT-
+DETR-R18 rely on deeper backbones and heavier at-
+tention computation, while the one-stage YOLOv12m
+still struggles with small and mid-scale target recall.
+Our model bridges these gaps by combining the inter-
+pretability of end-to-end Transformers with the com-
+pactness of CNN-based architectures, leading to a more
+robust and deployable UA V detector.
+The multi-scale breakdown reported in Table 2 fur-
+ther confirms the effectiveness of our design. LME-
+DETR consistently achieves the highest scores for
+small, medium, and large objects, demonstrating bal-
+anced representation capability across different spa-
+tial resolutions. Notably, its advantage on small and
+medium targets indicates that the Lightweight Multi-
+scale Enhancement mechanism successfully strength-
+ens feature aggregation and spatial awareness under
+real-world aerial conditions.
+Beyond the numerical gains, the consistent per-
+formance trends observed across VisDrone2019 and
+UA VVaste reflect the cross-dataset stability of our ar-
+chitecture. The model not only adapts to varying
+flight altitudes and viewpoints but also preserves ro-
+bust performance in scenes with heavy clutter or il-
+lumination imbalance. This cross-domain consistency
+confirms that LME-DETR generalizes effectively to un-
+seen UA V environments, providing a solid foundation
+for real-time aerial perception applications.
+4.3. Ablation Study
+To understand the individual and combined contri-
+butions of each proposed component, we perform an in-
+cremental ablation study on the VisDrone2019 dataset,
+as presented in Table 4. Starting from the RT-DETR
+baseline, we sequentially integrate the LRENetwork,
+SRFIM, and EMA-SVFL modules to examine how each
+design improves detection performance across different
+object scales.
+The first modification replaces the baseline back-
+bone with our LRENetwork, resulting in a clear per-
+formance gain, particularly for small and large targets.
+The value of AP S increases from 11.3 to 12.1, while
+APL improves from 41.3 to 42.7. This improvement
+stems from the LRENetwork’s ability to expand the
+model’s effective receptive field through reparameteri-
+zable dilated convolutions. The resulting enhancement
+demonstrates that a well-calibrated receptive field is
+fundamental to balancing fine-grained detail extraction
+and global scene understanding in aerial imagery.
+Integrating the SRFIM module further amplifies
+the network’s discriminative power, pushing the small-
+object accuracy to an AP S of 12.8. This gain high-
+lights the importance of cross-scale semantic reinforce-
+ment, where SRFIM bridges the gap between deep se-
+mantic abstractions and shallow spatial features. By
+promoting bidirectional information flow across feature
+hierarchies, SRFIM helps the model maintain spatial
+precision while gaining contextual awareness, which is
+crucial for detecting densely packed and visually am-
+biguous UA V targets.
+Finally, the inclusion of the EMA-SVFL loss func-
+tion drives the model to its best performance, achieving
+
+===PDF PAGE 11===
+Table 3. Comparison of representative object detectors with comparable parameter scales on UA VVaste. * denotes the best
+performance and the underscore ’_’ denotes the second-best performance.
+Model Publication Input Shape GFlops Params FPS AP AP 50
+Two-stage Methods
+Faster-RCNN TPAMI 2017 (768, 1344) 208G 41.39M 24 30.3 67.0
+Cascade-RCNN CVPR 2018 (768, 1344) 236G 69.29M 18 27.8 65.0
+One-stage Methods
+YOLOv8s ADICS 2024 (640, 640) 28G 11.13M 131 34.5 69.8
+YOLOv8m ADICS 2024 (640, 640) 78G 25.85M 83 35.7 71.7
+YOLOv10s NeurIPS 2024 (640, 640) 21G 7.22M 135 34.9 68.5
+YOLOv10m NeurIPS 2024 (640, 640) 58G 15.32M 77 35.8 70.6
+YOLOv12s arXiv 2025 (640, 640) 21G 9.23M 132 36.1 71.2
+YOLOv12m arXiv 2025 (640, 640) 67G 20.11M 67.5 37.4 73.4
+FBRT-YOLO AAAI 2025 (640, 640) 119G 14.60M 70 36.9 78.6
+End-to-End Methods
+DETR ECCV 2020 (640, 640) 60G 187M 38 34.8 71.6
+Deformable DETR ICLR 2020 (640, 640) 173G 40M 62 37.1 74.7
+RT-DETR-R18 CVPR 2024 (640, 640) 57G 20M 183 36.3 72.6
+D-Fine-M ICLR 2025 (640, 640) 57G 19.9M 165 37.5 74.2
+LME-DETR (Ours) - (640, 640) 46G 14M 220* 37.6* 80.5*
+Table 4. Ablation study of each component in LME-DETR on the VisDrone dataset. The experiment starts with the RT-
+DETR baseline and progressively adds our proposed modules.
+Baseline LRENetwork SRFIM EMA-SVFL AP S APM APL
+✓ 11.3 30.5 41.3
+✓ ✓ 12.1 29.9 42.7
+✓ ✓ ✓ 12.8 30.6 43.2
+✓ ✓ ✓ ✓ 13.2 30.7 43.7
+the highest values across all scale metrics. This im-
+provement validates the role of adaptive supervision in
+enhancing robustness and generalization. By dynami-
+cally emphasizing hard or underrepresented samples—
+such as small, occluded, or low-contrast objects—and
+stabilizing gradient updates through an exponential
+moving average, EMA-SVFL effectively reallocates the
+learning focus toward the most informative examples.
+The result is a detector that not only achieves higher
+accuracy but also exhibits stronger consistency under
+challenging aerial conditions.
+4.4. Visualization Experiments
+Beyond quantitative gains, we further visualize how
+each design in LME-DETR improves perception be-
+havior across diverse UA V scenes. To this end, Fig. 4
+presents a unified qualitative comparison on both the
+VisDrone and UA VVaste datasets, providing a compre-
+hensive perspective on spatial attention and detection
+robustness.
+On the left side of Fig. 4, we analyze the activation
+heatmaps derived from VisDrone. These results expose
+a clear perceptual disparity between the baseline RT-
+DETR and our proposed LME-DETR. The baseline
+suffers from fragmented and diffuse attention, leaving
+large unresponsive regions over dense or overlapping
+targets, and occasionally activating irrelevant back-
+ground textures such as roads or vegetation. In con-
+trast, LME-DETR yields compact and high-intensity
+activation clusters accurately aligned with true targets,
+while maintaining strong suppression over background
+noise. This improvement originates from two key archi-
+tectural innovations. The Lightweight Receptive En-
+hancement Network (LRENet) expands the effective
+receptive field to capture richer contextual cues with-
+out extra computational cost, and the SRFIM mod-
+ule facilitates scale-aware feature validation by allowing
+global semantics to guide local structural refinement.
+Together, these mechanisms enable the model to per-
+ceive fine-grained details while maintaining coherent
+global understanding.
+
+===PDF PAGE 12===
+Figure 4. Comprehensive visualization on the VisDrone (left) and UA VVaste (right) datasets. The VisDrone heatmaps
+compare the spatial attention distributions of RT-DETR and our proposed LME-DETR. The UA VVaste results further
+highlight detection robustness in real-world UA V imagery: baseline models such as YOLOv8 and RT-DETR exhibit frequent
+missed detections (marked as “missed”) and false activations.
+5. Conclusion
+In this paper, we propose LME-DETR, an eﬀicient
+end-to-end object detector specifically engineered to
+address the critical challenges of UA V-based visual
+perception.The Lightweight Receptive field Enhance-
+ment Network (LRENetwork) is designed to provide
+robust contextual modeling while maintaining a com-
+pact footprint. The Scale-Robust Feature Interaction
+Module (SRFIM) is put in to foster effective cross-scale
+feature fusion, significantly enhancing the model’s ro-
+bustness to objects of varying sizes. Our proposed
+EMA-SlideVarifocalLoss (EMA-SVFL) intensifies su-
+pervision on diﬀicult-to-detect small objects by adap-
+tively shifting the optimization focus. Extensive ex-
+periments on UA V benchmarks confirm that our LME-
+DETR achieves a state-of-the-art balance between ac-
+curacy and eﬀiciency. These contributions establish
+LME-DETR not only as a novel framework but as a
+practical and powerful solution ready for deployment
+in real-world UA V applications.
+Acknowledgement
+This work was supported by the Shanghai Mu-
+nicipal Education Commission Artificial Intelligence
+Plan (Z2024-119), the Innovation Special Fund Project
+in Shanghai University of Electric Power (Grant No.
+X202511010), and the Industry–University Collab-
+orative Research Project “Large Language Model–
+Based Intelligent Operation and Maintenance Knowl-
+edge Platform for Power Grid Equipment” (No. H2025-
+220).
+References
+[1] B. Wang, W. Li, B. Zhang, and Y. Liu. Joint response
+and background learning for uav visual tracking. In
+2024 IEEE International Conference on Robotics and
+Automation (ICRA), pages 455–462, 2024. 1
+[2] S. Bell, C. L. Zitnick, K. Bala, and R. Girshick. Inside-
+outside net: Detecting objects in context with skip
+pooling and recurrent neural networks. In 2016 IEEE
+Conference on Computer Vision and Pattern Recogni-
+tion (CVPR), pages 2874–2883, 2016. 2
+[3] Z. Du, J. Yin, and J. Yang. Expanding receptive field
+yolo for small object detection. Journal of Physics:
+Conference Series, 1314(1):012202, oct 2019. 2
+[4] P. Wang, P. Chen, Y. Yuan, D. Liu, Z. Huang, X. Hou,
+and G. Cottrell. Understanding convolution for seman-
+tic segmentation. In 2018 IEEE Winter Conference
+on Applications of Computer Vision (W ACV), pages
+1451–1460, 2018. 2
+[5] L.-C. Chen, G. Papandreou, F. Schroff, and H. Adam.
+Rethinking atrous convolution for semantic image seg-
+mentation. ArXiv, abs/1706.05587, 2017. 2
+[6] L.-C. Chen, Y. Zhu, G. Papandreou, F. Schroff, and
+H. Adam. Encoder-decoder with atrous separable con-
+volution for semantic image segmentation. In V. Fer-
+rari, M. Hebert, C. Sminchisescu, and Y. Weiss, edi-
+tors, Computer Vision – ECCV 2018, pages 833–851,
+Cham, 2018. Springer International Publishing. 2
+
+===PDF PAGE 13===
+[7] C. Szegedy, W. Liu, Y. Jia, P. Sermanet, S. Reed,
+D. Anguelov, D. Erhan, V. Vanhoucke, and A. Rabi-
+novich. Going deeper with convolutions. In 2015 IEEE
+Conference on Computer Vision and Pattern Recogni-
+tion (CVPR), pages 1–9, 2015. 2
+[8] K. He, X. Zhang, S. Ren, and J. Sun. Spatial pyra-
+mid pooling in deep convolutional networks for visual
+recognition. IEEE Transactions on Pattern Analysis
+and Machine Intelligence, 37(9):1904–1916, 2015. 2
+[9] S. Xie, R. Girshick, P. Dollár, Z. Tu, and K. He. Ag-
+gregated residual transformations for deep neural net-
+works. In 2017 IEEE Conference on Computer Vision
+and Pattern Recognition (CVPR), pages 5987–5995,
+2017. 2
+[10] T.-Y. Lin, P. Dollár, R. Girshick, K. He, B. Hariharan,
+and S. Belongie. Feature pyramid networks for object
+detection. In 2017 IEEE Conference on Computer Vi-
+sion and Pattern Recognition (CVPR), pages 936–944,
+2017. 2
+[11] S. Liu, L. Qi, H. Qin, J. Shi, and J. Jia. Path ag-
+gregation network for instance segmentation. 2018
+IEEE/CVF Conference on Computer Vision and Pat-
+tern Recognition, pages 8759–8768, 2018. 2
+[12] M. Tan, R. Pang, and Q. V. Le. Eﬀicientdet: Scal-
+able and eﬀicient object detection. In 2020 IEEE/CVF
+Conference on Computer Vision and Pattern Recogni-
+tion (CVPR), pages 10778–10787, 2020. 2
+[13] G. Ghiasi, T.-Y. Lin, and Q. V. Le. Nas-fpn: Learning
+scalable feature pyramid architecture for object detec-
+tion. In 2019 IEEE/CVF Conference on Computer
+Vision and Pattern Recognition (CVPR), pages 7029–
+7038, 2019. 2
+[14] T. Wolf, L. Debut, V. Sanh, J. Chaumond, C. De-
+langue, A. Moi, P. Cistac, T. Rault, R. Louf, M. Fun-
+towicz, J. Davison, S. Shleifer, P. von Platen, C. Ma,
+Y. Jernite, J. Plu, C. Xu, T. L. Scao, S. Gugger,
+M. Drame, Q. Lhoest, and A. M. Rush. Transformers:
+State-of-the-art natural language processing. In Pro-
+ceedings of the 2020 Conference on Empirical Methods
+in Natural Language Processing: System Demonstra-
+tions, pages 38–45, Online, Oct. 2020. Association for
+Computational Linguistics. 2
+[15] Y. Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang,
+Y. Liu, and J. Chen. Detrs beat yolos on real-time
+object detection. In 2024 IEEE/CVF Conference on
+Computer Vision and Pattern Recognition (CVPR),
+pages 16965–16974, 2024. 2, 9
+[16] P. Zhu, L. Wen, D. Du, X. Bian, H. Fan, Q. Hu, and
+H. Ling. Detection and tracking meet drones challenge.
+IEEE Transactions on Pattern Analysis and Machine
+Intelligence, 44(11):7380–7399, 2021. 2, 8
+[17] M. Kraft, M. Piechocki, B. Ptak, and K. Walas. Au-
+tonomous, onboard vision-based trash and litter detec-
+tion in low altitude aerial images collected by an un-
+manned aerial vehicle. Remote Sensing, 13(5), 2021.
+2, 8
+[18] S. Ren, K. He, R. Girshick, and J. Sun. Faster r-cnn:
+Towards real-time object detection with region pro-
+posal networks. IEEE Transactions on Pattern Anal-
+ysis and Machine Intelligence, 39(6):1137–1149, 2017.
+3, 9
+[19] K. He, G. Gkioxari, P. Dollár, and R. Girshick. Mask
+r-cnn. In 2017 IEEE International Conference on Com-
+puter Vision (ICCV), pages 2980–2988, 2017. 3
+[20] T.-Y. Lin, P. Goyal, R. Girshick, K. He, and P. Dollár.
+Focal loss for dense object detection. In 2017 IEEE
+International Conference on Computer Vision (ICCV),
+pages 2999–3007, 2017. 3
+[21] N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kir-
+illov, and S. Zagoruyko. End-to-end object detection
+with transformers. In A. Vedaldi, H. Bischof, T. Brox,
+and J.-M. Frahm, editors, Computer Vision – ECCV
+2020, pages 213–229, Cham, 2020. Springer Interna-
+tional Publishing. 3, 9
+[22] X. Zhu, W. Su, L. Lu, B. Li, X. Wang, and J. Dai.
+Deformable detr: Deformable transformers for end-to-
+end object detection. arXiv preprint arXiv:2010.04159,
+2020. 3, 9
+[23] S. Liu, F. Li, H. Zhang, X. Yang, X. Qi, H. Su, J. Zhu,
+and L. Zhang. DAB-DETR: Dynamic anchor boxes are
+better queries for DETR. In International Conference
+on Learning Representations, 2022. 3
+[24] H. Zhang, F. Li, S. Liu, L. Zhang, H. Su, J. Zhu, L. M.
+Ni, and H.-Y. Shum. Dino: Detr with improved de-
+noising anchor boxes for end-to-end object detection.
+arXiv preprint arXiv:2203.03605, 2022. 3
+[25] D. Yin, L. Hu, B. Li, Y. Zhang, and X. Yang. 5%>
+100%: Breaking performance shackles of full fine-
+tuning on visual recognition tasks. In Proceedings of
+the Computer Vision and Pattern Recognition Confer-
+ence, pages 20071–20081, 2025. 3
+[26] K. He, X. Zhang, S. Ren, and J. Sun. Deep residual
+learning for image recognition. In 2016 IEEE Con-
+ference on Computer Vision and Pattern Recognition
+(CVPR), pages 770–778, 2016. 4
+[27] S. Bell, C. L. Zitnick, K. Bala, and R. Girshick. Inside-
+outside net: Detecting objects in context with skip
+pooling and recurrent neural networks. In 2016 IEEE
+Conference on Computer Vision and Pattern Recogni-
+tion (CVPR), pages 2874–2883, 2016. 4
+[28] D. J. Santry. Convolutional Neural Networks, pages
+111–131. 2024. 4
+[29] X. Wang, R. Girshick, A. Gupta, and K. He. Non-
+local neural networks. In 2018 IEEE/CVF Conference
+on Computer Vision and Pattern Recognition, pages
+7794–7803, 2018. 4
+[30] X. Ding, X. Zhang, J. Han, and G. Ding. Scaling up
+your kernels to 31×31: Revisiting large kernel design in
+cnns. In 2022 IEEE/CVF Conference on Computer Vi-
+sion and Pattern Recognition (CVPR), pages 11953–
+11965, 2022. 4
+[31] X. Ding, Y. Zhang, Y. Ge, S. Zhao, L. Song, X. Yue,
+and Y. Shan. Unireplknet: A universal perception
+large-kernel convnet for audio, video, point cloud,
+time-series and image recognition. In 2024 IEEE/CVF
+
+===PDF PAGE 14===
+Conference on Computer Vision and Pattern Recogni-
+tion (CVPR), pages 5513–5524, 2024. 5
+[32] S. Woo, J. Park, J.-Y. Lee, and I. S. Kweon. Cbam:
+Convolutional block attention module. In Computer
+Vision – ECCV 2018: 15th European Conference,
+Munich, Germany, September 8–14, 2018, Proceed-
+ings, Part VII, page 3–19, Berlin, Heidelberg, 2018.
+Springer-Verlag. 5
+[33] X. Ding, X. Zhang, J. Han, and G. Ding. Scaling up
+your kernels to 31×31: Revisiting large kernel design in
+cnns. In 2022 IEEE/CVF Conference on Computer Vi-
+sion and Pattern Recognition (CVPR), pages 11953–
+11965, 2022. 5
+[34] X. Ding, Y. Guo, G. Ding, and J. Han. Acnet:
+Strengthening the kernel skeletons for powerful cnn via
+asymmetric convolution blocks. In 2019 IEEE/CVF
+International Conference on Computer Vision (ICCV),
+pages 1911–1920, 2019. 6
+[35] Q. Wang, B. Wu, P. Zhu, P. Li, W. Zuo, and Q. Hu.
+Eca-net: Eﬀicient channel attention for deep convolu-
+tional neural networks. In The IEEE Conference on
+Computer Vision and Pattern Recognition (CVPR),
+2020. 7
+[36] J. Hu, L. Shen, and G. Sun. Squeeze-and-excitation
+networks. In 2018 IEEE/CVF Conference on Com-
+puter Vision and Pattern Recognition, pages 7132–
+7141, 2018. 7
+[37] H. Zhang, Y. Wang, F. Dayoub, and N. Sünderhauf.
+Varifocalnet: An iou-aware dense object detector. In
+2021 IEEE/CVF Conference on Computer Vision and
+Pattern Recognition (CVPR), pages 8510–8519, 2021.
+7
+[38] I. Loshchilov and F. Hutter. Decoupled Weight Decay
+Regularization. 11 2017. 8
+[39] Z. Cai and N. Vasconcelos. Cascade r-cnn: Delving
+into high quality object detection. In 2018 IEEE/CVF
+Conference on Computer Vision and Pattern Recogni-
+tion, pages 6154–6162, 2018. 9
+[40] R. Varghese and S. M. Yolov8: A novel object detec-
+tion algorithm with enhanced performance and robust-
+ness. In 2024 International Conference on Advances in
+Data Engineering and Intelligent Computing Systems
+(ADICS), pages 1–6, 2024. 9
+[41] A. Wang, H. Chen, L. Liu, K. Chen, Z. Lin, J. Han,
+and G. Ding. Yolov10: Real-time end-to-end object
+detection. ArXiv, abs/2405.14458, 2024. 9
+[42] Y. Tian, Q. Ye, and D. Doermann. Yolov12:
+Attention-centric real-time object detectors. arXiv
+preprint arXiv:2502.12524, 2025. 9
+[43] Y. Xiao, T. Xu, Y. Xin, and J. Li. Fbrt-yolo: Faster
+and better for real-time aerial image detection. Pro-
+ceedings of the AAAI Conference on Artificial Intelli-
+gence, 39(8):8673–8681, Apr. 2025. 9
+[44] Y. Peng, H. Li, P. Wu, Y. Zhang, X. Sun, and F. Wu.
+D-fine: Redefine regression task in detrs as fine-grained
+distribution refinement, 2024. 9

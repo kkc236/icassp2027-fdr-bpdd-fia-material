@@ -1,0 +1,6 @@
+\begin{figure*}[t]
+\centering
+\visualOverview{\textwidth}
+\caption{Detector architecture and module details. (a) $G$ localizes objects within each RT-DETR decoder layer; $F$ refines P3; $B$ uses the final query to refine the base predictions. The named shared input contains backbone P2, refined $P_3^{*}$, and hybrid-encoder P4. (b) GCDL combines distribution accumulation (G.1), center-preserving feasible geometry (G.2), and training-only LQS-weighted FGL (G.3). The detached incoming reference $r_0$ stays fixed for decoding and target encoding; $\operatorname{sg}(b_l)$ supplies the next layer's attention reference. (c) Shared refinement combines two residual blocks, parallel channel/spatial gates, and an identity-initialized blend. (d) The expert uses local tokens and distribution-augmented queries to predict class and edge residuals. Its box decoder reuses G.2 and $r_0$. The detached teacher uses the combined expert edge logits---base logits plus edge residual---to selectively supervise all six $G$ layers. Solid arrows show forward computation; dashed arrows show training-only paths. Standard detection losses and block-internal pre-normalization are omitted.}
+\label{fig:overview}\label{fig:lrs}\label{fig:expert}\label{fig:selection}
+\end{figure*}

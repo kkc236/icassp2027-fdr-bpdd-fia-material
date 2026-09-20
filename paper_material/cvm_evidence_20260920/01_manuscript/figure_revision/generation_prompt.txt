@@ -1,0 +1,18 @@
+Use case: precise-object-edit.
+Asset type: final scientific architecture figure for a two-column CVM paper.
+Input image: the supplied local PNG is the EDIT TARGET, not just a style reference.
+Preserve the entire existing four-panel composition, aspect ratio, restrained blue/teal/purple palette, serif scientific typography, modules, formulas, and all current dataflow paths. Do not redesign. Re-render text and strokes cleanly at high resolution (ideally 3072 by 2304 pixels) so this dense figure is readable at full paper width.
+
+Make ONLY these targeted corrections:
+1. Panel (a): The line currently labelled "Final query + base predictions" merges only Class head and G outputs. Add the missing DIRECT final-query route from the "Attention + FFN (queries)" unit to B: leave from the BOTTOM edge of Attention + FFN, route right horizontally in the unused strip BELOW the Class head/G boxes and ABOVE the shared-local-features box, then up outside the decoder to join the existing decoder-output line before B. This bypass must not pass through either prediction head. Label the new path "Final query". Change the existing heads-output line label to "Base predictions". Use a small filled junction dot at the real merger just before B, so final query and base predictions clearly feed B. Leave the teal shared local features to B path alone. Avoid line crossings with text.
+2. Panel (d): in the training-only strip replace the existing "sg(expert edge logits)" text with "sg(base edge logits + edge residual)" clearly in the same teacher-source box. Widen that box modestly if necessary inside the existing panel. It remains the detached TEACHER of the Masked KL loss. Preserve the separate "G edge logits" STUDENT arrow, and all other B computation. Do not connect the residual alone as the teacher.
+3. Panel (b), G.2: remove the overlap between the fixed-reference arrow and the G.2 title. Place the named input "Fixed decoding reference r_0 (all six layers)" on a clear short route into the TOP of "Reference + offsets", reserving a small unobstructed vertical lane. It must not touch/cross the title text. Slight local movement of G.2 title/input is allowed but preserve structure.
+4. Panel (b), G.3 formula: ensure both shrinkage coefficients are alpha with decoder-LAYER subscript l, NOT sample subscript i: s'_i = (1 - alpha_l) s_i + alpha_l s-bar. Keep all other math unchanged.
+
+Scientific invariants:
+- (b) G: h_l + sg(h_{l-1}) -> edge head -> delta z_l; z_l = z_{l-1} + delta z_l; then Softmax + Integral; fixed reference r0; center branch bypasses extent floor; sg(b_l) next-layer attention reference distinct from r0.
+- (c) F: P3 original skip into P3* = P3 + gamma (R - P3) stays intact.
+- (d) B: class/edge residuals each added to base logits; boxes decoded with SAME r0; separate training-only KL path.
+- Keep (a), (b), (c), (d) ordering, all actual mechanism labels, no added metrics or decorative mini-icons.
+- Full clean white outer background, no mockup, no photographic texture, no cropping.
+Deliver one finished corrected figure.

@@ -1,0 +1,60 @@
+{
+  "source": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/batch8_efficiency_20260916/v1/efficiency.json",
+  "sha256": "ce2dcfb4c31bdc87918a3d6f4334852c167dbaf0914a51c1b4e0217d755fe9dc",
+  "sample_batches_verified": 1500,
+  "sample_images": 12000,
+  "protocol": {
+    "imgsz": 640,
+    "batch": 8,
+    "dtype": "float32",
+    "warmup": 100,
+    "iterations": 300,
+    "conf": 0.001,
+    "max_det": 300,
+    "tta": false,
+    "extra_nms": false,
+    "seed": 20260915,
+    "cpu_threads": 8,
+    "tf32": false,
+    "cudnn_benchmark": false,
+    "fusion": "native predictor fusion on GPU",
+    "input": "eight fixed seeded uint8 BGR random images; first equals prior batch1 input",
+    "latency_scope": "Ultralytics predict: preprocess + model + postprocess; excludes disk I/O",
+    "timing": "CUDA synchronized wall-clock per complete eight-image prediction call",
+    "amortized_latency_is_not_single_request_latency": true,
+    "expert_hook": "same lightweight per-expert forward counter as prior batch1 benchmark"
+  },
+  "rows": [
+    {
+      "arm": "Baseline",
+      "batch_median_ms": 59.55884559080005,
+      "amortized_ms_per_image": 7.444855698850006,
+      "images_per_second_from_median": 134.32093790004126
+    },
+    {
+      "arm": "G",
+      "batch_median_ms": 66.19985005818307,
+      "amortized_ms_per_image": 8.274981257272884,
+      "images_per_second_from_median": 120.84619516462344
+    },
+    {
+      "arm": "G+F",
+      "batch_median_ms": 69.0439403988421,
+      "amortized_ms_per_image": 8.630492549855262,
+      "images_per_second_from_median": 115.86824207579792
+    },
+    {
+      "arm": "G+B",
+      "batch_median_ms": 104.89666601642966,
+      "amortized_ms_per_image": 13.112083252053708,
+      "images_per_second_from_median": 76.26553163040457
+    },
+    {
+      "arm": "Full",
+      "batch_median_ms": 107.9197870567441,
+      "amortized_ms_per_image": 13.489973382093012,
+      "images_per_second_from_median": 74.12913070143114
+    }
+  ],
+  "new_model_execution": false
+}

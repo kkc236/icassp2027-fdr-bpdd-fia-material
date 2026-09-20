@@ -1,0 +1,135 @@
+{
+  "bundle_sha256": "1dbbfb417ec084e488eea6740380e5b71324f4357c74e806b5808f796e10e157",
+  "files": [
+    {
+      "local_path": "files\\CURRENT.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/CURRENT.json",
+      "sha256": "80243ce9961dc35c376f864da1b0844bda2d41847c647a5da98525b4e5f0fa5f"
+    },
+    {
+      "local_path": "files\\RUN_COMPLETE.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/RUN_COMPLETE.json",
+      "sha256": "02e7c1bc7e4f82706bf873601df41b31fdad8761f34307c815a57ccac6e76135"
+    },
+    {
+      "local_path": "files\\RUN_STATUS.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/RUN_STATUS.json",
+      "sha256": "524a6afca01cf4c6da53d78127cfb6d6bc1f2224b4ffc38646649998eb1340b2"
+    },
+    {
+      "local_path": "files\\evaluate.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/evaluate.py",
+      "sha256": "72aa384e761915c2ad1834557343ba2f37f2e6841b6fdb555042b6f1e4430d46"
+    },
+    {
+      "local_path": "files\\runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/runner.log",
+      "sha256": "f9c25d3c98906ad1e093107f99b693635236bb1cddd2a99e5f8a662c45326a76"
+    },
+    {
+      "local_path": "files\\runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/runner.py",
+      "sha256": "9edbdf825930deabf3d843620001795afc2b97ee8094bde8d3f0428f2b5db29d"
+    },
+    {
+      "local_path": "files\\test\\imgsz640\\BEST_EPOCH_IDENTITY.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/test/imgsz640/BEST_EPOCH_IDENTITY.json",
+      "sha256": "1cbe276e77ae4b5da3d0510b7949f419fe99b93c00a9716359bbee73bb991685"
+    },
+    {
+      "local_path": "files\\test\\imgsz640\\save_model_runtime_source.txt",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/test/imgsz640/save_model_runtime_source.txt",
+      "sha256": "e54956af97d7db2625359e9de422d7474b7b39e09136f47d7ebdba4c047bc8cc"
+    },
+    {
+      "local_path": "files\\test\\imgsz640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/test/imgsz640/summary.json",
+      "sha256": "429f4ce68b89700abc80324b49db259b01bce80a546ffbdc8d658bcc005253b9"
+    },
+    {
+      "local_path": "files\\test\\imgsz800\\BEST_EPOCH_IDENTITY.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/test/imgsz800/BEST_EPOCH_IDENTITY.json",
+      "sha256": "1cbe276e77ae4b5da3d0510b7949f419fe99b93c00a9716359bbee73bb991685"
+    },
+    {
+      "local_path": "files\\test\\imgsz800\\save_model_runtime_source.txt",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/test/imgsz800/save_model_runtime_source.txt",
+      "sha256": "e54956af97d7db2625359e9de422d7474b7b39e09136f47d7ebdba4c047bc8cc"
+    },
+    {
+      "local_path": "files\\test\\imgsz800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/test/imgsz800/summary.json",
+      "sha256": "0bff884172476b9c18680ac2fb2c787a2d0ac43241ac0f9d13e8b0bee2bf5ef8"
+    },
+    {
+      "local_path": "files\\val\\imgsz640\\BEST_EPOCH_IDENTITY.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/val/imgsz640/BEST_EPOCH_IDENTITY.json",
+      "sha256": "1cbe276e77ae4b5da3d0510b7949f419fe99b93c00a9716359bbee73bb991685"
+    },
+    {
+      "local_path": "files\\val\\imgsz640\\save_model_runtime_source.txt",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/val/imgsz640/save_model_runtime_source.txt",
+      "sha256": "e54956af97d7db2625359e9de422d7474b7b39e09136f47d7ebdba4c047bc8cc"
+    },
+    {
+      "local_path": "files\\val\\imgsz640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/val/imgsz640/summary.json",
+      "sha256": "087625b0ae2ee47b97d46961234bd146b930c22a7c8de7192a072331a4a7b7a7"
+    },
+    {
+      "local_path": "files\\val\\imgsz800\\BEST_EPOCH_IDENTITY.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/val/imgsz800/BEST_EPOCH_IDENTITY.json",
+      "sha256": "1cbe276e77ae4b5da3d0510b7949f419fe99b93c00a9716359bbee73bb991685"
+    },
+    {
+      "local_path": "files\\val\\imgsz800\\save_model_runtime_source.txt",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/val/imgsz800/save_model_runtime_source.txt",
+      "sha256": "e54956af97d7db2625359e9de422d7474b7b39e09136f47d7ebdba4c047bc8cc"
+    },
+    {
+      "local_path": "files\\val\\imgsz800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_best_800_20260915/val/imgsz800/summary.json",
+      "sha256": "bc68eaf9ec73cf5d44451a2f3dbb687481dfad55f783951e27543dd4d83993bf"
+    },
+    {
+      "local_path": "comparisons\\G_LRS_GFDR\\val\\imgsz640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_frozen_640_control_20260915/G_LRS_GFDR/val/imgsz640/summary.json",
+      "sha256": "5269792dae14d63987356a3ac05320cecd09461546374681b762024b4d7b0161"
+    },
+    {
+      "local_path": "comparisons\\G_LRS_GFDR\\val\\imgsz800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_highres_val_probe_v2_20260915/G_LRS_GFDR/imgsz800/summary.json",
+      "sha256": "7c8ed4f7b1d01c4d88b7b2618ee2e5f756a7d10d636a07be2322ca7271f33b60"
+    },
+    {
+      "local_path": "comparisons\\G_LRS_GFDR\\test\\imgsz640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_frozen_640_control_20260915/G_LRS_GFDR/test/imgsz640/summary.json",
+      "sha256": "570ef7d824bf6a00b6eb24355f841e030013aea32e752d4be97e83c611623950"
+    },
+    {
+      "local_path": "comparisons\\G_LRS_GFDR\\test\\imgsz800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_highres_test_probe_20260915/G_LRS_GFDR/imgsz800/summary.json",
+      "sha256": "ac0ca70ed33d12e18f2434f3d7c3306e2a7047522b5caf5bef2863fbd1059e11"
+    },
+    {
+      "local_path": "comparisons\\FULL_CAPACITY_B_F\\val\\imgsz640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_frozen_640_control_20260915/FULL_CAPACITY_B_F/val/imgsz640/summary.json",
+      "sha256": "fb7aeb6abea734cb4539d8a18d810f85185af2e8d6d2d14aef37eefa7ca7675d"
+    },
+    {
+      "local_path": "comparisons\\FULL_CAPACITY_B_F\\val\\imgsz800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_highres_val_probe_v2_20260915/FULL_CAPACITY_B_F/imgsz800/summary.json",
+      "sha256": "8680bf24fda742359797425e339b322a1d19d825c66be6897947e5a9c7cb836d"
+    },
+    {
+      "local_path": "comparisons\\FULL_CAPACITY_B_F\\test\\imgsz640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_frozen_640_control_20260915/FULL_CAPACITY_B_F/test/imgsz640/summary.json",
+      "sha256": "cd629cca1d7134ff5a3331725b42c199764ca55402af567e979395ce20a901b5"
+    },
+    {
+      "local_path": "comparisons\\FULL_CAPACITY_B_F\\test\\imgsz800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/visdrone_highres_test_probe_20260915/FULL_CAPACITY_B_F/imgsz800/summary.json",
+      "sha256": "e233166c81c2a83e060ae7e9ad1a9287193b289f26efa5aefc91f8ad98619cdc"
+    }
+  ]
+}

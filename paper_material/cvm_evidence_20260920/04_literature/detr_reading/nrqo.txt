@@ -1,0 +1,734 @@
+
+=== PAGE 1 ===
+Revisiting DETR for Small Object Detection via
+Noise-Resilient Query Optimization
+Xiaocheng Fang1*, Jieyi Cai 1*, Huanyu Liu 1, Wenxiu Cai 1, Yishu Liu 2B, Bingzhi Chen 3,1B
+1South China Normal University, Guangzhou, China
+2Harbin Institute of Technology, Shenzhen, China
+3Beijing Institute of Technology, Zhuhai, China
+{fangxiaocheng,caijieyi,20222005228,101088}@m.scnu.edu.cn,
+liuyishu.smile@gmail.com, chenbingzhi@bit.edu.cn
+Abstract—Despite advancements in Transformer-based detec-
+tors for small object detection (SOD), recent studies show
+that these detectors still face challenges due to inherent noise
+sensitivity in feature pyramid networks (FPN) and diminished
+query quality in existing label assignment strategies. In this
+paper, we propose a novel Noise-Resilient Query Optimization
+(NRQO) paradigm, which innovatively incorporates the Noise-
+Tolerance Feature Pyramid Network (NT-FPN) and the Pairwise-
+Similarity Region Proposal Network (PS-RPN). Specifically, NT-
+FPN mitigates noise during feature fusion in FPN by preserving
+spatial and semantic information integrity. Unlike existing label
+assignment strategies, PS-RPN generates a sufficient number of
+high-quality positive queries by enhancing anchor-ground truth
+matching through position and shape similarities, without the
+need for additional hyperparameters. Extensive experiments on
+multiple benchmarks consistently demonstrate the superiority of
+NRQO over state-of-the-art baselines.
+Index Terms—Small Object Detection, DETR, Noise-Tolerance,
+Pairwise-Similarity
+I. I NTRODUCTION
+As a fundamental task in computer vision, object detec-
+tion entails both localizing and classifying objects. Existing
+methods primarily fall into two categories: CNN-based and
+Transformer-based detectors. CNN-based detectors, such as
+Faster R-CNN [1], RetinaNet [2], and FCOS [3], rely on manu-
+ally designed components, including anchors, ROI thresholds,
+and NMS, resulting in a complex, hyperparameter-intensive
+pipeline that limits end-to-end optimization. In contrast,
+Transformer-based detectors, such as DETR [4], Conditional-
+DETR [5], and Salience-DETR [6], simplify the process by
+leveraging self-attention, eliminating the need for hand-crafted
+components, and enhancing global context modeling. Despite
+these advancements, directly applying general object detectors
+to small object detection tasks leads to a substantial drop in
+accuracy.
+Small object detection (SOD) remains a significant chal-
+lenge in computer vision. Compared to general-scale objects,
+∗ Equal contribution.
+BCorresponding authors: Bingzhi Chen and Yishu Liu.
+This work was supported in part by the Guangdong Basic and Applied
+Basic Research Foundation (No. 2025A1515010225), in part by the National
+Natural Science Foundation of China (No. 62302172), and in part by the
+Shenzhen Fundamental Research Fund (No. JCYJ20240813105900002).
+(a) FPN-based Heatmap
+ (b) Our NT-FPN Heatmap
+(c) DotD-based Result
+ (d) Our PS-RPN Result
+Fig. 1: Comparison of query heatmaps and detection results
+between traditional methods and our methods.
+small objects present unique difficulties due to their limited
+size, low resolution, and lack of distinctive features, which
+make them harder to localize and classify accurately [7], [8].
+Furthermore, small objects are more susceptible to noise and
+occlusion, further complicating detection tasks. Despite these
+challenges, SOD holds substantial significance in both research
+and practical applications, such as autonomous driving [9],
+aerial surveillance [10], and medical imaging [11].
+In small object detection, the feature pyramid network
+(FPN) [12] has become a cornerstone strategy due to its
+ability to integrate multi-scale features, thereby improving
+the detection of fine-grained details and global context for
+small target objects. Building on this foundation, numerous
+studies have focused on optimizing FPN-based networks. For
+example, Gong et al. [13] introduce a fusion factor to adjust
+the influence of high-level features, mitigating the attenuation
+of small object semantics during feature fusion. Additionally,
+Gao et al. [14] enhance high-level semantic features by rotat-
+ing them at four different angles, concatenating them along
+the channel dimension, and passing them through convolution
+layers to improve interaction across various perspectives, thus
+reinforcing global semantic information. Hu et al. [15] utilize
+adaptive hierarchical upsampling to generate FPN features,
+arXiv:2507.19059v1  [cs.CV]  25 Jul 2025
+
+=== PAGE 2 ===
+...
+...
+...
+Backbone
+NT-FPN
+Decoder
+PS-RPN
+Pairwise-Similarity
+Label Assignments
+PS-RPN
+Input
+Decoder
+Spatial EncoderSemantic Encoder
+Layer 0
+Layer 1
+Layer 2
+Layer 0
+Layer 1
+Layer L
+Dataset
+Bottom-up Top-down
+NT-FPN
+...
+Layer L
+...
+...
+...
+...
+...
+Layer 2
+...
+...
+...
+...
+...
+...
+...
+...
+...
+Semantic Contrast
+Spatial Contrast
+Spatial EncoderSemantic Encoder
+...
+......
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+Output
+aux queries
+aux queries
+aux queries
+object queries
+object queries
+PS
+PSposition
+positive: 0.7
+negative: 0.3
+D:0.85
+B:0.73
+C:0.45
+A:0.21
+Positive
+Negative
+Ignore
+D:0.85
+B:0.73
+C:0.45
+A:0.21
+Positive
+Negative
+Ignore
+positive: 0.7
+negative: 0.3
+D:0.85
+B:0.73
+C:0.45
+A:0.21
+Positive
+Negative
+Ignore
+PSshape
+C
+Ground Truth
+A
+B
+D
+△w
+Anchor
+Ground Truth
+△h
+Lateral Semantic Token
+Fused Semantic Token
+Fused Semantic Token
+Lateral Semantic Token
+Fused Semantic Token
+Lateral Spatial Token
+Fused Spatial Token
+Lateral Spatial Token
+Fused Spatial Token
+Spatial Contrast
+Spatial Contrast
+Semantic Contrast
+{       }
+{       }
+Semantic Contrast
+{       }
+{       }
+Fig. 2: Illustration of our proposed NRQO paradigm, which consists of two key modules: (1) NT-FPN, reducing noise in FPN
+and enhancing small object representation by preserving spatial and semantic integrity; (2) PS-RPN, improving the quality of
+positive queries for small objects by modeling position and shape similarities between anchors and ground truth.
+compensating for low-level distortions and addressing the
+dilution issue caused by FPN fusion.
+Label assignment strategies play a crucial role in small
+object detection. These strategies are typically categorized into
+hard-label and soft-label approaches, depending on whether
+labels are strictly classified as negative or positive. Tradi-
+tional intersection-over-union (IoU) metrics in SOD are highly
+sensitive to small positional deviations between predicted
+and ground truth boxes [16]. To address this, DotD [17]
+introduces a metric based on the relative distance between
+object centers, considering the average object size in the
+dataset. NWD [18] further refines this approach by modeling
+bounding boxes as 2D Gaussian distributions and applying
+normalized Wasserstein distance to minimize the impact of
+small location deviations. Building on NWD, NWD-RKA [19]
+mitigates excessive negative labels by sampling the top-K
+highest-quality regions instead of relying on a fixed threshold.
+Despite their potential to improve small object detection,
+most existing FPNs and label assignment strategies face two
+major challenges, i.e., inherent noise sensitivity and dimin-
+ished query quality , both of which compromise detection
+precision. On the one hand, previous studies [20], [21] have
+demonstrated that upsampling upper-level features can intro-
+duce redundancy, while channel reduction in lateral features
+often leads to information loss, commonly referred to as
+“noise.” This noise is particularly detrimental to small object
+detection, as low-resolution features are especially sensitive to
+it. Comparing Fig. 1a and Fig. 1b, we observe that some small
+targets are missed due to noise introduced during the feature
+fusion process in the FPN. On the other hand, existing label
+assignment strategies primarily focus on bounding box posi-
+tions while overlooking shape information, thereby reducing
+the quality of positive queries [17], [18]. As a result, when
+the detector encounters small objects with similar positions
+but different shapes, it struggles to assign high-quality pos-
+itive queries. As shown in Fig. 1c and Fig. 1d, DotD-based
+detectors, which only consider bounding box positions, exhibit
+suboptimal performance in small object detection.
+To address these challenges, this paper proposes a novel
+Noise-Resilient Query Optimization (NRQO) paradigm that
+incorporates the Noise-Tolerance Feature Pyramid Network
+(NT-FPN) and the Pairwise-Similarity Region Proposal Net-
+work (PS-RPN) to enhance small object detection. Specifically,
+to mitigate the detrimental effects of noise during feature
+fusion in FPN, the proposed NT-FPN is designed to main-
+tain spatial and semantic integrity across multiple scales. By
+employing this noise-resilient strategy, NT-FPN significantly
+enhances small object detection. Additionally, to improve
+the quality of positive queries, we incorporate the PS-RPN,
+which refines anchor-ground truth similarity by modeling both
+position and shape. This dual consideration of position and
+shape ensures the generation of high-quality positive queries,
+thereby boosting small object detection performance. Our main
+contributions are summarized as follows:
+• We propose a novel Noise-Resilient Query Optimization
+(NRQO) paradigm to enhance small object detection by
+mitigating noise sensitivity and improving positive query
+quality through the integration of NT-FPN and PS-RPN.
+• The proposed NT-FPN mitigates noise by preserving
+spatial and semantic information integrity, while PS-RPN
+improves positive query quality by utilizing position and
+shape similarities, without requiring hyperparameters.
+• The effectiveness and superiority of our NRQO paradigm
+are thoroughly evaluated across multiple large-scale
+datasets, demonstrating its promising performance com-
+pared to state-of-the-art approaches.
+
+=== PAGE 3 ===
+II. M ETHODOLOGY
+A. Overview of NRQO
+The primary objective of the proposed NRQO paradigm is to
+reduce noise during feature fusion in the FPN and enhance the
+quality of positive queries for small objects. Fig. 2 illustrates
+the pipeline of the proposed NRQO paradigm, which consists
+of two key modules: 1) the Noise-Tolerance Feature Pyramid
+Network (NT-FPN), and 2) the Pairwise-Similarity Region
+Proposal Network (PS-RPN).
+B. Noise-Tolerance Feature Pyramid Network
+To effectively detect small objects, it is crucial to address
+the noise introduced during multi-scale feature fusion in the
+FPN. While the FPN integrates features at different scales, the
+upsampling and channel reduction processes often introduce
+noise, thereby degrading small object detection performance.
+To mitigate this, we propose the Noise-Tolerance Feature
+Pyramid Network (NT-FPN), designed to reduce noise by
+preserving spatial and semantic integrity during feature fusion.
+NT-FPN prevents feature degradation and improves the quality
+of small object representations.
+Specifically, we project the lateral feature Ci,j into spatial
+and semantic representations {sc
+i,j, ˆsc
+i,j ∈ R256} using spatial
+and semantic encoders, where i denotes the FPN level and j
+the sample index in the minibatch. Similarly, the upper-level
+feature Pi,j is projected into {sp
+i,j, ˆsp
+i,j ∈ R256}. Our objective
+is to minimize the distance between the spatial information
+of the fused and lateral features while aligning the semantic
+information of the fused features with the upper-level features.
+1) Spatial Contrast: The spatial representations of Ci,j and
+Pi,j should ideally align, but channel reduction degrades Pi,j,
+causing inconsistencies with Ci,j. In our approach, given L
+levels of an FPN and N images within a minibatch, we define
+qs (sp
+x,y) and ks
++ (sc
+x,y) as a positive pair for the x-th level
+of the top-down path and the y-th image, as they should be
+spatially consistent. Spatial representations from other levels
+or images within the minibatch, containing distinct spatial
+information, are treated as negative samples. We denote this
+set of negative samples as S−,
+S− =
+
+sc
+i,j, sp
+i,j | i = 0, . . . , L, j = 0, . . . , N; j ̸= y
+	
+. (1)
+Thus, the spatial loss at the x-th level for the y-th image,
+denoted as Ls (qs), is defined as follows,
+Ls (qs) = − log
+
+
+exp
+ 
+qs · ks
++/τ
+
+exp
+ 
+qs · ks
++/τ
+
++ P
+s∈S−
+exp (qs · s/τ )
+
+ ,
+(2)
+where the temperature τ controls the concentration of features
+in the representation space.
+The overall spatial loss is computed as follows,
+Ls = 1
+L × N
+LX
+x=0
+NX
+y=0
+Ls (qs) . (3)
+2) Semantic Contrast: Theoretically, Pi+1,j and Pi,j should
+have identical semantic representations. However, upsampling
+may introduce noise, causing semantic inconsistency. For the
+x-th level of the top-down path and the y-th image, we
+define qˆs (ˆsp
+x,y) and kˆs
++ (ˆsp
+x+1,y) as a positive pair. Semantic
+representations from other images in the minibatch are treated
+as negative samples, denoted by ˆS−,
+ˆS− =
+
+ˆsc
+i,j, ˆsp
+i,j | i = 0, . . . , L, j = 0, . . . , N; j ̸= y
+	
+. (4)
+Similarly, the semantic loss at the x-th level for the y-th
+image denoted as Lˆs
+ 
+qˆs
+, is defined as follows,
+Lˆs
+ 
+qˆs
+= − log
+
+
+exp
+ 
+qˆs · kˆs
++/τ
+
+exp
+ 
+qˆs · kˆs
++/τ
+
++ P
+ˆs∈ ˆS−
+exp (qˆs · ˆs/τ )
+
+ .
+(5)
+The overall semantic loss is calculated as follows,
+Lˆs = 1
+(L − 1) × N
+L−1X
+x=0
+NX
+y=0
+Lˆs
+ 
+qˆs
+. (6)
+C. Pairwise-Similarity Region Proposal Network
+Accurately matching anchors to ground truth boxes is
+crucial for generating high-quality positive queries for small
+objects. Traditional overlap-based methods, such as IoU, strug-
+gle with small objects, while distance-based methods like
+DotD [17] and NWD [18] focus only on positions while
+neglecting shape, thereby reducing the quality of positive
+queries. To address these limitations, we propose the Pairwise-
+Similarity Region Proposal Network (PS-RPN), which in-
+tegrates both position and shape similarity to generate a
+sufficient number of high-quality positive queries, significantly
+improving small object detection performance.
+Specifically, PS-RPN introduces a novel Pairwise-Similarity
+(PS) metric that combines both position and shape similarities
+to more effectively quantify the alignment between anchors
+and ground truth boxes, thereby improving small object de-
+tection performance. The PS metric is defined as follows:
+PS = exp (−(PS position + PS shape)) . (7)
+Position similarity measures the distance between the center
+points of the ground truth and anchor, normalized by the
+dimensions of the bounding boxes,
+PS position =
+s m · (xg − x)
+wg + w
+2
++
+ n · (yg − y)
+hg + h
+2
+. (8)
+Shape similarity captures the relative differences in width
+and height between the ground truth and anchor,
+PS shape =
+s m · (wg − w)
+wg + w
+2
++
+ n · (hg − h)
+hg + h
+2
+. (9)
+Here, (xg, yg) and (x, y) denote the center coordinates of
+the ground truth and anchor, while wg, w, hg, h represent their
+widths and heights. The parameters m and n are defined as:
+m =
+PM
+i=1
+PNi
+j=1
+PQi
+k=1
+|xij −xik|
+(wij +wik)
+PM
+i=1 Ni · Qi
+, (10)
+
+=== PAGE 4 ===
+TABLE I: Comparison with detection approaches on the VisDrone 2019 and SODA-D.
+Methods Ref Params VisDrone 2019 SODA-D
+AP AP 50 AP 75 AP S AP M AP L AP AP 50 AP 75 AP eS AP rS AP gS AP N
+CNN-based
+Faster RCNN[1] NIPS’15 41M 20.1 33.4 21.1 12.1 30.4 40.0 28.9 59.4 24.1 13.8 25.7 34.5 43.0
+FCOS[3] ICCV’19 32M 15.2 25.5 15.7 7.8 23.7 29.7 23.9 49.5 19.9 6.9 19.4 30.9 40.9
+ATSS[22] CVPR’20 32M 18.7 30.7 19.2 10.9 29.0 32.5 26.8 55.6 22.1 11.7 23.9 32.2 41.3
+YOLOX[23] CVPR’21 99M 23.5 39.5 23.8 14.8 34.2 39.0 26.7 53.4 23.0 13.6 25.1 30.9 30.4
+Sparse RCNN[24] CVPR’21 106M 8.5 15.5 8.1 4.9 12.5 18.6 24.2 50.3 20.3 8.8 20.4 30.2 39.4
+RFLA [25] ECCV’22 45M 25.4 42.2 26.0 17.9 34.4 45.7 29.7 60.2 25.2 13.2 26.9 35.4 44.6
+CFINet [26] ICCV’23 49M 26.0 45.3 26.1 18.3 35.3 49.9 30.7 60.8 26.7 14.7 27.8 36.4 44.6
+Transformer-based
+Deformable-DETR[27] ICLR’20 40M 14.2 25.7 13.8 8.0 21.7 30.1 19.2 44.8 13.7 6.3 15.4 24.9 34.2
+Conditional-DETR[5] ICCV’21 46M 26.4 37.7 27.4 16.2 36.2 35.6 25.7 52.8 15.0 7.9 20.3 28.0 36.5
+DAB-DETR[28] ICLR’22 55M 27.8 40.8 26.9 16.4 35.5 39.8 27.2 55.1 20.6 10.3 22.5 31.9 37.2
+DINO[29] ICLR’23 56M 26.8 44.2 28.9 17.5 37.3 41.3 28.9 59.4 22.4 12.5 22.7 34.7 42.8
+Co-DINO[30] ICCV’23 66M 28.5 46.7 29.9 20.5 38.2 46.3 32.2 61.1 28.9 15.3 28.4 38.9 48.4
+Salience-DETR[6] CVPR’24 56M 28.9 46.5 30.1 21.2 38.0 46.5 31.9 60.7 29.1 15.0 28.5 38.6 48.5
+NRQO Ours 63M 32.1 51.7 33.9 24.5 41.9 53.5 33.4 62.8 30.1 16.2 29.8 39.6 49.7
+n =
+PM
+i=1
+PNi
+j=1
+PQi
+k=1
+|yij −yik|
+(hij +hik)
+PM
+i=1 Ni · Qi
+, (11)
+where M is the number of training images, Ni is the number
+of ground truth boxes in the i-th image, and Qi is the number
+of anchors in the same image. The variables xij and xik
+represent the x-coordinates of the j-th ground truth and the
+k-th anchor, respectively, with similar definitions applying to
+the y-coordinates.
+Additionally, we adopt a Pairwise-Similarity label assign-
+ment strategy based on the traditional MaxIoUAssigner[1],
+replacing IoU with PS. The positive, negative, and minimum
+positive thresholds are set to 0.7, 0.3, and 0.3, respectively.
+The training objective of PS-RPN is defined as follows:
+LPS-RPN = LCls + LReg, (12)
+LCls and LReg denote classification and regression losses.
+D. Training and Optimization
+Based on the above analyses, the training objective of
+the proposed NRQO paradigm combines multiple objective
+functions from NT-FPN and PS-RPN,
+LNRQO = α · (Ls + Lˆs) + LPS-RPN, (13)
+where α balances the contributions of different loss terms.
+III. E XPERIMENTS
+A. Dataset and Evaluation Metrics
+We evaluate our NRQO paradigm on VisDrone 2019[31],
+SODA-D [32], and COCO 2017 [33] datasets, using Average
+Precision (AP)[33] as the primary metric, along with AP50 and
+AP75 at IoU thresholds of 0.5 and 0.75. Objects in VisDrone
+2019 and COCO 2017 are categorized by size into small (S),
+medium (M), and large (L), while SODA-D classifies objects
+into Small and Normal, further refining Small into extremely
+small (eS), relatively small (rS), and generally small (gS).
+TABLE II: Comparison with detection approaches on the
+COCO 2017.
+Methods Ref AP AP 50 AP75 APS APM APL
+CNN-based
+Faster RCNN [1] NIPS’15 35.7 56.1 38.0 19.2 40.9 48.7
+FCOS [3] ICCV’19 38.6 57.2 41.7 23.5 42.8 48.9
+ATSS [22] CVPR’20 39.3 57.5 42.7 22.9 42.9 51.2
+YOLOX [23] CVPR’21 40.5 59.3 43.7 23.2 44.8 54.1
+Sparse RCNN [24] CVPR’21 40.1 59.4 43.5 22.9 43.6 52.9
+Transformer-based
+Deformable-DETR [27] ICLR’20 31.8 51.4 33.5 15.0 35.7 44.7
+Conditional-DETR [5] ICCV’21 32.2 52.1 33.4 13.9 34.5 48.7
+DAB-DETR [28] ICLR’22 38.0 60.3 39.8 19.2 40.9 55.4
+DINO [29] ICLR’23 49.0 66.6 53.5 32.0 52.3 63.0
+Co-DINO [30] ICCV’23 50.8 68.5 55.7 33.9 54.0 64.8
+Salience-DETR [6] CVPR’24 49.2 67.1 53.8 32.7 53.0 63.1
+NRQO Ours 53.2 70.3 58.4 36.6 55.8 66.5
+B. Implementation Details and Baselines
+All experiments are conducted on a single RTX 3090 GPU.
+The model was trained for 12 epochs using an AdamW opti-
+mizer with a batch size of 2, an initial learning rate of 2e-4, and
+a weight decay of 0.0001. For fairness, ResNet-50 is used as
+the backbone in all baseline models. We extensively compare
+our NRQO paradigm with various object detection baselines,
+including both CNN-based and Transformer-based methods.
+C. Comparisons with State-of-The-Arts
+1) Evaluation on VisDrone 2019: We first evaluate the
+performance of the proposed NRQO paradigm on VisDrone
+2019, where it outperforms all baseline methods. As shown in
+Table I, NRQO achieves a 6.1% improvement in AP over lead-
+ing CNN-based models such as CFInet (32.1% vs. 26.0%) and
+a 3.2% improvement over state-of-the-art Transformer-based
+models like Salience-DETR (32.1% vs. 28.9%), demonstrating
+its effectiveness in detecting small objects.
+
+=== PAGE 5 ===
+InputDetectionHeatmap
+Fig. 3: Visualization of detection results and query heatmaps for our proposed NRQO paradigm on the VisDrone 2019 dataset.
+TABLE III: Ablation studies on two modules.
+Settings NT-FPN PS-RPN AP AP 50 AP75 APS APM APL
+I ✗ ✗ 28.5 46.7 29.9 20.5 38.2 46.3
+II ✓ ✗ 31.6 51.2 32.8 23.7 41.3 52.8
+III ✗ ✓ 30.9 50.6 33.2 23.1 40.8 53.0
+IV ✓ ✓ 32.1 51.7 33.9 24.5 41.9 53.5
+2) Evaluation on SODA-D: As shown in Table I, NRQO
+achieves a 1.2% improvement in AP over the best-performing
+Transformer-based model, Co-DINO (33.4% vs. 32.2%). No-
+tably, NRQO excels in detecting extremely small (AP eS) and
+relatively small objects (AP rS), with improvements of 0.9%
+and 1.3%, respectively. These results highlight its precision
+and robustness in handling small objects.
+3) Evaluation on COCO 2017: As shown in Table II,
+NRQO achieves superior performance on the COCO 2017
+dataset, with an AP of 53.2%. It outperforms CNN-based
+models like YOLOX by 12.7% and Transformer-based models
+like Co-DINO by 2.4% (53.2% vs. 50.8%). This advantage is
+particularly evident in small (AP S) and medium (AP M ) object
+categories, with gains of 2.7% and 1.8%, respectively.
+D. Ablation Studies
+In the ablation studies, we systematically evaluate the im-
+pact of each component of our proposed NRQO paradigm on
+small object detection performance. As shown in Table III,
+the results for “NRQO w/o NT-FPN” highlight the crucial
+role of NT-FPN in reducing noise during multi-scale feature
+fusion and enhancing small object representation, thereby
+improving the model’s ability to detect small objects. The
+results for “NRQO w/o PS-RPN” demonstrate that PS-RPN
+significantly enhances detection accuracy by incorporating
+both position and shape similarities, ensuring more precise
+anchor-to-ground-truth matching and generating higher-quality
+positive queries for small objects.
+E. Parameter Analysis
+As shown in Table IV, the coefficient α in Eq. 13 balances
+the influence of spatial and semantic losses. Both insufficient
+TABLE IV: Ablation on the coefficient of the training loss.
+α AP AP 50 AP75 APS APM APL
+0.05 31.3 49.3 33.2 23.7 41.6 53.0
+0.07 31.7 50.8 34.0 23.4 42.2 53.2
+0.1 32.1 51.7 33.9 24.5 41.9 53.5
+0.5 31.4 50.5 33.6 21.8 41.3 53.1
+0.7 31.3 50.1 32.6 21.2 40.7 52.8
+and excessive weighting of these losses negatively impact per-
+formance; however, adjusting the coefficient α demonstrates
+low sensitivity to overall performance. Consequently, we set
+α to 0.1 to achieve optimal precision.
+F . Visualization Results
+To further evaluate the performance of our proposed NRQO
+paradigm, we visualize detection results and query heatmaps
+on the VisDrone 2019 dataset. As shown in Fig. 3, NRQO
+accurately detects and localizes small objects, with the de-
+tected objects clearly highlighted by red bounding boxes. The
+corresponding heatmaps demonstrate NRQO’s ability to cap-
+ture essential features, highlighting both spatial and semantic
+details. These maps further showcase how NRQO maintains
+a strong focus on small objects, ensuring high-quality query
+generation, and effectively enhancing small object detection.
+IV. C ONCLUSIONS
+In this paper, we propose a novel Noise-Resilient Query
+Optimization (NRQO) paradigm to enhance small object de-
+tection. By seamlessly integrating the Noise-Tolerance Feature
+Pyramid Network (NT-FPN) and the Pairwise-Similarity Re-
+gion Proposal Network (PS-RPN), NRQO effectively mitigates
+the challenges of inherent noise sensitivity and diminished
+query quality common in existing FPNs and label assignment
+strategies. Extensive experiments on three public datasets
+demonstrate the effectiveness of NRQO, achieving state-of-
+the-art performance. Our proposed NRQO paradigm shows
+significant promise for improving small object detection,
+making it highly applicable to real-world scenarios such as
+autonomous driving, surveillance, and medical imaging.
+
+=== PAGE 6 ===
+REFERENCES
+[1] S. Ren, K. He, R. Girshick, and J. Sun, “Faster r-cnn: Towards real-time
+object detection with region proposal networks,” in NeurIPS, vol. 28,
+2015.
+[2] T.-Y . Lin, P. Goyal, R. Girshick, K. He, and P. Doll ´ar, “Focal loss for
+dense object detection,” in ICCV, 2017, pp. 2980–2988.
+[3] Z. Tian, C. Shen, H. Chen, and T. He, “Fcos: Fully convolutional one-
+stage object detection,” in ICCV. IEEE, 2019.
+[4] N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and
+S. Zagoruyko, “End-to-end object detection with transformers,” in
+ECCV. Springer, 2020, pp. 213–229.
+[5] D. Meng, X. Chen, Z. Fan, G. Zeng, H. Li, Y . Yuan, L. Sun, and J. Wang,
+“Conditional detr for fast training convergence,” in ICCV, 2021, pp.
+3651–3660.
+[6] X. Hou, M. Liu, S. Zhang, P. Wei, and B. Chen, “Salience detr:
+Enhancing detection transformer with hierarchical salience filtering
+refinement,” in CVPR, 2024, pp. 17 574–17 583.
+[7] J. Noh, W. Bae, W. Lee, J. Seo, and G. Kim, “Better to follow, follow
+to be better: Towards precise supervision of feature super-resolution for
+small object detection,” in ICCV, 2019, pp. 9725–9734.
+[8] C. Yang, Z. Huang, and N. Wang, “Querydet: Cascaded sparse query
+for accelerating high-resolution small object detection,” in CVPR, 2022,
+pp. 13 668–13 677.
+[9] Y . Hu, J. Yang, L. Chen, K. Li, C. Sima, X. Zhu, S. Chai, S. Du,
+T. Lin, W. Wang et al. , “Planning-oriented autonomous driving,” in
+CVPR, 2023, pp. 17 853–17 862.
+[10] H. Fang, Z. Liao, X. Wang, Y . Chang, and L. Yan, “Differentiated
+attention guided network over hierarchical and aggregated features for
+intelligent uav surveillance,” IEEE TII , vol. 19, no. 9, pp. 9909–9920,
+2023.
+[11] B. Chen, S. Fu, Y . Liu, J. Pan, G. Lu, and Z. Zhang, “Cariesxrays:
+Enhancing caries detection in hospital-scale panoramic dental x-rays via
+feature pyramid contrastive learning,” in AAAI, vol. 38, no. 20, 2024,
+pp. 21 940–21 948.
+[12] T.-Y . Lin, P. Doll´ar, R. Girshick, K. He, B. Hariharan, and S. Belongie,
+“Feature pyramid networks for object detection,” in CVPR, 2017, pp.
+2117–2125.
+[13] Y . Gong, X. Yu, Y . Ding, X. Peng, J. Zhao, and Z. Han, “Effective fusion
+factor in fpn for tiny object detection,” in CVPR, 2021, pp. 1160–1168.
+[14] T. Gao, Q. Niu, J. Zhang, T. Chen, S. Mei, and A. Jubair, “Global to
+local: A scale-aware network for remote sensing object detection,” IEEE
+TGRS, 2023.
+[15] X. Hu, W. Xu, Y . Gan, J. Su, and J. Zhang, “Towards disturbance
+rejection in feature pyramid network,” IEEE Transactions on Artificial
+Intelligence, vol. 4, no. 4, pp. 946–958, 2022.
+[16] C. Dong and M. Duoqian, “Control distance iou and control distance
+iou loss for better bounding box regression,” Pattern Recognition, vol.
+137, p. 109256, 2023.
+[17] C. Xu, J. Wang, W. Yang, and L. Yu, “Dot distance for tiny object
+detection in aerial images,” in CVPR, 2021, pp. 1192–1201.
+[18] J. Wang, C. Xu, W. Yang, and L. Yu, “A normalized gaussian wasserstein
+distance for tiny object detection,” arXiv preprint arXiv:2110.13389 ,
+2021.
+[19] C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, and G.-S. Xia, “Detecting tiny
+objects in aerial images: A normalized wasserstein distance and a new
+benchmark,” ISPRS Journal of Photogrammetry and Remote Sensing ,
+vol. 190, pp. 79–93, 2022.
+[20] Z. Liu, G. Gao, L. Sun, and L. Fang, “Ipg-net: Image pyramid guidance
+network for small object detection,” in CVPR, 2020, pp. 1026–1027.
+[21] D. Liu, J. Liang, T. Geng, A. Loui, and T. Zhou, “Tripartite feature
+enhanced pyramid network for dense prediction,” IEEE TIP , vol. 32,
+pp. 2678–2692, 2023.
+[22] S. Zhang, C. Chi, Y . Yao, Z. Lei, and S. Z. Li, “Bridging the gap
+between anchor-based and anchor-free detection via adaptive training
+sample selection,” in CVPR, 2020, pp. 9759–9768.
+[23] Z. Ge, S. Liu, F. Wang, Z. Li, and J. Sun, “Yolox: Exceeding yolo series
+in 2021,” arXiv preprint arXiv:2107.08430 , 2021.
+[24] P. Sun, R. Zhang, Y . Jiang, T. Kong, C. Xu, W. Zhan, M. Tomizuka,
+L. Li, Z. Yuan, C. Wang et al. , “Sparse r-cnn: End-to-end object
+detection with learnable proposals,” in CVPR, 2021, pp. 14 454–14 463.
+[25] C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, and G.-S. Xia, “Rfla: Gaussian
+receptive field based label assignment for tiny object detection,” in
+ECCV. Springer, 2022, pp. 526–543.
+[26] X. Yuan, G. Cheng, K. Yan, Q. Zeng, and J. Han, “Small object detection
+via coarse-to-fine proposal generation and imitation learning,” in ICCV,
+2023, pp. 6317–6327.
+[27] X. Zhu, W. Su, L. Lu, B. Li, X. Wang, and J. Dai, “Deformable
+detr: Deformable transformers for end-to-end object detection,” in ICLR,
+2020.
+[28] S. Liu, F. Li, H. Zhang, X. Yang, X. Qi, H. Su, J. Zhu, and L. Zhang,
+“Dab-detr: Dynamic anchor boxes are better queries for detr,” in ICLR,
+2021.
+[29] H. Zhang, F. Li, S. Liu, L. Zhang, H. Su, J. Zhu, L. M. Ni, and H.-Y .
+Shum, “Dino: Detr with improved denoising anchor boxes for end-to-
+end object detection,” arXiv preprint arXiv:2203.03605 , 2022.
+[30] Z. Zong, G. Song, and Y . Liu, “Detrs with collaborative hybrid assign-
+ments training,” in ICCV, 2023, pp. 6748–6758.
+[31] D. Du, P. Zhu, L. Wen, X. Bian, H. Lin, Q. Hu, T. Peng, J. Zheng,
+X. Wang, Y . Zhang et al. , “Visdrone-det2019: The vision meets drone
+object detection in image challenge results,” in ICCV, 2019, pp. 0–0.
+[32] G. Cheng, X. Yuan, X. Yao, K. Yan, Q. Zeng, X. Xie, and J. Han,
+“Towards large-scale small object detection: Survey and benchmarks,”
+IEEE TPAMI, 2023.
+[33] T.-Y . Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan,
+P. Doll ´ar, and C. L. Zitnick, “Microsoft coco: Common objects in
+context,” in ECCV. Springer, 2014, pp. 740–755.

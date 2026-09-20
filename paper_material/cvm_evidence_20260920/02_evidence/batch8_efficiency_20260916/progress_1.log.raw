@@ -1,0 +1,10 @@
+[?2004l
+STATUS {"CURRENT.json": {"phase": "completed", "completed_arms": 5}, "COMPLETE.json": {"status": "completed", "arms": 5, "batch": 8, "measured_batches": 1500, "measured_images": 12000, "checkpoints_unchanged": true, "training_sources_unchanged": true, "training_started": false}}
+ROW {"arm": "Baseline", "batch_median_ms": 59.55884559080005, "amortized_ms_per_image": 7.444855698850006, "images_per_second_from_median": 134.32093790004126, "peak_allocated_mib": 795.96044921875}
+ROW {"arm": "G", "batch_median_ms": 66.19985005818307, "amortized_ms_per_image": 8.274981257272884, "images_per_second_from_median": 120.84619516462344, "peak_allocated_mib": 803.02783203125}
+ROW {"arm": "G+F", "batch_median_ms": 69.0439403988421, "amortized_ms_per_image": 8.630492549855262, "images_per_second_from_median": 115.86824207579792, "peak_allocated_mib": 870.18408203125}
+ROW {"arm": "G+B", "batch_median_ms": 104.89666601642966, "amortized_ms_per_image": 13.112083252053708, "images_per_second_from_median": 76.26553163040457, "peak_allocated_mib": 942.94921875}
+ROW {"arm": "Full", "batch_median_ms": 107.9197870567441, "amortized_ms_per_image": 13.489973382093012, "images_per_second_from_median": 74.12913070143114, "peak_allocated_mib": 994.3505859375}
+GPU 
+CODEX_DONE_3ad1162c4fa44e1eb86b7d3a659d21110
+[?2004h(base) ]0;root@dee31ea771a8: /root@dee31ea771a8:/# 

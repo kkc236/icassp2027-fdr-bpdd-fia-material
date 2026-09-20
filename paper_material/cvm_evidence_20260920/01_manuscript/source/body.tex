@@ -1,0 +1,328 @@
+\begin{abstract}
+Small objects in UAV imagery make localization sensitive to boundary displacement. Fine-grained edge distributions provide a useful representation, whose integration also requires well-defined geometry and supervision: signed offsets can decode to nonpositive extents, while direct IoU weighting can leave low-overlap matches weakly supervised. We present Geometry-Constrained Distributional Localization (GCDL), a localization design for UAV imagery that builds on D-FINE's representation and develops the reference path, feasible decoding, and layerwise supervision within RT-DETR. Geometry-feasible decoding preserves the implied center and bounds each extent using reference-scale and floating-point floors, with an explicit identity surrogate gradient. Layerwise quality shrinkage (LQS) redistributes detached quality weights within each image and decoder layer, conserving their total while reducing dispersion more strongly in early layers. A box-conditioned expert extends this core using shared visual features. Its localization targets are accepted only when the proposed partial edge correction improves overlap with the matched object. On converted-label VisDrone, GCDL achieves 29.620 validation AP versus 29.078 for a complete FDR/FGL transfer. The complete detector improves native test AP by 5.861 points over RT-DETR-L and common-evaluator final AP by 1.579 points over our scratch-adapted D-FINE-L reproduction under different training recipes. On a local converted-label UAVDT validation split, Full improves AP from 14.12 to 16.96. In the VisDrone configuration, Full processes 74.129 images/s at $640\times640$, FP32, and batch eight on RTX 4090, supporting high-throughput batch processing for UAV imagery.
+\end{abstract}
+\par
+\keywords{UAV detection; distributional localization; feasible geometry; layerwise supervision}
+
+\section{Introduction}
+UAV aerial monitoring requires accurate localization of small objects amid crowding and extensive background. The scale profile in Appendix Fig.~\ref{fig:motivation}(a) makes this challenge concrete: among 38,759 converted-label VisDrone~\cite{zhu2018visdrone} validation boxes, 85.9\% have an equivalent side below 32 pixels after the $640\times640$ stretch used by our common evaluator. A fixed displacement can substantially change overlap at these scales. For two equal-size boxes with aligned vertical spans, a one-pixel horizontal shift reduces IoU to 0.778 at width eight, compared with 0.939 at width 32 (Fig.~\ref{fig:motivation}(b)). This scale profile motivates attention to boundary localization.
+
+% FIGURE_BUBBLE
+
+DETR~\cite{carion2020detr} formulates detection as set prediction, and RT-DETR~\cite{zhao2024rtdetr} combines efficient encoding with query-based decoding. D-FINE~\cite{peng2025dfine} advances localization through fine-grained distribution refinement (FDR), replacing point regression with iteratively refined edge distributions. We adopt this representation and investigate its decoding and supervision within an RT-DETR host. Distributional resolution describes where an edge can lie; the integration must also define which boxes are feasible and how matched objects supervise the distributions at each depth.
+
+These requirements lead to two design questions. Signed edge offsets do not algebraically enforce positive decoded extents, so a geometric constraint should preserve the implied center and remain effective in finite precision. Separately, direct matched-box IoU weighting assigns little distributional supervision to low-overlap matches. We seek an allocation that moderates these differences in early layers while retaining quality ordering and the group's total weight.
+
+We propose \emph{Geometry-Constrained Distributional Localization} (GCDL), combining an incoming-reference and supervision-path redesign, geometry-feasible decoding, and layerwise quality shrinkage (LQS) within RT-DETR. Geometry-feasible decoding imposes reference-scale and precision-aware extent floors with an identity surrogate gradient. LQS shrinks eligible, detached IoU weights toward their image--layer mean, with shrinkage decaying to zero at the final layer. The former preserves the decoded center and boxes whose extents already satisfy the floors; the latter conserves total supervision weight while reducing its dispersion. These components define the proposed localization core $G$, retaining RT-DETR's classification, query selection, and attention backbone.
+
+A local visual extension builds on this core. Shared P3 refinement supplies both the base decoder and a box-conditioned expert, which predicts residual class and edge logits from nearby P2--P4 features. During training, the expert also proposes localization targets. Because individually better expert edges need not form a better box when combined with retained student edges, transfer checks the actual partial correction against the matched object. This local visual extension supplies an additional accuracy--cost operating point on top of GCDL.
+
+Figure~\ref{fig:bubble} places the full detector in the reported VisDrone accuracy--size landscape. Our evaluation connects geometric and supervision properties with design-level accuracy and complete-system performance on VisDrone, with additional results on UAVDT. GCDL records 29.620 validation AP versus 29.078 for the complete FDR/FGL transfer. The complete detector reaches 30.109 VisDrone validation AP and improves native test AP by 5.861 points. On the local UAVDT validation split, the reported Full run improves AP by 2.84 points. We report our intermediate designs and pair the accuracy of each system configuration with its measured cost. Our contributions are:
+\begin{itemize}
+\item A distributional localization design that combines an incoming-reference and supervision-path redesign with center-preserving, precision-aware extent constraints and depth-dependent supervision allocation. We derive its geometric and weight-preservation properties and distinguish the new rules from the complete FDR/FGL transfer.
+\item A local visual extension with shared P3 features and selective expert-to-base localization transfer. Its selection rule evaluates the geometry of the partial edge correction actually proposed for each prediction.
+\item An evaluation connecting the task's scale profile, numerical properties, validation comparisons, complete-system test results, and measured batch throughput on VisDrone, complemented by an additional UAVDT comparison. The analysis identifies the additional accuracy and cost of the local visual extension.
+\end{itemize}
+
+\section{Related Work}
+\subsection{Aerial detection and box-guided visual evidence}
+Aerial detectors address small targets by preserving spatial detail and improving multiscale feature use. Slicing Aided Hyper Inference (SAHI)~\cite{akyon2022sahi} changes the scale seen by a detector through image slicing. FGHDet~\cite{bi2025fghdet} couples fine-grained feature construction with detection-head selection, while DASSF~\cite{li2025dassf} combines dynamic sampling and attention-based scale-sequence fusion. RemDet~\cite{li2025remdet} revisits feature and downsampling efficiency. NRQO~\cite{fang2025nrqo}, SO-DETR~\cite{zhang2025sodetr}, and Dome-DETR~\cite{hu2025domedetr} adapt feature fusion or query processing for small-object detection.
+
+Recent CVM methods further connect feature design and supervision. LME-DETR~\cite{xu2026lme} combines receptive-field and cross-scale feature enhancement with EMA-based modulation of a Varifocal classification objective. SD-Net~\cite{yang2026sdnet} coordinates adaptive feature extraction, cross-scale modulation, and high-resolution refinement. GCDL addresses a complementary part of the detector: decoding and supervising boundary distributions. LQS acts on FGL weights within an eligible image--layer group, conserves their total, and varies with decoder depth; it does not track an EMA across training steps. The local visual extension supplies additional feature access around the resulting boxes.
+
+Channel and spatial attention, exemplified by CBAM~\cite{woo2018cbam}, provide complementary feature modulation. Our shared P3 branch computes its two gates in parallel from the same features and uses a zero-initialized residual blend. Box-guided refinement makes feature access depend on a localization hypothesis. BorderDet~\cite{qiu2020borderdet} gathers border features from provisional boxes, and Cascade-DETR~\cite{ye2023cascadedetr} restricts attention using previously predicted boxes. Our extension uses fixed box-scaled samples from the existing P2--P4 pyramid, distribution descriptors, and residual class and edge updates after base decoding. Its local predictions serve both as the final output and as candidate localization targets for the base layers.
+
+\subsection{Distributional localization and its integration}
+Deformable DETR~\cite{zhu2021deformable} concentrates attention on sparse locations around reference points. DN-DETR~\cite{li2022dndetr} and DINO~\cite{zhang2023dino} improve query training through denoising. These developments motivate efficient spatial access and stable query optimization. GCDL focuses on the geometry and loss allocation of the decoded distributions within this framework.
+
+Generalized Focal Loss~\cite{li2020gfl} represents box locations as distributions and incorporates localization quality into detection learning. This establishes a broader distributional-regression context for the fine-grained edge representation used here. D-FINE~\cite{peng2025dfine} supplies the discrete edge representation, nonuniform support, integral decoding, cumulative distribution refinement, and adjacent-bin fine-grained localization (FGL) loss adopted here. It also studies transfer to other DETR models. GCDL develops the decoding and supervision of this representation within RT-DETR: reference-scale and precision-aware extent floors impose feasible geometry, and image--layer shrinkage moderates quality weights while conserving their total. Figure~\ref{fig:overview}(b) details our reference, geometry, and supervision paths; Table~\ref{tab:lrsversions} evaluates the complete transfer and our localization variants.
+
+\subsection{Localization knowledge transfer}
+Localization distillation~\cite{zheng2022ld} transfers distributional information from selected localization regions, while DETRDistill~\cite{chang2023detrdistill} aligns teacher and student predictions through Hungarian matching. D-FINE's GO-LSD~\cite{peng2025dfine} transfers final-layer localization distributions to shallower layers using aggregated matches and quality-dependent weighting.
+
+Our target source is a directly supervised local expert that remains in the inference graph and supplies candidate targets to all six base layers, including the last. Selection is defined for same-query, same-object pairs and checks the support and relative loss of each edge. A final IoU gate evaluates the actual partial edge replacement. This distinguishes the proposed selection rule from weighting a complete teacher prediction by its quality alone.
+
+\section{Method}
+\subsection{Framework and distributional representation}
+Our detector is organized around the proposed GCDL localization core $G$. A shared branch $F$ refines the hybrid encoder's P3 output for both the base decoder and a box-conditioned expert $B$. The expert refines the final base predictions, receives direct ground-truth supervision, and supplies selectively gated localization targets to the base layers. Figure~\ref{fig:overview}(a) shows these prediction paths; panels (b), (c), and (d) detail $G$, $F$, and $B$, respectively. The decoder container distinguishes retained attention and classification operations from the GCDL localization path.
+
+% FIGURE_OVERVIEW
+
+\paragraph{Design scope.}
+We use Ultralytics RT-DETR-L with six decoder layers and 300 ordinary queries. The proposed GCDL replaces its localization path while retaining the stock classification heads, query selection, attention/FFN backbone, matching interface, and detection losses. Its design specifies the reference and supervision path, constrains the geometry decoded from signed distributions, and moderates how matched objects supervise those distributions at each depth. The distributional representation is inherited from D-FINE; the incoming-reference path, feasible geometry, and LQS define GCDL. Section~\ref{sec:localizationresults} evaluates the complete transfer and the intermediate configurations.
+
+
+
+\paragraph{Attributed distributional representation.}
+Each edge has 33 bins, yielding 132 boundary logits per query. Following D-FINE~\cite{peng2025dfine}, for one edge at layer $l$ we use
+\begin{equation}
+\begin{aligned}
+z_l&=\sum_{t=0}^{l}\Delta z_t,\qquad
+p_{l,k}=\operatorname{softmax}(z_l)_k,\\
+d_l&=\sum_{k=0}^{32}p_{l,k}W_k .
+\end{aligned}
+\label{eq:distribution}
+\end{equation}
+The fixed support uses $\texttt{reg\_max}=32$, $\texttt{reg\_scale}=4$, and $\texttt{up}=0.5$. Let $a=3^{1/15}$. The support entries are
+\[
+[-4,\,1-a^{15},\ldots,1-a,\,0,\,a-1,\ldots,a^{15}-1,\,4].
+\]
+\paragraph{Reference and supervision path.}
+Our path redesign anchors edge decoding and FGL targets to the incoming decoder reference, rather than a separately predicted preliminary box. It disables additional preliminary-box and denoising-query FDR supervision while retaining RT-DETR's stock denoising losses. These choices change the reference and training paths; they do not remove the preliminary prediction head. We disable distribution feedback. For each query, all six boundary distributions and the expert share a fixed, detached incoming decoder reference box $r_0$. Updated boxes guide attention and local sampling but do not redefine this distribution frame. Thus, edge probabilities retain the same geometric meaning across layers and prediction paths, and cross-layer transfer requires no rebinning. A fixed distribution frame follows FDR; the incoming-reference and supervision choices form our path redesign. P3, P4, and P5 supply the base decoder; P2 is used only by the expert. We write $\operatorname{sg}$ for stop-gradient.
+
+\subsection{Geometry-feasible decoding}
+\label{sec:lrs}
+Let the reference center and size be $c$ and $(w,h)$, with $u=(w,h)/4$. Let $d^{-}$ contain left/top distances and $d^{+}$ right/bottom distances. The decoded center and raw size are $\hat c=c+(d^{+}-d^{-})\odot u/2$ and $v=(4+d^{-}+d^{+})\odot u$. Signed edge offsets do not algebraically enforce positive $v$. We retain the implied center and constrain the extent using
+\begin{equation}
+\begin{aligned}
+f&=\max\!\left\{\delta\operatorname{sg}(u),\,
+8\epsilon\max(|\operatorname{sg}(\hat c)|,1)\right\},\\
+\hat v&=\operatorname{sg}(\max(v,f))+\bigl[v-\operatorname{sg}(v)\bigr],
+\end{aligned}
+\label{eq:geometry}
+\end{equation}
+where $\delta=10^{-3}$ and $\epsilon$ is the machine precision of the decoding dtype. Operations are componentwise and use at least FP32. The bracketed subtraction is evaluated first: its forward value is zero, avoiding cancellation between a large negative raw extent and a small positive floor. The base, expert, and mixed-edge checks use this same geometric decoder.
+
+With positive reference sizes and finite intermediate quantities, the first floor imposes a minimum relative extent, while the second provides a margin against loss of extent when center-size boxes are converted to corners. Extents already at or above $f$ remain unchanged; a correction preserves the decoded center and expands paired boundaries symmetrically. The implemented backward path gives $\partial\hat v/\partial v=1$, an identity surrogate rather than the derivative of hard clipping. This avoids a zero extent-gradient through a clipped region while enforcing the forward constraint. Here, feasible means positive, representable extents; boxes may extend beyond the image. The formulation concerns box feasibility; archived numerical checks in Sec.~\ref{sec:geometryevidence} assess its finite-precision implementation.
+
+\subsection{Layerwise supervision allocation}
+\label{sec:lrssupervision}
+Base FGL weights each matched object by the detached IoU $q_{l,i}$ between its prediction and target. Panel G.3 abbreviates this quality as $s_i$ and its eligible image--layer mean as $\bar s$. Direct weighting can leave low-IoU matches with little distributional supervision. Our design moderates this dispersion in early layers while preserving the original weighting at the final layer. Let $\mathcal E_{l,n}$ contain eligible matches in image $n$ and layer $l$. Eligibility requires all four left interpolation-bin indices to be strictly between 0 and 31; boundary-clamped targets are excluded from shrinkage. For groups containing at least two matches, define
+\begin{equation}
+\begin{aligned}
+\bar q_{l,n}&=\frac{1}{|\mathcal E_{l,n}|}
+\sum_{j\in\mathcal E_{l,n}}q_{l,j},\\
+\alpha_l&=0.25\left(1-\frac{l}{5}\right),\qquad l=0,\ldots,5,\\
+q'_{l,i}&=(1-\alpha_l)q_{l,i}+\alpha_l\bar q_{l,n}.
+\end{aligned}
+\label{eq:lrs}
+\end{equation}
+All quality-weight calculations are detached. Singleton groups and ineligible matches retain their original weights. Shrinkage is confined to the same image and layer, so unrelated images do not exchange supervision weight. In exact arithmetic, the eligible group satisfies
+\begin{equation}
+\begin{aligned}
+\sum_{i\in\mathcal E_{l,n}}q'_{l,i}
+&=\sum_{i\in\mathcal E_{l,n}}q_{l,i},\\
+q'_{l,i}-\bar q_{l,n}
+&=(1-\alpha_l)(q_{l,i}-\bar q_{l,n}).
+\end{aligned}
+\label{eq:lrsproperties}
+\end{equation}
+Consequently, the within-group variance is multiplied by $(1-\alpha_l)^2$. In exact arithmetic, pairwise differences obey $q'_{l,i}-q'_{l,j}=(1-\alpha_l)(q_{l,i}-q_{l,j})$, so quality ordering is preserved. An eligible zero-IoU match receives positive weight whenever the group mean and shrinkage coefficient are positive. Weights below the eligible-group mean increase and those above it decrease without increasing the group total. The implementation also corrects floating-point residuals in that total. At layer zero, $\alpha_0=0.25$; at layer five, $\alpha_5=0$ and the original quality weighting is recovered. An all-zero group remains zero: LQS reallocates an existing supervision budget rather than introducing a positive floor on supervision. Here, quality denotes detached matched-box IoU; LQS shrinks these loss weights rather than predicting a calibrated uncertainty. Figure~\ref{fig:overview}(b), specifically G.2 and G.3, shows their dependencies within GCDL: the geometry branch preserves the center, while the training branch combines individual quality, group quality, and layer depth to allocate FGL weights.
+
+
+
+\paragraph{Integrated localization objective.}
+We retain adjacent-bin FGL from D-FINE and replace only its eligible base quality weights by $q'$. The four edge losses are summed per matched object, normalized by the layer's matched-object count, and summed over the six layers with coefficient 0.15. Stock detection, auxiliary-layer, and RT-DETR denoising losses remain active. Extra preliminary-box and denoising-FDR supervision are disabled in the current configuration. The additional distribution heads use a private random-number stream to avoid perturbing the host's initialization stream.
+
+The geometry rule operates during both training and inference. LQS operates only on training weights and adds no prediction branch. Their roles are complementary: one constrains the boxes represented by the distributions, and the other controls how matched objects supervise those distributions. Together with the localization-path integration, they define our proposed $G$ module.
+
+\subsection{Local visual extension}
+\label{sec:extension}
+The localization core is extended by shared P3 refinement $F$ and a box-conditioned expert $B$. The extension reuses the image pyramid, refines the final predictions, and supplies selected localization targets during training. We evaluate its accuracy and cost separately from the core.
+
+\paragraph{Shared visual features.}
+The shared branch in Fig.~\ref{fig:overview}(c) transforms the hybrid encoder's P3 output using two local residual blocks followed by channel and spatial gates. Each block contains pointwise projections, GELU, and a depthwise $3\times3$ convolution. The channel gate uses pooled features; the spatial gate uses a $7\times7$ convolution over channel-mean and channel-maximum maps. Denoting this transform by $R$, the output is
+\begin{equation}
+P_3^{*}=P_3+\gamma\bigl(R(P_3)-P_3\bigr),\qquad
+\gamma_{\mathrm{init}}=0.
+\label{eq:shared}
+\end{equation}
+The zero-initialized scalar makes the branch initially preserve P3. Both the base decoder and the local expert read $P_3^{*}$. The downsampling branch that constructs P4 reads the original P3, so refinement is confined to the P3 output.
+
+\subsubsection{Box-conditioned expert}
+
+
+\paragraph{Sampling the box neighborhood.}
+The expert revisits the final base box using the existing backbone and hybrid-encoder features. Let the box center and size for query $i$ be $\hat c_i$ and $\hat v_i$. Define $T=\{-0.5,-0.25,0,0.25,0.5\}$. For each radius $r\in\{0.4,0.6\}$, we take the offsets $(-r,t)$, $(r,t)$, $(t,-r)$, and $(t,r)$ for $t\in T$. These two 20-point patterns and one center point form the 41-element set $\Omega$. Sample coordinates are
+\begin{equation}
+s_{i,k}=\operatorname{sg}(\hat c_i)+
+\omega_k\odot\operatorname{sg}(\hat v_i),\quad\omega_k\in\Omega.
+\label{eq:sampling}
+\end{equation}
+Here $\operatorname{sg}$ stops gradients. The two patterns cover nearby interior and exterior locations relative to the predicted box; they are fixed offsets scaled by the predicted width and height. Figure~\ref{fig:overview}(d) summarizes the sampling and attention path; the equations above define the exact offsets. Sampling coordinates are detached, so the sampling operation does not move the base box through coordinate gradients.
+
+Bilinear sampling from P2, $P_3^{*}$, and P4 produces 123 local tokens for each query. Invalid coordinates are masked. Each scale is projected to 256 channels and receives a position embedding derived from the sample coordinates and scale index.
+
+\paragraph{Distribution-aware query update.}
+The query is augmented with eight detached distribution statistics: the mean and entropy of each of its four edges. Means are computed in normalized, equally spaced bin-index coordinates. They serve as descriptors for the expert; actual geometric distances still use the nonuniform support in Eq.~\eqref{eq:distribution}. The augmented query interacts with local tokens through two attention blocks, each using eight heads and a feed-forward width of 1024. A query token remains in the attention input even when all local samples are invalid.
+
+Let $h_i$ denote the resulting expert feature and let $c_i^{\mathrm{base}}$ and $z_i^{\mathrm{base}}$ denote the final base class and boundary logits. Two zero-initialized heads predict residuals:
+\begin{equation}
+\begin{aligned}
+c_i^{\mathrm{expert}}&=c_i^{\mathrm{base}}+H_{\mathrm{cls}}(h_i),\\
+z_i^{\mathrm{expert}}&=z_i^{\mathrm{base}}+H_{\mathrm{edge}}(h_i),\\
+p_i^{\mathrm{expert}}&=\operatorname{softmax}(z_i^{\mathrm{expert}}).
+\end{aligned}
+\label{eq:residual}
+\end{equation}
+Softmax is applied separately to each edge. The addition occurs in logit space, with 132 boundary residuals, and the same geometric decoder produces the refined box. Zero-initialized heads initially preserve the base outputs.
+
+\paragraph{Direct supervision and inference.}
+The expert reuses the final base layer's query-to-ground-truth assignment. Its predictions receive classification, L1, generalized-IoU, and fine-grained localization (FGL) losses. Direct expert losses also update the shared feature/query path and the base logits through the residual connection. Sampling coordinates and distribution descriptors are detached; teacher distributions are additionally detached when supplying localization targets to the base decoder. At inference, the refined expert prediction is the system output.
+
+\subsubsection{Selective localization transfer}
+The expert can supply a candidate target for each base layer, but local refinement does not guarantee an improvement for every query or edge. We select targets in three stages, summarized in Fig.~\ref{fig:overview}(d).
+
+
+
+\paragraph{Object correspondence and boundary support.}
+We first retain pairs with the same image, query index, and matched ground-truth object. This check applies to all six base layers, including the last layer. It prevents a same-index prediction assigned to another object from receiving that expert target. For each eligible edge, the untruncated ground-truth distance must also lie within the representable support $[W_0,W_{32}]$.
+
+\paragraph{Edge quality.}
+Let $\ell^S_e$ and $\ell^T_e$ be student and expert edge losses computed by interpolating the target distance between its two neighboring bins. With margin $m=0.02$ and scale $\tau=0.10$, define
+\begin{equation}
+\begin{aligned}
+a_e&=\max\bigl(\operatorname{sg}(\ell^S_e-\ell^T_e)-m,0\bigr),\\
+r_e&=\mathbf{1}_{\mathrm{support}}\frac{a_e}{a_e+\tau}.
+\end{aligned}
+\label{eq:edgeweight}
+\end{equation}
+An expert edge receives a positive weight only when its loss improves on the student's by more than the margin. The factor $a_e/(a_e+\tau)$ gives a bounded weight; this is a detached selection calculation.
+
+\paragraph{Joint box geometry.}
+The final check evaluates the combination of edges proposed for transfer. For a correspondence-eligible pair, define the mixed distributions and gate
+\begin{equation}
+\begin{aligned}
+p^{\mathrm{mix}}_e&=\begin{cases}
+p^T_e,&r_e>0,\\
+p^S_e,&r_e=0,
+\end{cases}\\
+g&=\mathbf{1}\!\left[
+\operatorname{IoU}(D(p^{\mathrm{mix}}),b^*)>
+\operatorname{IoU}(D(p^S),b^*)\right],\\
+w_e&=g\,r_e ,
+\end{aligned}
+\label{eq:mixed}
+\end{equation}
+where $D$ decodes all distributions in the query's fixed reference frame and $b^*$ is the matched ground-truth box. Unselected edges stay at their student values. A better complete expert box alone is insufficient to establish the quality of a partial replacement. Rejected or correspondence-ineligible pairs have zero weights. This checks target quality at the current predictions; it is not a guarantee of improved IoU after an optimizer update.
+
+Let $A_l$ be the set of positive-weight edges in layer $l$, and $\Lambda$ the set of layers with nonempty $A_l$. The localization loss is
+\begin{equation}
+L_{\mathrm{KD}}=\frac{1}{|\Lambda|}\sum_{l\in\Lambda}
+\frac{1}{|A_l|}\sum_{(i,e)\in A_l}
+w_{l,i,e}D_{\mathrm{KL}}\!\left(p^T_{i,e}\Vert p^S_{l,i,e}\right).
+\label{eq:kd}
+\end{equation}
+An empty active set gives zero loss. Normalization uses the number of active edges, not the sum of their weights, followed by the number of active layers. Teacher distributions and all selection calculations are detached; gradients flow through the student distributions in the KL loss. We apply no classification distillation.
+
+\subsection{Training and inference}
+\label{sec:training}
+
+The base geometry and FGL with LQS follow Secs.~\ref{sec:lrs} and~\ref{sec:lrssupervision}.
+
+Let $L_{\mathrm{det}}$ contain the retained base detection losses, $L_{\mathrm{FGL}}$ the additional base localization loss, and $L_{\mathrm{expert}}$ direct expert supervision. The complete objective is
+\begin{equation}
+L=L_{\mathrm{det}}+L_{\mathrm{FGL}}+L_{\mathrm{expert}}
++0.15\eta(t)L_{\mathrm{KD}}.
+\label{eq:objective}
+\end{equation}
+For completed epoch $t$, $\eta(t)$ is zero through epoch 10, increases linearly to one at epoch 20, stays one through epoch 80, and decreases linearly to zero at epoch 100. This schedule weights the expert-to-base localization term. The expert's own single-layer FGL has weight 0.15 and remains active throughout training.
+
+Inference retains the feature pyramid, shared P3 refinement, distributional base decoder, local sampling, and expert heads. Matching, quality checks, and the distillation loss are training-only operations. The architecture thus uses local evidence to produce the final prediction and, during training, to provide selected localization targets to the base.
+
+\section{Experiments}
+% TABLE_SYSTEM
+We first compare complete detectors, then analyze the localization design and the accuracy--cost choices of its components. Internal design comparisons use validation; test comparisons evaluate complete systems.
+\subsection{Dataset, training, and evaluation protocols}
+\label{sec:protocol}
+\paragraph{Dataset and metrics.}
+VisDrone~\cite{zhu2018visdrone} has 6,471 training, 548 validation, and 1,610 test images covering ten classes. Labels were converted through YOLO format and lack the complete original ignore-region information. The results therefore describe this converted-label protocol. AP averages IoU thresholds from 0.50 to 0.95 in steps of 0.05; $\mathrm{AP}_{50}$ and $\mathrm{AP}_{75}$ use the indicated individual thresholds, and $\mathrm{AP}_{s}$ denotes small-object AP~\cite{lin2014coco}. Values are percentages; reported gains are percentage points.
+
+Figure~\ref{fig:motivation} uses all 548 validation images and 38,759 converted-label boxes, with a mean of 70.7 boxes per image. For image dimensions $(W,H)$ and annotation size $(w,h)$, its input-scale statistic is $s=\sqrt{wh\,640^2/(WH)}$. This describes the common evaluator's stretched input. COCO small-object AP instead groups annotations by area in original image coordinates; the figure's 32-pixel threshold is not the $\mathrm{AP}_s$ grouping.
+
+\paragraph{Native training and evaluation.}
+On VisDrone, RT-DETR-L and Full share a nominal recipe: scratch training for 100 epochs at $640\times640$, MuSGD with initial learning rate 0.01, AMP, physical batch eight, nominal batch 64, and seed zero. Full's trainer accumulates eight physical batches after warmup, giving approximately 64 images per optimizer update; the accumulation factor ramps during warmup. Baseline resumed its own run, and source revisions differ. Their comparison evaluates complete systems, including our GCDL localization module and its inherited distributional primitives. Internal component analysis uses native validation-selected results.
+
+The native test comparison uses validation-selected checkpoints and shared converted annotations. Baseline's selected epoch is also its final epoch. The evaluator is \texttt{RTDETRValidator}, with $640\times640$ input, FP32, batch eight, confidence 0.001, and at most 300 detections, without test-time augmentation or extra NMS. These test evaluations were available during earlier development; test is not an untouched blind set.
+
+\paragraph{Common external evaluation.}
+For D-FINE-L and Full, the common pipeline uses PIL bilinear stretching to $640\times640$, RGB/255, FP32, batch one, confidence 0.001, and at most 300 predictions, without test-time augmentation or extra NMS. Predictions mapped to original image coordinates are evaluated by COCOeval 2.0.11 with $\texttt{maxDet}=300$. Native and common results are reported separately.
+
+Our D-FINE-L comparison is a scratch-adapted reproduction of the official implementation, with 31.146M parameters. We make the backbone and its normalization trainable and use base learning rate 0.00025 across parameter groups, with these adaptations fixed before training. Training runs for 100 epochs with AdamW, FP32, physical and effective batch four without accumulation, multiscale augmentation from 480 to 800, and stage-best checkpoint restoration at epoch 72. Under our D-FINE-L training setup, a physical batch size of eight caused an out-of-memory error on an RTX 4090 with 24 GB of GPU memory; we therefore reduced the physical batch size to four. Thus, the common evaluator aligns prediction and scoring, while optimization, effective batch size, and augmentation differ; equal epoch counts do not imply equal optimizer-update counts or training compute. Final checkpoints are the primary comparison: D-FINE uses the evaluated EMA snapshot from actual loop epoch 100, and Full uses its epoch-100 checkpoint. Each model's native validation-selected best checkpoint is a secondary endpoint.
+
+\subsection{Complete-system comparisons}\label{sec:systemresults}
+\paragraph{Native comparison with RT-DETR-L.}
+Table~\ref{tab:system}(a) evaluates the complete system against stock RT-DETR-L under their shared native evaluator. Full improves AP from 17.743 to 23.604, a gain of 5.861 points. The corresponding gains are 8.987 points in $\mathrm{AP}_{50}$ and 5.981 points in $\mathrm{AP}_{75}$. Improvements thus extend to the stricter 0.75 overlap threshold.
+
+
+\paragraph{Common comparison with D-FINE-L.}
+Under the common pipeline in Table~\ref{tab:system}(b,c), Full reaches 24.133 AP at the final checkpoint, exceeding our D-FINE-L reproduction by 1.579 points. Small-object AP increases from 13.338 to 14.575, a gain of 1.237 points. At the native validation-selected endpoint, Full reaches 24.229 AP compared with 22.679 for D-FINE-L, a 1.550-point difference. The positive AP difference is retained at both recorded endpoints. Appendix~\ref{sec:sensitivity} reports all eight archived combinations of split, checkpoint, and evaluation cap; the final test result at 300 remains the primary endpoint.
+
+
+
+Figure~\ref{fig:externalclasses} extends the aggregate comparison to all ten categories. Under the common converted-label protocol, Full improves final-checkpoint class AP relative to our scratch-adapted D-FINE-L reproduction, from $+0.465$ points for people to $+4.131$ for tricycle, with $+1.579$ overall AP. Class AP improves for all ten categories at this endpoint; Table~\ref{tab:system}(b,c) additionally reports higher small-object AP.
+
+% FIGURE_EXTERNAL_CLASSES
+
+\paragraph{Published validation context.}
+Appendix Table~\ref{tab:literature} situates Full alongside RemDet-L~\cite{li2025remdet} at a similar parameter scale and BDNet~\cite{guan2026bdnet} at a smaller scale. All use 640 input without pretraining, but training duration, preprocessing, annotation handling, and checkpoint selection differ. Full records 30.109 AP with 35.244M parameters after 100 epochs; BDNet reports 31.2 AP with 2.59M parameters. These published results provide accuracy--size context under their respective protocols.
+
+
+
+\subsection{Results on UAVDT}\label{sec:uavdt}
+We report a second-dataset comparison on the car, truck, and bus categories of UAVDT~\cite{du2018uavdt}. The supplied validation scripts specify a local converted-label validation split, $640\times640$ input, and batch four. The accompanying training scripts specify 100 epochs, physical batch eight, and training from scratch with MuSGD; completed-run settings are not independently documented.
+
+% TABLE_UAVDT
+
+Full increases AP from 14.12 to 16.96 ($+2.84$ points), with gains of 4.95 points in $\mathrm{AP}_{50}$ and 2.53 points in $\mathrm{AP}_{75}$. Category AP improves by 4.27, 1.48, and 2.79 points for car, truck, and bus, respectively. Thus, the overall improvement is accompanied by gains across all three vehicle categories, while truck remains the lowest-AP category. These results extend the reported baseline comparison to UAVDT under the local evaluation protocol.
+
+\subsection{Localization design analysis}
+\label{sec:localizationresults}
+The full FDR/FGL transfer reference integrates preliminary-reference decoding, normal/denoising-query FGL, and preliminary-box supervision into the RT-DETR host. It includes our host-interface integration and is not an unmodified D-FINE detector. Table~\ref{tab:lrsversions} compares this reference with our path redesign, its geometry-equipped variant, and GCDL. All retain the attributed representation and fixed distribution frame (Sec.~\ref{sec:lrs}).
+
+% TABLE_LRSVERSIONS
+
+GCDL records 29.620 AP and 49.382 $\mathrm{AP}_{50}$, exceeding the transfer reference by 0.542 and 0.909 points. It is not the highest-AP row: the path-only design reaches 29.696 AP, placing GCDL 0.076 points lower in AP and 0.062 higher in $\mathrm{AP}_{50}$. The final core combines feasible decoding and conserved-weight allocation with an overall improvement over the transfer reference. These properties motivate the integrated design; the comparison does not establish a separate accuracy gain for every rule.
+
+\paragraph{Geometric properties.}
+The decoder preserves the implied center, leaves extents already satisfying the floors unchanged, and enforces positive representable extents under the assumptions in Sec.~\ref{sec:lrs}. Controlled synthetic checks verify these properties and finite gradients across input precisions (Appendix~\ref{sec:numericalchecks}). They assess the geometric operator; Table~\ref{tab:lrsversions} reports detection accuracy.
+
+\subsection{Components and computational cost}
+\label{sec:componentcost}
+Table~\ref{tab:components} pairs accuracy and cost for GCDL ($G$), shared P3 refinement ($F$), and the expert with direct and selective supervision ($B$). The accuracy columns report validation results only. The two main operating points are $G$ at 29.620 AP and 120.846 images/s, and Full at 30.109 AP and 74.129 images/s. The extension therefore adds 0.489 AP, with its inference cost measured in the same setting.
+
+% TABLE_COMPONENTS
+
+\paragraph{Component evidence.}
+The core exceeds the RT-DETR-L host by 7.709 AP, including the contribution of the inherited FDR representation; Full exceeds the host by 8.198 AP. The most directly matched pair is $G+B$ versus Full: recorded training settings, shared source files, and shared initialization tensors agree, and Full adds the zero-initialized $F$ branch. This raises AP by 0.832 in the expert-equipped configuration. Other historical rows are less tightly controlled: $G+F$ records 29.773 AP, whereas $G+B$ is 0.343 points below $G$. They do not establish an independent benefit from the expert-and-supervision bundle. In particular, this table evaluates $B$ jointly and does not isolate the selective supervision rule.
+
+\paragraph{Measurement protocol.}
+Measurements use RTX 4090, PyTorch 2.5.1+cu121, and Ultralytics 8.4.90 at $640\times640$, FP32, and batch eight, with eight CPU threads, TF32 disabled, and cuDNN benchmarking disabled. Each variant receives fixed random inputs, 100 warmup batches, and 300 CUDA-synchronized predict calls. Timing uses native GPU fusion and includes preprocessing, model execution, postprocessing, and a lightweight expert-forward counter, excluding disk I/O. Throughput is 8000 divided by the median batch milliseconds. GFLOPs count two operations per multiply--accumulate per image; parameter counts cover the complete unfused model.
+
+\paragraph{Cost of the operating points.}
+Relative to RT-DETR-L, $G$ adds 0.330M parameters and 0.207 GFLOPs (about 0.20\%), while measured batch time rises from 59.559 to 66.200 ms. The integrated distributional path thus has measurable runtime overhead despite its small arithmetic increase. Relative to $G$, Full adds 2.087M parameters and 28.247 GFLOPs (26.70\%): 24.771 GFLOPs from the expert and 3.476 from shared P3 refinement. Full's 107.920 ms batch time corresponds to 13.490 ms amortized per image, not single-request response latency. These measurements characterize desktop-GPU batch processing for UAV aerial monitoring, excluding image acquisition and transmission; onboard performance has not been evaluated.
+
+\section{Discussion and Conclusion}
+GCDL combines an incoming-reference and supervision-path redesign with feasible decoding and layerwise weight allocation. It builds on D-FINE's representation, preserves the decoded center, enforces feasible extents, and redistributes eligible quality weights without increasing their total. The local visual extension refines predictions and selects transfer targets using the geometry of the proposed partial correction.
+
+The core exceeds the complete FDR/FGL transfer by 0.542 validation AP. Full adds 0.489 validation AP over the core, improves native test AP over RT-DETR-L by 5.861 points, and processes 74.129 images/s at $640\times640$, FP32, and batch eight on RTX 4090. The additional UAVDT comparison records a 2.84-point AP improvement over its baseline. These results characterize accurate UAV-image detection and high-throughput batch processing at the reported cost.
+
+\paragraph{Scope and remaining questions.}
+The experiments include VisDrone and an additional UAVDT comparison, while variability across training seeds remains unmeasured. Historical localization versions do not isolate every modification, and the expert and its supervision are evaluated jointly. The common external comparison retains different training recipes. Broader controlled evaluation and lower-cost expert refinement are the next priorities.
+
+\appendix
+\raggedbottom
+% FIGURE_MOTIVATION
+\section{Numerical implementation checks}
+\label{sec:numericalchecks}\label{sec:geometryevidence}
+A controlled six-layer decoder-wrapper test uses synthetic features, identity decoder layers, CPU BF16 autocast, and fixed Integral outputs of $-4$ on all edges. The precision-safe formulation passes checks for FP32 boxes and positive corner extents. This is a numerical stress case, not an observed failure frequency of a trained detector.
+
+Eight nominal reference-size/input-type combinations ($0.1$ and $10^{-8}$ across FP16, BF16, FP32, and FP64) pass positive-corner-extent and finite-gradient checks. The smallest FP16 input underflows to zero, providing an additional stress case outside the positive-reference assumption. An FP64 check verifies that tested boxes whose extents satisfy the floors remain unchanged and that an asymmetric correction preserves the decoded center. These results assess operator implementation properties, not accuracy or convergence gains.
+
+\section{External evaluation sensitivity}
+\label{sec:sensitivity}
+Table~\ref{tab:sensitivity} covers all eight combinations in the recorded evaluation plan: final/best checkpoints, validation/test splits, and evaluation caps of 100/300. It uses archived complete-detector scores from the common pipeline in Sec.~\ref{sec:protocol}. The 100-cap scores reuse predictions exported with a total limit of 300 per image, applying COCOeval's per-category truncation; they do not evaluate a detector reconfigured to output only 100 predictions.
+
+% TABLE_SENSITIVITY
+
+\begin{samepage}
+Full records higher AP in all eight comparisons, by 1.550--2.027 points. These rows reuse trained checkpoints and overlapping data: they are neither independent trials nor evidence of statistical significance. They retain the training-recipe differences and do not provide test-set component attribution.\par
+\end{samepage}
+
+\begin{samepage}
+\section{Task scale and published context}
+\label{sec:visualcontext}
+Figure~\ref{fig:motivation} shows the annotation-scale distribution and its analytical localization motivation. Table~\ref{tab:literature} retains the published accuracy--size context, with training and evaluator differences stated explicitly.\par
+\end{samepage}
+
+% TABLE_LITERATURE

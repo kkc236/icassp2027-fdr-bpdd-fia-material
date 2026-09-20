@@ -1,0 +1,756 @@
+     BiCoR-Seg: Bidirectional Co-Refinement Framework for High-Resolution
+                      Remote Sensing Image Segmentation
+
+                     Jinghao Shi                                              Jianing Song
+       China University of Geosciences (Wuhan)                   China University of Geosciences (Wuhan)
+            Wuhan 430070, Hubei, China                                Wuhan 430070, Hubei, China
+                  shijinghao@cug.edu.cn                                         songjn@cug.edu.cn
+
+
+
+                       Abstract                                  observation [59], holds significant application value in var-
+                                                                 ious real-world scenarios such as urban planning, land-use
+   High-resolution remote sensing image semantic seg-            monitoring, ecological environment assessment, and disas-
+mentation (HRSS) is a fundamental yet critical task in           ter emergency response [28, 29]. Its objective is to assign
+the field of Earth observation. However, it has long             precise semantic labels to each pixel, thereby enabling the
+faced the challenges of high inter-class similarity and          automatic identification of ground object categories and the
+large intra-class variability. Existing approaches of-           fine depiction of spatial structures.
+ten struggle to effectively inject abstract yet strongly            However, due to the diversity of ground object cate-
+discriminative semantic knowledge into pixel-level fea-          gories, significant variations in scale, complex textures,
+ture learning, leading to blurred boundaries and class           and drastic illumination changes in remote sensing im-
+confusion in complex scenes. To address these chal-              ages [22, 28], HRSS has long faced dual challenges of large
+lenges, we propose Bidirectional Co-Refinement Frame-            intra-class variation and high inter-class similarity [36].
+work for HRSS (BiCoR-Seg). Specifically, we design               These characteristics make it difficult for models to learn
+a Heatmap-driven Bidirectional Information Synergy               feature representations that are highly discriminative and
+Module (HBIS), which establishes a bidirectional in-             generalizable [42], leading to common problems in com-
+formation flow between feature maps and class em-                plex scenes, such as blurred boundaries, category confu-
+beddings by generating class-level heatmaps. Based               sion, and fragmented regions.
+on HBIS, we further introduce a hierarchical super-
+                                                                    Researchers have conducted extensive explorations.
+vision strategy, where the interpretable heatmaps gen-
+                                                                 Early convolutional neural network (CNN)-based meth-
+erated by each HBIS module are directly utilized as
+                                                                 ods [23, 27, 32] effectively extracted multi-scale local fea-
+low-resolution segmentation predictions for supervision,
+                                                                 tures through encoder–decoder architectures. However, due
+thereby enhancing the discriminative capacity of shal-
+                                                                 to the inherently limited receptive field of convolution op-
+low features. In addition, to further improve the dis-
+                                                                 erations, these methods struggled to capture global contex-
+criminability of the embedding representations, we pro-
+                                                                 tual information, resulting in insufficient capability to dis-
+pose a cross-layer class embedding Fisher Discrimina-
+                                                                 tinguish land-cover categories that depend on large-scale
+tive Loss to enforce intra-class compactness and enlarge
+                                                                 spatial layouts, such as roads and buildings. Subsequent
+inter-class separability. Extensive experiments on the
+                                                                 works introduced dilated convolutions [48], attention mech-
+LoveDA, Vaihingen, and Potsdam datasets demonstrate
+                                                                 anisms [1], and Transformer architectures [37] to enhance
+that BiCoR-Seg achieves outstanding segmentation per-
+                                                                 global perception by modeling long-range dependencies.
+formance while offering stronger interpretability. The
+                                                                 Although these approaches improved feature representa-
+released code is available at https://github.com/
+                                                                 tion capacity, they still relied on implicit semantic learning.
+ShiJinghao566/BiCoR-Seg.
+                                                                 Discriminative, category-level knowledge (e.g., ”buildings”
+                                                                 should exhibit rigid boundaries, ”water bodies” should have
+   Keywords: Remote Sensing, Image segmentation,
+                                                                 smooth surfaces) remained buried within massive network
+Class embedding, Heatmap-driven, Bidirectional infor-
+                                                                 parameters. Without an explicit mechanism to guide the
+mation synergy
+                                                                 alignment between pixel-level features and high-level se-
+                                                                 mantics, models were prone to misclassification in regions
+1. Introduction
+                                                                 with ambiguous features [21, 41].
+    High-resolution remote sensing image semantic segmen-           Recent studies have attempted to incorporate class pro-
+tation (HRSS), as a fundamental task in the field of Earth       totype mechanisms [30, 50] to explicitly model seman-
+
+
+                                                             1
+tic knowledge, enabling interactions between features and            maps.
+class representations within the semantic space. These             • We introduce hierarchical heatmap deep supervision
+methods have, to some extent, enhanced category separa-              and a Fisher discriminant loss to enhance inter-layer
+bility and semantic consistency. However, such interactions          semantic consistency and explicitly constrain the spa-
+are often unidirectional, as class embeddings influence fea-         tial structural distribution of class embeddings, signif-
+ture aggregation during the decoding phase but cannot re-            icantly improving the discriminability of class embed-
+ceive feedback from the pixel level for further refinement.          dings and the separability of features.
+Moreover, existing class embeddings are typically static and       • Our BiCoR-Seg achieves highly competitive perfor-
+lack adaptability to specific image content, while their se-         mance across three mainstream datasets, fully demon-
+mantic spaces often lack explicit constraints. Therefore, es-        strating the effectiveness and superiority of the pro-
+tablishing a tight and interpretable bidirectional optimiza-         posed framework in complex scenarios.
+tion mechanism between semantic embeddings and visual
+features has become a key challenge for further improving       2. Related Work
+HRSS performance.
+    To address the aforementioned issues, we propose            2.1. Deep Learning Based Remote Sensing Image Seg-
+the Bidirectional Co-Refinement Framework for HRSS                    mentation
+(BiCoR-Seg). We posit that precise segmentation re-                 The introduction of deep learning has significantly ad-
+lies on establishing an explicit interaction mechanism be-      vanced the development of semantic segmentation in re-
+tween pixel-level features and category semantics during        mote sensing imagery. Early methods were primarily based
+the forward propagation process of the network. There-          on convolutional neural networks (CNNs). Representative
+fore, BiCoR-Seg abandons the traditional one-way decod-         of this stage, Fully Convolutional Networks (FCNs) [27]
+ing paradigm and introduces a heatmap-based bidirectional       achieved pixel-level end-to-end prediction for the first time.
+information synergy module (HBIS). In each interaction,         Subsequent models such as U-Net [32] and its variants, in-
+HBIS first computes the similarity between the category         cluding UNet++ [57] and Attention U-Net [31], effectively
+embeddings and the feature map to generate class heatmaps.      integrated high-level semantics with low-level spatial de-
+Subsequently, HBIS leverages these heatmaps to guide the        tails through encoder–decoder architectures and skip con-
+category embeddings in perceiving the feature distributions,    nections. To further enhance multi-scale perception, PSP-
+and updates their representations by selecting top-K high-      Net [54] and the DeepLab series [5–7] introduced pyra-
+response pixels. The enhanced category semantics then feed      mid pooling and atrous (dilated) convolution structures.
+back into the feature maps by generating category-specific      ConDSeg [24] improved boundary recognition through a
+affine modulation parameters to adjust feature distributions.   contrastive-driven feature enhancement mechanism, while
+Furthermore, we design a dual supervision mechanism that        HRNet [35] maintained high-resolution feature representa-
+employs a hierarchical heatmap loss to supervise the spa-       tions via parallel multi-resolution branches, demonstrating
+tial localization accuracy and applies a Fisher discrimina-     outstanding performance in fine-grained object segmenta-
+tive loss to enforce intra-class compactness and inter-class    tion.
+separability of the category embedding space. This itera-           To overcome the limitation of convolution’s local re-
+tive interaction mechanism progressively enhances the dis-      ceptive field in global context modeling, researchers in-
+criminative power of features, enabling the network to si-      corporated attention mechanisms [1] and Transformer [37]
+multaneously capture global semantic consistency and local      architectures into segmentation tasks. Models such as
+boundary details, thereby significantly improving segmen-       SETR [55] and Segmenter [34] demonstrated the feasibil-
+tation accuracy and generalization in complex scenes.           ity of pure Transformer-based designs; meanwhile, Swin
+    Overall, the contributions of this paper are as follows:    Transformer [25] and SegFormer [45] achieved a balance
+    • We propose the BiCoR-Seg framework, which                 between performance and efficiency through hierarchical
+      achieves explicit semantic interaction and layer-wise     structures and lightweight decoders. In the remote sens-
+      collaborative refinement between feature and class em-    ing domain, methods like AerialFormer [17] and UNet-
+      beddings, providing a novel and interpretable model-      Former [40] combine the strengths of convolutional net-
+      ing paradigm for remote sensing image segmentation.       works and Transformers, achieving a balance between local
+    • We design the HBIS module, which enables bidirec-         detail preservation and global semantic consistency. Hybrid
+      tional information interaction driven by heatmaps to      architectures such as TransUNet [4], LeViT-UNet [46], and
+      realize mutual guidance and semantic co-construction      Swin-UNet [2] further strengthen cross-level feature inter-
+      between features and class embeddings, thereby es-        action, exhibiting superior performance in multi-scale ob-
+      tablishing an explicit and interpretable collaborative    ject recognition and complex scene segmentation. Collec-
+      mechanism between the class embeddings and feature        tively, these studies constitute the technological foundation
+Figure 1: Overall architecture of the proposed BiCoR-Seg framework. The proposed framework consists of an encoder for
+multi-scale feature extraction, a decoder composed of multiple cascaded HBIS modules, and an output head.
+
+
+of modern remote sensing segmentation models.                   shallow, preventing high-level semantic knowledge from
+                                                                effectively guiding low-level feature learning. Moreover,
+2.2. Explicit Semantic Modeling Methods                         most prior class embedding approaches are static, mean-
+    Recent studies have begun exploring explicitly semantic-    ing that the class prototypes remain unchanged during in-
+guided paradigms to more directly integrate category-level      ference, independent of the image context, and lack hierar-
+semantic knowledge into the segmentation process. The           chical adaptability or explicit regularization within the em-
+core idea originates from the query-based object detector       bedding space. In contrast to the above works, our proposed
+DETR [58], which introduces a set of learnable class proto-     BiCoR-Seg framework establishes a bidirectional and itera-
+types or class queries. These methods maintain a dedicated      tive information flow across all decoder stages via the HBIS
+embedding vector for each semantic category, serving as a       module, leveraging class heatmaps to ensure that semantic
+carrier of high-level semantic concepts that interact with      knowledge deeply and continuously guides the entire fea-
+pixel-level features during the network’s decoding stage.       ture learning process. Furthermore, we introduce hierar-
+In the field of general segmentation, MaskFormer [11]           chical class heatmap supervision and a Fisher discriminant
+and its subsequent improvement Mask2Former [10] have            loss, which jointly impose direct and effective constraints
+achieved remarkable success by reformulating the segmen-        on the cooperative refinement between features and embed-
+tation task as a query-based mask classification problem. K-    dings from both spatial localization and semantic distribu-
+Net [53] further extends this idea by employing a set of dy-    tion perspectives.
+namically updated kernels for instance segmentation, while
+SegViT [50] utilizes learnable class queries to compute at-     3. Method
+tention maps for generating explicit semantic masks. In the
+                                                                3.1. Overall Architecture
+remote sensing domain, the Prototypical Contrastive Net-
+work (PCN) [30] enhances intra-class compactness in bi-            To address the issues of large intra-class variance and
+nary segmentation tasks through prototype contrastive con-      small inter-class differences in high-resolution remote sens-
+straints, whereas CenterSeg [52] further designs a classifier   ing image semantic segmentation (HRSS), which often re-
+based on category centers and multiple prototypes.              sult in recognition ambiguity and blurred boundaries, and
+    However, in existing methods, the interaction between       to enable interactive fusion between class embeddings and
+semantics and visual features is typically unidirectional and   pixel-level features during the decoding stage, we pro-
+Figure 2: Architecture of the proposed HBIS module. The HBIS module is composed of two information pathways: Feature-
+to-Class Embedding (F2CE) and Class Embedding-to-Feature (CE2F). Three types of heatmaps are utilized in the bidirec-
+tional interaction: the raw class heatmap, the normalized heatmap H̃ (with a BN layer for normalization), and the Softmax-
+normalized heatmap H sof t for semantic fusion.
+
+
+pose a Bidirectional Cooperative Refinement framework            output head performs matrix multiplication between the fi-
+for HRSS(BiCoR-Seg). This framework progressively in-            nal feature map FL and the class embeddings CEL , and the
+jects discriminative semantic concepts into the pixel fea-       result is upsampled to obtain the final pixel-level probability
+ture learning process, thereby achieving deep integration        prediction map P .
+between semantic embeddings and visual representations.             In the following sections, we focus on the core compo-
+    As illustrated in Fig. 1, the proposed framework con-        nent of the framework, the Heatmap-driven Bidirectional
+sists of three main components: an encoder for extracting        Information Synergy module (HBIS), and provide a detailed
+multi-scale visual features, an iterative decoder that per-      description of the hierarchical heatmap supervision loss and
+forms cooperative refinement between features and seman-         Fisher discriminant loss that are specifically designed to op-
+tics, and an output head that produces the final segmentation    timize this architecture.
+results. Specifically, given an input image I ∈ RH×W ×3 ,
+                                                                 3.2. Heatmap-driven Bidirectional Information Synergy
+the encoder first extracts multi-scale features and fuses them
+                                                                      Module (HBIS)
+through an aggregation module composed of MLPs and up-
+sampling operations, resulting in a high-resolution feature          Although current explicit semantic modeling methods
+map F0 and an initial class embedding CE0 . Subsequently,        introduce class-prototype embeddings, their interactions are
+F0 and CE0 are refined through an L-layer decoder con-           often unidirectional: the class embeddings only participate
+structed with HBIS modules, which perform bidirectional          in feature aggregation at the end of decoding, lacking posi-
+cooperative refinement between pixel features and class em-      tive guidance for shallow feature learning. Moreover, the
+beddings. Let CEl = {CEl,n }N     n=1 denote the set of class    updating process of class embeddings is static and inde-
+embeddings output by the l-th decoder layer, where CEl,n         pendent of the image content, preventing high-level seman-
+represents the embedding vector of the n-th class at layer l,    tic knowledge from actively influencing the entire feature
+and N is the total number of semantic classes. Finally, the      learning process.
+   To address this issue, we design HBIS, as illustrated in      pooling. This ensures that the information aggregation con-
+Fig. 2, to establishes an interpretable and effective bidi-      centrates on the most relevant visual cues while suppressing
+rectional communication between class embeddings and             the interference from irrelevant areas. Finally, we obtain
+pixel-level features. In the following subsection, we first      the contextual feature vector for class n at the current layer,
+introduce the core component, namely the generation of           Cl,n , which aggregates the most representative pixel infor-
+class heatmaps, and then, based on this foundation, elab-        mation of class n in the current image, as formulated below
+orate on two enhancement pathways within HBIS: the                               
+feature-to-class embedding update path (F2CE) and the                                     Hl,n (x, y)
+                                                                                                             , (x, y) ∈ Ωn ,
+                                                                                 
+                                                                                 
+                                                                                  P
+class embedding-to-feature enhancement path (CE2F).                                          H (u, v) + ε
+                                                                   H̃l,n (x, y) = (u,v)∈Ω l,n
+                                                                                          n
+                                                                                 
+                                                                                 0,                            (x, y) ∈
+                                                                                                                       /Ω ,    n
+Class Heatmap Generation. To initiate bidirectional
+                                                                                                                               (2)
+communication, it is first necessary to establish a correspon-                  X
+dence between abstract class concepts and their spatial lo-          Cl,n =              H̃l,n (x, y) · Linear(Fl−1 (x, y)).   (3)
+                                                                              (x,y)∈Ωn
+cations in the image. Therefore, we design a class heatmap
+that projects each class embedding into the image space,         Here, H̃l,n (x, y) denotes the normalized class heatmap
+generating a spatial confidence map that reveals the poten-      value of the n-th class at pixel position (x, y) in the l-th
+tial distribution of each class across the image.                layer.
+    We dynamically activate the functionality of the class          Directly adding or replacing the contextual vector Cl
+embeddings, enabling them to serve as query vectors.             with the class embedding CEl−1 may lead to instability
+Specifically, the class embeddings from the previous layer,      during training. Therefore, we introduce a gated update
+denoted as CEl−1 , are transformed through a learnable lin-      mechanism to achieve stable and adaptive fusion. Specifi-
+ear layer Linear(·) into a set of vectors whose dimensions       cally, we compute an adaptive gating vector Gl by concate-
+match the channel dimension of the feature map Cfeat . By        nating the previous class embedding and the current con-
+computing the dot-product similarity between each pixel          textual feature vector, and then passing the result through
+feature and all class embeddings, we obtain the response         a learnable linear layer Linear(·) to dynamically determine
+intensity of the n-th class at the spatial location (x, y):      the ratio between information preservation and absorption:
+    Hl,n (x, y) = σ Fl−1 (x, y) · Linear(CEl−1,n )⊤ , (1)
+                                                                                                            
+                                                                                Gl = σ Linear([CEl−1 ∥Cl ]) ,             (4)
+where σ(·) denotes the Sigmoid activation function. The
+                                                                 where ∥ denotes vector concatenation, and Gl ∈ RN . Using
+output value Hl,n (x, y) ∈ [0, 1] represents the confidence
+                                                                 this gating vector Gl , we perform weighted fusion between
+that the pixel belongs to the n-th class. Consequently,
+                                                                 historical semantic information and current contextual in-
+a class heatmap for the current layer is formed as Hl ∈
+    ′   ′                                                        formation to generate updated class embeddings. For the
+RH ×W ×N , whose resolution is consistent with that of the
+                                                                 n-th class embedding at the l-th layer, the update rule is de-
+feature map and is utilized for subsequent bidirectional in-
+                                                                 fined as:
+formation collaboration.
+                                                                        CEl,n = (1 − Gl,n ) · CEl−1,n + Gl,n · Cl,n .          (5)
+Feature Map to Class Embedding Updating (F2CE).
+The core objective of the F2CE pathway is to endow class         Here, Gl,n represents the gating coefficient of Gl for the n-
+embeddings with image adaptivity, thereby progressively          th class. This mechanism enables each class embedding to
+refining generic semantic priors into contextual representa-     maintain semantic stability while adapting dynamically to
+tions tightly related to the content of the current image. At    the specific image content.
+layer l, this pathway aggregates, for each category, the most
+relevant visual features from the feature map Fl−1 . The         Class Embedding to Feature Map Updating (CE2F).
+input class embedding CEl−1 thus incorporates the image-         When the class embeddings are updated through the F2CE
+specific contextual information and is updated into a more       pathway, they carry more accurate and context-aware se-
+discriminative CEl−1 .                                           mantic knowledge. The goal of the CE2F pathway is to
+    This procedure consists of two steps. First is region-       write the semantic knowledge learned by CEl back to the
+guided feature pooling: for each class, we use its heatmap       pixel-level feature maps, guiding and enhancing those am-
+Hl,n to select the Top-K high-response pixels and aggre-         biguous features to become more category-discriminative.
+gate them into a region Ωl,n . Using the normalized heatmap         This process also consists of two steps. First is the class-
+values as weights, the pixel features within these regions       specific feature modulation. We assume that objects of
+are projected by a linear layer, Linear(·), into the class-      different classes should have distinct feature distributions.
+embedding dimensionality Cclass , followed by weighted           Therefore, using the updated class embeddings CEl , we
+learn a pair of affine transformation parameters for each              each decoder layer l, the heatmap Hl is upsampled to the
+class CEl,n , namely the channel-wise scaling factor γn and            ground-truth size and constrained with standard segmenta-
+bias βn . These affine parameters are generated as follows:            tion losses:
+                                                                                 L
+                                             
+              γn = 1 + tanh Linear(CEl,n ) ,             (6)                     X
+                                                                        LHM =           LCE (Up(Hl ), Y )+LDice (Up(Hl ), Y ), (11)
+                    βn = Linear(CEl,n ),                        (7)              l=1
+
+where tanh(·) denotes the hyperbolic tangent activation                where Up(·) denotes the upsampling operation that resizes
+function. Both γn and βn belong to RCfeat .These parame-               the prediction map to the same spatial resolution as the
+ters can be viewed as the encapsulation of the n-th semantic           ground truth Y . This deep supervision strategy effectively
+concept in the feature space. The original features are mod-           alleviates the gradient vanishing problem and strengthens
+ulated by these class-specific affine parameters to form the           the model’s capability of learning discriminative spatial fea-
+modulated features F̃l,n . For each pixel (x, y), the updated          tures in shallow layers.
+feature vector F̃l,n (x, y) is computed as:
+                                                                       3.3. Multi-level Cooperative Supervision
+            F̃l,n (x, y) = γn ⊙ Fl−1 (x, y) + βn ,              (8)
+                                                                          To ensure that BiCoR-Seg can learn highly discrimi-
+where Fl−1 (x, y) ∈ R    Cfeat
+                            represents the feature vector at           native features and semantic representations, we design a
+position (x, y), and ⊙ denotes channel-wise multiplication.            composite multi-level loss function. The total loss is de-
+Next comes the heatmap-guided modulation feature fusion.               fined as:
+The degree to which each pixel should be influenced by a
+                                                                                 Ltotal = Lmain + λ1 LHM + λ2 LF D ,            (12)
+specific class-modulated feature is controlled by the class
+heatmap. We apply a Softmax normalization along the class                        Lmain = LCE (P, Y ) + LDice (P, Y ).           (13)
+dimension of the heatmap Hl to obtain the per-pixel class
+assignment probability Hlsoft :                                        Although HBIS achieves semantic alignment at the spa-
+                                                                      tial level, class embeddings may still overlap in semantic
+              soft           exp Hl,n (x, y)                           space, that is, embeddings of different classes become too
+            Hl,n (x, y) = N                      ,       (9)
+                           P                                          close, leading to ambiguous class discrimination. To ad-
+                                exp Hl,k (x, y)                        dress this, we introduce a Fisher Discriminant Constraint
+                             k=1
+                                                                       LF D , which explicitly enhances inter-class separability and
+                   soft                                                intra-class compactness from a geometric perspective of the
+In this context, Hl,n   (x, y) denotes the Softmax-normalized
+heatmap value of the n-th class at pixel position (x, y) in            feature space. For the class embedding set at the l-th layer,
+the l-th layer, representing the probability that this pixel be-       CEl = {CEl,n }N    n=1 , we compute the within-class scatter
+                                                                         (l)                             (l)
+longs to class n. Then, we use these probabilities as weights          Sw and between-class scatter Sb within a mini-batch as
+to fuse the modulated features from all classes and add them           follows:
+back to the original features to form the enhanced represen-
+                                                                                                     N       B
+tation:                                                                           (l)       1 XX     (b)
+                                                                                 Sw   =           ∥CEl,n − µ(l) 2
+                                                                                                            n ∥2 ,              (14)
+                                    N                                                      BN n=1
+                                    X                                                                    b=1
+                                           soft
+Fl (x, y) = αFl−1 (x, y)+(1−α)            Hl,n  (x, y)·F̃l,n (x, y),
+                                    n=1                                                                  N
+                                                                                         (l)     1 X (l)
+                                                             (10)                       Sb =          ∥µ − µ(l) ∥22 ,           (15)
+where α is a learnable parameter, and Hl,n    soft
+                                                   (x, y) denotes                                N n=1 n
+the probability that the pixel at position (x, y) belongs to                      (l)
+the n-th class. Through the CE2F pathway, each pixel-level                 where µn and µ(l) denote the class center and the over-
+feature representation is directly guided by the most prob-            all mean at the l-th layer, respectively:
+able class-specific semantic knowledge, effectively mitigat-                                                     B
+ing issues of inter-class similarity and intra-class ambiguity.                                          1 X   (b)
+                                                                                            µ(l)
+                                                                                             n =             CEl,n ,            (16)
+                                                                                                         B
+                                                                                                             b=1
+   For the hierarchical heatmap supervision loss LHM , the
+effectiveness of each HBIS module highly depends on the                                                          N
+                                                                                               (l)     1 X (l)
+quality of the generated class heatmaps. To ensure that                                      µ       =      µ .                 (17)
+                                                                                                       N n=1 n
+heatmaps at shallow layers can learn meaningful seman-
+tic localization ability, we regard them as low-resolution                 The Fisher Discriminant loss LF D aims to minimize the
+segmentation predictions and apply deep supervision. At                ratio between the within-class scatter and the between-class
+               Table 1: Comparison with other methods on the LoveDA dataset. ”Agri.” denotes Agriculture.
+
+ Method                    Venue            Background.   Building        Road     Water Barren        Forest    Agri.   mIoU
+
+ FCN [27]               CVPR 2015              42.6            49.5        48.1     73.1      11.8      43.5     58.3     46.7
+ U-Net [32]            MICCAI 2015             43.1            52.7        52.8     73.1      10.3      43.0     59.9     47.8
+ PSPNet [54]            ISPRS 2016             44.4            52.1        53.5     76.5       9.7      44.1     57.9     48.3
+ LinkNet [3]            CVPR 2017              43.6            52.1        52.5     76.9      12.2      45.1     57.3     48.5
+ UNet++ [57]           MICCAI 2018             42.9            52.6        52.8     74.5      11.4      44.4     58.8     48.2
+ DeepLabv3+ [8]         ECCV 2018              43.0            50.9        52.0     74.4      10.4      44.2     58.5     47.6
+ SemanticFPN [20]       CVPR 2019              42.0            51.5        53.4     74.7      11.2      44.6     58.7     48.2
+ FarSeg [56]            CVPR 2020              43.4            51.8        53.3     76.1      10.8      43.2     58.6     48.2
+ SegFormer [45]        NeurIPS 2021            42.2            56.4        50.7     78.5      17.2      45.2     53.8     49.1
+ BANet [39]             GRSL 2022              43.7            51.5        51.1     76.9      16.6      44.9     62.5     49.6
+ UNetFormer [40]        ISPRS 2022             44.7            58.8        54.9     79.6      20.1      46.0     62.5     52.4
+ RSSFormer [47]           TIP 2023             52.4            60.7        55.2     76.3      18.7      45.4     58.3     52.4
+ TransUNet [4]           MIA 2024              43.0            56.1        53.7     78.0       9.3      44.9     56.9     48.9
+ Hi-ResNet [9]         JSTARS 2024             46.7            58.3        55.9     80.1      17.0      46.7     62.7     52.5
+ SFA-Net [18]             RS 2024              48.4            60.3        59.1     81.9      24.1      46.2     64.0     54.9
+ AFENet [16]            TGRS 2025              47.4            59.2        59.2     81.6      21.4      48.7     66.4     54.8
+ DMA-Net [13]             RS 2025              49.3            60.1        58.7     82.3      17.3      47.1     64.8     54.2
+
+ Ours                         –                48.1            60.9        58.7     80.8      24.4      48.7     66.8     55.5
+
+
+scatter, encouraging embeddings of the same category to be            4. Experiments
+more compact and those of different categories to be farther
+                                                                      4.1. Datasets and Evaluation Metrics
+apart in the feature space. It is formulated as:
+                                                                          We conduct extensive experiments and evaluations on
+                               (l)                                    three challenging high-resolution remote sensing image
+                      (l)    Sw
+                     LF D = (l)    .                   (18)           segmentation benchmark datasets. To ensure reproducibil-
+                           Sb + ϵ
+                                                                      ity and fair comparison, all datasets are divided following
+                                                                      the standard protocols provided by the open-source remote
+We apply this loss to the output CEl of each decoder layer            sensing segmentation framework GeoSeg [43].
+and compute a weighted summation to ensure that a highly                  LoveDA (Land-cover Domain Adaptive) [38]. A
+discriminative semantic space is maintained from shallow              large-scale dataset containing both urban and rural scenes,
+to deep layers:                                                       with a spatial resolution of 0.3 m and covering seven land-
+                             L                                        cover categories. This dataset exhibits diverse scenes
+                                    (l)
+                             X
+                    LF D =         LF D .              (19)           and severe class imbalance, posing high demands on the
+                             l=1                                      model’s domain adaptation capability and robustness. It
+                                                                      contains 2522 images for training, 1669 images for vali-
+    Through the cooperative effect of the hierarchical                dation, and 1796 images for testing. Since the ground-truth
+heatmap supervision loss LHM and the Fisher Discriminant              labels of the test set are not publicly available, we follow
+constraint LF D , BiCoR-Seg achieves a comprehensive op-              the official evaluation protocol and submit our predictions
+timization objective, which significantly enhances segmen-            to the online evaluation server to obtain the final results.
+tation accuracy and class discrimination capability, while                ISPRS Vaihingen. [33] This dataset consists of 33 high-
+exhibiting superior generalization stability in complex sce-          resolution aerial images with a ground sampling distance
+narios.                                                               (GSD) of 9 cm. It contains six classes in total: five fore-
+Table 2: Comparison with other methods on the ISPRS Vaihingen dataset. ”Imp. surf.” and ”Low veg.” stand for Impervious
+surfaces and Low vegetation, respectively.
+
+Method                  Venue          Imp. surf.    Building    Low veg.      Tree      Car       mIoU       OA       mF1
+
+U-Net [32]          MICCAI 2015          84.33         86.48       73.13       83.89     40.82     60.92     82.02     73.73
+DANet [15]           CVPR 2019           91.13         94.82       83.47       88.92     62.98     74.52     89.52     84.27
+TreeUNet [49]        ISPRS 2019          92.50         94.90       83.60       89.60     85.90     80.92     90.40     89.30
+SegViT [50]         NeurIPS 2022         91.97         95.26       82.24       90.84     80.68     79.35     90.50     88.20
+CTFNet [44]          GRSL 2023           90.69         94.35       81.66       87.27     82.72     77.84     88.60     87.34
+SFA-Net [18]           RS 2024           93.50         96.30       85.40       90.20     90.70     84.06        -      91.20
+LSRFormer [51]       TGRS 2024           93.84         96.40       85.82       90.70     90.79     84.56     91.90     91.50
+AFENet [16]          TGRS 2025           96.90         95.72       85.07       90.64     89.37     84.55     91.67     91.54
+
+Ours                       –             97.36         96.11       85.78       91.08     89.40     85.38     92.10     91.94
+
+                          Table 3: Comparison with other methods on the ISPRS Potsdam dataset.
+
+Method                  Venue          Imp. surf.    Building    Low veg.      Tree      Car       mIoU       OA       mF1
+
+U-Net [32]          MICCAI 2015          86.54         88.73       72.09       79.49     46.67     60.46     85.29     75.64
+DANet [15]           CVPR 2019           91.00         95.60       86.10       87.60     84.30     80.30     89.10     88.90
+TreeUNet [49]        ISPRS 2019          93.10         97.30       86.80       87.10     95.80     85.50     90.70     92.00
+SegViT [50]         NeurIPS 2022         92.45         97.01       89.77       89.98     95.23     86.85     91.20     92.89
+CTFNet [44]          GRSL 2023           91.48         96.30       86.04       87.23     92.48     83.20     89.38     90.70
+LSRFormer [51]       TGRS 2024           94.08         97.33       88.63       89.82     97.05     87.80     91.90     93.40
+SFA-Net [18]           RS 2024           95.00         97.50       88.30       89.60     97.10     87.60        -      93.50
+AFENet [16]          TGRS 2025           94.57         96.86       88.17       89.78     96.83     87.50     92.00     93.24
+
+Ours                       –             94.82         97.38       91.83       91.40     97.52     89.87     92.10     94.59
+
+
+ground categories (impervious surfaces, buildings, low veg-     mance, we adopt three widely used metrics in semantic
+etation, trees, and cars) and one background class. Follow-     segmentation tasks, following previous studies [12, 14, 27]:
+ing the GeoSeg split protocol, 15 images are used for train-    mean Intersection-over-Union (mIoU), Overall Accuracy
+ing, one image (ID 30) for validation, and 17 images (IDs       (OA), and mean F1-Score (mF1).
+2, 4, 6, etc.) for testing [40]. All images are cropped into
+non-overlapping patches of 1024 × 1024 pixels for training      4.2. Implementation Details
+and inference.
+                                                                   All experiments are conducted on an NVIDIA RTX 4090
+   ISPRS Potsdam. [33] This dataset includes 38 aerial          GPU. We adopt ConvNeXt-B [26] as the backbone network
+images with even higher resolution, each with a size of         and initialize it with weights pre-trained on ImageNet. Two
+6000 × 6000 pixels. The category definitions are consistent     HBIS layers are inserted into the decoder stage. In each
+with those of the Vaihingen dataset. Following the official     layer, Top-K is employed as a hard selection operator to
+split, after removing one mislabeled image (ID 7 10), we        select the most discriminative regions for semantic aggre-
+use 22 images for training, one image (ID 2 10) for val-        gation, with the parameter set to 0.02. To ensure training
+idation, and 14 images (IDs 2 13, 2 14, 3 13, etc.) for         stability, this selection process is treated as a stop-gradient
+testing [40]. All images are also cropped into patches of       operation, while gradients are propagated only through the
+1024 × 1024 pixels before being fed into the model.             subsequent weighted aggregation with respect to the feature
+   To quantitatively evaluate the segmentation perfor-          representations.
+            Table 4: Ablation study on key components. The checkmark indicates the module or loss is enabled.
+
+                        Modules                                  mIoU
+                                                                                           Params (M)             FLOPs (G)                     FPS
+Baseline          HBIS            LF D         LHM               LoveDA
+   ✓                                                              54.20                       93.5                        93.63                66.79
+   ✓                ✓                                             55.15
+   ✓                ✓              ✓                              55.21
+                                                                                              89.5                        87.80                65.17
+   ✓                ✓                            ✓                55.36
+   ✓                ✓              ✓             ✓                55.49
+
+
+   We use the Adam optimizer [19] with an initial learning                      Table 5: Ablation on the number of HBIS layers.
+rate of 0.8 × 10−4 and apply a cosine annealing schedule to
+dynamically adjust the learning rate. The batch size is set to                                        mIoU
+8. The weights of the composite loss are empirically set to                 Layers                                                Params(M)
+λ1 = 0.1 and λ2 = 0.1.                                                                      LoveDA        Vaihingen
+                                                                             l=1              55.29            84.54                    89.0
+4.3. Comparison with Other Methods                                           l=2              55.49            85.37                    89.5
+   On the most challenging LoveDA dataset, compared                          l=3              55.28            84.67                    90.0
+with publicly reported results under similar-scale back-
+bones (e.g., SegFormer with MiT-B5-level capacity), our                     0.555                                                                mIoU
+model achieves an mIoU of 55.5%,,reaching a new SOTA
+                                                                            0.554
+level, as shown in Table 1. The model performs partic-
+                                                                            0.553
+ularly well on the “Agriculture” and “Forest” categories,
+with IoUs of 66.8% and 48.7%, respectively, indicating that                 0.552
+
+our approach effectively handles large-scale and texture-                   0.551
+                                                                     mIoU
+
+
+
+
+complex natural scenes.                                                     0.550
+
+   On the ISPRS Vaihingen dataset, our model achieves an                    0.549
+mF1 score of 91.94%, as shown in Table 2. The advan-                        0.548
+tage is particularly evident for the “Imp. surf” and “Tree”                 0.547
+classes, where the F1 scores reach 97.36% and 91.08%,                               0.01     0.02       0.05        0.1           0.2   0.3    0.5
+respectively, fully demonstrating that BiCoR-Seg excels at                                               Top-K (log scale)
+modeling fine structures and complex boundaries in high-
+resolution aerial imagery.                                           Figure 3: Effect of the Top-K threshold on model perfor-
+                                                                     mance on the LoveDA dataset.
+   On the ISPRS Potsdam dataset, our model also deliv-
+ers strong results, with an mF1 of 94.59%, as shown in Ta-
+ble 3. It achieves notable improvements in distinguishing
+the highly confusable ”Low veg.” and ”Tree” categories.              4.4. Ablation Study
+Meanwhile, for the small-object class ”Car”, the model               Ablation on Key Components. To systematically vali-
+attains an F1 score of 97.52%, showcasing robust multi-              date the effectiveness of the core components in our frame-
+scale perception and fine-grained segmentation capability            work, we conduct ablation studies on the HBIS module
+in dense urban scenes.                                               and the multi-level cooperative supervision losses. We set
+   In summary, BiCoR-Seg achieves performance surpass-               a model employing a conventional cross-attention mecha-
+ing existing methods across three datasets with distinct             nism as the baseline. Specifically, we replace the HBIS
+characteristics, providing strong evidence of the effective-         module in the decoder with a standard cross-attention layer,
+ness of our proposed approach. This demonstrates that our            which also enables interactions between class embeddings
+model can dynamically and precisely inject high-level se-            and pixel feature maps, but lacks our heatmap-guided, ex-
+mantic knowledge into pixel-level feature learning, thereby          plicit bidirectional co-refinement mechanism. The baseline
+significantly enhancing segmentation accuracy and general-           model is optimized only with the main segmentation loss
+ization capability in complex remote sensing scenarios.              Lmain .
+          Original              GT                Ours           SegViT             SFA-Net          UNetFormer
+
+
+
+
+                                                                                                                         Background
+  (1)
+
+
+
+
+                                                                                                                         Building
+                                                                                                                         Road
+  (2)
+
+
+
+
+                                                                                                                         Barren
+                                                                                                                         Agriculture
+  (3)
+
+
+
+
+                                                                                                                         Forest
+  (4)
+
+
+
+
+                                                                                                                         Water
+Figure 4: Qualitative comparison of segmentation results on challenging remote sensing scenes. BiCoR-Seg produces more
+complete and semantically consistent segmentation maps compared with other representative methods.
+
+
+Quantitative Analysis As shown in Table 4, simply re-           and controllable impact on inference efficiency.
+placing the cross-attention module in the baseline with our
+HBIS module yields a notable improvement: the mIoU on
+LoveDA increases from 54.20% to 55.15%. This gain               Number of HBIS Modules L. The number of cascaded
+strongly demonstrates that, compared with conventional          HBIS modules L in the decoder determines the depth of
+attention-based interaction, our bidirectional co-refinement    semantic–feature interaction and refinement. We evaluate
+mechanism more effectively establishes tight connections        the model performance with different values of L on the
+between high-level semantics and pixel features. We fur-        LoveDA and Vaihingen datasets. As shown in Table 5,
+ther introduce two auxiliary losses. Using either the hierar-   when L=1, the performance is relatively low, indicating
+chical heatmap supervision or the Fisher discriminant loss      that a single interaction is insufficient for adequate seman-
+alone consistently improves performance. When both are          tic alignment. When L increases to 2, the performance im-
+applied together, the model achieves the best results, reach-   proves markedly. However, when L is further increased to
+ing 55.49% mIoU on LoveDA. These results indicate that          3, a slight degradation is observed, which may be attributed
+the spatial alignment supervision provided by LHM and the       to information redundancy caused by overly deep interac-
+semantic discriminability constraint from LF D are comple-      tions. Therefore, we set L=2 in all experiments to strike
+mentary, and their combination offers the most comprehen-       the best balance between performance and computational
+sive optimization objective for BiCoR-Seg.                      efficiency.
+    In terms of computational complexity and inference effi-
+ciency (Table 4), replacing the conventional cross-attention    Effect of the Top-K Threshold. In the F2CE pathway,
+with the proposed HBIS module introduces no significant         we employ a Top-K mechanism to select high-response pix-
+overhead. Specifically, FLOPs are reduced from 93.63G           els for updating class embeddings. The size of the Top-K
+to 87.80G, respectively, while the inference speed only         threshold determines the range of visual feature used for
+slightly decreases from 66.79 FPS to 65.17 FPS. These re-       class embedding updates. A too-small threshold may lead to
+sults demonstrate that the cooperative refinement mecha-        insufficient information, whereas an excessively large one
+nism achieves consistent performance gains with a limited       may introduce noise. We evaluate the influence of different
+                                                                Impervious                            Low
+             Original         GT                Tree             surfaces           Car            vegetation
+                                                                                                                          1.0
+ Vaihingen
+
+
+
+
+             Original         GT            Agriculture          Building          Road               Forest              0.5
+ LoveDA
+
+
+
+
+                                                                                                                          0.0
+
+Figure 5: Visualization of class heatmaps generated by BiCoR-Seg for representative categories. The HBIS module effec-
+tively highlights category-specific regions while suppressing irrelevant background noise.
+
+
+threshold values on model performance using the LoveDA            itly reveal the spatial regions that the model focuses on dur-
+dataset, and the results are shown in Fig. 3.                     ing segmentation decision-making. It can be seen that the
+   Experimental results show that when the Top-K thresh-          heatmaps accurately highlight the pixel regions correspond-
+old is set to 0.02, the model achieves the best performance,      ing to each semantic category and effectively suppress back-
+reaching an mIoU of 55.49%. This indicates that selecting         ground noise. For the building category, the heatmap pre-
+the top 2% of pixels with the highest responses to update         cisely emphasizes rooftop regions, while for small objects
+class embeddings captures the most representative visual in-      such as vehicles, the heatmap also achieves accurate local-
+formation while effectively filtering out irrelevant regions.     ization. These observations demonstrate that, through it-
+                                                                  erative collaborative refinement, BiCoR-Seg is capable of
+   We visualize the segmentation results of BiCoR-Seg and         purifying its internal semantic representations and focus-
+several representative methods on challenging scenes, as          ing its attention on the most discriminative ground-object
+shown in Fig. 4. It can be clearly observed that our method       regions. This provides interpretable evidence for its su-
+significantly outperforms other segmentation approaches.          perior segmentation performance, visually confirming that
+For instance, in the fourth example, the comparative meth-        our proposed HBIS mechanism enables high-level seman-
+ods confuse the purple bare soil with the orange agriculture,     tic concepts to be progressively and precisely aligned with
+while our method generates complete and highly discrimi-          pixel-level visual evidence, thereby significantly improving
+native segmentation masks, demonstrating stronger spatial         final segmentation accuracy.
+awareness.
+   To further illustrate the interpretability of BiCoR-Seg,       5. Conclusion
+particularly the working mechanism of the HBIS module,
+we visualize the class heatmaps generated for representa-           In this paper, we propose a Bidirectional Collaborative
+tive categories, as shown in Fig. 5. The heatmaps explic-         Refinement Framework (BiCoR-Seg) to address the preva-
+lent issues of inter-class similarity, intra-class variability,           ference on computer vision and pattern recognition, pages
+and semantic ambiguity in high-resolution remote sensing                  1290–1299, 2022. 3
+image semantic segmentation. The framework establishes               [11] B. Cheng, A. Schwing, and A. Kirillov. Per-pixel classifica-
+an explicit semantic association between feature representa-              tion is not all you need for semantic segmentation. Advances
+tions and class embeddings through a heatmap-driven bidi-                 in neural information processing systems, 34:17864–17875,
+                                                                          2021. 3
+rectional information collaboration mechanism, enabling
+                                                                     [12] M. Cordts, M. Omran, S. Ramos, T. Rehfeld, M. Enzweiler,
+the model to achieve progressive optimization of features
+                                                                          R. Benenson, U. Franke, S. Roth, and B. Schiele. The
+and semantics across layers. Experimental results demon-                  cityscapes dataset for semantic urban scene understanding.
+strate that BiCoR-Seg achieves superior performance on                    In Proceedings of the IEEE conference on computer vision
+multiple benchmark datasets, significantly improving seg-                 and pattern recognition, pages 3213–3223, 2016. 8
+mentation accuracy and boundary sharpness in complex                 [13] C. Deng, H. Liang, X. Qin, and S. Wang. Dma-net: Dynamic
+scenes. Moreover, quantitative analyses show that the class-              morphology-aware segmentation network for remote sensing
+specific heatmaps accurately reflect the model’s discrimi-                images. Remote Sensing, 17(14):2354, 2025. 7
+native rationale, thereby validating the effectiveness of the        [14] M. Everingham. The pascal visual object classes chal-
+bidirectional refinement mechanism.                                       lenge,(voc2007) results. http://pascallin. ecs. soton. ac.
+                                                                          uk/challenges/VOC/voc2007/index. html., 2007. 8
+References                                                           [15] J. Fu, J. Liu, H. Tian, Y. Li, Y. Bao, Z. Fang, and H. Lu. Dual
+                                                                          attention network for scene segmentation. In Proceedings of
+ [1] D. Bahdanau, K. Cho, and Y. Bengio. Neural machine                   the IEEE/CVF conference on computer vision and pattern
+     translation by jointly learning to align and translate. arXiv        recognition, pages 3146–3154, 2019. 8
+     preprint arXiv:1409.0473, 2014. 1, 2                            [16] F. Gao, M. Fu, J. Cao, J. Dong, and Q. Du. Adaptive fre-
+ [2] H. Cao, Y. Wang, J. Chen, D. Jiang, X. Zhang, Q. Tian, and           quency enhancement network for remote sensing image se-
+     M. Wang. Swin-unet: Unet-like pure transformer for medical           mantic segmentation. IEEE Transactions on Geoscience and
+     image segmentation. In European conference on computer               Remote Sensing, 2025. 7, 8
+     vision, pages 205–218. Springer, 2022. 2                        [17] T. Hanyu, K. Yamazaki, M. Tran, R. A. McCann, H. Liao,
+ [3] A. Chaurasia and E. Culurciello. Linknet: Exploiting en-             C. Rainwater, M. Adkins, J. Cothren, and N. Le. Aerial-
+     coder representations for efficient semantic segmentation.           former: Multi-resolution transformer for aerial image seg-
+     In 2017 IEEE visual communications and image processing              mentation. Remote Sensing, 16(16):2930, 2024. 2
+     (VCIP), pages 1–4. IEEE, 2017. 7                                [18] G. Hwang, J. Jeong, and S. J. Lee. Sfa-net: Semantic feature
+ [4] J. Chen, Y. Lu, Q. Yu, X. Luo, E. Adeli, Y. Wang, L. Lu,             adjustment network for remote sensing image segmentation.
+     A. L. Yuille, and Y. Zhou. Transunet: Transformers make              Remote Sensing, 16(17):3278, 2024. 7, 8
+     strong encoders for medical image segmentation. 2, 7            [19] D. P. Kingma. Adam: A method for stochastic optimization.
+ [5] L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy, and               arXiv preprint arXiv:1412.6980, 2014. 9
+     A. L. Yuille. Semantic image segmentation with deep con-        [20] A. Kirillov, R. Girshick, K. He, and P. Dollar. Panoptic fea-
+     volutional nets and fully connected crfs. arXiv preprint             ture pyramid networks. In Proceedings of the IEEE/CVF
+     arXiv:1412.7062, 2014. 2                                             Conference on Computer Vision and Pattern Recognition
+ [6] L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy, and               (CVPR), June 2019. 7
+     A. L. Yuille. Deeplab: Semantic image segmentation with         [21] M. Lei, S. Li, Y. Wu, H. Hu, Y. Zhou, X. Zheng, G. Ding,
+     deep convolutional nets, atrous convolution, and fully con-          S. Du, Z. Wu, and Y. Gao. Yolov13: Real-time object detec-
+     nected crfs. IEEE transactions on pattern analysis and ma-           tion with hypergraph-enhanced adaptive visual perception,
+     chine intelligence, 40(4):834–848, 2017. 2                           2025. 1
+ [7] L.-C. Chen, G. Papandreou, F. Schroff, and H. Adam. Re-         [22] M. Lei and X. Liu. Solo-net: A sparser but wiser method
+     thinking atrous convolution for semantic image segmenta-             for small object detection in remote-sensing images. IEEE
+     tion. arxiv 2017. arXiv preprint arXiv:1706.05587, 2:1,              Geoscience and Remote Sensing Letters, 21:1–5, 2023. 1
+     2019. 2                                                         [23] M. Lei, H. Wu, X. Lv, and L. Jiang. Ddranet: A dynamic
+ [8] L.-C. Chen, Y. Zhu, G. Papandreou, F. Schroff, and H. Adam.          density-region-aware network for crowd counting. IEEE Sig-
+     Encoder-decoder with atrous separable convolution for se-            nal Processing Letters, 2024. 1
+     mantic image segmentation. In Proceedings of the Euro-          [24] M. Lei, H. Wu, X. Lv, and X. Wang. Condseg: A general
+     pean conference on computer vision (ECCV), pages 801–                medical image segmentation framework via contrast-driven
+     818, 2018. 7                                                         feature enhancement. In Proceedings of the AAAI Confer-
+ [9] Y. Chen, P. Fang, X. Zhong, J. Yu, X. Zhang, and T. Li. Hi-          ence on Artificial Intelligence, volume 39, pages 4571–4579,
+     resnet: Edge detail enhancement for high-resolution remote           2025. 2
+     sensing segmentation. IEEE Journal of Selected Topics in        [25] Z. Liu, Y. Lin, Y. Cao, H. Hu, Y. Wei, Z. Zhang, S. Lin, and
+     Applied Earth Observations and Remote Sensing, 2024. 7               B. Guo. Swin transformer: Hierarchical vision transformer
+[10] B. Cheng, I. Misra, A. G. Schwing, A. Kirillov, and R. Gird-         using shifted windows. In Proceedings of the IEEE/CVF
+     har. Masked-attention mask transformer for universal im-             international conference on computer vision, pages 10012–
+     age segmentation. In Proceedings of the IEEE/CVF con-                10022, 2021. 2
+[26] Z. Liu, H. Mao, C.-Y. Wu, C. Feichtenhofer, T. Darrell,         [39] L. Wang, R. Li, C. Duan, C. Zhang, X. Meng, and S. Fang.
+     and S. Xie. A convnet for the 2020s. In Proceedings of               A novel transformer based semantic segmentation scheme
+     the IEEE/CVF conference on computer vision and pattern               for fine-resolution remote sensing images. IEEE Geoscience
+     recognition, pages 11976–11986, 2022. 8                              and Remote Sensing Letters, 19:1–5, 2022. 7
+[27] J. Long, E. Shelhamer, and T. Darrell. Fully convolutional      [40] L. Wang, R. Li, C. Zhang, S. Fang, C. Duan, X. Meng, and
+     networks for semantic segmentation. In Proceedings of the            P. M. Atkinson. Unetformer: A unet-like transformer for ef-
+     IEEE conference on computer vision and pattern recogni-              ficient semantic segmentation of remote sensing urban scene
+     tion, pages 3431–3440, 2015. 1, 2, 7, 8                              imagery. ISPRS Journal of Photogrammetry and Remote
+[28] Z. Luo, J. Pan, Y. Hu, L. Deng, Y. Li, C. Qi, and X. Wang.           Sensing, 190:196–214, 2022. 2, 7, 8
+     Rs-dseg: semantic segmentation of high-resolution remote        [41] W. Wang, T. Zhou, F. Yu, J. Dai, E. Konukoglu, and
+     sensing images based on a diffusion model component with             L. Van Gool. Exploring cross-image pixel contrast for se-
+     unsupervised pretraining. Scientific Reports, 14(1):18609,           mantic segmentation. In Proceedings of the IEEE/CVF inter-
+     2024. 1                                                              national conference on computer vision, pages 7303–7313,
+[29] L. Ma, Y. Liu, X. Zhang, Y. Ye, G. Yin, and B. A. John-              2021. 1
+     son. Deep learning in remote sensing applications: A meta-      [42] D. Wu, Z. Guo, A. Li, C. Yu, N. Sang, and C. Gao. Semantic
+     analysis and review. ISPRS journal of photogrammetry and             segmentation via pixel-to-center similarity calculation. CAAI
+     remote sensing, 152:166–177, 2019. 1                                 Transactions on Intelligence Technology, 9(1):87–100, 2024.
+[30] K. Nogueira, M. M. Faita-Pinheiro, A. P. M. Ramos, W. N.             1
+     Gonçalves, J. M. Junior, and J. A. dos Santos. Prototypical    [43] G. Wu and Z. Guo. Geoseg: A computer vision package
+     contrastive network for imbalanced aerial image segmenta-            for automatic building segmentation and outline extraction.
+     tion. In Proceedings of the IEEE/CVF Winter Conference on            CoRR, abs/1809.03175, 2018. 7
+     Applications of Computer Vision (WACV), pages 8366–8376,        [44] H. Wu, P. Huang, M. Zhang, and W. Tang. Ctfnet: Cnn-
+     January 2024. 1, 3                                                   transformer fusion network for remote-sensing image se-
+[31] O. Oktay, J. Schlemper, L. L. Folgoc, M. Lee, M. Hein-               mantic segmentation. IEEE Geoscience and Remote Sensing
+     rich, K. Misawa, K. Mori, S. McDonagh, N. Y. Hammerla,               Letters, 21:1–5, 2023. 8
+     B. Kainz, et al. Attention u-net: Learning where to look for
+                                                                     [45] E. Xie, W. Wang, Z. Yu, A. Anandkumar, J. M. Alvarez, and
+     the pancreas. arXiv preprint arXiv:1804.03999, 2018. 2
+                                                                          P. Luo. Segformer: Simple and efficient design for semantic
+[32] O. Ronneberger, P. Fischer, and T. Brox. U-net: Convo-
+                                                                          segmentation with transformers. Advances in neural infor-
+     lutional networks for biomedical image segmentation. In
+                                                                          mation processing systems, 34:12077–12090, 2021. 2, 7
+     International Conference on Medical image computing and
+                                                                     [46] G. Xu, X. Zhang, X. He, and X. Wu. Levit-unet: Make
+     computer-assisted intervention, pages 234–241. Springer,
+                                                                          faster encoders with transformer for medical image segmen-
+     2015. 1, 2, 7, 8
+                                                                          tation. In Chinese Conference on Pattern Recognition and
+[33] F. Rottensteiner, G. Sohn, J. Jung, M. Gerke, C. Baillard,
+                                                                          Computer Vision (PRCV), pages 42–53. Springer, 2023. 2
+     S. Benitez, and U. Breitkopf. The ISPRS benchmark on ur-
+     ban object classification and 3d building reconstruction. In    [47] R. Xu, C. Wang, J. Zhang, S. Xu, W. Meng, and X. Zhang.
+     ISPRS Annals of the Photogrammetry, Remote Sensing and               Rssformer: Foreground saliency enhancement for remote
+     Spatial Information Sciences, volume I-3, pages 293–298,             sensing land-cover segmentation. IEEE Transactions on Im-
+     2012. 7, 8                                                           age Processing, 32:1052–1064, 2023. 7
+[34] R. Strudel, R. Garcia, I. Laptev, and C. Schmid. Segmenter:     [48] F. Yu and V. Koltun. Multi-scale context aggregation by di-
+     Transformer for semantic segmentation. In Proceedings of             lated convolutions. arXiv preprint arXiv:1511.07122, 2015.
+     the IEEE/CVF international conference on computer vision,            1
+     pages 7262–7272, 2021. 2                                        [49] K. Yue, L. Yang, R. Li, W. Hu, F. Zhang, and W. Li. Tree-
+[35] K. Sun, B. Xiao, D. Liu, and J. Wang. Deep high-resolution           unet: Adaptive tree convolutional neural networks for sub-
+     representation learning for human pose estimation. In Pro-           decimeter aerial image segmentation. ISPRS Journal of Pho-
+     ceedings of the IEEE/CVF conference on computer vision               togrammetry and Remote Sensing, 156:1–13, 2019. 8
+     and pattern recognition, pages 5693–5703, 2019. 2               [50] B. Zhang, Z. Tian, Q. Tang, X. Chu, X. Wei, C. Shen, et al.
+[36] L. Sun, H. Zou, J. Wei, X. Cao, S. He, M. Li, and S. Liu. Se-        Segvit: Semantic segmentation with plain vision transform-
+     mantic segmentation of high-resolution remote sensing im-            ers. Advances in Neural Information Processing Systems,
+     ages based on sparse self-attention and feature alignment.           35:4971–4982, 2022. 1, 3, 8
+     Remote Sensing, 15(6):1598, 2023. 1                             [51] R. Zhang, Q. Zhang, and G. Zhang. Lsrformer: Effi-
+[37] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones,           cient transformer supply convolutional neural networks with
+     A. N. Gomez, Ł. Kaiser, and I. Polosukhin. Attention is all          global information for aerial image segmentation. IEEE
+     you need. Advances in neural information processing sys-             Transactions on Geoscience and Remote Sensing, 62:1–13,
+     tems, 30, 2017. 1, 2                                                 2024. 8
+[38] J. Wang, Z. Zheng, A. Ma, X. Lu, and Y. Zhong. Loveda:          [52] W. Zhang, M. Ma, Y. Jiang, R. Lian, Z. Wu, K. Cui, and
+     A remote sensing land-cover dataset for domain adaptive              X. Ma. Center-guided classifier for semantic segmentation
+     semantic segmentation. arXiv preprint arXiv:2110.08733,              of remote sensing images. arXiv preprint arXiv:2503.16963,
+     2021. 7                                                              2025. 3
+[53] W. Zhang, J. Pang, K. Chen, and C. C. Loy. K-net: Towards
+     unified image segmentation. Advances in Neural Information
+     Processing Systems, 34:10326–10338, 2021. 3
+[54] H. Zhao, J. Shi, X. Qi, X. Wang, and J. Jia. Pyramid scene
+     parsing network. In Proceedings of the IEEE conference on
+     computer vision and pattern recognition, pages 2881–2890,
+     2017. 2, 7
+[55] S. Zheng, J. Lu, H. Zhao, X. Zhu, Z. Luo, Y. Wang, Y. Fu,
+     J. Feng, T. Xiang, P. H. Torr, et al. Rethinking semantic
+     segmentation from a sequence-to-sequence perspective with
+     transformers. In Proceedings of the IEEE/CVF conference
+     on computer vision and pattern recognition, pages 6881–
+     6890, 2021. 2
+[56] Z. Zheng, Y. Zhong, J. Wang, and A. Ma. Foreground-aware
+     relation network for geospatial object segmentation in high
+     spatial resolution remote sensing imagery. In Proceedings
+     of the IEEE/CVF conference on computer vision and pattern
+     recognition, pages 4096–4105, 2020. 7
+[57] Z. Zhou, M. M. Rahman Siddiquee, N. Tajbakhsh, and
+     J. Liang. Unet++: A nested u-net architecture for medi-
+     cal image segmentation. In International workshop on deep
+     learning in medical image analysis, pages 3–11. Springer,
+     2018. 2, 7
+[58] X. Zhu, W. Su, L. Lu, B. Li, X. Wang, and J. Dai. De-
+     formable detr: Deformable transformers for end-to-end ob-
+     ject detection. arXiv preprint arXiv:2010.04159, 2020. 3
+[59] X. X. Zhu, D. Tuia, L. Mou, G.-S. Xia, L. Zhang, F. Xu, and
+     F. Fraundorfer. Deep learning in remote sensing: A compre-
+     hensive review and list of resources. IEEE geoscience and
+     remote sensing magazine, 5(4):8–36, 2017. 1
+

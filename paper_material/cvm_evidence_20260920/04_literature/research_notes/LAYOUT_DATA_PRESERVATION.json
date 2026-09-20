@@ -1,0 +1,14 @@
+{
+  "reference_release": "cvm_horizontal_architecture_20260918",
+  "input_files_checked": 72,
+  "inputs_changed": [],
+  "experiment_tables_unchanged": [
+    "table_system.tex",
+    "table_components.tex",
+    "table_lrsversions.tex",
+    "table_sensitivity.tex",
+    "table_literature.tex"
+  ],
+  "numbered_method_equations_unchanged": true,
+  "new_model_execution": false
+}

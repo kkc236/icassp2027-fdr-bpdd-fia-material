@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py", line 151, in <module>
+    print(json.dumps(run(build_parser().parse_args()), ensure_ascii=False, indent=2))
+  File "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py", line 85, in run
+    detector.model.to(select_device(args.device, batch=args.batch)).eval()
+TypeError: select_device() got an unexpected keyword argument 'batch'

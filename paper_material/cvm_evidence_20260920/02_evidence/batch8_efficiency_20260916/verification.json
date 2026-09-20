@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "measured_batches": 1500,
+  "measured_images": 12000,
+  "arms": 5,
+  "observed_model_batch_size": 8,
+  "unchanged_checkpoints": true,
+  "unchanged_training_sources": true,
+  "same_environment_and_base_protocol_as_prior_batch1": true,
+  "prior_batch1_not_remeasured_this_run": true,
+  "measurement_source_sha256": "49bc64aa228c18e3200884ad551ec68fe63a69e12d72e1b17d1072f2fc586136"
+}

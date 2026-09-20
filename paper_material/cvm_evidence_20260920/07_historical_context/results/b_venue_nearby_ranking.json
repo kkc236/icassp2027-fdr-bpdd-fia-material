@@ -1,0 +1,121 @@
+{
+  "format_version": 1,
+  "dataset": "VisDrone2019-DET",
+  "reference": {
+    "method": "LRS-GFDR + Capacity-BPDD-v3-Safe + FIA",
+    "status": "current_joint_formal100",
+    "split": "val",
+    "input_size": "640x640",
+    "metric": "mAP50-95",
+    "value": 0.30109,
+    "value_percent": 30.109,
+    "best_epoch": 97,
+    "evidence": "../evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv"
+  },
+  "policy": {
+    "venue_scope": "CCF-B conference papers only",
+    "split_requirement": "explicit VisDrone validation split",
+    "metric_requirement": "reported mAP50-95",
+    "nearby_window_pp": 2.0,
+    "sort": "absolute difference from current reference, ascending",
+    "strict_fairness": false,
+    "claim_boundary": "absolute positioning only; not a paired improvement or SOTA claim"
+  },
+  "ranked": [
+    {
+      "rank": 1,
+      "method": "YOLOv5x + EMA",
+      "venue": "ICASSP 2023",
+      "venue_rank": "B",
+      "split": "val",
+      "input_size": "640x640",
+      "map50_95": 0.304,
+      "delta_pp": 0.291,
+      "abs_delta_pp": 0.291,
+      "source_row_id": "ema_yolov5x_val",
+      "source_url": "https://doi.org/10.1109/ICASSP49357.2023.10096516",
+      "comparability": "nearby value; partial pretraining and evaluator details differ"
+    },
+    {
+      "rank": 2,
+      "method": "UAV-DETR-R18",
+      "venue": "IROS 2025",
+      "venue_rank": "B",
+      "split": "val",
+      "input_size": "640x640",
+      "map50_95": 0.298,
+      "delta_pp": -0.309,
+      "abs_delta_pp": 0.309,
+      "source_row_id": "uav_detr_r18_val",
+      "source_url": "https://doi.org/10.1109/IROS60139.2025.11246176",
+      "comparability": "nearby value; training/evaluator details differ"
+    },
+    {
+      "rank": 3,
+      "method": "UAV-DETR-R50",
+      "venue": "IROS 2025",
+      "venue_rank": "B",
+      "split": "val",
+      "input_size": "640x640",
+      "map50_95": 0.315,
+      "delta_pp": 1.391,
+      "abs_delta_pp": 1.391,
+      "source_row_id": "uav_detr_r50_val",
+      "source_url": "https://doi.org/10.1109/IROS60139.2025.11246176",
+      "comparability": "nearby value; backbone and training/evaluator differ"
+    },
+    {
+      "rank": 4,
+      "method": "UAV-DETR-EV2",
+      "venue": "IROS 2025",
+      "venue_rank": "B",
+      "split": "val",
+      "input_size": "640x640",
+      "map50_95": 0.287,
+      "delta_pp": -1.409,
+      "abs_delta_pp": 1.409,
+      "source_row_id": "uav_detr_ev2_val",
+      "source_url": "https://doi.org/10.1109/IROS60139.2025.11246176",
+      "comparability": "nearby value; EfficientFormerV2 backbone and training/evaluator differ"
+    },
+    {
+      "rank": 5,
+      "method": "RT-DETR-R50",
+      "venue": "IROS 2025",
+      "venue_rank": "B",
+      "split": "val",
+      "input_size": "640x640",
+      "map50_95": 0.284,
+      "delta_pp": -1.709,
+      "abs_delta_pp": 1.709,
+      "source_row_id": "iros_study_rtdetr_r50_val",
+      "source_url": "https://doi.org/10.1109/IROS60139.2025.11246176",
+      "comparability": "nearby value; baseline re-benchmark and evaluator differ"
+    }
+  ],
+  "context": [
+    {
+      "method": "NRQO",
+      "venue": "ICME 2025",
+      "venue_rank": "B",
+      "split": "not_reported",
+      "input_size": "not_reported",
+      "map50_95": 0.321,
+      "source_row_id": "nrqo_split_unreported",
+      "source_url": "https://doi.org/10.1109/ICME59968.2025.11209405",
+      "reason": "split and input are not reported; excluded from rank"
+    },
+    {
+      "method": "VARDet",
+      "venue": "ICASSP 2026",
+      "venue_rank": "B",
+      "split": "val",
+      "input_size": "1333x800",
+      "map50_95": 0.365,
+      "delta_pp": 6.391,
+      "source_row_id": "vardet_r50_val",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11463846",
+      "reason": "different high-resolution protocol; context only"
+    }
+  ]
+}

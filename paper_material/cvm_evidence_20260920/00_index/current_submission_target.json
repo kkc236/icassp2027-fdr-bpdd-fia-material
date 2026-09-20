@@ -1,0 +1,18 @@
+{
+  "active_target": "CVM 2027",
+  "target_record": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm2027_preparation_20260916/SUBMISSION_TARGET.json",
+  "stage": "UAVDT added; author-confirmed Full identity; provenance and paper ID pending",
+  "current_manuscript": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/main.tex",
+  "current_pdf": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/MANUSCRIPT_CVM.pdf",
+  "current_project_zip": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/CVM2027_SUBMISSION_READY.zip",
+  "current_figure_zip": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/CVM_FIGURES.zip",
+  "layout_review": {
+    "updated": "2026-09-19",
+    "active_revision": "cvm_uavdt_revision_20260919",
+    "base_revision": "cvm_approved_architecture_20260919",
+    "scope": "Added author-confirmed Full UAVDT results with protocol and source-snapshot qualifications; existing VisDrone values unchanged",
+    "scientific_results_changed": true,
+    "new_dataset": "UAVDT",
+    "architecture_vector_source": false
+  }
+}

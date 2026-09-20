@@ -1,0 +1,737 @@
+
+=== PAGE 1 ===
+arXiv:2501.01855v3  [cs.CV]  1 Jul 2025
+UA V-DETR: Efficient End-to-End Object Detection for Unmanned
+Aerial Vehicle Imagery
+Huaxiang Zhang, Hao Zhang, Kai Liu, Zhongxue Gan*, and Guo-Niu Zhu*, Member, IEEE
+Abstract— Unmanned aerial vehicle object detection (UA V-
+OD) has been widely used in various scenarios. However,
+most existing UA V-OD algorithms rely on manually designed
+components, which require extensive tuning. End-to-end models
+that do not depend on such manually designed components are
+mainly designed for natural images, which are less effective for
+UA V imagery. To address such challenges, this paper proposes
+an efficient detection transformer (DETR) framework tailored
+for UA V imagery, i.e., UA V-DETR. The framework includes a
+multi-scale feature fusion with frequency enhancement module,
+which captures both spatial and frequency information at
+different scales. In addition, a frequency-focused downsampling
+module is presented to retain critical spatial details during
+downsampling. A semantic alignment and calibration module
+is developed to align and fuse features from different fusion
+paths. Experimental results demonstrate the effectiveness and
+generalization of our approach across various UA V imagery
+datasets. On the VisDrone dataset, our method improves AP
+by 3.1% and AP 50 by 4.2% over the baseline. Similar enhance-
+ments are observed on the UA VVaste dataset. The project page:
+https://github.com/ValiantDiligent/UAV-DETR
+I. I NTRODUCTION
+Camera-equipped unmanned aerial vehicles (UA Vs) have
+been widely applied in various fields [1]. As one of the
+core technologies in these applications, UA V object detection
+(UA V-OD) has attracted considerable attention [2]. Popu-
+lar UA V-OD algorithms often rely on manually designed
+components, such as non-maximum suppression (NMS) and
+anchor boxes generated based on human expertise [3]. These
+components require extensive tuning for different tasks,
+which are complex and inefficient in practical applications.
+In contrast, end-to-end models are free from these issues.
+Therefore, it would be a good choice to develop end-to-end
+models for UA V-OD.
+As a popular end-to-end model, the Detection Transformer
+(DETR) [4] utilizes the transformer architecture to create
+an end-to-end detector. Recent studies have improved the
+small object detection capabilities of DETR models, but
+their high computational cost and poor real-time performance
+make them unsuitable for real-time scenarios [5]. To tackle
+such issues, Zhao et al. [6] introduced a real-time detection
+transformer (RT-DETR), which surpassed the popular you
+only look once (YOLO) framework in both accuracy and
+speed. However, existing DETRs are predominantly designed
+*This work is supported by Shanghai Municipal Science and Technology
+Major Project under Grant 2021SHZDZX0103 and Key Project of Com-
+prehensive Prosperity Plan of Fudan University under Grant XM06231744.
+(Corresponding author: Zhongxue Gan and Guo-Niu Zhu)
+All authors are with the Academy for Engineering and Technology, Fudan
+University, Shanghai 200433, China (e-mail: guoniu zhu@fudan.edu.cn).
+Fig. 1. Challenges in UA V-OD
+for natural images, which poses challenges when applied to
+UA V image analysis.
+As shown in Fig. 1, the object features in UA V vision
+are more complex than those in normal vision. Aerial im-
+agery suffers from challenges such as small object sizes
+and occlusion. Therefore, detecting objects in UA V images
+typically benefits from detailed feature extraction [2]. In
+cases where local features may not provide sufficient in-
+formation, incorporating the relationship between the object
+and its surrounding environment would be a viable option to
+enhance the detection accuracy [3], [7].
+To handle the challenge of object detection in aerial
+imagery, this paper proposes an efficient detection trans-
+former framework for UA V imagery, namely UA V-DETR.
+We enhance our model by leveraging both spatial and fre-
+quency domain information across multiple scales to retain
+high-frequency components. We present a frequency-focused
+downsampling strategy to preserve critical spatial details
+during downsampling. Finally, we enhance the semantic
+representation capability of the model by aligning features
+from different feature fusion paths.
+Our main contributions are summarized as follows.
+1) We propose UA V-DETR, an efficient end-to-end de-
+tector transformer for UA V imagery. The framework
+achieves superior accuracy and real-time performance.
+We put forward three models of different sizes to meet
+various performance requirements.
+2) We present a multi-scale feature fusion with frequency
+enhancement module to enhance the detection of small
+and occluded objects.
+3) We develop a frequency-focused downsampling mod-
+ule that retains dual-domain information.
+4) We propose a semantic alignment and calibration mod-
+
+=== PAGE 2 ===
+ule to align features that from different feature fusion
+paths to boost detection performance.
+II. R ELATED WORK
+A. Object Detection in UAV Imagery
+Object detection in UA V imagery presents unique chal-
+lenges, particularly in detecting small objects and managing
+occlusions. Moreover, UA V-OD often needs to be deployed
+on hardware platforms, which requires to balance between
+real-time performance and computational complexity [3].
+Some studies [8], [9] presented a coarse-to-fine processing
+pipeline for UA V-OD. Although these two-stage methods
+achieve high accuracy, they introduce significant compu-
+tational overhead [10], which makes them unsuitable for
+resource-limited environments. To address this issue, another
+strategy focused on developing optimized single-stage mod-
+els to balance between detection accuracy and efficiency.
+Meanwhile, lots of works [2], [11] suggested to capture
+more features relevant for detecting small objects, with
+most of them concentrating on utilizing higher-resolution
+feature maps. In addition, some methods [12], [13] leveraged
+contextual information to enhance small object detection.
+Among these studies, most UA V-OD methods are de-
+voted to lightweighting models or optimizing the processing
+pipeline for practical use. There is limited research on post-
+processing techniques. Additionally, these methods mainly
+extract detailed features and contextual information in the
+spatial domain, while the frequency domain is underutilized.
+B. Real-Time End-to-End Object Detection
+Many single-stage UA V-OD models are based on the
+YOLO series models due to their balance of performance
+and real-time capability [11], [13]. However, these detectors
+typically require NMS for post-processing, which not only
+slows down inference but also introduces hyperparameters
+that can lead to instability in speed and accuracy.
+By contrast, RT-DETR [6] is the first real-time and end-
+to-end object detector, which eliminates the influence of
+NMS. It surpasses even the most powerful YOLO models in
+both speed and accuracy through attention-based intra-scale
+feature interaction, CNN-based cross-scale feature fusion,
+and uncertainty-minimal query selection.
+RT-DETR leverages global attention mechanisms to cap-
+ture long-range dependencies and contextual information,
+which make it more flexible and effective. Its end-to-end
+design strategy enables it more suitable for deployment on
+UA V platforms compared to the YOLO series models.
+C. Feature Fusion
+Feature fusion techniques aim to combine multi-scale
+feature maps to improve object detection. However, semantic
+gaps between features at different levels pose challenges,
+especially for detecting small and densely distributed objects
+[14]. An intuitive approach is to sum or concatenate feature
+maps from different layers, though it often leads to spatial
+feature misalignment. For example, Li et al. [15] presented
+pooling-based and sampling-based attention mechanisms to
+investigate these issues.
+While these methods focus on spatial feature fusion, the
+frequency-domain information is not taken into considera-
+tion. Although some works [16], [17] explored frequency-
+domain fusion, they fall short in effective multi-scale fusion
+across both spatial and frequency domains.
+In contrast, our UA V-DETR, a single-stage model with a
+DETR-like architecture, performs multi-scale feature fusion
+in both spatial and frequency domains. By using learned
+offsets to align features across different fusion paths, our
+approach addresses the misalignment issue and enhances
+detection performance.
+III. M ETHODOLOGY
+As shown in Fig. 2, this study proposes a UA V-DETR,
+which is built upon the architecture of RT-DETR [6].
+We enhance the model with three components, i.e., multi-
+scale feature fusion with frequency enhancement, frequency-
+focused downsampling, and semantic alignment and cali-
+bration. Additionally, we introduce inner Scylla intersection
+over union (Inner-SIoU) [18], [19] to replace the generalized
+intersection over union (GIoU).
+A. Multi-Scale Feature Fusion with Frequency Enhancement
+In traditional feature fusion, high-frequency components
+are often lost. In this study, we present a multi-scale feature
+fusion with frequency enhancement module (MSFF-FE) to
+preserve small object details by combining spatial and fre-
+quency domain information across multiple scales.
+In the proposed MSFF-FE architecture, the Focus module
+[20] is employed to compress spatial information from satel-
+lite imagery into channel dimensions through stride-based
+feature slicing and a convolution layer. As depicted in Fig. 3,
+we process S2 through Focus modules and concatenate the
+resulting feature map with other input feature maps along
+the channel dimension as input. The MSFF-FE adopts a
+cross-stage partial strategy [21]. It partitions the input feature
+map x ∈ RC×H×W into two parts: x1 ∈ RC1×H×W and
+x2 ∈ RC2×H×W . To avoid excessive computational cost, we
+set C1 = C
+4 and C2 = 3C
+4 . The first part x1 undergoes
+multi-scale and frequency enhancement, while the second
+part x2 is concatenated with the processed features from x1,
+followed by a 1 × 1 convolution to fuse the two branches.
+Firstly, the feature map x1 passes through a 1×1 convolution
+to adjust its channel dimensions, followed by the GELU
+activation function [22] for non-linearity, resulting in xconv.
+As shown in Eq. (1), we transform xconv into the frequency
+domain by Fourier transform (F). To refine the frequency-
+domain features, we design a Global Average Pooling (GAP)
+layer, followed by a convolutional layer. After refinement,
+the features are transformed back to the spatial domain via
+inverse Fourier transform (IF).
+xsp = |IF (Conv1×1(GAP(xconv)) · F (xconv))| (1)
+
+=== PAGE 3 ===
+Fig. 2. Overview of the UA V-DETR. MSFF-FE represents the Multi-Scale Feature Fusion with Frequency Enhancement module; FD denotes Frequency-
+focused Downsampling; SAC is Semantic Alignment and Calibration. FFT and IFFT denote fast Fourier transform and its inverse operation, respectively.
+C
+GELU
+× +
+FFT
+X2
+X1
+ReLu
+Channel 
+Attention
+GELU
+IFFT
+×
+Focus SplitC
+S2 others
+Channel Attention
+ReLu
+Sigmoid
+Cout=Cin/4 Cout=Cin*4
+31× 31 
+Conv
+5 × 5 
+Conv
+3 × 3 
+Conv
+1 × 1 
+Conv
+FF
+Module
+Fourier
+transform
+Activation
+Function
+GAP
+Fig. 3. Structure of multi-scale feature fusion with frequency enhancement.
+By default, the number of output channels in the convolutional layers equals
+the number of input channels. The structural diagram of the Frequency-
+Focused module is included in Fig. 2.
+To capture multi-scale information, three convolutions
+with different kernel sizes are applied to xsp.
+xsc = Conv1×1(xsp) + Conv3×3(xsp) + Conv5×5(xsp) (2)
+In our design, we also leverage a channel attention mech-
+anism on GAP (xconv) to further refine the xsc. Then, We
+leverage the gating mechanism to modulate and refine the
+multi-scale features.
+xF = α · IF (F (Conv1×1(xsc)) · Conv1×1(xsc)) +β · xsc (3)
+where α and β are learned parameters balancing the spatial
+and frequency components. We refer to this equation as the
+Frequency-Focused (FF) module, which will be used in later
+stages of the network. The FF module dynamically learns and
+adjusts filtering coefficients in the frequency domain through
+1 × 1 convolution layers. Additionally, we incorporate resid-
+ual connections. This design preserves the original spatial
+features. At the same time, it allows for controllable fusion of
+frequency-enhanced components. Before combining with the
+unprocessed x2, the enhanced features undergo final fusion.
+xfinal = x1 + Conv31×31(xconv) + Conv1×1(xconv) + xF (4)
+We employ large convolution kernels to capture long-range
+dependencies, while small convolution kernels are utilized
+to optimize channel-wise information. Additionally, residual
+connections are incorporated to accelerate model training.
+The final output is obtained by concatenating xfinal with
+x2, followed by a 1 × 1 convolution and GELU activation
+function.
+B. Frequency-Focused Downsampling
+As illustrated in Fig. 2, in the frequency-focused down-
+sampling (FD) module, the input feature map x ∈ RC×H×W
+is first downsampled using average pooling with a kernel size
+of 2 and a stride of 1. As a result, the pooled feature map
+xp is obtained and then it is divided into two parts along the
+channel dimension: x1 and x2. Each of them are processed
+in parallel.
+x1 is processed using a 3 × 3 convolution with stride 2
+and padding 1, which reduces its spatial dimensions while
+preserving key features. Then, x′
+1 is obtained. x2 undergoes
+parallel processing, where one path applies FF module to
+enhance important feature components. Accordingly, xf is
+obtained. The other path applies max pooling with a 3 × 3
+kernel and stride 2, followed by a 1×1 convolution to reduce
+the number of channels. Correspondingly, we get x′
+p. The
+two outputs, xf and x′
+p, are concatenated along the channel
+dimension and passed through a 1 × 1 convolution to reduce
+the number of channels to the desired size, which results in
+x′
+2. Finally, x′
+1 and x′
+2 are concatenated to form the final
+output of the module.
+C. Semantic Alignment and Calibration
+As shown in Fig. 4, the semantic alignment and calibration
+(SAC) module is designed to fuse and align features obtained
+from different fusion processes.
+Given two input features x1 ∈ RC1×H1×W1 and x2 ∈
+RC2×H2×W2, the SAC module first unifies the number of
+channels to a common dimension C through separate con-
+volution layers. Then, the feature x2 is upsampled using
+bilinear interpolation to match the spatial dimensions of x1.
+To enhance feature x2, we apply FF module that generates
+a frequency-enhanced feature xfreq. Afterward, we fuse the
+
+=== PAGE 4 ===
+frequency-enhanced feature with the original upsampled fea-
+ture x2. A gating mechanism is employed to balance the
+contributions from both the spatial and frequency domains.
+Δ2 α
+β
+Δ1
+Grid
+Sample
+Grid
+Sample
+OffsetX1
+X2
+Conv3×3
+Conv3×3
+FF
+G
+UpSample
+C
+Fig. 4. Structure of semantic alignment and calibration.
+xfused = G(x2) · xfreq + (1 − G(x2)) · x2 (5)
+where G is a learned gating function, which is used to
+ensure an adaptive fusion of spatial and frequency-domain
+information.
+To address misalignment between x1 and xfused, the SAC
+module learns 2D offsets ∆1 and ∆2, which adjust the sam-
+pling grid for each feature map. These offsets are generated
+through a convolution layer. Using the learned offsets, we
+adjust the spatial coordinates of the features through a grid-
+based sampling operation [23] to ensure the alignment of
+both features.
+xaligned
+1 = GridSample(x1, ∆1), (6)
+xaligned
+fused = GridSample(xfused, ∆2) (7)
+GridSample employs learnable offsets ∆ to dynamically
+warp feature coordinates via bilinear interpolation to enable
+geometric alignment of multi-scale features. This differen-
+tiable formulation preserves gradient flow while adapting to
+viewpoint variations and scale discrepancies in UA V imagery.
+Then, an element-wise weighted summation is used to fuse
+the aligned features, where α and β are learned attention
+weights that balance the contributions from each aligned
+feature.
+xoutput = α · xaligned
+1 + β · xaligned
+fused (8)
+D. LOSS Function
+RT-DETR uses GIoU loss for bounding box regression,
+which is less effective for small object detection, especially
+when the Intersection over Union (IoU) values are low. To
+address this issue, we adopt Inner-SIoU, which enhances
+both small object detection and geometric alignment. Inner-
+SIoU combines Inner-IoU [19] and SCYLLA-IoU (SIoU)
+[18]. It scales the auxiliary bounding box by 1.25 to im-
+prove sensitivity and speed up convergence. The InnerIoU is
+defined using expanded auxiliary bounding boxes. The Inner-
+IoU is calculated as:
+Inner-IoU = |Binner ∩ Binner
+gt |
+|Binner ∪ Binner
+gt | (9)
+where Binner and Binner
+gt represent the expanded predicted and
+ground truth boxes, respectively. The width and height of
+both boxes are scaled by a factor of 1.25. The terms |Binner ∩
+Binner
+gt | and |Binner ∪ Binner
+gt | denote the area of overlap and
+the union area between the expanded boxes, respectively.
+The Inner-SIoU loss is defined as:
+LInner-SIoU = LSIoU + IoU − Inner-SIoU (10)
+where IoU is the standard IoU loss, and LSIoU includes angle,
+distance, and shape penalties.
+IV. E XPERIMENTS
+A. Experimental Setup
+Datasets: We conduct quantitative experiments on two
+object detection datasets: VisDrone [24] and UA VVaste [25].
+The VisDrone-2019-DET dataset comprises 6,471 training
+images, 548 validation images, and 3,190 test images, all
+captured from drones at varying altitudes across different
+locations. Each image is annotated with bounding boxes for
+ten predefined object categories: pedestrian, person, car, van,
+bus, truck, motorbike, bicycle, awning-tricycle, and tricycle.
+We use the VisDrone-2019-DET training set and validation
+set for training and testing, respectively.
+In addition, we further train the UA V-DETR network
+with UA VVaste dataset to validate the capacity to generalize
+across datasets. UA VVaste is a dataset designed specifically
+for aerial rubbish detection. It consists of 772 images and
+3716 hand-labeled annotations of waste in urban and natural
+environments such as streets, parks, and lawns. We choose
+the training set for training and the test set for testing.
+Implementation Details: All models are trained on
+NVIDIA GeForce RTX 3090. The UA V-DETR model is
+based on RT-DETR [6], with three variations: one using
+ResNet18, another with ResNet50, and a third incorporating
+EfficientFormerV2 [26] as the backbone. We implement our
+approach and train the framework for 400 epochs with
+a batch size of 4. We use an early stopping mechanism
+with a patience setting of 20. The UA V-DETR network is
+optimized using AdamW [27] with a learning rate of 0.0001,
+a momentum of 0.9. We scale our input images to 640 ×640
+pixels and use the data augmentation methods from the
+RT-DETR model to ensure consistency across experiments.
+Additionally, we apply mixup [28] and Mosaic [29] tech-
+niques, with Mosaic set to a probability of 1 and mixup
+set to a probability of 0.2. We report the standard COCO
+metrics, including AP (averaged over uniformly sampled IoU
+thresholds ranging from 0.50-0.95 with a step size of 0.05),
+AP50, as well as AP at different scales: AP S, AP M .
+B. Comparative Experiments
+As listed in Table I, on the VisDrone dataset, our UA V-
+DETR-R18 achieves a 3.1% improvement in AP, a 4.2%
+increase in AP 50 compared to the baseline RT-DETR-R18.
+Similarly, the UA V-DETR-R50 sees a 3.1% increase in AP,
+a 4.1% rise in AP 50 compared to the baseline. UA V-DETR-
+EV2 also demonstrates an accuracy advantage over HIC-
+YOLOv5, which has a similar computational cost. UA V-
+DETR-R18 outperforms all methods with a computational
+cost below 100 GFLOPs, which achieves the best accuracy
+
+=== PAGE 5 ===
+TABLE I
+EXPERIMENTAL RESULTS ON THE VISDRONE -2019-DET D ATASET
+Model Publication InputSize Params(M) GFLOPs AP AP 50
+Real-time Object Detectors
+YOLOv8-M [20] - 640×640 25.9 78.9 24.6 40.7
+YOLOv8-L [20] - 640×640 43.7 165.2 26.1 42.7
+YOLOv9-S [30] ECCV2025 640×640 7.2 26.7 22.7 38.3
+YOLOv9-M [30] ECCV2025 640×640 20.1 76.8 25.2 42.0
+YOLOv10-M [31] arXiv2024 640×640 15.4 59.1 24.5 40.5
+YOLOv10-L [31] arXiv2024 640×640 24.4 120.3 26.3 43.1
+YOLOv11-S [32] arXiv2024 640×640 9.4 21.3 23.0 38.7
+YOLOv11-M [32] arXiv2024 640×640 20.0 67.7 25.9 43.1
+Object Detectors for UAV Imagery
+PP-YOLOE-P2-Alpha-l [33] - 640×640 54.1 111.4 30.1 48.9
+QueryDet [8] CVPR2022 2400×2400 33.9 212 28.3 48.1
+ClusDet [9] ICCV2019 1000×600 30.2 207 26.7 50.6
+DCFL [34] CVPR2023 1024×1024 36.1 157.8 - 32.1
+HIC-YOLOv5 [2] ICRA2024 640×640 9.4 31.2 26.0 44.3
+End-to-end Object Detectors
+DETR [4] ECCV2020 1333×750 60 187 24.1 40.1
+Deformable DETR [5] ICLR2020 1333×800 40 173 27.1 42.2
+Sparse DETR [35] ICLR2022 1333×800 40.9 121 27.3 42.5
+RT-DETR-R18 [6] CVPR2024 640×640 20 60.0 26.7 44.6
+RT-DETR-R50 [6] CVPR2024 640×640 42 136 28.4 47.0
+Real-time End-to-end Object Detectors for UAV Imagery
+UA V-DETR-EV2(Ours) - 640×640 13 43 28.7 47.5
+UA V-DETR-R18(Ours) - 640×640 20 77 29.8 48.8
+UA V-DETR-R50(Ours) - 640×640 42 170 31.5 51.1
+TABLE II
+EXPERIMENTAL RESULTS ON UAVASTE DATASET
+Model Params (M) GFLOPs AP S APM AP AP 50
+YOLOv11-S [32] 9.4 21.3 27.3 48.7 27.8 63.0
+HIC-YOLOv5 [2] 9.4 31.2 30.8 20.9 30.5 65.1
+RT-DETR-R18 [6] 20.0 57.3 35.8 64.8 36.3 72.6
+RT-DETR-R50 [6] 42.0 129.9 37.0 62.3 37.4 73.5
+UA V-DETR-EV2 (Ours) 13 43 36.7 63.3 37.1 70.6
+UA V-DETR-R18 (Ours) 20 77 36.6 64.6 37.0 74.0
+UA V-DETR-R50 (Ours) 42 170 37.1 61.3 37.5 75.9
+in its class. Furthermore, we compared our method with other
+object detectors that have computational costs similar to
+UA V-DETR-R50, and the results show that our approach also
+outperforms the others in terms of accuracy. Remarkably,
+our method still exhibits outstanding performance, even
+compared to approaches like PP-YOLOE-P2-Alpha-l [33],
+which typically benefit from extensive pre-training. Such
+comparisons are often considered unfair due to the significant
+advantages conferred by extensive pre-training. To further
+demonstrate the generalizability of UA V-DETR, we also
+evaluated the method on the UA VVaste dataset. The results
+are given in Table II. Notably, UA V-DETR still maintains a
+competitive advantage compared to other models. Compared
+to VisDrone, the UA VVaste dataset has a smaller amount of
+data. The strong performance of our model demonstrates that
+it does not rely on large amounts of annotated data.
+C. Ablation Studies
+We conducted ablation experiments on the VisDrone
+dataset using UA V-DETR-R18 to analyze the impact of each
+component on detection accuracy. Table III presents the
+performance comparison with different configurations, where
+IS stands for Inner-SIoU, MSFF-FE represents Multi-Scale
+TABLE III
+RESULTS OF THE ABLATION STUDY.
+Baseline IS MSFF-FE FD SAC AP AP 50
+✓ 26.7 44.6
+✓ ✓ 27.1 45.3
+✓ ✓ ✓ 28.4 46.9
+✓ ✓ ✓ ✓ 28.4 47.1
+✓ ✓ ✓ ✓ ✓ 29.8 48.8
+TABLE IV
+COMPARISON OF IOU METRICS
+IoU AP AP 50
+GIoU 29.0 48.4
+Inner-SIoU (ratio=1.20) 29.5 48.7
+Inner-SIoU (ratio=1.25) 29.8 48.8
+Inner-SIoU (ratio=1.30) 29.3 48.6
+TABLE V
+COMPARISON OF MODEL PERFORMANCE METRICS
+Model Params(M) GFLOPs FPS
+RT-DETR-R50 [6] 42 130 89
+RT-DETR-R18 [6] 20 60 183
+UA V-DETR-R50 42 170 65
+UA V-DETR-R18 20 77 124
+UA V-DETR-EV2 13 43 116
+
+=== PAGE 6 ===
+Feature Fusion with Frequency Enhancement module, FD
+stands for Frequency-Focused Downsampling module, and
+SAC refers to Semantic Alignment and Calibration module.
+The baseline RT-DETR-R18 achieves an AP of 26.7 and
+AP50 of 44.6. After incorporating Inner-SIoU, AP increased
+to 27.1, which shows that improving the loss function
+positively impacts performance. Adding the MSFF-FE mod-
+ule further improves the AP to 28.4, which demonstrates
+the benefits of incorporating multi-scale feature fusion and
+frequency enhancement. The addition of FD improves AP 50
+to 47.1. When all components are combined, UA V-DETR-
+R18 achieves the highest performance with an AP of 29.8
+and an AP50 of 48.8, which showcases the cumulative impact
+of each module on detection accuracy. As given in Table IV,
+our experiments demonstrate that setting the ratio of Inner-
+SIOU to 1.25 is an appropriate choice. Lastly, we calculated
+the Frames Per Second (FPS) for both RT-DETR models
+and UA V-DETR models using the PyTorch implementation
+in 32-bit Floating Point Precision, as shown in Table V. The
+result demonstrates that UA V-DETR largely maintains the
+real-time performance of RT-DETR.
+Baseline
+Baseline
+Baseline
+Ours
+Ours
+Ours
+Fig. 5. The heatmap of RT-DETR-R18 and UA V-DETR-R18. The brighter
+areas in the heatmap indicate stronger attention by the model. Our model
+shows greater focus on small objects and their surrounding environment.
+The yellow boxes highlight areas where our model performs better in
+detecting occluded objects. The red boxes indicate regions where the model
+misfocuses on noise.
+D. Visualization
+In Fig. 5, we present heatmaps for small objects in the
+VisDrone dataset, focusing on backpropagation through the
+predictions of the bounding box. Compared to the baseline
+model, UA V-DETR demonstrates a notably improved ability
+to localize small objects. In the heatmaps of our model, small
+objects exhibit higher heat values, which indicates that the
+model can more effectively capture the features of these
+small objects. Additionally, it can be observed that UA V-
+DETR pays more attention to the surrounding information
+of small objects, which demonstrates the model’s ability to
+better utilize contextual information during detection. As a
+result, as shown in the yellow box in Fig. 5, UA V-DETR
+also performs well in localizing occluded objects. Therefore,
+UA V-DETR does not severely degrade the baseline’s real-
+time performance. After deployment on different hardware
+platforms, FPS can obtain significant improvements [36].
+E. Discussion
+Compared to other UA V-OD models, UA V-DETR has
+two key differences. First, it eliminates the need for NMS
+and anchor setting, which greatly reduces the complexity
+of model deployment. Second, UA V-DETR leverages dual-
+domain information during feature fusion. As shown in Table
+I, our model achieves higher accuracy compared to other
+detectors with similar computational costs.
+There are several reasons that contribute to this improved
+performance. Firstly, our model retains more high-frequency
+features, which are crucial for detecting small objects. In
+traditional feature fusion and downsampling processes, high-
+frequency features are often lost, which makes it harder to
+recover edge and texture details. These details are particu-
+larly important for UA V-OD. To address this, we introduced
+the MSFF-FE and FD modules, which enable the model to
+combine spatial and frequency domain information during
+feature fusion and downsampling to eusure that important
+high-frequency components are preserved.
+Secondly, our model makes better use of contextual in-
+formation. When small objects are difficult to detect based
+on fine details, their surrounding semantic context becomes
+crucial. The operations in the frequency domain help the
+model capture global patterns, which improves the detection
+accuracy. However, these operations can sometimes lead to
+misalignment between the semantic and spatial information
+of different feature maps. To handle this problem, we de-
+signed the SAC module, which aligns features from different
+fusion paths and enhances overall detection performance.
+The ablation study in Table III demonstrates the effectiveness
+of these modules.
+Our findings suggest that utilizing frequency domain in-
+formation can enhance the performance of UA V-OD. We
+hope this approach will provide insights into how frequency
+information can be better used in UA V-OD tasks. However,
+as shown in the red box in Fig. 5, the model occasionally
+focuses on irrelevant regions, which presents a challenge that
+we aim to address in future work.
+V. C ONCLUSION
+This paper proposes UA V-DETR, a real-time end-to-end
+object detector specifically designed for UA V imagery. By
+developing the MSFF-FE module, FD module, and SAC
+module, UA V-DETR helps alleviate the difficulties of de-
+tecting small and occluded objects in aerial images. Each
+of our modules plays a crucial role. The MSFF-FE module
+enhances multi-scale feature fusion while preserving high-
+frequency components, the FD module focuses on main-
+taining spatial details during downsampling, and the SAC
+module ensures semantic alignment across different feature
+paths. Experimental results on the VisDrone and UA VVaste
+datasets demonstrate that our method achieves higher ac-
+curacy than existing approaches with similar computational
+costs while maintaining real-time inference speeds. Future
+work will focus on improving its robustness to noise.
+
+=== PAGE 7 ===
+REFERENCES
+[1] B. Wang, W. Li, B. Zhang, and Y . Liu, “Joint response and back-
+ground learning for uav visual tracking,” in 2024 IEEE International
+Conference on Robotics and Automation (ICRA) , 2024, pp. 455–462.
+[2] S. Tang, S. Zhang, and Y . Fang, “Hic-yolov5: Improved yolov5 for
+small object detection,” in 2024 IEEE International Conference on
+Robotics and Automation (ICRA) . IEEE, 2024, pp. 6614–6619.
+[3] K. Tong, Y . Wu, and F. Zhou, “Recent advances in small object
+detection based on deep learning: A review,” Image and Vision
+Computing, vol. 97, p. 103910, 2020.
+[4] N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and
+S. Zagoruyko, “End-to-end object detection with transformers,” in
+Computer Vision – ECCV 2020 , A. Vedaldi, H. Bischof, T. Brox, and
+J.-M. Frahm, Eds. Cham: Springer International Publishing, 2020,
+pp. 213–229.
+[5] X. Zhu, W. Su, L. Lu, B. Li, X. Wang, and J. Dai, “Deformable
+detr: Deformable transformers for end-to-end object detection,” in
+International Conference on Learning Representations , 2020.
+[6] Y . Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y . Liu, and J. Chen,
+“Detrs beat yolos on real-time object detection,” in Proceedings of the
+IEEE/CVF Conference on Computer Vision and Pattern Recognition
+(CVPR), June 2024, pp. 16 965–16 974.
+[7] Y . Li, Q. Hou, Z. Zheng, M.-M. Cheng, J. Yang, and X. Li, “Large
+selective kernel network for remote sensing object detection,” in
+Proceedings of the IEEE/CVF International Conference on Computer
+Vision (ICCV), October 2023, pp. 16 794–16 805.
+[8] C. Yang, Z. Huang, and N. Wang, “Querydet: Cascaded sparse query
+for accelerating high-resolution small object detection,” in Proceed-
+ings of the IEEE/CVF Conference on Computer Vision and Pattern
+Recognition (CVPR), June 2022, pp. 13 668–13 677.
+[9] F. Yang, H. Fan, P. Chu, E. Blasch, and H. Ling, “Clustered object
+detection in aerial images,” in Proceedings of the IEEE/CVF Interna-
+tional Conference on Computer Vision , 2019, pp. 8311–8320.
+[10] J. Feng, J. Wang, and R. Qin, “Lightweight detection network for
+arbitrary-oriented vehicles in uav imagery via precise positional in-
+formation encoding and bidirectional feature fusion,” International
+Journal of Remote Sensing , vol. 44, no. 15, pp. 4529–4558, 2023.
+[11] P. Mittal, R. Singh, and A. Sharma, “Deep learning-based object
+detection in low-altitude uav datasets: A survey,” Image and Vision
+Computing, vol. 104, p. 104046, 2020.
+[12] C. Shen, C. Ma, and W. Gao, “Multiple attention mechanism enhanced
+yolox for remote sensing object detection,” Sensors, vol. 23, no. 3, p.
+1261, 2023.
+[13] Y . Liu, P. Sun, N. Wergeles, and Y . Shang, “A survey and performance
+evaluation of deep learning methods for small object detection,”Expert
+Systems with Applications , vol. 172, p. 114602, 2021.
+[14] J. Deng, S. Bei, S. Shaojing, and Z. Zhen, “Feature fusion methods in
+deep-learning generic object detection: A survey,” in 2020 IEEE 9th
+Joint International Information Technology and Artificial Intelligence
+Conference (ITAIC), vol. 9. IEEE, 2020, pp. 431–437.
+[15] K. Li, Q. Geng, M. Wan, X. Cao, and Z. Zhou, “Context and
+spatial feature calibration for real-time semantic segmentation,” IEEE
+Transactions on Image Processing , vol. 32, pp. 5465–5477, 2023.
+[16] Y . Cui, W. Ren, and A. Knoll, “Omni-kernel network for image
+restoration,” in Proceedings of the AAAI Conference on Artificial
+Intelligence, vol. 38, no. 2, 2024, pp. 1426–1434.
+[17] G. Liu, Z. Chen, D. Liu, B. Chang, and Z. Dou, “Ftmf-net: A
+fourier transform-multiscale feature fusion network for segmentation
+of small polyp objects,” IEEE Transactions on Instrumentation and
+Measurement, vol. 72, pp. 1–15, 2023.
+[18] Z. Gevorgyan, “Siou loss: More powerful learning for bounding box
+regression,” arXiv preprint arXiv:2205.12740 , 2022.
+[19] H. Zhang, C. Xu, and S. Zhang, “Inner-iou: more effective intersec-
+tion over union loss with auxiliary bounding box,” arXiv preprint
+arXiv:2311.02877, 2023.
+[20] G. Jocher, A. Chaurasia, and J. Qiu, “Ultralytics yolov8,” 2023.
+[Online]. Available: https://github.com/ultralytics/ultralytics
+[21] C.-Y . Wang, H.-Y . M. Liao, Y .-H. Wu, P.-Y . Chen, J.-W. Hsieh, and I.-
+H. Yeh, “Cspnet: A new backbone that can enhance learning capability
+of cnn,” in Proceedings of the IEEE/CVF Conference on Computer
+Vision and Pattern Recognition (CVPR) Workshops , June 2020.
+[22] D. Hendrycks and K. Gimpel, “Gaussian error linear units (gelus),”
+arXiv preprint arXiv:1606.08415 , 2016.
+[23] M. Jaderberg, K. Simonyan, A. Zisserman et al., “Spatial transformer
+networks,”Advances in neural information processing systems, vol. 28,
+2015.
+[24] P. Zhu, L. Wen, D. Du, X. Bian, H. Fan, Q. Hu, and H. Ling,
+“Detection and tracking meet drones challenge,” IEEE Transactions
+on Pattern Analysis and Machine Intelligence , vol. 44, no. 11, pp.
+7380–7399, 2021.
+[25] M. Kraft, M. Piechocki, B. Ptak, and K. Walas, “Autonomous, onboard
+vision-based trash and litter detection in low altitude aerial images
+collected by an unmanned aerial vehicle,” Remote Sensing , vol. 13,
+no. 5, 2021.
+[26] Y . Li, J. Hu, Y . Wen, G. Evangelidis, K. Salahi, Y . Wang, S. Tulyakov,
+and J. Ren, “Rethinking vision transformers for mobilenet size and
+speed,” in Proceedings of the IEEE International Conference on
+Computer Vision, 2023.
+[27] I. Loshchilov, “Decoupled weight decay regularization,” arXiv preprint
+arXiv:1711.05101, 2017.
+[28] H. Zhang, M. Cisse, Y . N. Dauphin, and D. Lopez-Paz, “mixup:
+Beyond empirical risk minimization,” in International Conference on
+Learning Representations, 2018.
+[29] A. Bochkovskiy, C.-Y . Wang, and H.-Y . M. Liao, “Yolov4: Op-
+timal speed and accuracy of object detection,” arXiv preprint
+arXiv:2004.10934, 2020.
+[30] C.-Y . Wang and H.-Y . M. Liao, “YOLOv9: Learning what you want
+to learn using programmable gradient information,” arXiv preprint
+arXiv:2402.13616, 2024.
+[31] A. Wang, H. Chen, L. Liu, K. Chen, Z. Lin, J. Han, and G. Ding,
+“Yolov10: Real-time end-to-end object detection,” arXiv preprint
+arXiv:2405.14458, 2024.
+[32] R. Khanam and M. Hussain, “YOLOv11: An overview of the key
+architectural enhancements,” arXiv preprint arXiv:2410.17725 , 2024.
+[33] P. Authors, “Paddledetection, object detection and instance segmenta-
+tion toolkit based on paddlepaddle.” https://github.com/PaddlePaddle/
+PaddleDetection, 2019.
+[34] C. Xu, J. Ding, J. Wang, W. Yang, H. Yu, L. Yu, and G.-S. Xia,
+“Dynamic coarse-to-fine learning for oriented tiny object detection,”
+in Proceedings of the IEEE/CVF Conference on Computer Vision and
+Pattern Recognition (CVPR), June 2023, pp. 7318–7328.
+[35] B. Roh, J. Shin, W. Shin, and S. Kim, “Sparse detr: Efficient end-to-
+end object detection with learnable sparsity,” in ICLR, 2022.
+[36] H. T. Minh, L. Mai, and T. V . Minh, “Performance evaluation of deep
+learning models on embedded platform for edge ai-based real time
+traffic tracking and detecting applications,” in 2021 15th International
+Conference on Advanced Computing and Applications (ACOMP) ,
+2021, pp. 128–135.

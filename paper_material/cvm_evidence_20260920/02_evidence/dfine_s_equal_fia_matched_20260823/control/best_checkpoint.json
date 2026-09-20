@@ -1,0 +1,32 @@
+{
+  "format_version": 1,
+  "selection_split": "val",
+  "selection_metric": "COCO AP50-95",
+  "selection_rule": "maximum test_coco_eval_bbox[0] in the 132-row training log; test_coco_eval_bbox is D-FINE's name for val-loader metrics",
+  "best_epoch": 127,
+  "stage": "best_stg2",
+  "checkpoint_filename": "best_stg2.pth",
+  "checkpoint_bytes": 165254650,
+  "checkpoint_sha256": "1997b2b44e5c8ef108c4909e258b4b15eb5c099e5527ca8d03648d21d75e4c82",
+  "checkpoint_last_epoch": 127,
+  "training_val_coco_stats": [
+    0.27424985167884014,
+    0.4602670301919163,
+    0.27502052137770705,
+    0.1848614809788302,
+    0.38376165959161646,
+    0.4855396742617723,
+    0.1115152254281128,
+    0.32200619215332327,
+    0.42515879089498126,
+    0.3340592629266588,
+    0.553833279529437,
+    0.7097160212244418
+  ],
+  "test_split_used_for_selection": false,
+  "verification": {
+    "tool_source_commit": "75e779e29cef436b1fcd6c60e9f1194973d2f882",
+    "checkpoint_epoch_match": true,
+    "all_stats_finite": true
+  }
+}

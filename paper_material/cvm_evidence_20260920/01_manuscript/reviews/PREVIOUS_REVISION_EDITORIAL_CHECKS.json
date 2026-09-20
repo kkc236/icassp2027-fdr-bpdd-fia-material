@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "revision": "2026-09-17 multi-reviewer manuscript revision",
+  "positioning_zh": "面向无人机航拍监测，提供高精度目标检测与高速批量处理能力。",
+  "comparison_reference": "Complete FDR/FGL transfer (Original FDR); not the entire D-FINE detector",
+  "clean_role": "intermediate configuration, all results retained",
+  "independent_agent_review_roles": [
+    "DETR implementation and mathematics",
+    "strict CVM reviewer and evidence cross-review",
+    "presentation, primary related work and English editing",
+    "independent final reviewer"
+  ],
+  "independent_agent_count": 4,
+  "review_report_sha256": {
+    "DETR_TECHNICAL_REVIEW_ZH.md": "332b06b5b665d4808737aa4d6faa1ea2f21677d0900d1f96ab38d172207f7b04",
+    "CVM_REVIEW_ZH.md": "7bab146247158b2491887a78c5c56e77e33854c0b5ccdddbebfb47288778b2f9",
+    "PRESENTATION_AND_RELATED_WORK_ZH.md": "c9f48c57018f2013e64355d42a5a34c182f43d97e398e47322f63951aa97fb13",
+    "FINAL_INDEPENDENT_REVIEW_ZH.md": "d3ecad919ab1823b212c60e0267d455db90e01fbea3c8997f3b320d661bf9d0a"
+  },
+  "reviewers_are_agents_not_human_peer_reviewers": true,
+  "G_is_first_contribution": true,
+  "localization_comparison_is_first_experimental_result": true,
+  "G_method_whitespace_tokens": 875,
+  "all_method_whitespace_tokens": 1978,
+  "geometry_equation_evaluation_order_corrected": true,
+  "equation_count_preserved": 11,
+  "LRS_rank_and_zero_group_properties_clarified": true,
+  "expert_direct_gradient_path_clarified": true,
+  "native_predictor_GPU_fusion_disclosed": true,
+  "timing_counter_distinguished_from_training_gate": true,
+  "numeric_tables_unchanged": true,
+  "numeric_cells_checked": 72,
+  "historical_negative_results_retained": {
+    "geometry_vs_clean_AP": -0.335,
+    "G_vs_clean_AP": -0.076,
+    "GB_vs_G_AP": -0.343
+  },
+  "internal_test_added": false,
+  "efficiency_batch_sizes": [
+    8
+  ],
+  "new_training": false,
+  "new_model_evaluation": false,
+  "qualitative_figure_status": "excluded from current revision by user",
+  "UAVDT_added": false,
+  "CVM2026_primary_references_added": [
+    "LME-DETR",
+    "SD-Net"
+  ],
+  "formulation_checks": {
+    "status": "passed",
+    "check_count": 8,
+    "scope": "Formula arithmetic and source-expression consistency only. No neural model, dataset prediction, training, autograd, or accuracy evaluation was run."
+  },
+  "pages": 11,
+  "tables": 7,
+  "figures": 5,
+  "equations": 11,
+  "references": 19,
+  "visual_review": "passed_all_11_pages",
+  "visual_review_method": "All eleven initial page renders inspected; final changed pages 1,8,9,10,11 inspected again; pages 2-7 exact PNG equality.",
+  "rendered_pages_sha256": {
+    "page-01.png": "aedbdf0bde2f113d92603c26c0eeaad80ff5599b2b8d65b1865011767e2394bc",
+    "page-02.png": "6ac175c4f53550b71a2d655243881796dd2406e7e61c6dc41b7496ee068f8e51",
+    "page-03.png": "e46c83c17e03c2a1fc2e9c32221af143d4cab821fec8b9708dea303792cc66de",
+    "page-04.png": "ec7117aedf1fde38be71c3090fd1ba9b4fa9bb6d457fc5e85bc67d09d0328daa",
+    "page-05.png": "d44223814a68ffa8a1485956d58efa9c365787269d3e13e371bad21806324ecd",
+    "page-06.png": "0a511f0a93732078b5266006400d4abd7d95f4e90e3bfc52b5b6dc60015e0b9d",
+    "page-07.png": "6add2ae6257f4afd1aadcf410be5f38b1c1fea47a7d631fd3e8b7bce11177d9e",
+    "page-08.png": "16a011ca39ed7750f1236ca999054b9e80445ca1fdef9ae8e49042d0f2b8624d",
+    "page-09.png": "5f37aa6b8e1853ba78c682f6fd1f57db47d43637bb189f2b86400e9bd4c2aab6",
+    "page-10.png": "2eba2b4eadd7783272d918f57a65c4b99a9f06c01f49096083ee83fcc9372824",
+    "page-11.png": "f0707647613f00cd338ecf37db208328ebdd2ca91a03aa1c543f47011915b376"
+  },
+  "main_tex_sha256": "fcccaaaf786678719d63aee61699b6c726113508114410672bc06136b4d3f048",
+  "pdf_sha256": "cbe3eb53211270b5594fccbfa380f7499a2647be6ed0aeb4c0eb44086ea01147",
+  "agreed_scope_complete": true,
+  "external_submission_performed": false,
+  "acceptance_probability_estimated": false,
+  "remaining_evidence_limits": [
+    "one dataset and one seed",
+    "historical configurations not all source/initialization matched",
+    "different D-FINE and Full training recipes",
+    "converted labels and prior test access",
+    "expert/direct-supervision/KD bundle not isolated",
+    "desktop fixed-input throughput only"
+  ],
+  "pending_metadata": [
+    "real submission-system paper ID"
+  ]
+}

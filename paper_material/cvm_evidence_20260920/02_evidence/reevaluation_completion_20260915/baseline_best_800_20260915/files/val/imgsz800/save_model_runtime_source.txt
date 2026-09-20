@@ -1,0 +1,58 @@
+    def save_model(self):
+        """Save model training checkpoints with additional metadata."""
+        import io
+
+        # A transient NaN/Inf permanently poisons the EMA running average (ema = decay*ema + (1-decay)*model), so
+        # save_model would otherwise skip every epoch and the run would finish with no checkpoint on valid input.
+        # Resync each poisoned EMA tensor from the live model where finite; any tensor that is non-finite in both is
+        # left for the nan_to_num_ pass below, so a usable checkpoint is always written.
+        ema = unwrap_model(self.ema.ema)
+        if not all(torch.isfinite(v).all() for v in ema.state_dict().values() if isinstance(v, torch.Tensor)):
+            model_sd = unwrap_model(self.model).state_dict()
+            for k, v in ema.state_dict().items():
+                if isinstance(v, torch.Tensor) and not torch.isfinite(v).all() and torch.isfinite(model_sd[k]).all():
+                    v.copy_(model_sd[k])
+        ema = deepcopy(ema).half()
+        # Clamp fp16 serialization overflow without mutating the live EMA.
+        for v in ema.state_dict().values():
+            if isinstance(v, torch.Tensor) and v.is_floating_point():
+                torch.nan_to_num_(v)
+
+        # Serialize ckpt to a byte buffer once (faster than repeated torch.save() calls)
+        buffer = io.BytesIO()
+        torch.save(
+            {
+                "epoch": self.epoch,
+                "best_fitness": self.best_fitness,
+                "model": None,  # resume and final checkpoints derive from EMA
+                "ema": ema,
+                "updates": self.ema.updates,
+                "optimizer": convert_optimizer_state_dict_to_fp16(deepcopy(self.optimizer.state_dict())),
+                "scaler": self.scaler.state_dict(),
+                "train_args": vars(self.args),  # save as dict
+                "train_metrics": {**self.metrics, **{"fitness": self.fitness}},
+                "train_results": self.read_results_csv(),
+                "date": datetime.now().isoformat(),
+                "version": __version__,
+                "git": {
+                    "root": str(GIT.root),
+                    "branch": GIT.branch,
+                    "commit": GIT.commit,
+                    "message": GIT.message,
+                    "origin": GIT.origin,
+                },
+                "license": "AGPL-3.0 (https://ultralytics.com/license)",
+                "docs": "https://docs.ultralytics.com",
+            },
+            buffer,
+        )
+        serialized_ckpt = buffer.getvalue()  # get the serialized content to save
+
+        # Save checkpoints
+        self.wdir.mkdir(parents=True, exist_ok=True)  # ensure weights directory exists
+        self.last.write_bytes(serialized_ckpt)  # save last.pt
+        if self.best_fitness == self.fitness:
+            self.best.write_bytes(serialized_ckpt)  # save best.pt
+        if (self.save_period > 0) and (self.epoch % self.save_period == 0):
+            (self.wdir / f"epoch{self.epoch}.pt").write_bytes(serialized_ckpt)  # save epoch, i.e. 'epoch3.pt'
+        return True

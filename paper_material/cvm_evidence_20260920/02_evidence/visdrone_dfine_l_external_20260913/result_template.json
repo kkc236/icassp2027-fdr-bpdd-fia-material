@@ -1,0 +1,27 @@
+{
+  "format_version": 1,
+  "status": "not_started",
+  "framework": "D-FINE",
+  "dataset": {
+    "name": "VisDrone2019-DET",
+    "split": "val",
+    "class_count": 10,
+    "images": null,
+    "sha256": null
+  },
+  "training": {
+    "epochs": 100,
+    "seed": 0,
+    "pretrained": null,
+    "checkpoint": null
+  },
+  "evaluation": {
+    "imgsz": 640,
+    "max_det": 300,
+    "tta": false,
+    "nms": false,
+    "metric": "pycocotools.COCOeval"
+  },
+  "metrics": null,
+  "notes": "Do not change status to complete until a checkpoint and an independently verified prediction file exist."
+}

@@ -1,0 +1,19 @@
+
+\begin{table}[t]
+\centering
+\caption{Published VisDrone validation context and our native result. All rows use 640 input without pretraining. Training and evaluation recipes differ.}
+\label{tab:literature}
+\small\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Method & Epochs & Params (M) & AP & $\mathrm{AP}_{50}$ \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Published results}}\\[2pt]
+RemDet-L~\cite{li2025remdet} & 300 & 35.3 & 29.3 & 47.4 \\
+BDNet~\cite{guan2026bdnet} & 300 & 2.59 & 31.2 & 50.5 \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Our native protocol}}\\[2pt]
+Full (ours) & 100 & 35.244 & 30.109 & 49.890 \\
+\bottomrule
+\end{tabular*}
+\end{table}

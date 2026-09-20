@@ -1,0 +1,24 @@
+
+\begin{table*}[t]
+\centering
+\caption{Inherited representation and author design choices in the RT-DETR host. The complete FDR/FGL transfer is the reference; Table~\ref{tab:lrsversions} separates our path redesign from the two additional rules.}
+\label{tab:mechanism}
+\small\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.12}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}p{2.5cm}p{6.25cm}p{7.1cm}@{}}
+\toprule
+Design aspect & Full FDR/FGL transfer reference & GCDL (ours) \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Inherited distributional representation~\cite{peng2025dfine}}}\\[2pt]
+Distributional core & Discrete edges, nonuniform support, integral decoding, cumulative logits, fixed distribution frame, and adjacent-bin FGL & Retains these representation primitives and their attribution \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Our reference and supervision path}}\\[2pt]
+Reference choice & Predicted preliminary box shared across decoder layers & Incoming decoder reference shared across layers and the expert \\
+Additional supervision & Normal/DN FGL and preliminary-box L1/GIoU & Normal-query FGL; extra preliminary-box and DN-FDR terms disabled; stock DN retained \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Our geometry and layerwise allocation rules}}\\[2pt]
+Geometry and gradient & Decode signed edge offsets relative to the reference box & Preserve the implied center; enforce reference-scale and precision-aware extent floors with an explicit identity surrogate \\
+Quality weights & Detached matched-box IoU weights in FGL & Shrink eligible same-image, same-layer weights toward their group mean, preserving the total \\
+Depth dependence & Apply the direct quality-weighting rule & Decay shrinkage from $0.25$ to zero across six layers; keep final-layer, singleton, and ineligible weights unchanged \\
+\bottomrule
+\end{tabular*}
+\end{table*}

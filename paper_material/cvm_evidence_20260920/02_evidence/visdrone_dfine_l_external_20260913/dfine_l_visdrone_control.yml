@@ -1,0 +1,43 @@
+__include__: [
+  '../dataset/custom_detection.yml',
+  '../runtime.yml',
+  './include/dataloader.yml',
+  './include/optimizer.yml',
+  './include/dfine_hgnetv2.yml',
+]
+
+# Rendered by prepare_dfine_l_server.sh. The official D-FINE repository is
+# supplied separately; do not import it into the Ultralytics source tree.
+output_dir: __DFINE_OUTPUT_DIR__
+num_classes: 10
+remap_mscoco_category: False
+eval_spatial_size: [640, 640]
+epochs: 100
+seed: 0
+# VisDrone from-scratch D-FINE-L is numerically unstable under FP16 autocast
+# (the DN decoder can overflow before the loss guard). Keep the official
+# computation in FP32 for a reproducible, finite external baseline.
+use_amp: False
+use_ema: True
+
+HGNetv2:
+  name: 'B4'
+  return_idx: [1, 2, 3]
+  freeze_stem_only: True
+  freeze_at: 0
+  freeze_norm: True
+  pretrained: False
+
+train_dataloader:
+  dataset:
+    img_folder: __TRAIN_IMG_FOLDER__
+    ann_file: __TRAIN_ANN_FILE__
+  total_batch_size: 4
+  num_workers: 8
+
+val_dataloader:
+  dataset:
+    img_folder: __VAL_IMG_FOLDER__
+    ann_file: __VAL_ANN_FILE__
+  total_batch_size: 4
+  num_workers: 8

@@ -1,0 +1,23 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize,
+box/.style={draw=ink,rounded corners=2pt,align=center,minimum height=1.04cm,inner sep=5pt},
+arr/.style={-{Latex[length=2mm]},line width=.65pt,draw=ink},
+train/.style={arr,dashed,draw=expertcolor}]
+\node[box,fill=basefill,text width=2.3cm] (student) at (1.5,4.3) {Base student\\6 decoder layers};
+\node[box,fill=expertfill,text width=2.3cm] (teacher) at (1.5,2.35) {Expert teacher\\Detached};
+\node[box,fill=basefill,text width=2.5cm] (pair) at (5.15,3.3) {\textbf{1. Pair check}\\Same image,\\query, and GT\\Supported target};
+\node[box,fill=featurefill,text width=2.5cm] (quality) at (8.9,3.3) {\textbf{2. Edge check}\\Loss improvement\\above margin 0.02};
+\node[box,fill=expertfill,text width=2.7cm] (mix) at (13,3.3) {\textbf{3. Box check}\\Mix selected edges\\Require higher IoU};
+\draw[train] (student.east)--++(.3,0) |- (pair.west);
+\draw[train] (teacher.east)--++(.3,0) |- (pair.west);
+\draw[train] (pair)--(quality);\draw[train] (quality)--(mix);
+\node[align=center,text=ink,anchor=south] at (8.9,4.3) {$r_e=\mathbf{1}_{\mathrm{support}}a_e/(a_e+0.10)$};
+\node[box,fill=featurefill,text width=5.3cm,minimum height=.9cm] (kd) at (12.35,.85) {Weighted $D_{\mathrm{KL}}(p^T\Vert p^S)$\\Mean over active edges, then active layers};
+\draw[train] (mix.south)--(13,1.7)--(kd.north);
+\node[align=left,anchor=west,text width=6.6cm] at (.25,.85) {\textbf{No eligible edges:} zero distillation loss.\\\textbf{Gradients:} student KL path only; teacher and selection are detached.};
+\draw[train] (kd.east)--(16.65,.85)--(16.65,5.35)--node[above] {Selected localization supervision; training only} (1.5,5.35)--(student.north);
+\end{tikzpicture}
+\caption{Selective localization supervision. Student and expert distributions share a fixed reference frame per query. After correspondence, support, and edge-quality checks, the gate decodes the actual mixture of selected expert edges and retained student edges. Only a strict IoU improvement activates transfer. Ground-truth losses train the expert separately; this diagram shows its detached teacher role.}
+\label{fig:selection}
+\end{figure*}

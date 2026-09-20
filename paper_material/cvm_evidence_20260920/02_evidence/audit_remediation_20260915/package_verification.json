@@ -1,0 +1,37 @@
+{
+  "status": "pass",
+  "document_count": 14,
+  "local_links_checked": 197,
+  "table_input_count": 29,
+  "document_sha256": {
+    "paper_material/README_ZH.md": "64015f620c81b91351971ff5f2cd0e2ad8f624f404133c7ae581de4a15a45b85",
+    "paper_material/PAPER_WRITING_HANDOFF_20260915_ZH.md": "b0ee3fc024ba958528beaf4dcc8fec0937baeea0da60b2eb46f9af39a34bf91f",
+    "paper_material/methods/CURRENT_JOINT_METHOD_ZH.md": "318af264851e5b27213f8c8c8a2f3399d096b5e35623f1d45698d5d89c609ce3",
+    "paper_material/results/CURRENT_COMPLEXITY_ZH.md": "91a6076617f813d8f203ab8c4e5fd8f781b410c80b15b3f48ac6ba6c89d2956b",
+    "paper_material/results/CURRENT_FULL_GFLOPS_ZH.md": "f3b202945890469b5dac6842bf56fc45ac6cd27f4965a701538eb59a8cc549f3",
+    "paper_material/results/CURRENT_BATCH8_EFFICIENCY_ZH.md": "4710214a40379d662d23fdae8f5a9c536b863b184ac2e37d2c5655d468f91357",
+    "paper_material/reviews/AUDIT_REMEDIATION_20260915_ZH.md": "bc07260f6a90f5d4c9923ec28e5d41bc888773a3c0f0015c463faa4d00a42763",
+    "paper_material/evidence/audit_remediation_20260915/SOURCE_PAIR_RESOLUTION_ZH.md": "3cae13776768515dbe2de6d954e8090524c10f4e151b8d63b72a9bf4e0a6b03a",
+    "paper_material/experiments/ABLATION_AND_SCALE_DESIGN_ZH.md": "228ed0b870a6d756327d47f4f4b10841072bec86a1a0eae734abf9328291c0da",
+    "paper_material/submission_tables_20260915/README.md": "a029405bb65f82443c0fa8b814e92594dc1e840c69201100526fec0940240b1e",
+    "paper_material/submission_tables_20260915/PAPER_PLAN_ZH.md": "1e2a7ee842610fe0b4e53220e52cde48835e71e7902180c120185b1ab0bb908f",
+    "paper_material/submission_tables_20260915/selected/README.md": "a26c7df7834848a00bb684cfe5cb71ec881ecbb16967718fb6a6007157b6300e",
+    "paper_material/submission_tables_20260915/selected/MAIN_TABLES.md": "c2580d14c50b6a5a4d4995d7908412da30b28cd6dc08988238f0b13bbca18e0a",
+    "paper_material/submission_tables_20260915/selected/SUPPLEMENTARY_TABLES.md": "4d0eb9af2974a371ea31a24264312f4e55740e5df092330758c25bb02b05cc37"
+  },
+  "source_and_initialization_scope": "V12/V13 only",
+  "uavdt": "deferred_by_user_separate_server",
+  "training_started": false,
+  "github_pushed": false,
+  "raw_metrics_modified": false,
+  "whole_bpdd_module_policy": true,
+  "full_flops_status": "complete_under_declared_convention_640_batch1_mac2",
+  "scientific_limits": [
+    "KD-only causality not claimed; whole BPDD module scope",
+    "all historical pairs not certified",
+    "single seed",
+    "test historically used for diagnosis",
+    "cross-recipe external comparison"
+  ],
+  "claim": "document/evidence package verification, not publication acceptance certification"
+}

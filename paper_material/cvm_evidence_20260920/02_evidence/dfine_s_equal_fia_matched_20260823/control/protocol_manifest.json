@@ -1,0 +1,39 @@
+{
+  "format_version": 1,
+  "created_at": "2026-08-22T00:59:37.684506+00:00",
+  "source_repository": "https://github.com/Peterande/D-FINE",
+  "source_commit": "7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6",
+  "model": "D-FINE-S",
+  "dataset": "VisDrone2019-DET",
+  "split_counts": {
+    "train_images": 6471,
+    "train_instances": 343204,
+    "val_images": 548,
+    "val_instances": 38759
+  },
+  "protocol": {
+    "imgsz": 640,
+    "train_batch": 8,
+    "val_batch": 8,
+    "epochs": 132,
+    "seed": 0,
+    "amp": true,
+    "workers": 8,
+    "pretraining": "official HGNetv2-B0 stage1 backbone"
+  },
+  "files": {
+    "/home/ubuntu/official-dfine-visdrone/configs/dataset/visdrone_detection.yml": "9687e360ede9ce327f8fd431795c34405cc3fa3170d6990de37eccb35123d687",
+    "/home/ubuntu/official-dfine-visdrone/configs/dfine/custom/dfine_hgnetv2_s_visdrone.yml": "d6276a2801e1bf6972e019116abf8e6450e8b1cc174b445f1a3fe4e71dc102fd",
+    "/home/ubuntu/dfine-visdrone-coco/annotations/instances_train.json": "e21b7109def110cec00c74d9fa95db590995b93e2633cb31abf3bc0b45b5c65c",
+    "/home/ubuntu/dfine-visdrone-coco/annotations/instances_val.json": "200d58fffda1ab131548ba1a978b2f59be410d6a95b5adadc4075912cdcca477"
+  },
+  "command": "/home/ubuntu/venvs/dfine-official/bin/python -u train.py -c configs/dfine/custom/dfine_hgnetv2_s_visdrone.yml --use-amp --seed=0",
+  "environment": {
+    "python": "3.12.8",
+    "torch": "2.5.1+cu124",
+    "torchvision": "0.20.1+cu124",
+    "cuda": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4090"
+  },
+  "pretrained_sha256": "70a372e8cbc59b34c5da2943261ecb633faf304a58e7e05461a27bd8d8b7f3d1"
+}

@@ -1,0 +1,1162 @@
+% Standalone CVM 2027 review manuscript. Compile twice with pdfLaTeX.
+% Official style files below are embedded verbatim; figures and references are inline.
+
+\begin{filecontents*}[overwrite]{cvm.sty}
+% ---------------------------------------------------------------
+%
+% $Id: cvm.sty,v 1.0 2012/4/24
+% ---------------------------------------------------------------
+% with LaTeX2e:
+% =============
+%
+% use as
+%   \documentclass[times,10pt,twocolumn]{article}
+%   \usepackage{latex8}
+%   \usepackage{times}
+%
+% ---------------------------------------------------------------
+
+% with LaTeX 2.09:
+% ================
+%
+% use as
+%   \documentstyle[times,art10,twocolumn,latex8]{article}
+%
+% ---------------------------------------------------------------
+% with both versions:
+% ===================
+%
+% specify \cvmfinalcopy to emit the final camera-ready copy
+%
+% specify references as
+%   \bibliographystyle{cvm}
+%   \bibliography{...your files...}
+%
+% ---------------------------------------------------------------
+
+\usepackage{eso-pic}
+\usepackage{xspace}
+
+\typeout{cvm 8.5 x 11-Inch Proceedings Style `cvm.sty'.}
+
+% ten point helvetica bold required for captions
+% eleven point times bold required for second-order headings
+% in some sites the name of the fonts may differ,
+% change the name here:
+\font\cvmtenhv  = phvb at 8pt % *** IF THIS FAILS, SEE cvm.sty ***
+\font\cvmtenhvLarge  = phvb at 11pt % *** IF THIS FAILS, SEE cvm.sty ***
+\font\cvmtenhvMiddle  = phvb at 9pt % *** IF THIS FAILS, SEE cvm.sty ***
+\font\elvbf  = ptmb scaled 1100
+
+% If the above lines give an error message, try to comment them and
+% uncomment these:
+%\font\cvmtenhv  = phvb7t at 8pt
+%\font\elvbf  = ptmb7t scaled 1100
+
+% set dimensions of columns, gap between columns, and paragraph indent
+\setlength{\textheight}{8.875in}
+\setlength{\textwidth}{6.875in}
+\setlength{\columnsep}{0.3125in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\parindent}{1pc}
+\setlength{\oddsidemargin}{-.304in}
+\setlength{\evensidemargin}{-.304in}
+
+\newif\ifcvmfinal
+\cvmfinalfalse
+\def\cvmfinalcopy{\global\cvmfinaltrue}
+
+% memento from size10.clo
+% \normalsize{\@setfontsize\normalsize\@xpt\@xiipt}
+% \small{\@setfontsize\small\@ixpt{11}}
+% \footnotesize{\@setfontsize\footnotesize\@viiipt{9.5}}
+% \scriptsize{\@setfontsize\scriptsize\@viipt\@viiipt}
+% \tiny{\@setfontsize\tiny\@vpt\@vipt}
+% \large{\@setfontsize\large\@xiipt{14}}
+% \Large{\@setfontsize\Large\@xivpt{18}}
+% \LARGE{\@setfontsize\LARGE\@xviipt{22}}
+% \huge{\@setfontsize\huge\@xxpt{25}}
+% \Huge{\@setfontsize\Huge\@xxvpt{30}}
+
+\def\@maketitle
+   {
+   \newpage
+   \null
+   \vskip .2in
+   \begin{center}
+      {\Large \bf \@title \par}
+      % additional two empty lines at the end of the title
+      \vspace*{20pt}
+      {
+      \large
+      \lineskip .5em
+      \begin{tabular}[t]{c}
+         \ifcvmfinal\@author\else Anonymous cvm submission\\
+         \vspace*{1pt}\\%This space will need to be here in the final copy, so don't squeeze it out for the review copy.
+Paper ID \cvmPaperID \fi
+      \end{tabular}
+      \par
+      }
+      % additional small space at the end of the author name
+      \vskip .5em
+      % additional empty line at the end of the title block
+      \vspace*{12pt}
+   \end{center}
+   }
+
+\def\abstract
+   {%
+   \centerline{\cvmtenhvLarge Abstract}%
+   \vspace*{10pt}%
+   \bf%
+   }
+
+\def\endabstract
+   {
+   % additional empty line at the end of the abstract
+   \vspace*{10pt}
+   }
+
+\def\affiliation#1{\gdef\@affiliation{#1}} \gdef\@affiliation{}
+
+\newlength{\@ctmp}
+\newlength{\@figindent}
+\setlength{\@figindent}{1pc}
+
+\long\def\@makecaption#1#2{
+   \setbox\@tempboxa\hbox{\small \noindent #1.~#2}
+   \setlength{\@ctmp}{\hsize}
+   \addtolength{\@ctmp}{-\@figindent}\addtolength{\@ctmp}{-\@figindent}
+   % IF longer than one indented paragraph line
+   \ifdim \wd\@tempboxa >\@ctmp
+      % THEN DON'T set as an indented paragraph
+      {\small #1.~#2\par}
+   \else
+      % ELSE center
+      \hbox to\hsize{\hfil\box\@tempboxa\hfil}
+  \fi}
+
+% correct heading spacing and type
+\def\cvmsection{\@startsection {section}{1}{\z@}
+   {10pt plus 2pt minus 2pt}{7pt} {\cvmtenhvLarge}}
+\def\cvmssect#1{\cvmsection*{#1}}
+\def\cvmsect#1{\cvmsection{\hskip -1em.~#1}}
+\def\section{\@ifstar\cvmssect\cvmsect}
+
+\def\cvmsubsection{\@startsection {subsection}{2}{\z@}
+   {8pt plus 2pt minus 2pt}{6pt} {\cvmtenhvMiddle}}
+\def\cvmssubsect#1{\cvmsubsection*{#1}}
+\def\cvmsubsect#1{\cvmsubsection{\hskip -1em.~#1}}
+\def\subsection{\@ifstar\cvmssubsect\cvmsubsect}
+
+%% --------- Page background marks: Ruler and confidentiality
+
+% ----- define vruler
+\makeatletter
+\newbox\cvmrulerbox
+\newcount\cvmrulercount
+\newdimen\cvmruleroffset
+\newdimen\cv@lineheight
+\newdimen\cv@boxheight
+\newbox\cv@tmpbox
+\newcount\cv@refno
+\newcount\cv@tot
+% NUMBER with left flushed zeros  \fillzeros[<WIDTH>]<NUMBER>
+\newcount\cv@tmpc@ \newcount\cv@tmpc
+\def\fillzeros[#1]#2{\cv@tmpc@=#2\relax\ifnum\cv@tmpc@<0\cv@tmpc@=-\cv@tmpc@\fi
+\cv@tmpc=1 %
+\loop\ifnum\cv@tmpc@<10 \else \divide\cv@tmpc@ by 10 \advance\cv@tmpc by 1 \fi
+   \ifnum\cv@tmpc@=10\relax\cv@tmpc@=11\relax\fi \ifnum\cv@tmpc@>10 \repeat
+\ifnum#2<0\advance\cv@tmpc1\relax-\fi
+\loop\ifnum\cv@tmpc<#1\relax0\advance\cv@tmpc1\relax\fi \ifnum\cv@tmpc<#1 \repeat
+\cv@tmpc@=#2\relax\ifnum\cv@tmpc@<0\cv@tmpc@=-\cv@tmpc@\fi \relax\the\cv@tmpc@}%
+% \makevruler[<SCALE>][<INITIAL_COUNT>][<STEP>][<DIGITS>][<HEIGHT>]
+\def\makevruler[#1][#2][#3][#4][#5]{\begingroup\offinterlineskip
+\textheight=#5\vbadness=10000\vfuzz=120ex\overfullrule=0pt%
+\global\setbox\cvmrulerbox=\vbox to \textheight{%
+{\parskip=0pt\hfuzz=150em\cv@boxheight=\textheight
+\cv@lineheight=#1\global\cvmrulercount=#2%
+\cv@tot\cv@boxheight\divide\cv@tot\cv@lineheight\advance\cv@tot2%
+\cv@refno1\vskip-\cv@lineheight\vskip1ex%
+\loop\setbox\cv@tmpbox=\hbox to0cm{{\rm\hfil\fillzeros[#4]\cvmrulercount}}%
+\ht\cv@tmpbox\cv@lineheight\dp\cv@tmpbox0pt\box\cv@tmpbox\break
+\advance\cv@refno1\global\advance\cvmrulercount#3\relax
+\ifnum\cv@refno<\cv@tot\repeat}}\endgroup}%
+\makeatother
+% ----- end of vruler
+
+% \makevruler[<SCALE>][<INITIAL_COUNT>][<STEP>][<DIGITS>][<HEIGHT>]
+\def\cvmruler#1{\makevruler[12pt][#1][1][3][0.993\textheight]\usebox{\cvmrulerbox}}
+\AddToShipoutPicture{%
+\ifcvmfinal\else
+  %\AtTextLowerLeft{%
+  % \color[gray]{.15}\framebox(\LenToUnit{\textwidth},\LenToUnit{\textheight}){}
+  %}
+\cvmruleroffset=\textheight
+\advance\cvmruleroffset by -3.7pt
+  \color[rgb]{.0,.0,0}
+  \AtTextUpperLeft{%
+    \put(\LenToUnit{-35pt},\LenToUnit{-\cvmruleroffset}){%left ruler
+      \cvmruler{\cvmrulercount}}
+    %\put(\LenToUnit{\textwidth\kern 30pt},\LenToUnit{-\cvmruleroffset})
+    \put(\LenToUnit{\dimexpr \textwidth+30pt},\LenToUnit{-\cvmruleroffset}){%right ruler
+      \cvmruler{\cvmrulercount}}
+  }
+\def\pid{}
+  \AtTextUpperLeft{%paperID in corners
+    \put(\LenToUnit{-65pt},\LenToUnit{45pt}){\pid}
+    \put(\LenToUnit{\textwidth\kern-8pt},\LenToUnit{45pt}){\pid}
+  }
+  \AtTextUpperLeft{%confidential
+    \put(0,\LenToUnit{1cm}){\parbox{\textwidth}{\bf
+      CVM PAPER ID: \cvmPaperID. }}
+  }
+\fi
+}
+
+%%% Make figure placement a little more predictable.
+% We trust the user to move figures if this results
+% in ugliness.
+% Minimize bad page breaks at figures
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.99}
+\renewcommand{\topfraction}{0.99}
+\renewcommand{\bottomfraction}{0.99}
+\renewcommand{\dblfloatpagefraction}{0.99}
+\renewcommand{\dbltopfraction}{0.99}
+\setcounter{totalnumber}{99}
+\setcounter{topnumber}{99}
+\setcounter{bottomnumber}{99}
+
+% Add a period to the end of an abbreviation unless there's one
+% already, then \xspace.
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\cf{\emph{c.f}\onedot} \def\Cf{\emph{C.f}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
+\def\etal{\emph{et al}\onedot}
+\makeatother
+
+% ---------------------------------------------------------------
+\end{filecontents*}
+
+\begin{filecontents*}[overwrite]{cvm_eso.sty}
+%%
+%% This is file `everyshi.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% everyshi.dtx  (with options: `package')
+%% 
+%% Copyright (C) [1994..1999] by Martin Schroeder. All rights reserved.
+%% 
+%% This file is part of the EveryShi package
+%% 
+%% This program may be redistributed and/or modified under the terms
+%% of the LaTeX Project Public License, either version 1.0 of this
+%% license, or (at your option) any later version.
+%% The latest version of this license is in
+%%    CTAN:macros/latex/base/lppl.txt.
+%% 
+%% Happy users are requested to send me a postcard. :-)
+%% 
+%% The EveryShi package contains these files:
+%% 
+%%       everyshi.asc
+%%       everyshi.dtx
+%%       everyshi.dvi
+%%       everyshi.ins
+%%       everyshi.bug
+%% 
+%% Error Reports in case of UNCHANGED versions to
+%% 
+%%                         Martin Schr"oder
+%%                         Cr"usemannallee 3
+%%                         D-28213 Bremen
+%%                         Martin.Schroeder@ACM.org
+%% 
+%% File: everyshi.dtx Copyright (C) 2001 Martin Schr\"oder
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{everyshi}
+         [2001/05/15 v3.00 EveryShipout Package (MS)]
+%% \CharacterTable
+%% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%  Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%  Digits        \0\1\2\3\4\5\6\7\8\9
+%%  Exclamation   \!     Double quote  \"     Hash (number) \#
+%%  Dollar        \$     Percent       \%     Ampersand     \&
+%%  Acute accent  \'     Left paren    \(     Right paren   \)
+%%  Asterisk      \*     Plus          \+     Comma         \,
+%%  Minus         \-     Point         \.     Solidus       \/
+%%  Colon         \:     Semicolon     \;     Less than     \<
+%%  Equals        \=     Greater than  \>     Question mark \?
+%%  Commercial at \@     Left bracket  \[     Backslash     \\
+%%  Right bracket \]     Circumflex    \^     Underscore    \_
+%%  Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%  Right brace   \}     Tilde         \~}
+%%
+%% \iffalse meta-comment
+%% ===================================================================
+%%  @LaTeX-package-file{
+%%     author          = {Martin Schr\"oder},
+%%     version         = "3.00",
+%%     date            = "15 May 2001",
+%%     filename        = "everyshi.sty",
+%%     address         = {Martin Schr\"oder
+%%                        Cr\"usemannallee 3
+%%                        28213 Bremen
+%%                        Germany},
+%%     telephone       = "+49-421-2239425",
+%%     email           = "martin@oneiros.de",
+%%     pgp-Key         = "2048 bit / KeyID 292814E5",
+%%     pgp-fingerprint = "7E86 6EC8 97FA 2995 82C3  FEA5 2719 090E",
+%%     docstring       = "LaTeX package which provides hooks into
+%%                        \cs{shipout}.
+%%  }
+%% ===================================================================
+%% \fi
+
+\newcommand{\@EveryShipout@Hook}{}
+\newcommand{\@EveryShipout@AtNextHook}{}
+\newcommand*{\EveryShipout}[1]
+   {\g@addto@macro\@EveryShipout@Hook{#1}}
+\newcommand*{\AtNextShipout}[1]
+   {\g@addto@macro\@EveryShipout@AtNextHook{#1}}
+\newcommand{\@EveryShipout@Shipout}{%
+   \afterassignment\@EveryShipout@Test
+   \global\setbox\@cclv= %
+   }
+\newcommand{\@EveryShipout@Test}{%
+   \ifvoid\@cclv\relax
+      \aftergroup\@EveryShipout@Output
+   \else
+      \@EveryShipout@Output
+   \fi%
+   }
+\newcommand{\@EveryShipout@Output}{%
+   \@EveryShipout@Hook%
+   \@EveryShipout@AtNextHook%
+      \gdef\@EveryShipout@AtNextHook{}%
+   \@EveryShipout@Org@Shipout\box\@cclv%
+   }
+\newcommand{\@EveryShipout@Org@Shipout}{}
+\newcommand*{\@EveryShipout@Init}{%
+   \message{ABD: EveryShipout initializing macros}%
+   \let\@EveryShipout@Org@Shipout\shipout
+   \let\shipout\@EveryShipout@Shipout
+   }
+\AtBeginDocument{\@EveryShipout@Init}
+\endinput
+%%
+%% End of file `everyshi.sty'.
+\end{filecontents*}
+
+\begin{filecontents*}[overwrite]{eso-pic.sty}
+%%
+%% This is file `eso-pic.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% eso-pic.dtx  (with options: `package')
+%%
+%% This is a generated file.
+%%
+%% Copyright (C) 1998-2002 by Rolf Niepraschk <niepraschk@ptb.de>
+%%
+%% This file may be distributed and/or modified under the conditions of
+%% the LaTeX Project Public License, either version 1.2 of this license
+%% or (at your option) any later version.  The latest version of this
+%% license is in:
+%%
+%%    http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.2 or later is part of all distributions of LaTeX version
+%% 1999/12/01 or later.
+%%
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{eso-pic}
+   [2002/11/16 v1.1b eso-pic (RN)]
+\input{cvm_eso.sty}
+\newcommand\LenToUnit[1]{#1\@gobble}
+
+\newcommand\AtPageUpperLeft[1]{%
+  \begingroup
+    \@tempdima=0pt\relax\@tempdimb=\ESO@yoffsetI\relax
+    \put(\LenToUnit{\@tempdima},\LenToUnit{\@tempdimb}){#1}%
+  \endgroup
+}
+\newcommand\AtPageLowerLeft[1]{\AtPageUpperLeft{%
+  \put(0,\LenToUnit{-\paperheight}){#1}}}
+\newcommand\AtPageCenter[1]{\AtPageUpperLeft{%
+  \put(\LenToUnit{.5\paperwidth},\LenToUnit{-.5\paperheight}){#1}}%
+}
+\newcommand\AtTextUpperLeft[1]{%
+  \begingroup
+    \setlength\@tempdima{1in}%
+    \ifodd\c@page%
+      \advance\@tempdima\oddsidemargin%
+    \else%
+      \advance\@tempdima\evensidemargin%
+    \fi%
+    \@tempdimb=\ESO@yoffsetI\relax\advance\@tempdimb-1in\relax%
+    \advance\@tempdimb-\topmargin%
+    \advance\@tempdimb-\headheight\advance\@tempdimb-\headsep%
+    \put(\LenToUnit{\@tempdima},\LenToUnit{\@tempdimb}){#1}%
+  \endgroup
+}
+\newcommand\AtTextLowerLeft[1]{\AtTextUpperLeft{%
+  \put(0,\LenToUnit{-\textheight}){#1}}}
+\newcommand\AtTextCenter[1]{\AtTextUpperLeft{%
+  \put(\LenToUnit{.5\textwidth},\LenToUnit{-.5\textheight}){#1}}}
+\newcommand{\ESO@HookI}{} \newcommand{\ESO@HookII}{}
+\newcommand{\ESO@HookIII}{}
+\newcommand{\AddToShipoutPicture}{%
+  \@ifstar{\g@addto@macro\ESO@HookII}{\g@addto@macro\ESO@HookI}}
+\newcommand{\ClearShipoutPicture}{\global\let\ESO@HookI\@empty}
+\newcommand\ESO@isMEMOIR[1]{}
+\@ifclassloaded{memoir}{\renewcommand\ESO@isMEMOIR[1]{#1}}{}
+\newcommand{\@ShipoutPicture}{%
+  \bgroup
+    \@tempswafalse%
+    \ifx\ESO@HookI\@empty\else\@tempswatrue\fi%
+    \ifx\ESO@HookII\@empty\else\@tempswatrue\fi%
+    \ifx\ESO@HookIII\@empty\else\@tempswatrue\fi%
+    \if@tempswa%
+      \@tempdima=1in\@tempdimb=-\@tempdima%
+      \advance\@tempdimb\ESO@yoffsetI%
+      \ESO@isMEMOIR{%
+        \advance\@tempdima\trimedge%
+        \advance\@tempdima\paperwidth%
+        \advance\@tempdima-\stockwidth%
+        \if@twoside\ifodd\c@page\else%
+          \advance\@tempdima-2\trimedge%
+          \advance\@tempdima-\paperwidth%
+          \advance\@tempdima\stockwidth%
+        \fi\fi%
+        \advance\@tempdimb\trimtop}%
+      \unitlength=1pt%
+      \global\setbox\@cclv\vbox{%
+        \vbox{\let\protect\relax
+          \pictur@(0,0)(\strip@pt\@tempdima,\strip@pt\@tempdimb)%
+            \ESO@HookIII\ESO@HookI\ESO@HookII%
+            \global\let\ESO@HookII\@empty%
+          \endpicture}%
+          \nointerlineskip%
+        \box\@cclv}%
+    \fi
+  \egroup
+}
+\EveryShipout{\@ShipoutPicture}
+\RequirePackage{keyval}
+\newif\ifESO@dvips\ESO@dvipsfalse \newif\ifESO@grid\ESO@gridfalse
+\newif\ifESO@texcoord\ESO@texcoordfalse
+\newcommand*\ESO@gridunitname{}
+\newcommand*\ESO@gridunit{}
+\newcommand*\ESO@labelfactor{}
+\newcommand*\ESO@griddelta{}\newcommand*\ESO@griddeltaY{}
+\newcommand*\ESO@gridDelta{}\newcommand*\ESO@gridDeltaY{}
+\newcommand*\ESO@gridcolor{}
+\newcommand*\ESO@subgridcolor{}
+\newcommand*\ESO@subgridstyle{dotted}% ???
+\newcommand*\ESO@gap{}
+\newcommand*\ESO@yoffsetI{}\newcommand*\ESO@yoffsetII{}
+\newcommand*\ESO@gridlines{\thinlines}
+\newcommand*\ESO@subgridlines{\thinlines}
+\newcommand*\ESO@hline[1]{\ESO@subgridlines\line(1,0){#1}}
+\newcommand*\ESO@vline[1]{\ESO@subgridlines\line(0,1){#1}}
+\newcommand*\ESO@Hline[1]{\ESO@gridlines\line(1,0){#1}}
+\newcommand*\ESO@Vline[1]{\ESO@gridlines\line(0,1){#1}}
+\newcommand\ESO@fcolorbox[4][]{\fbox{#4}}
+\newcommand\ESO@color[1]{}
+\newcommand\ESO@colorbox[3][]{%
+  \begingroup
+    \fboxrule=0pt\fbox{#3}%
+  \endgroup
+}
+\newcommand\gridSetup[6][]{%
+  \edef\ESO@gridunitname{#1}\edef\ESO@gridunit{#2}
+  \edef\ESO@labelfactor{#3}\edef\ESO@griddelta{#4}
+  \edef\ESO@gridDelta{#5}\edef\ESO@gap{#6}}
+\define@key{ESO}{texcoord}[true]{\csname ESO@texcoord#1\endcsname}
+\define@key{ESO}{pscoord}[true]{\csname @tempswa#1\endcsname
+  \if@tempswa\ESO@texcoordfalse\else\ESO@texcoordtrue\fi}
+\define@key{ESO}{dvips}[true]{\csname ESO@dvips#1\endcsname}
+\define@key{ESO}{grid}[true]{\csname ESO@grid#1\endcsname
+  \setkeys{ESO}{gridcolor=black,subgridcolor=black}}
+\define@key{ESO}{colorgrid}[true]{\csname ESO@grid#1\endcsname
+  \setkeys{ESO}{gridcolor=red,subgridcolor=green}}
+\define@key{ESO}{gridcolor}{\def\ESO@gridcolor{#1}}
+\define@key{ESO}{subgridcolor}{\def\ESO@subgridcolor{#1}}
+\define@key{ESO}{subgridstyle}{\def\ESO@subgridstyle{#1}}%
+\define@key{ESO}{gridunit}{%
+  \def\@tempa{#1}
+  \def\@tempb{bp}
+  \ifx\@tempa\@tempb
+    \gridSetup[\@tempa]{1bp}{1}{10}{50}{2}
+  \else
+    \def\@tempb{pt}
+    \ifx\@tempa\@tempb
+      \gridSetup[\@tempa]{1pt}{1}{10}{50}{2}
+    \else
+      \def\@tempb{in}
+      \ifx\@tempa\@tempb
+        \gridSetup[\@tempa]{.1in}{.1}{2}{10}{.5}
+      \else
+        \gridSetup[mm]{1mm}{1}{5}{20}{1}
+      \fi
+    \fi
+  \fi
+}
+\setkeys{ESO}{subgridstyle=solid,pscoord=true,gridunit=mm}
+\def\ProcessOptionsWithKV#1{%
+  \let\@tempc\@empty
+  \@for\CurrentOption:=\@classoptionslist\do{%
+    \@ifundefined{KV@#1@\CurrentOption}%
+    {}{\edef\@tempc{\@tempc,\CurrentOption,}}}%
+  \edef\@tempc{%
+    \noexpand\setkeys{#1}{\@tempc\@ptionlist{\@currname.\@currext}}}%
+  \@tempc
+  \AtEndOfPackage{\let\@unprocessedoptions\relax}}%
+\ProcessOptionsWithKV{ESO}%
+\newcommand\ESO@div[2]{%
+  \@tempdima=#1\relax\@tempdimb=\ESO@gridunit\relax
+  \@tempdimb=#2\@tempdimb\divide\@tempdima by \@tempdimb%
+  \@tempcnta\@tempdima\advance\@tempcnta\@ne}
+\AtBeginDocument{%
+  \IfFileExists{color.sty}
+  {%
+    \RequirePackage{color}
+    \let\ESO@color=\color\let\ESO@colorbox=\colorbox
+    \let\ESO@fcolorbox=\fcolorbox
+  }{}
+  \@ifundefined{Gin@driver}{}%
+  {%
+    \ifx\Gin@driver\@empty\else%
+      \filename@parse{\Gin@driver}\def\reserved@a{dvips}%
+      \ifx\filename@base\reserved@a\ESO@dvipstrue\fi%
+    \fi
+  }%
+  \ifx\pdfoutput\undefined\else
+    \ifx\pdfoutput\relax\else
+      \ifcase\pdfoutput\else
+        \ESO@dvipsfalse%
+      \fi
+    \fi
+  \fi
+  \ifESO@dvips\def\@tempb{eepic}\else\def\@tempb{epic}\fi
+  \def\@tempa{dotted}%\def\ESO@gap{\LenToUnit{6\@wholewidth}}%
+  \ifx\@tempa\ESO@subgridstyle
+    \IfFileExists{\@tempb.sty}%
+    {%
+      \RequirePackage{\@tempb}
+      \renewcommand*\ESO@hline[1]{\ESO@subgridlines\dottedline{\ESO@gap}%
+        (0,0)(##1,0)}
+      \renewcommand*\ESO@vline[1]{\ESO@subgridlines\dottedline{\ESO@gap}%
+        (0,0)(0,##1)}
+    }{}
+  \else
+    \ifx\ESO@gridcolor\ESO@subgridcolor%
+      \renewcommand*\ESO@gridlines{\thicklines}
+    \fi
+  \fi
+}
+\ifESO@texcoord
+  \def\ESO@yoffsetI{0pt}\def\ESO@yoffsetII{-\paperheight}
+  \edef\ESO@griddeltaY{-\ESO@griddelta}\edef\ESO@gridDeltaY{-\ESO@gridDelta}
+\else
+  \def\ESO@yoffsetI{\paperheight}\def\ESO@yoffsetII{0pt}
+  \edef\ESO@griddeltaY{\ESO@griddelta}\edef\ESO@gridDeltaY{\ESO@gridDelta}
+\fi
+\newcommand\ESO@gridpicture{%
+  \begingroup
+    \setlength\unitlength{\ESO@gridunit}%
+    \ESO@color{\ESO@subgridcolor}%
+    \ESO@div{\paperheight}{\ESO@griddelta}%
+    \multiput(0,0)(0,\ESO@griddeltaY){\@tempcnta}%
+      {\ESO@hline{\LenToUnit{\paperwidth}}}%
+    \ESO@div{\paperwidth}{\ESO@griddelta}%
+    \multiput(0,\LenToUnit{\ESO@yoffsetII})(\ESO@griddelta,0){\@tempcnta}%
+      {\ESO@vline{\LenToUnit{\paperheight}}}%
+    \ESO@color{\ESO@gridcolor}%
+    \ESO@div{\paperheight}{\ESO@gridDelta}%
+    \multiput(0,0)(0,\ESO@gridDeltaY){\@tempcnta}%
+      {\ESO@Hline{\LenToUnit{\paperwidth}}}%
+    \ESO@div{\paperwidth}{\ESO@gridDelta}%
+    \multiput(0,\LenToUnit{\ESO@yoffsetII})(\ESO@gridDelta,0){\@tempcnta}%
+      {\ESO@Vline{\LenToUnit{\paperheight}}}%
+    \fontsize{10}{12}\normalfont%
+    \ESO@div{\paperwidth}{\ESO@gridDelta}%
+    \multiput(0,\ESO@gridDeltaY)(\ESO@gridDelta,0){\@tempcnta}{%
+      \@tempcntb=\@tempcnta\advance\@tempcntb-\@multicnt%
+      \ifnum\@tempcntb>1\relax
+        \multiply\@tempcntb by \ESO@gridDelta\relax%
+        \@tempdima=\@tempcntb sp\@tempdima=\ESO@labelfactor\@tempdima%
+        \@tempcntb=\@tempdima%
+        \makebox(0,0)[c]{\ESO@colorbox{white}{\the\@tempcntb}}%
+      \fi}%
+    \ifx\ESO@gridunitname\@empty\def\@tempa{0}\else\def\@tempa{1}\fi%
+    \ESO@div{\paperheight}{\ESO@gridDelta}%
+    \multiput(\ESO@gridDelta,0)(0,\ESO@gridDeltaY){\@tempcnta}{%
+      \@tempcntb=\@tempcnta\advance\@tempcntb-\@multicnt%
+      \ifnum\@tempcntb>\@tempa\relax
+        \multiply\@tempcntb by \ESO@gridDelta\relax%
+        \@tempdima=\@tempcntb sp\@tempdima=\ESO@labelfactor\@tempdima%
+        \@tempcntb=\@tempdima%
+        \makebox(0,0)[c]{\ESO@colorbox{white}{\the\@tempcntb}}%
+      \fi
+    }%
+    \ifx\ESO@gridunitname\@empty\else%
+      \thicklines\fboxrule=\@wholewidth%
+      \put(\ESO@gridDelta,\ESO@gridDeltaY){\makebox(0,0)[c]{%
+        \ESO@fcolorbox{\ESO@gridcolor}{white}{%
+          \textbf{\ESO@gridunitname}}}}%
+    \fi
+    \normalcolor%
+  \endgroup
+}
+\ifESO@grid\g@addto@macro\ESO@HookIII{\ESO@gridpicture}\fi
+\endinput
+%%
+%% End of file `eso-pic.sty'.
+\end{filecontents*}
+
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage{cvm}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{graphicx,amsmath,amssymb,booktabs,array,balance}
+\usepackage{xcolor,tikz}
+\usetikzlibrary{arrows.meta,calc,positioning}
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+\hypersetup{pdftitle={Local Visual Refinement for Distributional UAV Object Detection},pdfauthor={},pdfsubject={Anonymous CVM review submission},citecolor=blue,linkcolor=blue,urlcolor=blue}
+\newcommand{\keywords}[1]{{\bfseries\emph{Keywords: #1}}}
+% Review mode is intentional. Do not enable \cvmfinalcopy for submission.
+% Replace only **** below with the real submission-system paper ID.
+\def\cvmPaperID{****}
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+\ifcvmfinal\pagestyle{empty}\fi
+\definecolor{ink}{HTML}{22364A}
+\definecolor{basefill}{HTML}{EDF2F7}
+\definecolor{expertcolor}{HTML}{236B9C}
+\definecolor{expertfill}{HTML}{E5F1F8}
+\definecolor{featurecolor}{HTML}{A76115}
+\definecolor{featurefill}{HTML}{FBF0DF}
+\begin{document}
+\title{Local Visual Refinement for Distributional UAV Object Detection}
+\author{}
+\maketitle
+
+
+\begin{abstract}
+Small aerial objects are sensitive to boundary errors, motivating local visual refinement after initial detection. We introduce a box-conditioned expert in a distributional RT-DETR detector. Using the boundary representation of D-FINE, the expert samples multiscale features around predicted boxes and produces residual class and edge-logit updates. Its directly supervised predictions also supply localization targets, selected through object-correspondence, boundary-support, and quality checks. Shared P3 refinement supplies both prediction paths. On converted-label VisDrone, the complete system improves native test AP over stock RT-DETR-L by 5.861 points. Under a separate common evaluator, final-checkpoint AP exceeds D-FINE-L by 1.579 points with different training recipes. A matched validation comparison supports a 0.832-point benefit from shared P3 refinement within the expert-equipped configuration. The system processes 74.129 images/s in a fixed-input benchmark on RTX 4090 at $640\times640$, FP32, and batch eight.
+\end{abstract}
+\par
+\keywords{UAV imagery; object detection; boundary distributions; local visual refinement; localization distillation}
+
+\section{Introduction}
+Accurately locating a small object requires more than identifying its presence. In UAV imagery, moving a boundary by only a few pixels can substantially change a box's overlap with its target. VisDrone~\cite{zhu2018visdrone} combines this sensitivity with crowded objects, occlusion, and extensive background. A useful localization representation must therefore be paired with visual evidence that helps distinguish nearby boundary positions.
+
+Existing aerial detectors obtain additional evidence at different stages. Slicing Aided Hyper Inference (SAHI)~\cite{akyon2022sahi} operates on resized image patches. LASOD-YOLO~\cite{wang2026lasod} combines context modeling with detail-preserving feature fusion, while weather-aware drone-view detection~\cite{kim2024weather} uses environmental context. These approaches motivate a complementary question: after a detector has estimated an object's location, how can that estimate guide a focused revisit to the surrounding visual features?
+
+DETR~\cite{carion2020detr} formulates detection as set prediction, and RT-DETR~\cite{zhao2024rtdetr} combines efficient feature encoding with query-based decoding. D-FINE~\cite{peng2025dfine} represents localization through discrete edge distributions refined across decoder layers. This representation describes alternative boundary positions, but the distribution alone does not supply new visual evidence. We connect the representation to a local visual expert after base decoding. The predicted box determines where the expert samples features; the resulting evidence determines residual updates to its class and edge logits.
+
+The expert's refined prediction serves two purposes. At inference, it provides the final detection. During training, it also offers a potential localization target for the base decoder. The second role needs a stricter criterion than simply running another prediction head. The same query may match different objects at different decoder layers, an edge target may lie outside the representable support, and individually promising edge changes may form a worse box when combined. Our supervision therefore checks object correspondence, support, edge quality, and the geometry of the proposed edge combination before transferring localization information.
+
+Both paths read a shared refinement of P3. This gives the base decoder and local expert access to the same enhanced feature level, while preserving the original branch that constructs P4. The design connects feature refinement, prediction refinement, and supervision through a single localization process, illustrated in Fig.~\ref{fig:overview}.
+
+The contributions are as follows:
+\begin{itemize}
+\item We develop a box-conditioned local expert that gathers multiscale evidence and produces residual class and boundary-logit updates. A shared P3 branch supplies both the base and expert prediction paths.
+\item We formulate selective localization supervision from the directly trained expert. Selection checks matched-object identity, representable support, edge loss, and the IoU of the actual mixed-edge box used to decide transfer.
+\item We evaluate the complete system under explicit native and common test protocols, analyze components on validation data, and report batch-eight inference cost. The most directly matched component comparison supports shared P3 refinement within the expert-equipped detector.
+\end{itemize}
+
+\section{Related Work}
+\subsection{Visual evidence for aerial object detection}
+Small-object detection depends on the preservation and use of spatial detail. SAHI~\cite{akyon2022sahi} changes the image scale seen by the detector through slicing. LASOD-YOLO~\cite{wang2026lasod} and weather-aware detection~\cite{kim2024weather} incorporate feature and environmental context. RemDet~\cite{li2025remdet} revisits efficient feature and downsampling design, while NRQO~\cite{fang2025nrqo} addresses feature-fusion noise and query quality. These methods place useful emphasis on the evidence available before or during detection.
+
+Our expert operates after the base decoder has produced a localization hypothesis. It samples the existing feature pyramid around that hypothesis, including P2 for finer spatial evidence. This makes the predicted box a guide for feature access. Shared P3 refinement complements this operation by supplying a common feature improvement to both prediction paths.
+
+\subsection{Object-local refinement and distributional localization}
+BorderDet~\cite{qiu2020borderdet} uses border features for localization, and Cascade-DETR~\cite{ye2023cascadedetr} restricts attention using previously predicted boxes. We build on the general principle that a provisional box can guide a subsequent feature operation. The present expert uses a fixed, box-relative sampling pattern across three feature scales and outputs residual updates to the class and edge logits.
+
+D-FINE~\cite{peng2025dfine} provides the adopted fine-grained distributional boundary representation. We use this representation as the foundation for local refinement, rather than claiming the representation itself as a contribution. SO-DETR~\cite{zhang2025sodetr} and Dome-DETR~\cite{hu2025domedetr} further motivate feature and query adaptation for small or tiny objects. Our focus is on connecting a local visual revisit to distributional prediction and supervision within one detector.
+
+\subsection{Localization knowledge transfer}
+Localization distillation~\cite{zheng2022ld} transfers distributional localization information, and DETRDistill~\cite{chang2023detrdistill} explicitly handles prediction correspondence through Hungarian matching. Correspondence is also essential when the teacher is an internal expert: a shared query index alone does not guarantee a shared target object at every layer.
+
+We select same-query pairs only when their ground-truth assignments agree, then assess the proposed localization transfer at both edge and box levels. The expert is directly supervised and remains in the inference graph. This connects target selection to the proposed local correction while ground-truth losses directly train the source of that correction.
+
+\section{Method}
+\subsection{Overview and distributional reference}
+Our system contains a distributional base detector, a shared P3 refinement branch, and a box-conditioned expert. The base predicts object queries and edge distributions. The expert reads local features around the final base boxes and predicts residual updates. Ground-truth losses train both prediction paths; selected expert distributions additionally supervise all six base decoder layers during training.
+
+We use Ultralytics RT-DETR-L with six decoder layers and 300 ordinary queries. Each edge has 33 bins, yielding 132 boundary logits per query. For one edge at layer $l$, the logits accumulate as in D-FINE~\cite{peng2025dfine}:
+\begin{equation}
+\begin{aligned}
+z_l&=\sum_{t=0}^{l}\Delta z_t,\qquad
+p_{l,k}=\operatorname{softmax}(z_l)_k,\\
+d_l&=\sum_{k=0}^{32}p_{l,k}W_k .
+\end{aligned}
+\label{eq:distribution}
+\end{equation}
+The fixed support uses $\texttt{reg\_max}=32$, $\texttt{reg\_scale}=4$, and $\texttt{up}=0.5$. Let $a=3^{1/15}$. The support entries are
+\[
+[-4,\,1-a^{15},\ldots,1-a,\,0,\,a-1,\ldots,a^{15}-1,\,4].
+\]
+We use incoming reference boxes, without additional preliminary-box predictions, and disable distribution feedback. P3, P4, and P5 supply the base detector; P2 is used only by the expert.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize,
+box/.style={draw=ink,rounded corners=2pt,align=center,minimum height=.78cm,inner sep=5pt},
+arr/.style={-{Latex[length=2mm]},line width=.65pt,draw=ink}]
+\node[box,fill=basefill,text width=2.15cm] (pyr) at (1.4,2.15) {Image backbone\\Feature pyramid};
+\node[box,fill=basefill,text width=2cm] (basefeat) at (5.35,3.7) {$\widetilde P_3,\ P_4,\ P_5$\\Base features};
+\node[box,fill=featurefill,text width=2cm] (shared) at (5.35,1.6) {Shared P3\\refinement ($F$)};
+\node[box,fill=basefill,text width=2.05cm] (decoder) at (9,3.7) {Distributional\\decoder\\6 layers, 300 queries};
+\node[box,fill=expertfill,text width=2.05cm] (local) at (9,1.6) {$P_2,\ \widetilde P_3,\ P_4$\\Expert features};
+\node[box,fill=expertfill,text width=2.6cm,minimum height=1.1cm] (expert) at (12.8,2.65) {Local expert\\Box-relative sampling\\Residual logits};
+\node[box,fill=featurefill,text width=1.25cm,minimum height=1.1cm] (out) at (16,2.65) {Refined\\classes\\and boxes};
+\draw[arr] (pyr.north) |- node[pos=.7,above] {$P_4,\ P_5$} (basefeat.west);
+\draw[arr] (pyr.east) -- ++(.5,0) |- node[pos=.75,above] {$P_3$} (shared.west);
+\draw[arr] (shared) -- (basefeat);
+\draw[arr] (basefeat) -- (decoder);
+\draw[arr] (shared) -- (local);
+\draw[arr] (pyr.south) -- (1.4,.45) -- node[below] {$P_2,\ P_4$} (9,.45) -- (local.south);
+\draw[arr] (decoder.east) -- ++(.4,0) -| node[pos=.28,above,align=center] {Base boxes, queries, logits} (expert.north);
+\draw[arr] (local.east) -- ++(.45,0) -| (expert.south);
+\draw[arr] (expert) -- (out);
+\node[align=left,anchor=north west,text width=6.1cm,font=\sffamily\scriptsize,text=ink] at (0,-.03) {P4 construction reads the original P3; the P3 refinement output is shared only at the two indicated inputs.};
+\node[align=left,anchor=north west,text width=9.2cm,font=\sffamily\scriptsize,text=ink] at (7,-.03) {The expert remains active at inference. During training, ground truth supervises both paths; selected expert distributions supervise the decoder (Fig.~\ref{fig:selection}).};
+\end{tikzpicture}
+\caption{Overall prediction architecture. The distributional base produces an initial localization hypothesis. Shared P3 refinement supplies both prediction paths; the box-conditioned expert revisits local evidence and produces the final detection. The expert's sampling and residual operations are expanded in Fig.~\ref{fig:expert}.}
+\label{fig:overview}
+\end{figure*}
+
+
+\paragraph{Geometric decoding.}
+Let the reference center and size be $c$ and $(w,h)$, with $u=(w,h)/4$. Let $d^{-}$ contain left/top distances and $d^{+}$ right/bottom distances. The decoded center and raw size are $\hat c=c+(d^{+}-d^{-})\odot u/2$ and $v=(4+d^{-}+d^{+})\odot u$. To maintain positive extents, we use
+\begin{equation}
+\begin{aligned}
+f&=\max\!\left\{\delta\operatorname{sg}(u),\,
+8\epsilon\max(|\operatorname{sg}(\hat c)|,1)\right\},\\
+\hat v&=\operatorname{sg}(\max(v,f))+v-\operatorname{sg}(v),
+\end{aligned}
+\label{eq:geometry}
+\end{equation}
+where $\operatorname{sg}$ stops gradients, $\delta=10^{-3}$, and $\epsilon$ is machine precision. Operations on vectors are componentwise. The forward size is lower-bounded, while the backward path uses an identity surrogate gradient. Decoding uses at least FP32 with finite inputs and positive reference sizes. The base, expert, and mixed-edge checks below use this same geometric decoder.
+
+\paragraph{Reference localization loss.}
+Base fine-grained localization (FGL) uses detached matching IoU as a quality weight. For eligible matches in an image and layer, we shrink this weight toward the group mean: $q'_i=(1-\alpha_l)q_i+\alpha_l\bar q$, where $\alpha_l=0.25(1-l/5)$ and $l\in\{0,\ldots,5\}$. Eligibility requires all four left interpolation-bin indices to be strictly between 0 and 31. Singleton groups and ineligible matches retain their weights. We sum the four edge losses, normalize by the matched-object count in each layer, and sum over layers with weight 0.15.
+
+Standard detection, auxiliary-layer, and original RT-DETR denoising losses are retained. We add no preliminary-box or denoising-FDR supervision. The distributional representation, geometric rule, and base FGL configuration together define the reference variant $G$ used in the experiments. This definition separates the adopted reference from the proposed shared feature and expert branches.
+
+\subsection{Shared P3 refinement}
+The shared branch transforms P3 using two local residual blocks followed by channel and spatial gates. Each block contains pointwise projections, GELU, and a depthwise $3\times3$ convolution. The channel gate uses pooled features; the spatial gate uses a $7\times7$ convolution over channel-mean and channel-maximum maps. Denoting this transform by $R$, the output is
+\begin{equation}
+\widetilde P_3=P_3+\gamma\bigl(R(P_3)-P_3\bigr),\qquad
+\gamma_{\mathrm{init}}=0.
+\label{eq:shared}
+\end{equation}
+The zero-initialized scalar makes the branch initially preserve P3. Both the base decoder and the local expert read $\widetilde P_3$. The downsampling branch that constructs P4 reads the original P3, so refinement is confined to the P3 output. This topology avoids propagating the same change through all pyramid levels and defines a precise location at which shared visual evidence enters the two prediction paths.
+
+\subsection{Box-conditioned local visual expert}
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize,
+box/.style={draw=ink,rounded corners=2pt,align=center,minimum height=.8cm,inner sep=4pt},
+arr/.style={-{Latex[length=2mm]},line width=.65pt,draw=ink}]
+\node[anchor=west,font=\sffamily\bfseries\small] at (0,5.9) {(a) Exact box-relative sampling};
+\node[anchor=west,font=\sffamily\bfseries\small] at (5.4,5.9) {(b) Local evidence to residual predictions};
+\begin{scope}[shift={(2.1,3.6)},x=2.55cm,y=2.55cm]
+\draw[draw=ink,fill=basefill,line width=.8pt] (-.5,-.5) rectangle (.5,.5);
+\draw[dashed,gray] (-.72,0)--(.72,0);
+\draw[dashed,gray] (0,-.72)--(0,.72);
+\fill[expertcolor] (-0.4,-0.5) circle[radius=.021];
+\fill[expertcolor] (-0.4,-0.25) circle[radius=.021];
+\fill[expertcolor] (-0.4,0) circle[radius=.021];
+\fill[expertcolor] (-0.4,0.25) circle[radius=.021];
+\fill[expertcolor] (-0.4,0.5) circle[radius=.021];
+\fill[expertcolor] (0.4,-0.5) circle[radius=.021];
+\fill[expertcolor] (0.4,-0.25) circle[radius=.021];
+\fill[expertcolor] (0.4,0) circle[radius=.021];
+\fill[expertcolor] (0.4,0.25) circle[radius=.021];
+\fill[expertcolor] (0.4,0.5) circle[radius=.021];
+\fill[expertcolor] (-0.5,-0.4) circle[radius=.021];
+\fill[expertcolor] (-0.25,-0.4) circle[radius=.021];
+\fill[expertcolor] (0,-0.4) circle[radius=.021];
+\fill[expertcolor] (0.25,-0.4) circle[radius=.021];
+\fill[expertcolor] (0.5,-0.4) circle[radius=.021];
+\fill[expertcolor] (-0.5,0.4) circle[radius=.021];
+\fill[expertcolor] (-0.25,0.4) circle[radius=.021];
+\fill[expertcolor] (0,0.4) circle[radius=.021];
+\fill[expertcolor] (0.25,0.4) circle[radius=.021];
+\fill[expertcolor] (0.5,0.4) circle[radius=.021];
+\fill[featurecolor] (-0.6,-0.5) circle[radius=.021];
+\fill[featurecolor] (-0.6,-0.25) circle[radius=.021];
+\fill[featurecolor] (-0.6,0) circle[radius=.021];
+\fill[featurecolor] (-0.6,0.25) circle[radius=.021];
+\fill[featurecolor] (-0.6,0.5) circle[radius=.021];
+\fill[featurecolor] (0.6,-0.5) circle[radius=.021];
+\fill[featurecolor] (0.6,-0.25) circle[radius=.021];
+\fill[featurecolor] (0.6,0) circle[radius=.021];
+\fill[featurecolor] (0.6,0.25) circle[radius=.021];
+\fill[featurecolor] (0.6,0.5) circle[radius=.021];
+\fill[featurecolor] (-0.5,-0.6) circle[radius=.021];
+\fill[featurecolor] (-0.25,-0.6) circle[radius=.021];
+\fill[featurecolor] (0,-0.6) circle[radius=.021];
+\fill[featurecolor] (0.25,-0.6) circle[radius=.021];
+\fill[featurecolor] (0.5,-0.6) circle[radius=.021];
+\fill[featurecolor] (-0.5,0.6) circle[radius=.021];
+\fill[featurecolor] (-0.25,0.6) circle[radius=.021];
+\fill[featurecolor] (0,0.6) circle[radius=.021];
+\fill[featurecolor] (0.25,0.6) circle[radius=.021];
+\fill[featurecolor] (0.5,0.6) circle[radius=.021];
+\fill[ink] (0,0) circle[radius=.021];
+\node[above,font=\sffamily\scriptsize] at (0,.68) {Predicted box};
+\end{scope}
+\node[anchor=west,text=expertcolor,font=\sffamily\footnotesize] at (.2,1.55) {$\bullet$ $r=0.4$: 20 samples};
+\node[anchor=west,text=featurecolor,font=\sffamily\footnotesize] at (.2,1.12) {$\bullet$ $r=0.6$: 20 samples};
+\node[anchor=west,font=\sffamily\footnotesize] at (.2,.69) {$\bullet$ Center: 1 sample};
+\node[anchor=west,font=\sffamily\bfseries\footnotesize] at (.2,.16) {41 per level $\times$ 3 levels = 123 tokens};
+\draw[gray!45] (5.1,-.2)--(5.1,5.55);
+\node[box,fill=expertfill,text width=2.15cm] (tokens) at (6.65,4.6) {Bilinear samples\\$P_2,\widetilde P_3,P_4$\\256 channels};
+\node[box,fill=basefill,text width=2.15cm] (query) at (6.65,2.7) {Base query\\+ 8 detached\\edge statistics};
+\node[box,fill=expertfill,text width=2.15cm,minimum height=1.4cm] (attn) at (10,3.65) {Attention $\times2$\\8 heads\\FFN 1024};
+\node[box,fill=featurefill,text width=2.2cm] (cls) at (13.25,4.6) {Zero-init head\\Class residual};
+\node[box,fill=featurefill,text width=2.2cm] (edge) at (13.25,2.7) {Zero-init head\\132 edge residuals};
+\node[circle,draw=ink,minimum size=.42cm,inner sep=0pt] (pluscls) at (15.15,4.6) {$+$};
+\node[circle,draw=ink,minimum size=.42cm,inner sep=0pt] (plusedge) at (15.15,2.7) {$+$};
+\node[align=center,font=\sffamily\scriptsize] at (15.15,5.45) {Base class\\logits};
+\node[align=center,font=\sffamily\scriptsize] at (15.15,3.55) {Base edge\\logits};
+\node[align=center,font=\sffamily\scriptsize] (cp) at (16.25,4.6) {Refined\\classes};
+\node[align=center,font=\sffamily\scriptsize] (ep) at (16.25,2.7) {Softmax\\+ decode};
+\draw[arr] (tokens.east) -- ++(.35,0) |- (attn.west);
+\draw[arr] (query.east) -- ++(.35,0) |- (attn.west);
+\draw[arr] (attn.east) -- ++(.35,0) |- (cls.west);
+\draw[arr] (attn.east) -- ++(.35,0) |- (edge.west);
+\draw[arr] (cls)--(pluscls);\draw[arr] (edge)--(plusedge);
+\draw[arr] (15.15,5.08)--(pluscls);\draw[arr] (15.15,3.18)--(plusedge);
+\draw[arr] (pluscls)--(cp);\draw[arr] (plusedge)--(ep);
+\node[align=left,anchor=north west,text width=10.6cm] at (5.55,1.4) {\textbf{Prediction:} add residuals to logits, then normalize and decode.\\[3pt]
+\textbf{Direct training:} classification, L1, GIoU, and FGL losses using the final base assignment.\\[3pt]
+\textbf{Teacher role:} detached expert distributions supply the selection process in Fig.~\ref{fig:selection}.};
+\end{tikzpicture}
+\caption{Box-conditioned expert. (a) The exact 41-point pattern is repeated on three feature levels, producing 123 local tokens per query. Coordinates use the detached base center and size. (b) Local tokens and a distribution-augmented query produce residual class and boundary logits. The query token is retained even when every local sample is invalid. The drawing specifies the mechanism; it is not an empirical attention map.}
+\label{fig:expert}
+\end{figure*}
+
+
+\paragraph{Sampling the box neighborhood.}
+The expert revisits the final base box using features already computed by the backbone. Let the box center and size for query $i$ be $\hat c_i$ and $\hat v_i$. Define $T=\{-0.5,-0.25,0,0.25,0.5\}$. For each radius $r\in\{0.4,0.6\}$, we take the offsets $(-r,t)$, $(r,t)$, $(t,-r)$, and $(t,r)$ for $t\in T$. These two 20-point patterns and one center point form the 41-element set $\Omega$. Sample coordinates are
+\begin{equation}
+s_{i,k}=\operatorname{sg}(\hat c_i)+
+\omega_k\odot\operatorname{sg}(\hat v_i),\quad\omega_k\in\Omega.
+\label{eq:sampling}
+\end{equation}
+The two patterns cover nearby interior and exterior locations relative to the predicted box; they are fixed offsets scaled by the predicted width and height. Figure~\ref{fig:expert} shows their exact geometry. Sampling coordinates are detached, so the sampling operation does not move the base box through coordinate gradients.
+
+Bilinear sampling from P2, $\widetilde P_3$, and P4 produces 123 local tokens for each query. Invalid coordinates are masked. Each scale is projected to 256 channels and receives a position embedding derived from the sample coordinates and scale index.
+
+\paragraph{Distribution-aware query update.}
+The query is augmented with eight detached distribution statistics: the mean and entropy of each of its four edges. Means are computed in normalized, equally spaced bin-index coordinates. They serve as descriptors for the expert; actual geometric distances still use the nonuniform support in Eq.~\eqref{eq:distribution}. The augmented query interacts with local tokens through two attention blocks, each using eight heads and a feed-forward width of 1024. A query token remains in the attention input even when all local samples are invalid.
+
+Let $h_i$ denote the resulting expert feature and let $c_i^{\mathrm{base}}$ and $z_i^{\mathrm{base}}$ denote the final base class and boundary logits. Two zero-initialized heads predict residuals:
+\begin{equation}
+\begin{aligned}
+c_i^{\mathrm{expert}}&=c_i^{\mathrm{base}}+H_{\mathrm{cls}}(h_i),\\
+z_i^{\mathrm{expert}}&=z_i^{\mathrm{base}}+H_{\mathrm{edge}}(h_i),\\
+p_i^{\mathrm{expert}}&=\operatorname{softmax}(z_i^{\mathrm{expert}}).
+\end{aligned}
+\label{eq:residual}
+\end{equation}
+Softmax is applied separately to each edge. The addition occurs in logit space, with 132 boundary residuals, and the same geometric decoder produces the refined box. Zero-initialized heads initially preserve the base outputs.
+
+\paragraph{Direct supervision and inference.}
+The expert reuses the final base layer's query-to-ground-truth assignment. Its predictions receive classification, L1, generalized-IoU, and FGL losses. These losses train the expert directly; teacher distributions are detached only when supplying localization targets to the base decoder. At inference, the refined expert prediction is the system output. The expert therefore contributes to both accuracy and computational cost.
+
+\subsection{Selective localization supervision}
+The expert can supply a candidate target for each base layer, but local refinement does not guarantee an improvement for every query or edge. We select targets in three stages, summarized in Fig.~\ref{fig:selection}.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize,
+box/.style={draw=ink,rounded corners=2pt,align=center,minimum height=1.04cm,inner sep=5pt},
+arr/.style={-{Latex[length=2mm]},line width=.65pt,draw=ink},
+train/.style={arr,dashed,draw=expertcolor}]
+\node[box,fill=basefill,text width=2.3cm] (student) at (1.5,4.3) {Base student\\6 decoder layers};
+\node[box,fill=expertfill,text width=2.3cm] (teacher) at (1.5,2.35) {Expert teacher\\Detached};
+\node[box,fill=basefill,text width=2.5cm] (pair) at (5.15,3.3) {\textbf{1. Pair check}\\Same image,\\query, and GT\\Supported target};
+\node[box,fill=featurefill,text width=2.5cm] (quality) at (8.9,3.3) {\textbf{2. Edge check}\\Loss improvement\\above margin 0.02};
+\node[box,fill=expertfill,text width=2.7cm] (mix) at (13,3.3) {\textbf{3. Box check}\\Mix selected edges\\Require higher IoU};
+\draw[train] (student.east)--++(.3,0) |- (pair.west);
+\draw[train] (teacher.east)--++(.3,0) |- (pair.west);
+\draw[train] (pair)--(quality);\draw[train] (quality)--(mix);
+\node[align=center,text=ink,anchor=south] at (8.9,4.3) {$r_e=\mathbf{1}_{\mathrm{support}}a_e/(a_e+0.10)$};
+\node[box,fill=featurefill,text width=5.3cm,minimum height=.9cm] (kd) at (12.35,.85) {Weighted $D_{\mathrm{KL}}(p^T\Vert p^S)$\\Mean over active edges, then active layers};
+\draw[train] (mix.south)--(13,1.7)--(kd.north);
+\node[align=left,anchor=west,text width=6.6cm] at (.25,.85) {\textbf{No eligible edges:} zero distillation loss.\\\textbf{Gradients:} student KL path only; teacher and selection are detached.};
+\draw[train] (kd.east)--(16.65,.85)--(16.65,5.35)--node[above] {Selected localization supervision; training only} (1.5,5.35)--(student.north);
+\end{tikzpicture}
+\caption{Selective localization supervision. Selection is applied per layer and matched query, then per edge. The final gate decodes the actual mixture of selected teacher edges and retained student edges. Only a strict IoU improvement activates transfer. Ground-truth losses train the expert separately; this diagram shows its detached teacher role.}
+\label{fig:selection}
+\end{figure*}
+
+
+\paragraph{Object correspondence and boundary support.}
+We first retain pairs with the same image, query index, and matched ground-truth object. This check applies to all six base layers, including the last layer. It prevents a same-index prediction assigned to another object from receiving that expert target. For each eligible edge, the untruncated ground-truth distance must also lie within the representable support $[W_0,W_{32}]$.
+
+\paragraph{Edge quality.}
+Let $\ell^S_e$ and $\ell^T_e$ be student and expert edge losses computed by interpolating the target distance between its two neighboring bins. With margin $m=0.02$ and scale $\tau=0.10$, define
+\begin{equation}
+\begin{aligned}
+a_e&=\max\bigl(\operatorname{sg}(\ell^S_e-\ell^T_e)-m,0\bigr),\\
+r_e&=\mathbf{1}_{\mathrm{support}}\frac{a_e}{a_e+\tau}.
+\end{aligned}
+\label{eq:edgeweight}
+\end{equation}
+An expert edge receives a positive weight only when its loss improves on the student's by more than the margin. The factor $a_e/(a_e+\tau)$ gives a bounded weight; this is a detached selection calculation.
+
+\paragraph{Joint box geometry.}
+The final check evaluates the combination of edges proposed for transfer. For a correspondence-eligible pair, define the mixed distributions and gate
+\begin{equation}
+\begin{aligned}
+p^{\mathrm{mix}}_e&=\begin{cases}
+p^T_e,&r_e>0,\\
+p^S_e,&r_e=0,
+\end{cases}\\
+g&=\mathbf{1}\!\left[
+\operatorname{IoU}(D(p^{\mathrm{mix}}),b^*)>
+\operatorname{IoU}(D(p^S),b^*)\right],\\
+w_e&=g\,r_e ,
+\end{aligned}
+\label{eq:mixed}
+\end{equation}
+where $D$ is the geometric decoder and $b^*$ the matched ground-truth box. Unselected edges stay at their student values. Consequently, the IoU check evaluates the actual edge combination being proposed, rather than assuming that a better complete expert box implies a better partial replacement. Rejected or correspondence-ineligible pairs have zero weights.
+
+Let $A_l$ be the set of positive-weight edges in layer $l$, and $\Lambda$ the set of layers with nonempty $A_l$. The localization loss is
+\begin{equation}
+L_{\mathrm{KD}}=\frac{1}{|\Lambda|}\sum_{l\in\Lambda}
+\frac{1}{|A_l|}\sum_{(i,e)\in A_l}
+w_{l,i,e}D_{\mathrm{KL}}\!\left(p^T_{i,e}\Vert p^S_{l,i,e}\right).
+\label{eq:kd}
+\end{equation}
+An empty active set gives zero loss. Normalization uses the number of active edges, not the sum of their weights, followed by the number of active layers. Teacher distributions and all selection calculations are detached; gradients flow through the student distributions in the KL loss. We apply no classification distillation.
+
+\subsection{Training objective and inference}
+Let $L_{\mathrm{det}}$ contain the retained base detection losses, $L_{\mathrm{FGL}}$ the additional base localization loss, and $L_{\mathrm{expert}}$ direct expert supervision. The complete objective is
+\begin{equation}
+L=L_{\mathrm{det}}+L_{\mathrm{FGL}}+L_{\mathrm{expert}}
++0.15\eta(t)L_{\mathrm{KD}}.
+\label{eq:objective}
+\end{equation}
+For completed epoch $t$, $\eta(t)$ is zero through epoch 10, increases linearly to one at epoch 20, stays one through epoch 80, and decreases linearly to zero at epoch 100. This schedule weights the expert-to-base localization term. The expert's own single-layer FGL has weight 0.15 and remains active throughout training.
+
+Inference retains the feature pyramid, shared P3 refinement, distributional base decoder, local sampling, and expert heads. Matching, quality checks, and the distillation loss are training-only operations. The architecture thus uses local evidence to produce the final prediction and, during training, to provide selected localization targets to the base.
+
+\section{Experiments}
+\subsection{Dataset, training, and evaluation protocols}
+\paragraph{Dataset and metrics.}
+VisDrone has 6,471 training, 548 validation, and 1,610 test images covering ten classes. Labels were converted through YOLO format and lack the complete original ignore-region information. The results therefore describe this converted-label protocol. AP averages IoU thresholds from 0.50 to 0.95 in steps of 0.05; $\mathrm{AP}_{50}$ and $\mathrm{AP}_{75}$ use the indicated individual thresholds, and $\mathrm{AP}_{s}$ denotes small-object AP~\cite{lin2014coco}. Values are percentages; reported gains are percentage points.
+
+\paragraph{Native training and evaluation.}
+RT-DETR-L and Full share a nominal recipe: scratch training for 100 epochs at $640\times640$, MuSGD with initial learning rate 0.01, AMP, physical batch eight, nominal batch 64, and seed zero. Baseline resumed its own run, and source revisions differ. Their comparison evaluates complete systems, including the adopted distributional reference. Internal component analysis uses native validation-selected results.
+
+The native test comparison uses validation-selected checkpoints and shared converted annotations. Baseline's selected epoch is also its final epoch. The evaluator is \texttt{RTDETRValidator}, with $640\times640$ input, FP32, batch eight, confidence 0.001, and at most 300 detections, without test-time augmentation or extra NMS. These test evaluations were available during earlier development; test is not an untouched blind set.
+
+\paragraph{Common external evaluation.}
+For D-FINE-L and Full, the common pipeline uses PIL bilinear stretching to $640\times640$, RGB/255, FP32, batch one, confidence 0.001, and at most 300 predictions, without test-time augmentation or extra NMS. Predictions mapped to original image coordinates are evaluated by COCOeval 2.0.11 with $\texttt{maxDet}=300$. Native and common results are reported separately.
+
+D-FINE-L has 31.146M parameters and uses 100-epoch scratch training with AdamW at learning rate 0.00025, FP32, batch four without accumulation, multiscale augmentation from 480 to 800, and stage-best checkpoint restoration. The common evaluator controls the evaluation pipeline, while these training recipes differ. Final checkpoints are the primary comparison; each model's native validation-selected best checkpoint is a secondary endpoint.
+
+\subsection{Complete-system test comparisons}
+\paragraph{Native comparison with RT-DETR-L.}
+Table~\ref{tab:native} evaluates the complete system against stock RT-DETR-L under their shared native evaluator. Full improves AP from 17.743 to 23.604, a gain of 5.861 points. The corresponding gains are 8.987 points in $\mathrm{AP}_{50}$ and 5.981 points in $\mathrm{AP}_{75}$. The stricter-overlap result is consistent with improved localization at the system level. Attribution to internal components is examined separately on validation data.
+
+
+\begin{table}[t]
+\centering
+\caption{Complete-system VisDrone test results under the native evaluator. Both checkpoints are validation-selected; input resolution is 640.}
+\label{tab:native}
+\small
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrr@{}}
+\toprule
+Model & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ \\
+\midrule
+RT-DETR-L & 17.743 & 32.254 & 17.565 \\
+\textbf{Full (ours)} & \textbf{23.604} & \textbf{41.241} & \textbf{23.546} \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+
+\paragraph{Common comparison with D-FINE-L.}
+Under the common pipeline in Table~\ref{tab:external}, Full reaches 24.133 AP at the final checkpoint, exceeding D-FINE-L by 1.579 points. Small-object AP increases from 13.338 to 14.575, a gain of 1.237 points. The difference persists at the native validation-selected endpoint: Full reaches 24.229 AP compared with 22.679 for D-FINE-L, a 1.550-point difference. Reporting both endpoints makes the comparison's dependence on checkpoint selection visible.
+
+
+\begin{table}[t]
+\centering
+\caption{External VisDrone test comparison under the common evaluator. Training recipes differ. Final is primary; best is selected by each model's native validation.}
+\label{tab:external}
+\small\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Model & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AP}_{s}$ \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Final checkpoint (primary)}}\\[2pt]
+D-FINE-L & 22.554 & 38.656 & 22.720 & 13.338 \\
+\textbf{Full (ours)} & \textbf{24.133} & \textbf{41.885} & \textbf{24.044} & \textbf{14.575} \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Native validation-selected best (secondary)}}\\[2pt]
+D-FINE-L & 22.679 & 38.940 & 22.713 & 13.478 \\
+\textbf{Full (ours)} & \textbf{24.229} & \textbf{42.009} & \textbf{24.208} & \textbf{14.618} \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+
+These results support the complete detector under the stated recipes. The native and common protocols have different preprocessing and evaluation pipelines, so their absolute AP values should be read within their respective tables. In particular, the common-pipeline comparison is a system comparison with D-FINE-L, not a matched-training estimate of a single module's effect.
+
+\subsection{Published validation context}
+Table~\ref{tab:literature} places the native validation result alongside published aerial-detection results. RemDet-L~\cite{li2025remdet} offers a similar parameter count, whereas BDNet~\cite{guan2026bdnet} reports higher AP with fewer parameters. All listed results use 640 input without pretraining. Training duration, preprocessing, annotation handling, and model selection differ, so the table supplies context rather than a controlled ranking.
+
+
+\begin{table}[t]
+\centering
+\caption{Published VisDrone validation context and our native result. All rows use 640 input without pretraining. Training and evaluation recipes differ.}
+\label{tab:literature}
+\small\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Method & Epochs & Params (M) & AP & $\mathrm{AP}_{50}$ \\
+\midrule
+RemDet-L~\cite{li2025remdet} & 300 & 35.3 & 29.3 & 47.4 \\
+BDNet~\cite{guan2026bdnet} & 300 & 2.59 & 31.2 & 50.5 \\
+Full (ours) & 100 & 35.244 & 30.109 & 49.890 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+
+Full obtains 30.109 native validation AP after 100 epochs with 35.244M parameters. Its parameter scale is close to RemDet-L's reported 35.3M. BDNet's published result illustrates the remaining headroom in accuracy and model efficiency. This context positions the present work around local distributional refinement and its supervision mechanism, without claiming the best accuracy or smallest model across aerial detectors.
+
+\subsection{Validation component analysis}
+We denote the distributional reference of Sec.~3.1 by $G$, the expert with direct supervision and selective localization distillation by $B$, and shared P3 refinement by $F$. Full contains all three. The expert and its supervision are evaluated jointly as $B$. Table~\ref{tab:components} reports validation results only; checkmarks make each configuration explicit.
+
+
+\begin{table}[t]
+\centering
+\caption{Native validation component results. $G$: distributional reference; $B$: expert with direct and selective supervision; $F$: shared P3 refinement. $G+B$ and Full form the most directly matched pair.}
+\label{tab:components}
+\small\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccrr@{}}
+\toprule
+Variant & $G$ & $B$ & $F$ & Val AP & $\mathrm{AP}_{50}$ \\
+\midrule
+Baseline & -- & -- & -- & 21.911 & 38.663 \\
+$G$ & \checkmark & -- & -- & 29.620 & 49.382 \\
+$G+F$ & \checkmark & -- & \checkmark & 29.773 & 49.548 \\
+$G+B$ & \checkmark & \checkmark & -- & 29.277 & 48.783 \\
+\textbf{Full} & \checkmark & \checkmark & \checkmark & \textbf{30.109} & \textbf{49.890} \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+
+Full has the highest validation AP among the recorded configurations, reaching 30.109 AP and 49.890 $\mathrm{AP}_{50}$. Relative to $G$, the AP difference is 0.489 points. The largest change from stock RT-DETR-L occurs when moving to the distributional reference, which includes the representation and supporting localization rules. That change is not attributed to the expert.
+
+The most directly matched pair is $G+B$ versus Full: recorded training settings, shared source files, and shared initialization tensors agree, with additional state in the zero-initialized $F$ branch. Adding shared P3 refinement raises AP from 29.277 to 30.109, a gain of 0.832 points. This is the clearest component evidence for the shared feature design within the expert-equipped configuration.
+
+The other rows help delimit this result. $G+F$ reaches 29.773 AP, while $G+B$ reaches 29.277 AP and falls below $G$ by 0.343 points. The recorded configurations therefore do not establish an independent gain from $B$. Their historical provenance is less tightly controlled than the $G+B$--Full pair. We interpret the table as support for the full configuration and for shared P3 refinement in the matched pair, rather than as an additive decomposition of gains from every mechanism.
+
+\subsection{Batch-eight inference efficiency}
+Table~\ref{tab:efficiency} reports model size, computation, and batch-eight timing separately from accuracy. Measurements use RTX 4090, PyTorch 2.5.1+cu121, and Ultralytics 8.4.90 at $640\times640$ in FP32. Eight CPU threads are used; TF32 and cuDNN benchmarking are disabled. Each variant receives fixed random inputs, 100 warmup batches, and 300 CUDA-synchronized timed predict calls.
+
+Timing includes preprocessing, model execution, postprocessing, and the lightweight expert-checking hook, but excludes disk I/O. We report the median batch time and the corresponding throughput, computed as 8000 divided by batch milliseconds. GFLOPs are per image with two operations per multiply--accumulate; parameter counts cover the complete unfused model.
+
+
+\begin{table}[t]
+\centering
+\caption{Batch-eight inference efficiency on RTX 4090 at $640\times640$ in FP32. GFLOPs are per image; batch times are medians of 300 synchronized predict calls after 100 warmup batches.}
+\label{tab:efficiency}
+\small\setlength{\tabcolsep}{2.5pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Variant & Params (M) & GFLOPs & Batch (ms) & Images/s \\
+\midrule
+Baseline & 32.827 & 105.597 & 59.559 & 134.321 \\
+$G$ & 33.157 & 105.804 & 66.200 & 120.846 \\
+$G+F$ & 33.458 & 109.280 & 69.044 & 115.868 \\
+$G+B$ & 34.942 & 130.575 & 104.897 & 76.266 \\
+Full & 35.244 & 134.051 & 107.920 & 74.129 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+
+Full uses 35.244M parameters and 134.051 GFLOPs per image. Its median batch time is 107.920 ms, corresponding to 74.129 images/s. Dividing by eight gives 13.490 ms amortized per image; this is not single-request response latency. The benchmark characterizes fixed-input batching throughput.
+
+Relative to $G$, Full adds 2.087M parameters and 28.247 GFLOPs, a 26.70\% increase in computation, while batch time rises from 66.200 to 107.920 ms. The expert bundle adds 24.771 GFLOPs when moving from $G$ to $G+B$; shared P3 refinement adds 3.476 GFLOPs from $G+B$ to Full. The expert is therefore the main source of additional computation. The measured trade-off favors better complete-system accuracy at increased inference cost; these desktop-GPU measurements do not establish onboard UAV deployment performance.
+
+\section{Discussion and Conclusion}
+This work connects two uses of local visual evidence: refining the final prediction and supplying selected localization targets to the base decoder. The box-conditioned expert revisits multiscale features, updates logits through residual heads, and provides directly supervised distributions. Object correspondence, support, edge quality, and mixed-box geometry define when those distributions can guide the base. Shared P3 refinement connects the visual inputs used by both prediction paths.
+
+The evidence is strongest at two levels. Complete-system test comparisons show gains over stock RT-DETR-L under native evaluation and over D-FINE-L under the common evaluator with different training recipes. The matched validation comparison isolates shared P3 refinement within the expert-equipped configuration, with a 0.832-point AP gain. The study uses one dataset and one seed; the expert and distillation are evaluated together, and individual selection rules are not isolated. Further work can test these mechanisms across datasets and separate their contributions.
+
+Full processes 74.129 images/s in the fixed-input FP32 benchmark at batch eight. Because the local expert remains active at inference and accounts for most added computation, reducing its token or attention cost is a practical direction for future work. The present results support local distributional refinement as a concrete route to improving UAV detection, with its accuracy evidence and computational cost stated under explicit protocols.
+
+
+\clearpage\balance
+
+\begin{thebibliography}{99}
+
+\fontsize{9}{11}\selectfont
+
+\bibitem{zhu2018visdrone} P. Zhu, L. Wen, X. Bian, H. Ling, and Q. Hu. Vision Meets Drones: A Challenge. arXiv:1804.07437, 2018.
+
+\bibitem{akyon2022sahi} F. C. Akyon, S. O. Altinuc, and A. Temizel. Slicing Aided Hyper Inference and Fine-tuning for Small Object Detection. In: \emph{ICIP}, 2022, 966--970. doi: \href{https://doi.org/10.1109/ICIP46576.2022.9897990}{\nolinkurl{10.1109/ICIP46576.2022.9897990}}.
+
+\bibitem{wang2026lasod} Z. Wang and J. X. Huang. LASOD-YOLO: A Lightweight Global Context Modeling for Aerial Small-Object Detection. In: \emph{ICIP}, 2026, 1--6. doi: \href{https://doi.org/10.1109/ICIP61757.2026.11630018}{\nolinkurl{10.1109/ICIP61757.2026.11630018}}.
+
+\bibitem{kim2024weather} H. Kim, D. Lee, S. Park, and Y. M. Ro. Weather-Aware Drone-View Object Detection via Environmental Context Understanding. In: \emph{ICIP}, 2024, 549--555. doi: \href{https://doi.org/10.1109/ICIP51287.2024.10647388}{\nolinkurl{10.1109/ICIP51287.2024.10647388}}.
+
+\bibitem{carion2020detr} N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and S. Zagoruyko. End-to-End Object Detection with Transformers. In: \emph{ECCV}, 2020.
+
+\bibitem{zhao2024rtdetr} Y. Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y. Liu, and J. Chen. DETRs Beat YOLOs on Real-time Object Detection. In: \emph{CVPR}, 2024, 16965--16974.
+
+\bibitem{peng2025dfine} Y. Peng, H. Li, P. Wu, Y. Zhang, X. Sun, and F. Wu. D-FINE: Redefine Regression Task of DETRs as Fine-grained Distribution Refinement. In: \emph{ICLR}, 2025.
+
+\bibitem{li2025remdet} C. Li, R. Zhao, Z. Wang, H. Xu, and X. Zhu. RemDet: Rethinking Efficient Model Design for UAV Object Detection. In: \emph{AAAI}, 2025, 4643--4651. doi: \href{https://doi.org/10.1609/aaai.v39i5.32490}{\nolinkurl{10.1609/aaai.v39i5.32490}}.
+
+\bibitem{fang2025nrqo} X. Fang, J. Cai, H. Liu, W. Cai, Y. Liu, and B. Chen. Revisiting DETR for Small Object Detection via Noise-Resilient Query Optimization. In: \emph{ICME}, 2025.
+
+\bibitem{qiu2020borderdet} H. Qiu, Y. Ma, Z. Li, S. Liu, and J. Sun. BorderDet: Border Feature for Dense Object Detection. In: \emph{ECCV}, 2020.
+
+\bibitem{ye2023cascadedetr} M. Ye, L. Ke, S. Li, Y.-W. Tai, C.-K. Tang, M. Danelljan, and F. Yu. Cascade-DETR: Delving into High-Quality Universal Object Detection. In: \emph{ICCV}, 2023, 6704--6714.
+
+\bibitem{zhang2025sodetr} H. Zhang, H. Zhang, A. Mei, Z. Gan, and G.-N. Zhu. SO-DETR: Leveraging Dual-Domain Features and Knowledge Distillation for Small Object Detection. In: \emph{IJCNN}, 2025. doi: \href{https://doi.org/10.1109/IJCNN64981.2025.11229240}{\nolinkurl{10.1109/IJCNN64981.2025.11229240}}.
+
+\bibitem{hu2025domedetr} Z. Hu, P. Wu, J. Chen, H. Zhu, Y. Wang, Y. Peng, H. Li, and X. Sun. Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection. In: \emph{ACM Multimedia}, 2025. doi: \href{https://doi.org/10.1145/3746027.3754861}{\nolinkurl{10.1145/3746027.3754861}}.
+
+\bibitem{zheng2022ld} Z. Zheng, R. Ye, P. Wang, D. Ren, W. Zuo, Q. Hou, and M.-M. Cheng. Localization Distillation for Dense Object Detection. In: \emph{CVPR}, 2022, 9407--9416.
+
+\bibitem{chang2023detrdistill} J. Chang, S. Wang, H.-M. Xu, Z. Chen, C. Yang, and F. Zhao. DETRDistill: A Universal Knowledge Distillation Framework for DETR-families. In: \emph{ICCV}, 2023, 6898--6908.
+
+\bibitem{lin2014coco} T.-Y. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollar, and C. L. Zitnick. Microsoft COCO: Common Objects in Context. In: \emph{ECCV}, 2014.
+
+\bibitem{guan2026bdnet} W. Guan, C. Lin, S. Huang, X. Wang, and X. Pang. BDNet: Bio-Inspired Dual-Backbone Small Object Detection Network. In: \emph{CVPR}, 2026.
+
+\end{thebibliography}
+
+\end{document}

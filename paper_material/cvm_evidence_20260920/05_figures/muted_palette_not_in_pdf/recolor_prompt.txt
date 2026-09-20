@@ -1,0 +1,25 @@
+Use case: precise-object-edit.
+Asset type: scientific journal architecture diagram.
+The supplied image is the EDIT TARGET. Apply a COLOR-ONLY edit. Preserve the exact geometry, layout, aspect ratio, text, symbols, formula characters, font sizes, panel positions, node positions, and ALL arrows/paths/endpoints. Do not redesign or simplify anything.
+
+Primary request: replace the current over-bright blue, cyan, purple and red scheme with a restrained low-saturation scientific palette. The result must look calm, cohesive and professional at print size. FLAT fills only: remove color gradients/glows. White background, crisp dark text.
+
+Palette and use:
+- Pure white #FFFFFF canvas and major panel interiors. Neutral thin gray #B6BEC5 outer frame for (a) and legend. Retained host/backbone/encoder/ordinary operators can use nearly-white #F5F6F7.
+- ALL text and formulas, including small annotations and headings, use charcoal #28323C. Absolutely no electric-blue, purple or red typography. Headings may use dark versions of their module accents ONLY if still clearly readable.
+- All ordinary solid forward arrows, arrowheads, real junction dots, algebra symbols, and node outlines use charcoal #28323C. Preserve the solid/dashed distinction.
+- G localization: muted slate-blue #566D83 panel/group borders and selected G node outlines; very pale blue-gray #EDF1F5 for G title/header strips and the "G: GCDL localization" unit in (a). Avoid large saturated washes. The G.1 and G.2 interiors are white, with subtle pale fills only inside computation boxes.
+- F shared P3: desaturated green-gray #54756E borders and F title/header strip text; very pale sage #E8F0ED fill for F modules in (a) and (c), and the shared-local-feature unit. All labels remain charcoal. Match F identity across both panels.
+- B local expert: warm taupe outline #846B54 and pale warm-gray #F1ECE5 fill for B module in (a), B header strip, and its residual units in (d). Replace every purple with this restrained warm palette.
+- Training-only paths (G.3 and selective distillation strip): dark muted brown #846B54 dashed arrows and dashed enclosure. White or extremely pale warm-gray interiors, no yellow wash. Loss ellipses can use pale #F1ECE5; their text stays charcoal. Keep training-only labels bold charcoal, not bright red.
+- Preserve neutral whitespace and legibility; NOT monochrome, but color is secondary to topology.
+
+Content invariants (check carefully):
+(a) Final query MUST leave the Attention+FFN bottom via the existing bypass and merge at the filled dot just before B; Base predictions line remains separate before the dot. Shared local feature arrow remains independent.
+(b) Fixed r0 badge MUST connect continuously down into Reference+offsets top, without crossing the G.2 heading. Keep the Center branch bypassing Extent floor.
+G.3 formula MUST read s'_i = (1 - alpha_l) s_i + alpha_l s-bar (layer subscript l).
+(c) Keep the P3 skip route and P3* = P3 + gamma(R - P3).
+(d) Teacher remains sg(base edge logits + edge residual) in two lines; student remains G edge logits; keep residual addition circles.
+Legend keeps forward solid / training dashed meaning.
+No content additions, deletions, line rerouting, font shrinking, cropping, shadows, bevels, gradients, icons, or decorative texture.
+Return exactly one recolored full figure.

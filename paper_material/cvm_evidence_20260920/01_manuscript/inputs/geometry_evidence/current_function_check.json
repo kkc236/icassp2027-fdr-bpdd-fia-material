@@ -1,0 +1,15 @@
+{
+  "comparison": [
+    {
+      "file": "inputs/geometry_evidence/source_f56b210/src/fdr_math.py",
+      "function": "decode_feasible_fdr_boxes",
+      "ast_sha256": "fc7c9a8e06e1cb2d9b4bf77ed220feba886b77436bbecd78cfac326031ff0052"
+    },
+    {
+      "file": "inputs/frozen_fdr_math.py",
+      "function": "decode_feasible_fdr_boxes",
+      "ast_sha256": "fc7c9a8e06e1cb2d9b4bf77ed220feba886b77436bbecd78cfac326031ff0052"
+    }
+  ],
+  "same_function_ast": true
+}

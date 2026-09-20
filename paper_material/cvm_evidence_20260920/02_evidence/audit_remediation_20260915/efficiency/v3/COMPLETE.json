@@ -1,0 +1,6 @@
+{
+  "status": "completed",
+  "arms": 5,
+  "initialization_probe_status": "pass",
+  "full_model_flops_certified": false
+}

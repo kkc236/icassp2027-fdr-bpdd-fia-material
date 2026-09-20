@@ -1,0 +1,39 @@
+{
+  "format_version": 1,
+  "run_id": "dfine-s-visdrone-seed0-official7fe2",
+  "status": "complete",
+  "source_repository": "https://github.com/Peterande/D-FINE",
+  "source_commit": "7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6",
+  "started_at": "2026-08-22T09:03:35+08:00",
+  "completed_at": "2026-08-23T00:14:23+08:00",
+  "reported_training_time": "15:10:40",
+  "epochs_expected": 132,
+  "epochs_logged": 132,
+  "first_epoch": 0,
+  "last_epoch": 131,
+  "model_parameters": 10183591,
+  "protocol": {
+    "image_size": 640,
+    "total_batch_size": 8,
+    "effective_workers": 4,
+    "seed": 0,
+    "amp": true,
+    "ema": true,
+    "epochs": 132
+  },
+  "artifacts": {
+    "training_log_jsonl": {
+      "path": "training_log.jsonl",
+      "sha256": "87f73a4fd7095edb455b293d66611bf3e4dee4b7ff9949998d7bf5d4cd93dd59"
+    },
+    "training_config": {
+      "path": "training_config.yml",
+      "sha256": "d6276a2801e1bf6972e019116abf8e6450e8b1cc174b445f1a3fe4e71dc102fd"
+    },
+    "protocol_manifest": {
+      "path": "protocol_manifest.json",
+      "sha256": "33888cd44d369ccaf9797819ea2c5fde85ea7dadaeb0d32e5ea7a749a386b8f5",
+      "amended_by": "protocol_correction.json"
+    }
+  }
+}

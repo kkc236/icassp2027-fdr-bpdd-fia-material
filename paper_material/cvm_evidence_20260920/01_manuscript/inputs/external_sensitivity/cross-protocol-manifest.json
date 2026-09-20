@@ -1,0 +1,1321 @@
+{
+  "format_version": 2,
+  "status": "evaluation_complete",
+  "comparison_type": "cross_training_protocol_common_evaluation",
+  "primary_endpoint": "final vs final; AP50:95 at maxDet=300",
+  "secondary_endpoints": "frozen native best; maxDet=100; AP50/AP75/APs/AR/per-class",
+  "selection_note": "Native best-selection metrics differ between frameworks. Final is the fixed epoch-100 endpoint.",
+  "data_note": "Project YOLO-derived labels; ignored regions unavailable. Not official VisDrone challenge protocol. Test-set prior use is not certified.",
+  "limitations": [
+    "single training seed",
+    "different physical/effective batches, optimizers, precision and augmentations",
+    "no claim of causal module gain from the external comparison"
+  ],
+  "dfine_training": {
+    "accumulation_steps": 1,
+    "backbone_batchnorm_layers": 80,
+    "backbone_frozen_parameters": [],
+    "comparison_type": "cross_training_protocol_common_evaluation",
+    "config": "/root/sj-tmp/dfine-bs4-official/configs/dfine/dfine_hgnetv2_l_visdrone_bs4_scratch.yml",
+    "config_sha256": "50359501038ac1eebf86ef92bab235e7b1175d3a1a92337119a0b9617a037ac0",
+    "cuda": "12.1",
+    "format_version": 2,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "optimizer_groups": [
+      {
+        "lr": 0.00025,
+        "parameters": 13507680,
+        "weight_decay": 0.000125
+      },
+      {
+        "lr": 0.00025,
+        "parameters": 85632,
+        "weight_decay": 0.0
+      },
+      {
+        "lr": 0.00025,
+        "parameters": 17552684,
+        "weight_decay": 0.000125
+      }
+    ],
+    "parameters": 31145998,
+    "pid": 425321,
+    "resolved_config": {
+      "DFINE": {
+        "backbone": "HGNetv2",
+        "decoder": "DFINETransformer",
+        "encoder": "HybridEncoder"
+      },
+      "DFINECriterion": {
+        "alpha": 0.75,
+        "gamma": 2.0,
+        "losses": [
+          "vfl",
+          "boxes",
+          "local"
+        ],
+        "matcher": {
+          "alpha": 0.25,
+          "gamma": 2.0,
+          "type": "HungarianMatcher",
+          "weight_dict": {
+            "cost_bbox": 5,
+            "cost_class": 2,
+            "cost_giou": 2
+          }
+        },
+        "reg_max": 32,
+        "weight_dict": {
+          "loss_bbox": 5,
+          "loss_ddf": 1.5,
+          "loss_fgl": 0.15,
+          "loss_giou": 2,
+          "loss_vfl": 1
+        }
+      },
+      "DFINEPostProcessor": {
+        "num_top_queries": 300
+      },
+      "DFINETransformer": {
+        "box_noise_scale": 1.0,
+        "cross_attn_method": "default",
+        "eval_idx": -1,
+        "feat_channels": [
+          256,
+          256,
+          256
+        ],
+        "feat_strides": [
+          8,
+          16,
+          32
+        ],
+        "hidden_dim": 256,
+        "label_noise_ratio": 0.5,
+        "layer_scale": 1,
+        "num_denoising": 100,
+        "num_layers": 6,
+        "num_levels": 3,
+        "num_points": [
+          3,
+          6,
+          3
+        ],
+        "num_queries": 300,
+        "query_select_method": "default",
+        "reg_max": 32,
+        "reg_scale": 4
+      },
+      "HGNetv2": {
+        "freeze_at": -1,
+        "freeze_norm": false,
+        "freeze_stem_only": true,
+        "local_model_dir": "weight/hgnetv2/",
+        "name": "B4",
+        "pretrained": false,
+        "return_idx": [
+          1,
+          2,
+          3
+        ]
+      },
+      "HybridEncoder": {
+        "act": "silu",
+        "depth_mult": 1,
+        "dim_feedforward": 1024,
+        "dropout": 0.0,
+        "enc_act": "gelu",
+        "expansion": 1.0,
+        "feat_strides": [
+          8,
+          16,
+          32
+        ],
+        "hidden_dim": 256,
+        "in_channels": [
+          512,
+          1024,
+          2048
+        ],
+        "nhead": 8,
+        "num_encoder_layers": 1,
+        "use_encoder_idx": [
+          2
+        ]
+      },
+      "__include__": [
+        "../dataset/custom_detection.yml",
+        "../runtime.yml",
+        "./include/dataloader.yml",
+        "./include/optimizer.yml",
+        "./include/dfine_hgnetv2.yml"
+      ],
+      "checkpoint_freq": 12,
+      "clip_max_norm": 0.1,
+      "criterion": "DFINECriterion",
+      "device": "cuda:0",
+      "ema": {
+        "decay": 0.9999,
+        "start": 0,
+        "type": "ModelEMA",
+        "warmups": 1000
+      },
+      "epochs": 100,
+      "eval_spatial_size": [
+        640,
+        640
+      ],
+      "evaluator": {
+        "iou_types": [
+          "bbox"
+        ],
+        "type": "CocoEvaluator"
+      },
+      "exp_name": "baseline",
+      "find_unused_parameters": false,
+      "lr_scheduler": {
+        "gamma": 0.1,
+        "milestones": [
+          500
+        ],
+        "type": "MultiStepLR"
+      },
+      "lr_warmup_scheduler": {
+        "type": "LinearWarmup",
+        "warmup_duration": 500
+      },
+      "model": "DFINE",
+      "num_classes": 10,
+      "optimizer": {
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "lr": 0.00025,
+        "params": [
+          {
+            "lr": 0.00025,
+            "params": "^(?=.*backbone)(?!.*(?:norm|bn)).*$"
+          },
+          {
+            "params": "^(?=.*(?:norm|bn)).*$",
+            "weight_decay": 0.0
+          }
+        ],
+        "type": "AdamW",
+        "weight_decay": 0.000125
+      },
+      "output_dir": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914",
+      "postprocessor": "DFINEPostProcessor",
+      "print_freq": 100,
+      "project_name": "D-FINE",
+      "remap_mscoco_category": false,
+      "scaler": {
+        "enabled": true,
+        "type": "GradScaler"
+      },
+      "seed": 0,
+      "sync_bn": true,
+      "task": "detection",
+      "train_dataloader": {
+        "collate_fn": {
+          "base_size": 640,
+          "base_size_repeat": 3,
+          "stop_epoch": 72,
+          "type": "BatchImageCollateFunction"
+        },
+        "dataset": {
+          "ann_file": "/root/sj-tmp/datasets/VisDrone-coco/annotations/instances_train.json",
+          "img_folder": "/root/sj-tmp/datasets/VisDrone/images/train",
+          "return_masks": false,
+          "transforms": {
+            "ops": [
+              {
+                "p": 0.5,
+                "type": "RandomPhotometricDistort"
+              },
+              {
+                "fill": 0,
+                "type": "RandomZoomOut"
+              },
+              {
+                "p": 0.8,
+                "type": "RandomIoUCrop"
+              },
+              {
+                "min_size": 1,
+                "type": "SanitizeBoundingBoxes"
+              },
+              {
+                "type": "RandomHorizontalFlip"
+              },
+              {
+                "size": [
+                  640,
+                  640
+                ],
+                "type": "Resize"
+              },
+              {
+                "min_size": 1,
+                "type": "SanitizeBoundingBoxes"
+              },
+              {
+                "dtype": "float32",
+                "scale": true,
+                "type": "ConvertPILImage"
+              },
+              {
+                "fmt": "cxcywh",
+                "normalize": true,
+                "type": "ConvertBoxes"
+              }
+            ],
+            "policy": {
+              "epoch": 72,
+              "name": "stop_epoch",
+              "ops": [
+                "RandomPhotometricDistort",
+                "RandomZoomOut",
+                "RandomIoUCrop"
+              ]
+            },
+            "type": "Compose"
+          },
+          "type": "CocoDetection"
+        },
+        "drop_last": true,
+        "num_workers": 8,
+        "shuffle": true,
+        "total_batch_size": 4,
+        "type": "DataLoader"
+      },
+      "use_amp": false,
+      "use_ema": true,
+      "use_focal_loss": true,
+      "use_wandb": false,
+      "val_dataloader": {
+        "collate_fn": {
+          "type": "BatchImageCollateFunction"
+        },
+        "dataset": {
+          "ann_file": "/root/sj-tmp/datasets/VisDrone-coco/annotations/instances_val.json",
+          "img_folder": "/root/sj-tmp/datasets/VisDrone/images/val",
+          "return_masks": false,
+          "transforms": {
+            "ops": [
+              {
+                "size": [
+                  640,
+                  640
+                ],
+                "type": "Resize"
+              },
+              {
+                "dtype": "float32",
+                "scale": true,
+                "type": "ConvertPILImage"
+              }
+            ],
+            "type": "Compose"
+          },
+          "type": "CocoDetection"
+        },
+        "drop_last": false,
+        "num_workers": 8,
+        "shuffle": false,
+        "total_batch_size": 4,
+        "type": "DataLoader"
+      }
+    },
+    "selection": "native validation AP50:95 global best over chronological epochs 0..99; final snapshot also retained",
+    "source_files": {
+      "src/__init__.py": "0df91981fa95c4c0cd14608cd8bef4cc7d4b750fb1a53b4ddd21625f15a094c8",
+      "src/core/__init__.py": "a2e2f021dd8a16e1de7c0f6b877960f2abc7387a0f53f2f3cfddcbc56eac4fb2",
+      "src/core/_config.py": "8897a1c4394e832bd5a9ffd136fc1c9df93da669a8ed14dec0f3f44479165b7e",
+      "src/core/workspace.py": "46cc833acbe05aead429a7690f583446e5d77a96ff5bbe15953c86c1117a7ad9",
+      "src/core/yaml_config.py": "a4a25ff62cb5649d06fda802f916c11b29110538d128cbfb331a98a105985ddb",
+      "src/core/yaml_utils.py": "a0efb8720753d6b40f2775056039c560cb002b59dad85072efd9e4f476f022f0",
+      "src/data/__init__.py": "aaf76ba6e2d53e1d81933a50c99ce69822e3e7deadc9cac9984144bc0bb9ba18",
+      "src/data/_misc.py": "a3d7ee830034853aced727634e1331548b78f85ff921a0ea75e1c62646f19414",
+      "src/data/dataloader.py": "8034ee2d2a0426753fea2d03b158188eb3a23225f875f6a9632cb7d81eff82d3",
+      "src/data/dataset/__init__.py": "7dc15c213e4bce1af41a7b4267a58f633a9f82b434a3339a74719aa33bcdf8dd",
+      "src/data/dataset/_dataset.py": "d9983ea6d985c45085c49dc568cd781f429168c8ca600c4a913e355553d28e49",
+      "src/data/dataset/cifar_dataset.py": "624d7f65891d1667bb275baf78e80254b69bc0b59f8c21e00a345117345de519",
+      "src/data/dataset/coco_dataset.py": "0a42982eee8c80e0e64232e24ce8ce97124f941963c5bca6e43be59e7810017e",
+      "src/data/dataset/coco_eval.py": "95c85dbeb8d4ddd7e7aa9b129db0543b8324ead550241d0a248b8f2c942c3a57",
+      "src/data/dataset/coco_utils.py": "f9260d9469dee20a11031724b6d8d66cfa6cad83d57e90514d9f8e754d91bf50",
+      "src/data/dataset/voc_detection.py": "378f726f192154bab6f73eacbde89219f6683c4713c2265ce6d03b027515a55c",
+      "src/data/dataset/voc_eval.py": "f6686f31abf5fe388f30e6c0a6953a520a3dacd518bd0ed11a2924b9770ba831",
+      "src/data/transforms/__init__.py": "ff1318a0600dc076546f1e9a8a09b1a3365080c7814f0ed7f433d7f7fef03018",
+      "src/data/transforms/_transforms.py": "5f51c131dc3040d8cef1c9fef96ebce0b74aff0e47294e985d313859805442b0",
+      "src/data/transforms/container.py": "6cb6a777b8dcf8ff8d4abb50341e922bd0522a7ae84e3d90231231912c9c6d17",
+      "src/data/transforms/functional.py": "11c013d0c5e030770557cd8d0e42f77737058b6e99a1051e99aceabd82683e59",
+      "src/data/transforms/mosaic.py": "081298935e8c35616063ca2bedb06316fbe1f208ab0e15d927e00a6160db5179",
+      "src/data/transforms/presets.py": "adcc042c4c68305925177dc9a98972eac91e5abdb36d9aff4597c188aa837d4b",
+      "src/misc/__init__.py": "bc7c44cc1de01449331be8fe4aea8aca6c9c3792c3b8cfa7c3d461c50123ba05",
+      "src/misc/box_ops.py": "2395a979466acb524039e7dbecfc9e8acf8dac4c7dff667f8a462e5f07a189b8",
+      "src/misc/dist_utils.py": "f473affbf76e18868c168bf3ad8ab6d77c486e2c69969b9968b4359c263cc529",
+      "src/misc/lazy_loader.py": "91252475010baa3b80e7eb0c4d841b17c3f278a7b8be1fc73353d3ab6ff66cff",
+      "src/misc/logger.py": "593b3a807107d104c5e1b8c7c2c30266836a446c707036b6be061d0dea7cddd1",
+      "src/misc/profiler_utils.py": "87b291e60ee91df384419f8da4615a5e55f5bcc571ee44c2003d2c7626d21ac1",
+      "src/misc/visualizer.py": "5c242a0b04edc3c577db90ae61f162d4df326fed65ca9e31ec62ee50bfb43a87",
+      "src/nn/__init__.py": "409be10929e4a0899f480957bd01c5a8856cde9a8ff1a113cb200a2cbe864893",
+      "src/nn/arch/__init__.py": "54c71d1365a882c369fa79d8a711d17e52c66655c7f9a2f023c0edcfcf559865",
+      "src/nn/arch/classification.py": "ecc3516b99f937df33dcbc371cf2f70a5da04e11bed5402936dd28bb81333b32",
+      "src/nn/arch/yolo.py": "544518eb39e6356742b5297482af079c881380c983360de1d6503d44db05482e",
+      "src/nn/backbone/__init__.py": "f18bb56bb4d8cae08a657af53d86f639fdbdbd38d2dc6713feb82b528d432311",
+      "src/nn/backbone/common.py": "3b4540353177bffb2857d6d41cd21ff87348a1c0579a9c06fb11f81cdf3d2b94",
+      "src/nn/backbone/csp_darknet.py": "244101fd5db2628c4c4d06abd150cf650ebfad72f4c19b530e935dc7ff6328d9",
+      "src/nn/backbone/csp_resnet.py": "d8d619e6dcfe8cd3c00ad1f66b77f4f9d94c1d850fcc79cc997dfb1c04972f77",
+      "src/nn/backbone/hgnetv2.py": "f5fc4c628b3900775f4df46d0901d7b18fb8c4adee63a5a7bb1c196803003c6a",
+      "src/nn/backbone/presnet.py": "1a17793ef4bea8deb4099e1a9a53404cfa20bc2d96bcecacf2b090a6b7ac1bed",
+      "src/nn/backbone/test_resnet.py": "291f5627e708954c4e147550afa65a472a2e3ea136a292c463c58e75f5052b18",
+      "src/nn/backbone/timm_model.py": "610b99efc3e5749eaa94e7c9132110b18db0f69fbb1a42faa960a9ab01c8b0aa",
+      "src/nn/backbone/torchvision_model.py": "0a5493de92479d348abdc57fcf2ab62d3fd362a7a132cfb15b3723505f1b296f",
+      "src/nn/backbone/utils.py": "1bc6df1477b48c7df882ee5725353544babc04fe16c632f5be478dd5a8c0bf3c",
+      "src/nn/criterion/__init__.py": "3ca44fa35fcd01923bc45f0e7ce981900e8280d1468caa374a1cc70ce1a49c28",
+      "src/nn/criterion/det_criterion.py": "d3995fdfe924b7ed1c2a2555b26cdf946f00e0fcd372ce6965ae6c94e169eef2",
+      "src/nn/postprocessor/__init__.py": "0f4dc1f8a23bc9d09bed16d1b9c5c3a13bc1650fc7ba383ef4782f7940908bf7",
+      "src/nn/postprocessor/box_revert.py": "c551f87c60dc389fcc793e7a3904295b573b0c861c0aa65be9106b135a90e0e2",
+      "src/nn/postprocessor/detr_postprocessor.py": "4ffe23bc1ca73c07bce94ece3ce592ecc54a05434e1e21282e873351d7cffcbc",
+      "src/nn/postprocessor/nms_postprocessor.py": "87b361dafac76d7d692d768df1f3c484c798f49d1f05c1a8792e1c7da22cf05e",
+      "src/optim/__init__.py": "83aceafe68117323449e4f6e63ed65d9b6bd99037a25922f1bcc557598ee1eef",
+      "src/optim/amp.py": "c19121f1983271f2fa65f74d32fef47338295db0f8a703a8e2abc1d9a526ff20",
+      "src/optim/ema.py": "1fc8bb7b52a97af61e08ff8e93e7c6a753ad20138c0f4b62f9fee8e663b6e046",
+      "src/optim/optim.py": "489c26284aa1232ff3d1bfe044023e8071748364072628eda69d50ba832f82a0",
+      "src/optim/warmup.py": "7778c846f7b0fa7ba139dd8aa57aacf1812a28b9da7920e42340bafd610aa3e3",
+      "src/solver/__init__.py": "4d5ad56ab1da7d7190e89ff6c8294a3ddc610c35f3bdbbeeb5e99f5b8416f498",
+      "src/solver/_solver.py": "489f55332160b62c0b2fd72a4c33df9fb98a0afcb273b0eeed59f610775d6379",
+      "src/solver/clas_engine.py": "a849cf03fd54667cacb385b66a8b4282aec107abc26910d57ab1403fc462b844",
+      "src/solver/clas_solver.py": "63880a985763f79690887f84d54a26f96e55410eee8a79869173e5fd0afa6374",
+      "src/solver/det_engine.py": "edf6d5aa98bea4617c16c29f45b59c983f6f12b2063f942683646483c7a90762",
+      "src/solver/det_solver.py": "cec76c0b41c4be34425dfa557c6f23a739eff43b6824534db2ae68f4782fc0e5",
+      "src/solver/validator.py": "1b10bf92b90cf359e300564bd2fdd49ee1fb4ee89a88a7377094299db6febd57",
+      "src/zoo/__init__.py": "4636cb03ad981f6c9b263dffc81a28349bd79e8e04085cdadf1c28ed9ce6a11d",
+      "src/zoo/dfine/__init__.py": "f3468938e14a00d710277755dcaf879c4838be4abb26bbbb485c2724d3c3b388",
+      "src/zoo/dfine/box_ops.py": "d807f7b9578b38faae9da1908cd3fa0490b72bba15b8a1dcc8017d4238d0733f",
+      "src/zoo/dfine/denoising.py": "aef7172a5bf4caa625c63dc182e45f53df0e77edaddd167678a23fdfdf801681",
+      "src/zoo/dfine/dfine.py": "3ed4ec1b356cf4916f2052cf0f87839ff9436a0b3267f0eb6fc360ad4fd0df80",
+      "src/zoo/dfine/dfine_criterion.py": "ca9938808c8ba59fa2e7aeb3754ddbc415efd51127f7ffdd83e0f68be3423908",
+      "src/zoo/dfine/dfine_decoder.py": "7fe0e798493d18ea71a3c337f3116a48a0fd28b20b3dbba5d27e75d8bc6bac14",
+      "src/zoo/dfine/dfine_utils.py": "d05209405e6c680620fcd847fa62c37a445b1a5838a55ba6c8b6f738aee576d8",
+      "src/zoo/dfine/hybrid_encoder.py": "18ea6aafcf9a22b0a8b7b56811a1307dd0d03290ad0ac3b7681640e5f78b417b",
+      "src/zoo/dfine/matcher.py": "76f06875e64f495b626ec5fbce2dadb81755f47e3b9b22f76d476a6f40600b08",
+      "src/zoo/dfine/postprocessor.py": "11d8559a4a10711282e9fe3b607056ee1be7432b35a290ed5c016146e1b25dd0",
+      "src/zoo/dfine/utils.py": "511c0f0f20bb99f18b8ec989730b7d17e8e772bfe2304341b4c6bb2e9d8391a3"
+    },
+    "started_at": "2026-09-14T14:56:01+0800",
+    "status": "preflight_passed",
+    "torch": "2.5.1+cu121",
+    "trainable_parameters": 31145996,
+    "training_protocol": "scratch-adapted official D-FINE; FP32, batch4; official stage resets retained"
+  },
+  "joint_training": {
+    "config": {
+      "path": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+      "sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061"
+    },
+    "dataset": {
+      "file_count": 14038,
+      "sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB"
+    },
+    "format_version": 2,
+    "initial_state": {
+      "path": "/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt",
+      "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B"
+    },
+    "method": "lrs_gfdr_capacity_v3_safe_bpdd_fia",
+    "method_revision": "v3-safe-loc-kd-decay80-100-no-cls-kd",
+    "settings": {
+      "amp": true,
+      "batch": 8,
+      "cache": false,
+      "close_mosaic": 10,
+      "copy_paste": 0.0,
+      "cos_lr": false,
+      "cutmix": 0.0,
+      "data": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/authority/data/formal-data.yaml",
+      "degrees": 0.0,
+      "deterministic": true,
+      "device": "0",
+      "epochs": 100,
+      "exist_ok": false,
+      "fliplr": 0.5,
+      "flipud": 0.0,
+      "hsv_h": 0.015,
+      "hsv_s": 0.7,
+      "hsv_v": 0.4,
+      "imgsz": 640,
+      "lr0": 0.01,
+      "lrf": 0.01,
+      "max_det": 300,
+      "mixup": 0.0,
+      "model": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+      "momentum": 0.937,
+      "mosaic": 1.0,
+      "name": "formal-seed0-capacity-v3-safe-fia",
+      "nbs": 64,
+      "nms": false,
+      "optimizer": "MuSGD",
+      "perspective": 0.0,
+      "plots": true,
+      "pretrained": false,
+      "project": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2",
+      "save": true,
+      "save_period": -1,
+      "scale": 0.5,
+      "seed": 0,
+      "shear": 0.0,
+      "translate": 0.1,
+      "val": true,
+      "warmup_bias_lr": 0.0,
+      "warmup_epochs": 3.0,
+      "warmup_momentum": 0.8,
+      "weight_decay": 0.0005,
+      "workers": 8
+    },
+    "source": {
+      "git_commit": "a43056af2a843ec9bae109d3420367c13f3bcef6",
+      "tree_sha256": "BEB07103E2AC2299AFFF5A29DEF4B71E4E8F0058D57E5762D938CEB1E6DD7A3B"
+    }
+  },
+  "dataset": {
+    "train": {
+      "images": 6471,
+      "annotations": 343204,
+      "sha256": "da01bfb0b105a83aeb9af484fa412abdcc09b2fdd2f7522872a04a768270a130"
+    },
+    "val": {
+      "images": 548,
+      "annotations": 38759,
+      "sha256": "92d2866fe6e6ff4c3101b82c01b7718eb78b3759399042c4501d893798fc8bfa"
+    },
+    "test": {
+      "images": 1610,
+      "annotations": 75102,
+      "sha256": "0f8c9f7bd5d17d9948381d656d31de03e0e6073a114261573f73744ce4caf087"
+    }
+  },
+  "evaluation_source_sha256": {
+    "train_dfine_recorded.py": "25b04d994576dcf64ddb26a69a29b5df4f8e38de23664a16a708f843f43c219e",
+    "export_joint_common.py": "7fbc1e24ccfcee9d5e2e1d59ea110095f89377f78a0120775945ffa737026f67",
+    "export_dfine_predictions.py": "0f6491c122d898f5e0dfd540cda0203ab3ee52fb777b707b7727131ecc853a5f",
+    "evaluate_common.py": "aadfe82f25a0a9ca2981e5de7b4d730b8548dd58de1509b74460530ac84e8d5f",
+    "prediction_contract.py": "9104e2b2064a207241aed4150d538c8e15a6582a073b78f9618b5c97edab26a0",
+    "summarize_cross_protocol.py": "5d985e95d769c9f47eefc934c5875dea929a31cd67bf252939f87b5a11cdce49",
+    "smoke_common_export.py": "72d01bdc0f55da28d4bc8ca4d4698733a53017fab5a398d273eb0830c3d69ee7"
+  },
+  "comparisons": [
+    {
+      "endpoint": "final",
+      "split": "val",
+      "max_det": 100,
+      "reports": {
+        "dfine": {
+          "AP50": 0.4668041867706945,
+          "AP75": 0.29143004466765016,
+          "AP_large": 0.4352488893131174,
+          "AP_medium": 0.38415339449320024,
+          "AP_small": 0.20547620251026588,
+          "AR": 0.43926472061483496,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.2847661095608445,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2570255281960878,
+            "1": 0.21041027062170278,
+            "2": 0.10746614458398425,
+            "3": 0.6067808452075527,
+            "4": 0.3673984701131889,
+            "5": 0.24313339450515478,
+            "6": 0.19399816228543068,
+            "7": 0.1249273307383938,
+            "8": 0.4466209414159815,
+            "9": 0.28990000794096776
+          },
+          "stats": [
+            0.2847661095608445,
+            0.4668041867706945,
+            0.29143004466765016,
+            0.20547620251026588,
+            0.38415339449320024,
+            0.4352488893131174,
+            0.11586655840154943,
+            0.33168344614201223,
+            0.43926472061483496,
+            0.3596882484290523,
+            0.5505896619263866,
+            0.6068233659909912
+          ]
+        },
+        "joint": {
+          "AP50": 0.5052177225465786,
+          "AP75": 0.31037181854821827,
+          "AP_large": 0.48157051174059395,
+          "AP_medium": 0.41377245026813064,
+          "AP_small": 0.2206006729657964,
+          "AR": 0.45810846992340004,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.30501095688246216,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2792564788924991,
+            "1": 0.2167545047256521,
+            "2": 0.12247528833144974,
+            "3": 0.6101151737196613,
+            "4": 0.37602364885923506,
+            "5": 0.2989507139366757,
+            "6": 0.23352591971550862,
+            "7": 0.13478835210132747,
+            "8": 0.47236678432732115,
+            "9": 0.30585270421529137
+          },
+          "stats": [
+            0.30501095688246216,
+            0.5052177225465786,
+            0.31037181854821827,
+            0.2206006729657964,
+            0.41377245026813064,
+            0.48157051174059395,
+            0.12106019557557658,
+            0.3476674456054964,
+            0.45810846992340004,
+            0.3798501423050096,
+            0.572076662513568,
+            0.5956593861685974
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 2.0244847321617634,
+        "AP50": 3.841353577588408,
+        "AP75": 1.8941773880568114,
+        "AP_small": 1.5124470455530532,
+        "AP_medium": 2.9619055774930403,
+        "AP_large": 4.632162242747656,
+        "AR": 1.8843749308565083
+      }
+    },
+    {
+      "endpoint": "final",
+      "split": "val",
+      "max_det": 300,
+      "reports": {
+        "dfine": {
+          "AP50": 0.46765257679614186,
+          "AP75": 0.2919132200066535,
+          "AP_large": 0.43538134900821296,
+          "AP_medium": 0.3843976644336972,
+          "AP_small": 0.20577918048991303,
+          "AR": 0.4400988315532605,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.285009542822865,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2584498044503022,
+            "1": 0.2104094467185008,
+            "2": 0.10746614458398425,
+            "3": 0.6077943886153413,
+            "4": 0.3673984701131889,
+            "5": 0.24313339450515478,
+            "6": 0.19399816228543068,
+            "7": 0.1249273307383938,
+            "8": 0.4466209414159815,
+            "9": 0.2898973448023715
+          },
+          "stats": [
+            0.285009542822865,
+            0.46765257679614186,
+            0.2919132200066535,
+            0.20577918048991303,
+            0.3843976644336972,
+            0.43538134900821296,
+            0.11586655840154943,
+            0.33168344614201223,
+            0.4400988315532605,
+            0.3606337910385213,
+            0.5513523823418222,
+            0.6072581485996869
+          ]
+        },
+        "joint": {
+          "AP50": 0.5056105325993043,
+          "AP75": 0.31075374778226034,
+          "AP_large": 0.48156780264812443,
+          "AP_medium": 0.41392159579686044,
+          "AP_small": 0.22081678762502957,
+          "AR": 0.4587832032373364,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.30528177072331314,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2804605080946466,
+            "1": 0.21674711015151113,
+            "2": 0.12247528833144974,
+            "3": 0.6116278775436382,
+            "4": 0.37602364885923506,
+            "5": 0.2989506214742381,
+            "6": 0.23352591971550862,
+            "7": 0.13478835210132747,
+            "8": 0.47236678432732115,
+            "9": 0.3058515966342553
+          },
+          "stats": [
+            0.30528177072331314,
+            0.5056105325993043,
+            0.31075374778226034,
+            0.22081678762502957,
+            0.41392159579686044,
+            0.48156780264812443,
+            0.12106019557557658,
+            0.3476674456054964,
+            0.4587832032373364,
+            0.38070228686845575,
+            0.5725291932933219,
+            0.5956593861685974
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 2.0272227900448136,
+        "AP50": 3.7957955803162466,
+        "AP75": 1.8840527775606852,
+        "AP_small": 1.5037607135116537,
+        "AP_medium": 2.9523931363163225,
+        "AP_large": 4.618645363991147,
+        "AR": 1.8684371684075884
+      }
+    },
+    {
+      "endpoint": "final",
+      "split": "test",
+      "max_det": 100,
+      "reports": {
+        "dfine": {
+          "AP50": 0.38519930659718227,
+          "AP75": 0.22681059659944997,
+          "AP_large": 0.4202659115529818,
+          "AP_medium": 0.3208159852335134,
+          "AP_small": 0.133016003022598,
+          "AR": 0.39496303602162314,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.2251108040359532,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.14847033494021308,
+            "1": 0.09816815390201362,
+            "2": 0.07039878443530395,
+            "3": 0.5052773956061078,
+            "4": 0.29785272995478734,
+            "5": 0.27504424820871914,
+            "6": 0.12634739644450454,
+            "7": 0.12717542471696475,
+            "8": 0.4359648622075981,
+            "9": 0.16640870994331977
+          },
+          "stats": [
+            0.2251108040359532,
+            0.38519930659718227,
+            0.22681059659944997,
+            0.133016003022598,
+            0.3208159852335134,
+            0.4202659115529818,
+            0.09061003805145901,
+            0.2906477129656903,
+            0.39496303602162314,
+            0.2972286667682419,
+            0.5239937130975856,
+            0.6335291937062221
+          ]
+        },
+        "joint": {
+          "AP50": 0.4176070079708431,
+          "AP75": 0.24031360897356835,
+          "AP_large": 0.44064105080494353,
+          "AP_medium": 0.34145536664039666,
+          "AP_small": 0.14535307305078035,
+          "AR": 0.4077032754901402,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.24097420009420725,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.1619078919563205,
+            "1": 0.10286059786760493,
+            "2": 0.08661807391604939,
+            "3": 0.515187776996106,
+            "4": 0.309869938319917,
+            "5": 0.2962824758253701,
+            "6": 0.16765293999072978,
+            "7": 0.1441620319172048,
+            "8": 0.4415443594981364,
+            "9": 0.1836559146546341
+          },
+          "stats": [
+            0.24097420009420725,
+            0.4176070079708431,
+            0.24031360897356835,
+            0.14535307305078035,
+            0.34145536664039666,
+            0.44064105080494353,
+            0.09376414578277074,
+            0.3013176454131418,
+            0.4077032754901402,
+            0.3110648900000267,
+            0.5314220866036213,
+            0.6393191255372352
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 1.5863396058254042,
+        "AP50": 3.2407701373660833,
+        "AP75": 1.3503012374118384,
+        "AP_small": 1.233707002818235,
+        "AP_medium": 2.063938140688326,
+        "AP_large": 2.037513925196172,
+        "AR": 1.2740239468517045
+      }
+    },
+    {
+      "endpoint": "final",
+      "split": "test",
+      "max_det": 300,
+      "reports": {
+        "dfine": {
+          "AP50": 0.38655739674580103,
+          "AP75": 0.22720046059194085,
+          "AP_large": 0.4207660029120941,
+          "AP_medium": 0.321411411010954,
+          "AP_small": 0.13337504624292112,
+          "AR": 0.396785368050706,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.22554355939110077,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.15132130458677182,
+            "1": 0.09820735464438,
+            "2": 0.07039878443530395,
+            "3": 0.5065790481368689,
+            "4": 0.2977503051811949,
+            "5": 0.27510098738147515,
+            "6": 0.12634739644450454,
+            "7": 0.12717542471696475,
+            "8": 0.4359647856153406,
+            "9": 0.1665902027682033
+          },
+          "stats": [
+            0.22554355939110077,
+            0.38655739674580103,
+            0.22720046059194085,
+            0.13337504624292112,
+            0.321411411010954,
+            0.4207660029120941,
+            0.09061003805145901,
+            0.2906477129656903,
+            0.396785368050706,
+            0.29910405157162223,
+            0.5262260098709417,
+            0.6355316160370197
+          ]
+        },
+        "joint": {
+          "AP50": 0.41885191984203196,
+          "AP75": 0.2404417486927189,
+          "AP_large": 0.44169215789018784,
+          "AP_medium": 0.34197522410964687,
+          "AP_small": 0.14574960237519952,
+          "AR": 0.4092104307552443,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.24133495712514402,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.16488515096994863,
+            "1": 0.10285897581242692,
+            "2": 0.08661807391604939,
+            "3": 0.515722441785761,
+            "4": 0.3098424467291718,
+            "5": 0.29635679893055267,
+            "6": 0.16765293999072978,
+            "7": 0.1441620319172048,
+            "8": 0.4415443594981364,
+            "9": 0.18370635170145846
+          },
+          "stats": [
+            0.24133495712514402,
+            0.41885191984203196,
+            0.2404417486927189,
+            0.14574960237519952,
+            0.34197522410964687,
+            0.44169215789018784,
+            0.09376414578277074,
+            0.3013176454131418,
+            0.4092104307552443,
+            0.3125786482150598,
+            0.5330925663732934,
+            0.6417848005944434
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 1.5791397734043255,
+        "AP50": 3.229452309623093,
+        "AP75": 1.3241288100778044,
+        "AP_small": 1.2374556132278391,
+        "AP_medium": 2.0563813098692876,
+        "AP_large": 2.0926154978093745,
+        "AR": 1.2425062704538303
+      }
+    },
+    {
+      "endpoint": "best",
+      "split": "val",
+      "max_det": 100,
+      "reports": {
+        "dfine": {
+          "AP50": 0.471496350633665,
+          "AP75": 0.29265703456990577,
+          "AP_large": 0.41671285901517924,
+          "AP_medium": 0.3868306117797846,
+          "AP_small": 0.209339295097312,
+          "AR": 0.4414001727433693,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.2877338083445882,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2608724817238418,
+            "1": 0.20998395615214005,
+            "2": 0.10900213694516148,
+            "3": 0.6070833757459618,
+            "4": 0.3680681580972322,
+            "5": 0.2501694429806762,
+            "6": 0.19796653137736706,
+            "7": 0.12193886107499893,
+            "8": 0.45973133850215003,
+            "9": 0.2925218008463531
+          },
+          "stats": [
+            0.2877338083445882,
+            0.471496350633665,
+            0.29265703456990577,
+            0.209339295097312,
+            0.3868306117797846,
+            0.41671285901517924,
+            0.11656381014693407,
+            0.3333268734103372,
+            0.4414001727433693,
+            0.3626407137992338,
+            0.5517827966752784,
+            0.6146548987220125
+          ]
+        },
+        "joint": {
+          "AP50": 0.5076976522348858,
+          "AP75": 0.3127759683478609,
+          "AP_large": 0.4641310992460851,
+          "AP_medium": 0.41508252213105457,
+          "AP_small": 0.22236870409471077,
+          "AR": 0.4591543570245776,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.30702687682009566,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2789364359910512,
+            "1": 0.21934705011264122,
+            "2": 0.12455350607997566,
+            "3": 0.6104486250296173,
+            "4": 0.37760306341688943,
+            "5": 0.30001302322754536,
+            "6": 0.2357164453885458,
+            "7": 0.13705019484401393,
+            "8": 0.48041709285851636,
+            "9": 0.30618333125216024
+          },
+          "stats": [
+            0.30702687682009566,
+            0.5076976522348858,
+            0.3127759683478609,
+            0.22236870409471077,
+            0.41508252213105457,
+            0.4641310992460851,
+            0.12144808756216408,
+            0.348660647184266,
+            0.4591543570245776,
+            0.3800984645022761,
+            0.5719246761349676,
+            0.6210186816721385
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 1.9293068475507436,
+        "AP50": 3.6201301601220814,
+        "AP75": 2.011893377795515,
+        "AP_small": 1.3029408997398768,
+        "AP_medium": 2.825191035126995,
+        "AP_large": 4.741824023090585,
+        "AR": 1.7754184281208285
+      }
+    },
+    {
+      "endpoint": "best",
+      "split": "val",
+      "max_det": 300,
+      "reports": {
+        "dfine": {
+          "AP50": 0.472477842884739,
+          "AP75": 0.29269361259327115,
+          "AP_large": 0.41681128905621506,
+          "AP_medium": 0.3869840899078145,
+          "AP_small": 0.20962222623390026,
+          "AR": 0.4421956894355797,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.28795887807283677,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.2620818114179842,
+            "1": 0.20998761545430777,
+            "2": 0.10900213694516148,
+            "3": 0.6081190973462073,
+            "4": 0.3680681580972322,
+            "5": 0.2501694429806762,
+            "6": 0.19796653137736706,
+            "7": 0.12193886107499893,
+            "8": 0.45973133850215003,
+            "9": 0.2925237875322828
+          },
+          "stats": [
+            0.28795887807283677,
+            0.472477842884739,
+            0.29269361259327115,
+            0.20962222623390026,
+            0.3869840899078145,
+            0.41681128905621506,
+            0.11656381014693407,
+            0.3333268734103372,
+            0.4421956894355797,
+            0.36357587547350995,
+            0.5524112621285271,
+            0.6150896813307082
+          ]
+        },
+        "joint": {
+          "AP50": 0.5080316149250819,
+          "AP75": 0.31317061733177587,
+          "AP_large": 0.4641291408198826,
+          "AP_medium": 0.41524285232340485,
+          "AP_small": 0.22261249225868662,
+          "AR": 0.4597892208098104,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 548,
+          "mAP50_95": 0.3072697299369438,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.27987681245235685,
+            "1": 0.2193428415622545,
+            "2": 0.12455350607997566,
+            "3": 0.6119389930200727,
+            "4": 0.37760306341688943,
+            "5": 0.30001302322754536,
+            "6": 0.2357164453885458,
+            "7": 0.13705019484401393,
+            "8": 0.48041709285851636,
+            "9": 0.3061853265192674
+          },
+          "stats": [
+            0.3072697299369438,
+            0.5080316149250819,
+            0.31317061733177587,
+            0.22261249225868662,
+            0.41524285232340485,
+            0.4641291408198826,
+            0.12144808756216408,
+            0.348660647184266,
+            0.4597892208098104,
+            0.3809375907708391,
+            0.5724328413790934,
+            0.6210186816721385
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 1.9310851864107026,
+        "AP50": 3.555377204034288,
+        "AP75": 2.0477004738504725,
+        "AP_small": 1.2990266024786368,
+        "AP_medium": 2.8258762415590333,
+        "AP_large": 4.731785176366754,
+        "AR": 1.7593531374230698
+      }
+    },
+    {
+      "endpoint": "best",
+      "split": "test",
+      "max_det": 100,
+      "reports": {
+        "dfine": {
+          "AP50": 0.3881404119131914,
+          "AP75": 0.22675340910736855,
+          "AP_large": 0.4080674214000866,
+          "AP_medium": 0.32172555326250285,
+          "AP_small": 0.13441077456352607,
+          "AR": 0.39694623980089083,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.22637104285704207,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.15161018468563361,
+            "1": 0.1008824464435126,
+            "2": 0.07069669374666325,
+            "3": 0.5055682714304522,
+            "4": 0.2966522212808757,
+            "5": 0.2786231080214793,
+            "6": 0.12642654939797654,
+            "7": 0.12319159176105175,
+            "8": 0.4389246899575939,
+            "9": 0.17113467184518139
+          },
+          "stats": [
+            0.22637104285704207,
+            0.3881404119131914,
+            0.22675340910736855,
+            0.13441077456352607,
+            0.32172555326250285,
+            0.4080674214000866,
+            0.0910358658489465,
+            0.29120213683255397,
+            0.39694623980089083,
+            0.29877939151188765,
+            0.5249651775221104,
+            0.6121137045065594
+          ]
+        },
+        "joint": {
+          "AP50": 0.41863168858726396,
+          "AP75": 0.24195855621021364,
+          "AP_large": 0.44825645714524864,
+          "AP_medium": 0.3424229393523449,
+          "AP_small": 0.14576088225021958,
+          "AR": 0.4087590045994618,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.24189895957384286,
+          "max_det": 100,
+          "metric_definition": "COCO IoU .50:.95, maxDets=100; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.16212841982135065,
+            "1": 0.10376487609647857,
+            "2": 0.08780456518654976,
+            "3": 0.5158180766571584,
+            "4": 0.3100331878739835,
+            "5": 0.2974012502874171,
+            "6": 0.1674772200717552,
+            "7": 0.1479898049205232,
+            "8": 0.44275824316128753,
+            "9": 0.183813951661925
+          },
+          "stats": [
+            0.24189895957384286,
+            0.41863168858726396,
+            0.24195855621021364,
+            0.14576088225021958,
+            0.3424229393523449,
+            0.44825645714524864,
+            0.09476082248523822,
+            0.3021173886298647,
+            0.4087590045994618,
+            0.3109734982785672,
+            0.5327364230851149,
+            0.6509115550805957
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 1.5527916716800787,
+        "AP50": 3.0491276674072587,
+        "AP75": 1.5205147102845096,
+        "AP_small": 1.1350107686693507,
+        "AP_medium": 2.0697386089842063,
+        "AP_large": 4.0189035745162025,
+        "AR": 1.1812764798570963
+      }
+    },
+    {
+      "endpoint": "best",
+      "split": "test",
+      "max_det": 300,
+      "reports": {
+        "dfine": {
+          "AP50": 0.3894033585413867,
+          "AP75": 0.2271340312281818,
+          "AP_large": 0.40857731465723796,
+          "AP_medium": 0.3222600189770762,
+          "AP_small": 0.13478095574909657,
+          "AR": 0.3986674239649727,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.22678525333944666,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.15455081917612215,
+            "1": 0.1008890293655089,
+            "2": 0.07069669374666325,
+            "3": 0.5068037144722438,
+            "4": 0.29656693635887954,
+            "5": 0.2786129662141979,
+            "6": 0.12642654939797654,
+            "7": 0.12319159176105175,
+            "8": 0.4389246899575939,
+            "9": 0.1711895429442292
+          },
+          "stats": [
+            0.22678525333944666,
+            0.3894033585413867,
+            0.2271340312281818,
+            0.13478095574909657,
+            0.3222600189770762,
+            0.40857731465723796,
+            0.0910358658489465,
+            0.29120213683255397,
+            0.3986674239649727,
+            0.30054234039323935,
+            0.5270470197658832,
+            0.6139984221761741
+          ]
+        },
+        "joint": {
+          "AP50": 0.42009068188993237,
+          "AP75": 0.24208027625017603,
+          "AP_large": 0.4487340515089001,
+          "AP_medium": 0.34290298229333566,
+          "AP_small": 0.14618335122778175,
+          "AR": 0.4102609373268905,
+          "evaluator": "pycocotools.COCOeval",
+          "evaluator_version": "2.0.11",
+          "image_count": 1610,
+          "mAP50_95": 0.24228513876937524,
+          "max_det": 300,
+          "metric_definition": "COCO IoU .50:.95, maxDets=300; YOLO-derived project annotations",
+          "per_class_AP": {
+            "0": 0.1652634107307216,
+            "1": 0.10376360006350072,
+            "2": 0.08780456518654976,
+            "3": 0.5163429746709169,
+            "4": 0.31000758872409556,
+            "5": 0.2975444958335684,
+            "6": 0.1674772200717552,
+            "7": 0.1479898049205232,
+            "8": 0.44275824316128753,
+            "9": 0.18389948433083364
+          },
+          "stats": [
+            0.24228513876937524,
+            0.42009068188993237,
+            0.24208027625017603,
+            0.14618335122778175,
+            0.34290298229333566,
+            0.4487340515089001,
+            0.09476082248523822,
+            0.3021173886298647,
+            0.4102609373268905,
+            0.31255120271789966,
+            0.5343126315477432,
+            0.6520035108807894
+          ]
+        }
+      },
+      "joint_minus_dfine_pp": {
+        "mAP50_95": 1.5499885429928584,
+        "AP50": 3.068732334854568,
+        "AP75": 1.4946245021994238,
+        "AP_small": 1.1402395478685183,
+        "AP_medium": 2.0642963316259477,
+        "AP_large": 4.015673685166216,
+        "AR": 1.1593513361917829
+      }
+    }
+  ],
+  "files": {
+    "dfine_final_val.jsonl": "9f2892072bfc5b60991f8d0543664ffca177e492a3c01304a4ee5de3a8dbf51c",
+    "dfine_final_val.report.json": "0c159b43457e61e3c00c8ba0cc6e3b4fc147a578ca145d4a55be1b00fcaf2449",
+    "joint_final_val.jsonl": "d946fc4fff304873707ea558f9b702644873f1a7c7b00496fb9512ca74783d72",
+    "joint_final_val.report.json": "b64dc5d25ce736dc9632d151ae7816d668847316c24a921b939ae6520156967b",
+    "dfine_final_val.coco.json": "532136fa328e1ce8e5f8d63439c742732911f5da3a4fa761656c3cba6b9c76d4",
+    "dfine_final_val.cap100.json": "2c4187f18b8c5867cca07b820c7c9d4ff90606093048e54d081256d57556a753",
+    "dfine_final_val.cap300.json": "fa6d4ceef0244a077e0bb47085aa7b96e29896f4f3955c599f381df1d286bb55",
+    "joint_final_val.coco.json": "a896f6e7bd54f3c5d91322922afee46b187202107ab1107273dc604808476a8f",
+    "joint_final_val.cap100.json": "f636ed32a7a4f9b3e83b6a096eff699e0c491f3527bf5a92bdf8ea778b3f2120",
+    "joint_final_val.cap300.json": "dd2e276f6235d8a57217996847e6a8bb18e58d56a4ba898e0568e717535f28f4",
+    "dfine_final_test.jsonl": "493b3f3dfac950ae7d3835e019510171f28866a87d53f742593c86ea4895d38b",
+    "dfine_final_test.report.json": "bebbc1e3109b193c1f2c60505a576d9499374eee4614e6f1849f177e08b2f467",
+    "joint_final_test.jsonl": "3b366dd6b65ee89d70de0fc2d1c3d09d8ca1faf75ab5a61397f6eae5098a6d29",
+    "joint_final_test.report.json": "9da9bb00f2be26e7b4afaa86eeff5e671db5c0e6291382ed1a06838b84641acf",
+    "dfine_final_test.coco.json": "98cef7fbbec6dca19fe1473355b4548d48825a9e374b81576ea9ec84625860be",
+    "dfine_final_test.cap100.json": "ba774a1dc1b049da462f15ebda5f44d233e16a80bc4da7b7daf6aac8da78adcf",
+    "dfine_final_test.cap300.json": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+    "joint_final_test.coco.json": "0321b8e779282a85609c3c354edf51e42af4401cb4df51a1f0b7d1cd7e858b22",
+    "joint_final_test.cap100.json": "e1670ca50993ac1e8040f00b18660927f769978b254e1f4c880192bc7bfc4b8d",
+    "joint_final_test.cap300.json": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+    "dfine_best_val.jsonl": "3e36d1929ba915df1bfbc2808d9ce7cf833740c638af26f374cf45f6f6c887e7",
+    "dfine_best_val.report.json": "a900bfe326093086eb2c730c35783c572dca4e2e07cf1c1c2c1e6ea2273d4e64",
+    "joint_best_val.jsonl": "df8974814e722eedf58dd561b2ad7ce652b31f3c4d1862fd4bf5952529f51552",
+    "joint_best_val.report.json": "5161d495b6294bb35f8145406521326a150433564420fe6955daec5259b50d63",
+    "dfine_best_val.coco.json": "43875626d24c1c94feb5922261f2023524c94b1d236ce1ffd6cec62ef70c863c",
+    "dfine_best_val.cap100.json": "41949dea8de41e0e28fbb9e93997204d979732c4806167027a765c6a67bec462",
+    "dfine_best_val.cap300.json": "7c8dc8b28f9fd3f56376db57f5ebd6f7f21d640d8e33282cd9ae55a581614e40",
+    "joint_best_val.coco.json": "abdb3f24fc741f41f8c59f4da32ba2301a141110ebde45947100f19a51a1ed5d",
+    "joint_best_val.cap100.json": "bb4f678397efb979a15e62b4bf991ad9b85aed1076af9d7a3bf2338ce8dee030",
+    "joint_best_val.cap300.json": "ecf8284b19ee59edab50feb4a3535c48a1bcc1afda4e7e90ee40569b36b5cbdf",
+    "dfine_best_test.jsonl": "c3bed85b3cf9d11139ca76d18af9ad176e7505efcfa80ba55ec96f7eb331f82a",
+    "dfine_best_test.report.json": "5b0941a490b12fa33ed4c41647d523e8254b4d5484888561078499e5bd870b99",
+    "joint_best_test.jsonl": "7c44097189145e55baf6cc0d8d4e9b85e0984c4a9e70d942cc228918c80ca593",
+    "joint_best_test.report.json": "5e954d770963d7efef3745f8ee22ed3e849c14fd14f4de27084ecbe48b8b329d",
+    "dfine_best_test.coco.json": "be1fa747e22a907de7e81a71a65d2b979d8679597b2647c920089e35e174e9ca",
+    "dfine_best_test.cap100.json": "476eec380cd5a29849c91079ea50ef0b9b2a98a320baa081cf794728f3a97d57",
+    "dfine_best_test.cap300.json": "8ef0136cec3af0833cff8083df7549eaca58f6a36d57e9eea57b92a1589e620a",
+    "joint_best_test.coco.json": "3e49c0e787d19b9c7ac0c30ec11101fac96d5db4a36ced18540cae4d85dc4784",
+    "joint_best_test.cap100.json": "20fc56a9677caf134376340c5c96883f998ea20421152195e47463f0c17add04",
+    "joint_best_test.cap300.json": "4d1b8618c31344f9400f2004b45d799d5c52511386694eaf1b8eaf07c0e8bfae"
+  }
+}

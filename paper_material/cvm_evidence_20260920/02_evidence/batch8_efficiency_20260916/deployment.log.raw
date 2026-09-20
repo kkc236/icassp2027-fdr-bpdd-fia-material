@@ -1,0 +1,4 @@
+[?2004l
+{"pid": 1163385, "command": ["/root/miniconda3/envs/lrs-v2/bin/python", "-B", "-u", "/root/sj-tmp/evidence/batch8-efficiency-20260916-v1/measure.py", "--code-root", "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code", "--output-dir", "/root/sj-tmp/evidence/batch8-efficiency-20260916-v1"], "source_sha256": "49bc64aa228c18e3200884ad551ec68fe63a69e12d72e1b17d1072f2fc586136", "training_started": false, "uavdt_in_scope": false, "output": "/root/sj-tmp/evidence/batch8-efficiency-20260916-v1"}
+CODEX_DONE_0e7fa5272084497ebd6e7d476e857fca0
+[?2004h(base) ]0;root@dee31ea771a8: /root@dee31ea771a8:/# 

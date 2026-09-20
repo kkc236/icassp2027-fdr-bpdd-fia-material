@@ -1,0 +1,177 @@
+{
+  "actual_input_shapes": [
+    [
+      2,
+      3,
+      800,
+      800
+    ],
+    [
+      8,
+      3,
+      800,
+      800
+    ]
+  ],
+  "arm": "G_LRS_GFDR",
+  "checkpoint": {
+    "path": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+    "sha256": "DF76A0C8BD5B215D378ACB87EB240D7D1DFB44190167CD8C1E19F86FA18C969D"
+  },
+  "class_details": {
+    "awning-tricycle": {
+      "id": 7,
+      "map": 0.14287242226226338,
+      "map50": 0.24627941100729356,
+      "map75": 0.1581002841413551
+    },
+    "bicycle": {
+      "id": 2,
+      "map": 0.0801609781091456,
+      "map50": 0.1868296638649804,
+      "map75": 0.060610762816431754
+    },
+    "bus": {
+      "id": 8,
+      "map": 0.42712177573888577,
+      "map50": 0.6080787809248008,
+      "map75": 0.4917222778007603
+    },
+    "car": {
+      "id": 3,
+      "map": 0.511284501817098,
+      "map50": 0.8015221443126753,
+      "map75": 0.5649355078402869
+    },
+    "motor": {
+      "id": 9,
+      "map": 0.19121979275405807,
+      "map50": 0.44511381102419423,
+      "map75": 0.12418925433103467
+    },
+    "pedestrian": {
+      "id": 0,
+      "map": 0.17311282785483637,
+      "map50": 0.4240520629936086,
+      "map75": 0.11198954934394445
+    },
+    "people": {
+      "id": 1,
+      "map": 0.10639434824061837,
+      "map50": 0.29538895766904394,
+      "map75": 0.047486159995223404
+    },
+    "tricycle": {
+      "id": 6,
+      "map": 0.1679955843655212,
+      "map50": 0.3021369415118891,
+      "map75": 0.1727396537294247
+    },
+    "truck": {
+      "id": 5,
+      "map": 0.28931851293231736,
+      "map50": 0.46257902197373124,
+      "map75": 0.3151014730505103
+    },
+    "van": {
+      "id": 4,
+      "map": 0.3164696770174734,
+      "map50": 0.4667329778378601,
+      "map75": 0.3683676518862474
+    }
+  },
+  "classes": {
+    "awning-tricycle": 0.14287242226226338,
+    "bicycle": 0.0801609781091456,
+    "bus": 0.42712177573888577,
+    "car": 0.511284501817098,
+    "motor": 0.19121979275405807,
+    "pedestrian": 0.17311282785483637,
+    "people": 0.10639434824061837,
+    "tricycle": 0.1679955843655212,
+    "truck": 0.28931851293231736,
+    "van": 0.3164696770174734
+  },
+  "data": {
+    "expected_images": 1610,
+    "path": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "sha256": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63"
+  },
+  "decoder_after_first_pass": {
+    "anchor_state_exposed": false,
+    "eval_idx": 5,
+    "feasible_geometry": true,
+    "module": "model.28.decoder"
+  },
+  "environment": {
+    "cuda": "12.1",
+    "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+    "python": "3.10.21",
+    "torch": "2.5.1+cu121",
+    "ultralytics": "8.4.90",
+    "ultralytics_file": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py"
+  },
+  "format_version": 1,
+  "kind": "frozen_checkpoint_native_highres_test_probe",
+  "metrics": {
+    "f1": 0.48879701895561084,
+    "map": 0.24059504210922178,
+    "map50": 0.4238713773120077,
+    "map75": 0.2415242574935219,
+    "precision": 0.5391444920279976,
+    "recall": 0.44704972432447904
+  },
+  "processed_images": 1610,
+  "protocol": {
+    "batch": 8,
+    "cache": false,
+    "conf": 0.001,
+    "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "device": "0",
+    "imgsz": 800,
+    "max_det": 300,
+    "mode": "val",
+    "model": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+    "nms": false,
+    "plots": false,
+    "quantize": null,
+    "rect": false,
+    "save_json": false,
+    "save_txt": false,
+    "split": "test",
+    "task": "detect",
+    "verbose": true,
+    "workers": 8
+  },
+  "selection": {
+    "arms": [
+      "G_LRS_GFDR",
+      "FULL_CAPACITY_B_F"
+    ],
+    "candidates": {
+      "800": {
+        "mean_map": 0.30167256474427284,
+        "per_arm_map": {
+          "FULL_CAPACITY_B_F": 0.3028738008622073,
+          "G_LRS_GFDR": 0.30047132862633846
+        }
+      },
+      "960": {
+        "mean_map": 0.2754725548989866,
+        "per_arm_map": {
+          "FULL_CAPACITY_B_F": 0.2764120781601987,
+          "G_LRS_GFDR": 0.2745330316377745
+        }
+      }
+    },
+    "format_version": 1,
+    "path": "/root/sj-tmp/evidence/visdrone_highres_test_probe_20260915/VAL_SELECTION.json",
+    "selected_imgsz": 800,
+    "selection_rule": "choose the candidate with the highest unweighted mean val mAP50-95 across the fixed G and Full checkpoints",
+    "selection_source_split": "val",
+    "sha256": "EA59B18B3F339FE3AB4352B64CEED29D78A348459DBF53B251E5F532EFF77CFD",
+    "test_was_not_read_for_selection": true
+  },
+  "split": "test",
+  "wall_seconds": 20.600572698749602
+}

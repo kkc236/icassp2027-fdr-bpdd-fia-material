@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/runner.py", line 26, in <module>
+    subprocess.run(command,cwd=code,stdout=log,stderr=subprocess.STDOUT,timeout=300,check=True)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/root/miniconda3/envs/lrs-v2/bin/python', '-u', '/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py', '--checkpoint', '/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt', '--data-yaml', '/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml', '--output-dir', '/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/val_calibrated_640', '--split', 'val', '--imgsz', '640', '--batch', '8', '--workers', '8', '--device', '0', '--expected-images', '548', '--anchor-scale-reference', '640']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/runner.py", line 26, in <module>
+    subprocess.run(command,cwd=code,stdout=log,stderr=subprocess.STDOUT,timeout=300,check=True)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/root/miniconda3/envs/lrs-v2/bin/python', '-u', '/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py', '--checkpoint', '/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt', '--data-yaml', '/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml', '--output-dir', '/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/val_calibrated_640', '--split', 'val', '--imgsz', '640', '--batch', '8', '--workers', '8', '--device', '0', '--expected-images', '548', '--anchor-scale-reference', '640']' returned non-zero exit status 1.

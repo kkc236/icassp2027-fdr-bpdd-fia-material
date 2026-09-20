@@ -1,0 +1,1289 @@
+{
+  "format_version": 1,
+  "hash_semantics": {
+    "canonical_local_artifact_sha256": "SHA-256 of the canonical Git blob payload bytes; working-tree newline conversion is excluded.",
+    "source_artifact_canonical_sha256": "SHA-256 of the source Git blob payload bytes.",
+    "git_blob_oid": "Git object ID naming the exact blob payload."
+  },
+  "sources": {
+    "equal_formal100_best_exact_20260821": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_branch": "codex/ap-fdr-integrated-redesign",
+      "source_commit": "fca7763679b6e10ed68f98971a362a054ecd4853",
+      "paper_alias_commit": "c331c36619739a0e90bcff56b41baca11dd36705",
+      "paper_method": "EQuAL",
+      "raw_runtime_method": "ACE-FDR",
+      "runtime_run_name": "formal-seed0-ace-fdr-v1",
+      "alias_binding": {
+        "path": "paper_material/evidence/equal_formal100_20260821/equal-runtime-alias.json",
+        "sha256": "1059f7db3214ef8e51a6c557ee2b7b10a304a214deab46e2eb0edb646ebc801f",
+        "canonical_method": "equal",
+        "runtime_method": "ace_fdr",
+        "yaml_semantics_equal": true
+      },
+      "checkpoint_kind": "best.pt",
+      "checkpoint_sha256": "06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca",
+      "checkpoint_bytes": 67288254,
+      "best_epoch": 91,
+      "training_epochs_completed": 100,
+      "release": {
+        "repository": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material",
+        "release_id": 374471972,
+        "tag": "equal-seed0-formal100-20260821",
+        "target_commit": "9a6bb67131804ecc3d1729ca038b254caba4f28e",
+        "published_at": "2026-08-21T14:46:00Z",
+        "prerelease": true,
+        "url": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/releases/tag/equal-seed0-formal100-20260821",
+        "archive": {
+          "asset_id": 523859760,
+          "name": "equal-seed0-formal100-20260821.tar.gz",
+          "size_bytes": 124713872,
+          "sha256": "6f7805e66a2f847332a8f0591cd04eb674cda7a18dc8d300865c5e68d3468086",
+          "url": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material/releases/download/equal-seed0-formal100-20260821/equal-seed0-formal100-20260821.tar.gz",
+          "contents": "best.pt, last.pt, results.csv, args.yaml, training log, launch authority, runtime config, completion manifest, exact val/test JSON, SHA-256 manifest"
+        }
+      },
+      "artifacts": [
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/args.yaml",
+          "sha256": "42f22ddf2d4c85a8232f12ed5d71c53b053f4abc76f07e3b142bd46237b8781f",
+          "record_type": "training_arguments"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/results.csv",
+          "sha256": "8c9939380832aaf31ae0c0ae8a441d06aa8f2e759208c7c66bc8282e831a531d",
+          "record_type": "formal100_training_log"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/completion-manifest.json",
+          "sha256": "c044ae6a45aec29d809f2c7e22e1c6ff4ac7c85899c14eed9e6c92217e659106",
+          "record_type": "evaluation_completion_manifest"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/equal_val.json",
+          "sha256": "3990a5ee856407f5007f044988ec1c1fdc99c9f2783fcf5c0de48e6a8145e7a4",
+          "record_type": "best_checkpoint_exact_val_evaluation"
+        },
+        {
+          "path": "paper_material/evidence/equal_formal100_20260821/equal_test.json",
+          "sha256": "5b34545d662255b852a63a8e59104976d7d686c76df20328a379548a99d1452b",
+          "record_type": "same_best_checkpoint_exact_test_evaluation"
+        }
+      ],
+      "evaluation_protocol": {
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "prediction_passes_per_split": 1
+      },
+      "evidence_level": "best_checkpoint_independent_val_and_test_exact",
+      "strict_paired": false,
+      "standalone_adoption_gate": "pass",
+      "combination_retraining_required": true,
+      "old_ap_fdr_combination_relabel_allowed": false,
+      "transformation": "import byte-exact training/evaluation records and bind immutable ACE-FDR runtime identifiers to the paper-facing EQuAL alias"
+    },
+    "strict_control_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "f6fe1365171eceef2ee327e589b14718f3773486",
+      "source_artifact": {
+        "path": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+        "git_blob_oid": "d1766857ab631375edc740e2e06397122651ffcf",
+        "canonical_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57"
+      },
+      "local_artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "canonical_local_artifact_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57",
+      "evidence_level": "strict",
+      "transformation": "none"
+    },
+    "fdr_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "f6fe1365171eceef2ee327e589b14718f3773486",
+      "source_artifact": {
+        "path": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+        "git_blob_oid": "d1766857ab631375edc740e2e06397122651ffcf",
+        "canonical_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57"
+      },
+      "local_artifact": "docs/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+      "canonical_local_artifact_sha256": "e22cd78342685e543ffe12db0930a3ed3da97c514366a5295269d7e3ca86df57",
+      "evidence_level": "strict",
+      "transformation": "none"
+    },
+    "bpdd_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "6bec4fece8c9ac49011f0aa64c6d3c1907235d19",
+      "source_artifact": {
+        "path": "evidence/paper-master-2026-08-10/authority-index.json",
+        "identity": "formal100_independent_bpdd_metrics",
+        "git_blob_oid": "ff2fb73f481c40333e31add616b1b7b33c9e4da3",
+        "canonical_sha256": "d632f76ca06624f6763cfe2de0fcdbf1dd14c3f96b316adb12501c9949acd657"
+      },
+      "local_artifact": "paper_material/evidence/bpdd_val_exact.json",
+      "canonical_local_artifact_sha256": "b2c9d4677347073c12f07fe797858d268facde3a9dbe917455e57cd01922ea29",
+      "evidence_level": "cross_authority_exact",
+      "transformation": "extract_exact_metrics_and_add_nonpaired_comparison_warning"
+    },
+    "strict_control_test_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+      "source_artifact": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+        "git_blob_oid": "e2e37444f8d88c2f0f81590ded205302fb03f488",
+        "canonical_sha256": "6e5897c6add04926d0a5afff47a59a4697be17ebf6940eff7b3173787fa56086"
+      },
+      "local_artifact": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+      "canonical_local_artifact_sha256": "6e5897c6add04926d0a5afff47a59a4697be17ebf6940eff7b3173787fa56086",
+      "evidence_level": "exact_single_arm",
+      "transformation": "normalize_legacy_third_method_boolean_key_to_fia_only"
+    },
+    "fdr_test_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+      "source_artifact": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-fdr-test-eval.json",
+        "git_blob_oid": "b52b3abcc2e39e16dcc8e8bfa74b7ab54a9e6086",
+        "canonical_sha256": "630c29806466262ed7cde12d66c891c78430d298800420041dcaac7b55e2a661"
+      },
+      "local_artifact": "evidence/strict-control-test-d97e1eb7/strict-fdr-test-eval.json",
+      "canonical_local_artifact_sha256": "630c29806466262ed7cde12d66c891c78430d298800420041dcaac7b55e2a661",
+      "evidence_level": "exact_single_arm",
+      "transformation": "none"
+    },
+    "fdr_bpdd_test_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+      "source_artifact": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-fdr-bpdd-test-eval.json",
+        "git_blob_oid": "e8d9c0d167d8d68acd994e26b1227834116b98b9",
+        "canonical_sha256": "3e0695a81218145aa0936ba34a2162a66c0f54e857239fe0bc8961ef71fb55a6"
+      },
+      "local_artifact": "evidence/strict-control-test-d97e1eb7/strict-fdr-bpdd-test-eval.json",
+      "canonical_local_artifact_sha256": "3e0695a81218145aa0936ba34a2162a66c0f54e857239fe0bc8961ef71fb55a6",
+      "evidence_level": "cross_authority_exact",
+      "transformation": "none"
+    },
+    "fia_p3_only_best_checkpoint_exact": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "118ad631eff93ad806f85ea47819578e6e00bfc5",
+      "release_tag": "DFR-BDPP-FIA",
+      "release_asset": {
+        "name": "fia-p3-only-final-20260819.tar.gz",
+        "asset_id": 520838108,
+        "size_bytes": 62725579,
+        "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+        "updated_at": "2026-08-19T12:52:19Z",
+        "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz"
+      },
+      "checkpoint_kind": "best.pt",
+      "checkpoint_sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+      "local_artifact": "paper_material/evidence/fia_existing_best_evaluation.json",
+      "canonical_local_artifact_sha256": "7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882",
+      "record_selector": "arms[variant=fia_only_p3]",
+      "artifacts": [
+        {
+          "path": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json",
+          "sha256": "5e6c3c0a8935f28f017df6a5e0a4ad4d7ade1ae926c55db44a9721f0bc84a625",
+          "record_type": "raw_exact_val_evaluation"
+        },
+        {
+          "path": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json",
+          "sha256": "653ab5e9fc84c9d0e9826ce455e468f8cd52d6ec78e4327306f07c322ccbab29",
+          "record_type": "raw_exact_test_evaluation"
+        },
+        {
+          "path": "paper_material/evidence/fia_p3_only_20260819/graph-identity-normalization.json",
+          "sha256": "b80a424b1c7d87d8882ca890132048ac99d6718ea27b244f9155ad412991b68f",
+          "record_type": "raw_to_effective_graph_identity_normalization"
+        }
+      ],
+      "release_content_manifest": {
+        "path": "paper_material/evidence/fia_p3_only_20260819/MANIFEST.sha256",
+        "sha256": "182141234424c6f463999e79e86de891fe80964420bba3a7a323357979d67530",
+        "entry_count": 18,
+        "self_hash_included": false,
+        "scope": "release_archive_contents; three registered JSON artifacts are copied locally"
+      },
+      "result_status": "current",
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "fia_layer_from_raw": -1,
+        "fia_layer_from_effective": 21,
+        "layer_23_from": 21,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ],
+        "topology_label": "p3_only_standalone"
+      },
+      "evaluation_protocol": {
+        "split": "val",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "images": 548,
+        "instances": 38759,
+        "data_yaml_sha256": "e04ce418942f8efe02ce8b174cbece0004fe3d6be2d07f7e6fbbbab0117cbfe6"
+      },
+      "metrics": {
+        "precision": 0.4871962209136635,
+        "recall": 0.42531734343807504,
+        "f1": 0.4509443663180429,
+        "map50": 0.39874518726363956,
+        "map75": 0.2218076018094571,
+        "map": 0.22705639514425527
+      },
+      "val_comparison": {
+        "delta_reference_source_id": "strict_control_val",
+        "delta_map_pp": 0.7946395144255269,
+        "strict_paired": false,
+        "scope": "same_split_project_baseline_arithmetic"
+      },
+      "test_evaluation_protocol": {
+        "split": "test",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "images": 1610,
+        "instances": 75102,
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae"
+      },
+      "independent_test_metrics": {
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812
+      },
+      "test_comparison": {
+        "delta_reference_source_id": "strict_control_test_exact",
+        "delta_map_pp": 0.8101032384120604,
+        "strict_paired": false,
+        "scope": "same_dataset_and_evaluator_protocol_arithmetic"
+      },
+      "per_class_status": "available_exact",
+      "per_class_artifacts": {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json#per_class",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json#per_class",
+        "class_count": 10
+      },
+      "evidence_level": "best_checkpoint_independent_val_and_test_exact",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "ablation_table_allowed": true,
+      "transformation": "register the fresh exact best.pt val and test evaluation with raw and resolved P3-only graph identity"
+    },
+    "fia_existing_best_independent_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "release_tag": "DFR-BDPP-FIA",
+      "release_asset": "fia-seed0-20260815-211156.zip",
+      "release_asset_sha256": "17eb96a577f20a99370f87f6a33374a7f402a9989a4d692f8961dce0fd9aab0a",
+      "checkpoint_kind": "best.pt",
+      "checkpoint_sha256": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
+      "local_artifact": "paper_material/evidence/fia_existing_best_evaluation.json",
+      "canonical_local_artifact_sha256": "7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882",
+      "record_selector": "arms[variant=fia_only_cascading_superseded]",
+      "result_status": "superseded",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact",
+      "supersession_reason": "Fresh exact FIA-only evaluation is bound to the corrected P3-only graph; this retained checkpoint uses the older cascading topology.",
+      "graph_identity": {
+        "p3_only": false,
+        "fia_layer": 22,
+        "layer_23_from": -1,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ],
+        "topology_label": "published_cascading_standalone"
+      },
+      "evaluation_protocol": {
+        "split": "val",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false
+      },
+      "metrics": {
+        "precision": 0.4794334980185041,
+        "recall": 0.4141938299458384,
+        "f1": 0.44443223821449407,
+        "map50": 0.38567545133764725,
+        "map75": 0.2096736111592438,
+        "map": 0.21679545343355133
+      },
+      "test_evaluation_protocol": {
+        "split": "test",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "images": 1610,
+        "instances": 75102,
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae"
+      },
+      "independent_test_metrics": {
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921
+      },
+      "evidence_level": "best_checkpoint_independent_val_and_test_exact",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "ablation_table_allowed": false,
+      "historical_numeric_use_allowed": true,
+      "transformation": "retain the older published cascading best.pt independent val and test evaluation as a superseded audit record"
+    },
+    "fdr_fia_existing_best_independent_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "release_tag": "DFR-BDPP-FIA",
+      "release_asset": "fdr-fia-seed0-20260815-211203.zip",
+      "release_asset_sha256": "30fc5c418a4f24b8e8c6ee3a44ddc88d94ba236225f178e689cfe81540afc900",
+      "checkpoint_kind": "best.pt",
+      "checkpoint_sha256": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
+      "local_artifact": "paper_material/evidence/fia_existing_best_evaluation.json",
+      "canonical_local_artifact_sha256": "7d75dcdc6bfe23cc9d57e0e2f495b558eed14bd3fc9c29e1de8c2e1a5e65f882",
+      "record_selector": "arms[variant=fdr_fia]",
+      "result_status": "current_supplementary",
+      "graph_identity": {
+        "p3_only": false,
+        "fia_layer": 22,
+        "layer_23_from": -1,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ],
+        "topology_label": "published_cascading_standalone"
+      },
+      "evaluation_protocol": {
+        "split": "val",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false
+      },
+      "metrics": {
+        "precision": 0.5775238641748943,
+        "recall": 0.4908887926435492,
+        "f1": 0.530693811231827,
+        "map50": 0.486314064615312,
+        "map75": 0.29972392008500426,
+        "map": 0.2949403207076206
+      },
+      "test_evaluation_protocol": {
+        "split": "test",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "nms": false,
+        "cache": false,
+        "half": false,
+        "rect": false,
+        "images": 1610,
+        "instances": 75102,
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae"
+      },
+      "independent_test_metrics": {
+        "precision": 0.5189669713045484,
+        "recall": 0.43165506726917735,
+        "f1": 0.46065437704605916,
+        "map50": 0.4074392932750549,
+        "map75": 0.23587873005461435,
+        "map": 0.23464538660213996
+      },
+      "evidence_level": "best_checkpoint_independent_val_and_test_exact",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "ablation_table_allowed": true,
+      "transformation": "load the published best.pt and run the frozen independent VisDrone val and test evaluators"
+    },
+    "fia_updated_three_module_checkpoint_best_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "release_tag": "DFR-BDPP-FIA",
+      "release_asset": "DFR-BDPP-FIA-best.pt",
+      "release_asset_size": 67871120,
+      "release_asset_updated_at": "2026-08-15T10:54:52Z",
+      "release_asset_sha256": "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+      "checkpoint_date": "2026-08-15T12:19:54.663646",
+      "checkpoint_model_type": "src.rtdetr_fdr_bpdd_fia.FDRBPDDFIADetectionModel",
+      "checkpoint_training_source_commit": null,
+      "checkpoint_training_source_commit_verified": false,
+      "training": {
+        "epochs": 100,
+        "seed": 0,
+        "deterministic": true,
+        "pretrained": false,
+        "optimizer": "MuSGD",
+        "imgsz": 640,
+        "batch": 8,
+        "workers": 4,
+        "split": "val"
+      },
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": 21,
+        "layer_23_from": 21,
+        "decoder_from": [
+          22,
+          25,
+          28
+        ]
+      },
+      "checkpoint_embedded_best_val": {
+        "epoch": 96,
+        "precision": 0.56996,
+        "recall": 0.49848,
+        "map50": 0.48982,
+        "map75": null,
+        "map": 0.29618
+      },
+      "evidence_level": "checkpoint_embedded_best_val",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "transformation": "inspect checkpoint metadata and graph identity without copying the checkpoint into this repository"
+    },
+    "fia_updated_three_module_terminal_val": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_context": "out-of-band terminal evaluation from the corrected three-module working directory",
+      "historical_git_artifact": {
+        "repository": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material.git",
+        "commit": "963daf6e47df2b5532d29abaf42008cc701bb38e",
+        "path": "paper_material/assets/fia_terminal_validation.jpg",
+        "git_blob_oid": "029baf9ad67d6ed592e48583c6c6e20085b5d309",
+        "sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+      },
+      "scope": {
+        "split": "VisDrone val",
+        "images": 548,
+        "instances": 38759
+      },
+      "rounded_val_metrics": {
+        "precision": 0.569,
+        "recall": 0.499,
+        "map50": 0.49,
+        "map75": null,
+        "map": 0.296
+      },
+      "standard_ablation_row": "E",
+      "delta_from_displayed_bpdd_map_pp": 0.374,
+      "evidence_level": "terminal_screenshot_rounded",
+      "strict_paired": false,
+      "formal_main_table_allowed": true,
+      "transformation": "bind the standard A-E table row E directly to the rounded val panel; do not substitute checkpoint-embedded precision or recall"
+    },
+    "fia_updated_three_module_terminal_test": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_context": "out-of-band terminal evaluation from the three-module working directory",
+      "release_tag": "DFR-BDPP-FIA",
+      "checkpoint_release_asset": "DFR-BDPP-FIA-best.pt",
+      "checkpoint_release_asset_sha256": "fd972586e2833a28aa02d04ac9e460b0d7c8cfc4e6e8bcb48da273f0e905593c",
+      "historical_git_artifact": {
+        "repository": "https://github.com/kkc236/icassp2027-fdr-bpdd-fia-material.git",
+        "commit": "963daf6e47df2b5532d29abaf42008cc701bb38e",
+        "path": "paper_material/assets/fia_terminal_validation.jpg",
+        "git_blob_oid": "029baf9ad67d6ed592e48583c6c6e20085b5d309",
+        "sha256": "059089d87c11acc29700311e818f69541df4c7695e70363e3f937861f3a516b6"
+      },
+      "identity_binding": {
+        "working_directory": "/home/ubuntu/uav-bpdd-fia",
+        "paired_val_display_map": 0.296,
+        "current_checkpoint_embedded_best_val_map": 0.29618,
+        "graph_identity": "corrected_p3_only_three_module",
+        "binding_level": "context_and_metric_match_not_byte_embedded_in_screenshot"
+      },
+      "test_scope": {
+        "split": "VisDrone test",
+        "images": 1610,
+        "instances": 75102
+      },
+      "rounded_test_metrics": {
+        "precision": 0.519,
+        "recall": 0.436,
+        "f1": null,
+        "map50": 0.408,
+        "map75": null,
+        "map": 0.234
+      },
+      "per_class_rounded": [
+        {
+          "class": "pedestrian",
+          "precision": 0.595,
+          "recall": 0.38,
+          "map50": 0.393,
+          "map": 0.161
+        },
+        {
+          "class": "people",
+          "precision": 0.599,
+          "recall": 0.273,
+          "map50": 0.285,
+          "map": 0.103
+        },
+        {
+          "class": "bicycle",
+          "precision": 0.359,
+          "recall": 0.205,
+          "map50": 0.177,
+          "map": 0.0748
+        },
+        {
+          "class": "car",
+          "precision": 0.755,
+          "recall": 0.791,
+          "map50": 0.792,
+          "map": 0.51
+        },
+        {
+          "class": "van",
+          "precision": 0.392,
+          "recall": 0.526,
+          "map50": 0.423,
+          "map": 0.292
+        },
+        {
+          "class": "truck",
+          "precision": 0.516,
+          "recall": 0.493,
+          "map50": 0.463,
+          "map": 0.301
+        },
+        {
+          "class": "tricycle",
+          "precision": 0.321,
+          "recall": 0.353,
+          "map50": 0.275,
+          "map": 0.147
+        },
+        {
+          "class": "awning-tricycle",
+          "precision": 0.441,
+          "recall": 0.272,
+          "map50": 0.239,
+          "map": 0.14
+        },
+        {
+          "class": "bus",
+          "precision": 0.675,
+          "recall": 0.587,
+          "map50": 0.606,
+          "map": 0.427
+        },
+        {
+          "class": "motor",
+          "precision": 0.535,
+          "recall": 0.481,
+          "map50": 0.427,
+          "map": 0.182
+        }
+      ],
+      "evidence_level": "terminal_screenshot_rounded",
+      "strict_paired": false,
+      "formal_main_table_allowed": false,
+      "supplementary_ablation_allowed": true,
+      "transformation": "reclassify the archived screenshot test panel as a positive rounded observation for the corrected three-module result; do not infer AP75 or F1"
+    },
+    "fia_updated_three_module_text_val": {
+      "artifact": "paper_material/evidence/fdr_bpdd_fia_val.txt",
+      "sha256": "27ebf878db256a86ddb99bf6a3837a42313542af783cec1f1cc597d074f1c734",
+      "original_artifact": {
+        "filename": "fdr-bdpp-fia-val.txt",
+        "sha256": "24b799cb57ef8a12338d7086c699ccf02101cfd529e5785a82e3dc71bf3ac8ef",
+        "size_bytes": 2409,
+        "transformation": "destination filename normalized from BDPP to BPDD and one final LF appended; report text and numeric content unchanged"
+      },
+      "source_context": "user-supplied four-decimal evaluation text corresponding to the archived three-module val screenshot panel",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "split": "VisDrone val",
+      "metrics": {
+        "precision": 0.5693,
+        "recall": 0.4991,
+        "f1": 0.5285,
+        "map50": 0.4898,
+        "map75": 0.3042,
+        "map": 0.2961
+      },
+      "per_class": [
+        {
+          "class": "pedestrian",
+          "precision": 0.68,
+          "recall": 0.5282,
+          "f1": 0.5945,
+          "map50": 0.5672,
+          "map75": 0.2246,
+          "map": 0.2733
+        },
+        {
+          "class": "people",
+          "precision": 0.6405,
+          "recall": 0.4972,
+          "f1": 0.5598,
+          "map50": 0.5023,
+          "map75": 0.1454,
+          "map": 0.216
+        },
+        {
+          "class": "bicycle",
+          "precision": 0.3718,
+          "recall": 0.2874,
+          "f1": 0.3242,
+          "map50": 0.2449,
+          "map75": 0.0853,
+          "map": 0.114
+        },
+        {
+          "class": "car",
+          "precision": 0.8004,
+          "recall": 0.8452,
+          "f1": 0.8222,
+          "map50": 0.8542,
+          "map75": 0.6916,
+          "map": 0.613
+        },
+        {
+          "class": "van",
+          "precision": 0.54,
+          "recall": 0.5458,
+          "f1": 0.5429,
+          "map50": 0.5285,
+          "map75": 0.4326,
+          "map": 0.3803
+        },
+        {
+          "class": "truck",
+          "precision": 0.5669,
+          "recall": 0.3892,
+          "f1": 0.4616,
+          "map50": 0.4112,
+          "map75": 0.3073,
+          "map": 0.2781
+        },
+        {
+          "class": "tricycle",
+          "precision": 0.4487,
+          "recall": 0.4258,
+          "f1": 0.437,
+          "map50": 0.3623,
+          "map75": 0.2168,
+          "map": 0.2053
+        },
+        {
+          "class": "awning-tricycle",
+          "precision": 0.3623,
+          "recall": 0.2312,
+          "f1": 0.2823,
+          "map50": 0.1829,
+          "map75": 0.1241,
+          "map": 0.1168
+        },
+        {
+          "class": "bus",
+          "precision": 0.6759,
+          "recall": 0.6147,
+          "f1": 0.6439,
+          "map50": 0.6324,
+          "map75": 0.5589,
+          "map": 0.4643
+        },
+        {
+          "class": "motor",
+          "precision": 0.607,
+          "recall": 0.6259,
+          "f1": 0.6163,
+          "map50": 0.6116,
+          "map75": 0.2558,
+          "map": 0.3002
+        }
+      ],
+      "model_info": {
+        "gflops": 109,
+        "parameters": 32635754,
+        "preprocess_seconds_per_image": 0.00044,
+        "inference_seconds_per_image": 0.017861,
+        "postprocess_seconds_per_image": 0.000191,
+        "end_to_end_fps": 54.08,
+        "inference_fps": 55.99,
+        "model_file_size_mb": 64.8
+      },
+      "delta_from_bpdd_map_pp": 0.384213043118556,
+      "strict_paired": false,
+      "evidence_level": "user_supplied_text_report_4dp",
+      "screenshot_crosscheck_source_id": "fia_updated_three_module_terminal_val",
+      "formal_main_table_allowed": true
+    },
+    "fia_updated_three_module_text_test": {
+      "artifact": "paper_material/evidence/fdr_bpdd_fia_test.txt",
+      "sha256": "d2fb3d5912fe9ab8c473487177519445d6e0501ee08d71f2abc836acf3b37ec3",
+      "original_artifact": {
+        "filename": "fdr-bdpp-fia-test.txt",
+        "sha256": "e2b81acb63e5ff704ae8635200d595ea24884ccf88a4cab7195010dffbe51480",
+        "size_bytes": 2409,
+        "transformation": "destination filename normalized from BDPP to BPDD and one final LF appended; report text and numeric content unchanged"
+      },
+      "source_context": "user-supplied four-decimal evaluation text corresponding to the archived three-module test screenshot panel",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "split": "VisDrone test",
+      "images": 1610,
+      "instances": 75102,
+      "metrics": {
+        "precision": 0.5189,
+        "recall": 0.4361,
+        "f1": 0.4634,
+        "map50": 0.4081,
+        "map75": 0.2327,
+        "map": 0.2337
+      },
+      "per_class": [
+        {
+          "class": "pedestrian",
+          "precision": 0.5949,
+          "recall": 0.3803,
+          "f1": 0.464,
+          "map50": 0.3927,
+          "map75": 0.1015,
+          "map": 0.1606
+        },
+        {
+          "class": "people",
+          "precision": 0.5993,
+          "recall": 0.2726,
+          "f1": 0.3747,
+          "map50": 0.2849,
+          "map75": 0.0446,
+          "map": 0.1026
+        },
+        {
+          "class": "bicycle",
+          "precision": 0.3594,
+          "recall": 0.2051,
+          "f1": 0.2611,
+          "map50": 0.1773,
+          "map75": 0.0493,
+          "map": 0.0748
+        },
+        {
+          "class": "car",
+          "precision": 0.7549,
+          "recall": 0.7911,
+          "f1": 0.7726,
+          "map50": 0.7922,
+          "map75": 0.5656,
+          "map": 0.5104
+        },
+        {
+          "class": "van",
+          "precision": 0.3925,
+          "recall": 0.5261,
+          "f1": 0.4496,
+          "map50": 0.4233,
+          "map75": 0.3414,
+          "map": 0.2916
+        },
+        {
+          "class": "truck",
+          "precision": 0.5163,
+          "recall": 0.493,
+          "f1": 0.5044,
+          "map50": 0.4632,
+          "map75": 0.3391,
+          "map": 0.3006
+        },
+        {
+          "class": "tricycle",
+          "precision": 0.3209,
+          "recall": 0.3531,
+          "f1": 0.3362,
+          "map50": 0.2749,
+          "map75": 0.1317,
+          "map": 0.1473
+        },
+        {
+          "class": "awning-tricycle",
+          "precision": 0.4407,
+          "recall": 0.2721,
+          "f1": 0.3365,
+          "map50": 0.2395,
+          "map75": 0.1545,
+          "map": 0.1403
+        },
+        {
+          "class": "bus",
+          "precision": 0.6746,
+          "recall": 0.5873,
+          "f1": 0.6279,
+          "map50": 0.6057,
+          "map75": 0.4828,
+          "map": 0.4271
+        },
+        {
+          "class": "motor",
+          "precision": 0.5352,
+          "recall": 0.4808,
+          "f1": 0.5065,
+          "map50": 0.4271,
+          "map75": 0.116,
+          "map": 0.1816
+        }
+      ],
+      "model_info": {
+        "gflops": 109,
+        "parameters": 32635754,
+        "preprocess_seconds_per_image": 0.00042,
+        "inference_seconds_per_image": 0.011658,
+        "postprocess_seconds_per_image": 0.000194,
+        "end_to_end_fps": 81.49,
+        "inference_fps": 85.78,
+        "model_file_size_mb": 64.8
+      },
+      "delta_from_bpdd_map_pp": 0.20409356127704895,
+      "strict_paired": false,
+      "evidence_level": "user_supplied_text_report_4dp",
+      "screenshot_crosscheck_source_id": "fia_updated_three_module_terminal_test",
+      "formal_main_table_allowed": false,
+      "supplementary_ablation_allowed": true
+    },
+    "fia_ablation_scaffold_1d083140": {
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_branch": "fdr-bdpp-fia",
+      "source_commit": "1d0831402e15f6d039510b79eb477b5c34abb42c",
+      "evidence_level": "implementation_scaffold_revision_unverified",
+      "result_evidence_available": false,
+      "updated_standalone_topology_verified": true,
+      "updated_result_identity_verified": false,
+      "allowed_as_result_identity": false,
+      "artifacts": [
+        {
+          "path": "configs/VisDrone.yaml",
+          "git_blob_oid": "1faccb3021cb0242a29ffb366443d29e3a05b89b",
+          "canonical_sha256": "12928c9c1fa1e19e1775409110cd66f31d8f6508267e9d07047d786bbaa17f16"
+        },
+        {
+          "path": "configs/rtdetr-l-fdr-fia.yaml",
+          "git_blob_oid": "ce6db7c6c429aa604211e87f147f8382a5d7038b",
+          "canonical_sha256": "d1df935e834ba099b9fefe9e1c689b3c4fc6313779d9f20a493ed6a10e0ba17a",
+          "local_git_blob_oid": "cc50b08db1c9a80e5539eee639e0ca1e25fee1c1",
+          "local_canonical_sha256": "cf183c9d61e03f2bc123087190ce93b9e5f253d84e873ba4fa5f48f6c91dc8ef",
+          "normalization": "preserve_p3_only_fia_topology"
+        },
+        {
+          "path": "configs/rtdetr-l-fia.yaml",
+          "git_blob_oid": "4ca150c824b2d5f8b664658501bae9548d1a28dd",
+          "canonical_sha256": "9592c34048cc5fa00ec990aa7d03c65faaa2d52c97eb01fc4359946ac3324165",
+          "local_git_blob_oid": "62819dda217aa67650ad38d06bb0a3ad3a974cb4",
+          "local_canonical_sha256": "f1575020cfe235cbcdeaaaa3029d582d3f70ab584e0f57b6c62d37df2ef6e9ee",
+          "normalization": "preserve_p3_only_fia_topology"
+        },
+        {
+          "path": "train_fdr_fia.py",
+          "git_blob_oid": "7f0d3ee354dbbff59a30d014e7d5b1787995a484",
+          "canonical_sha256": "ab9dc1f41ca530687205bbc7f7a7fa990046e3bd75cdf886aed80c5d06b40abf"
+        },
+        {
+          "path": "train_fia.py",
+          "git_blob_oid": "d667fd5b5fc88c7042cefacc6c3791a6b56e5409",
+          "canonical_sha256": "5239441027a1e851ddde36e05331e6a1e44d0be80c519433fde9fc006e40d995"
+        },
+        {
+          "path": "val_fdr_fia.py",
+          "git_blob_oid": "4cf8a7a0f9d247ed60b9ff5fa11efef69adcb4a3",
+          "canonical_sha256": "f757818ebd19255e690820d4c10270f52e9a78ae475d81e640c0cb3ceb801e78"
+        },
+        {
+          "path": "val_fia.py",
+          "git_blob_oid": "990dc6c087b15ad54d83bc213559587e89197ee5",
+          "canonical_sha256": "5636fdbcc99628ff429a4d3e5588568f5b0c2d03bb58c6fa0bebf9190a710538"
+        }
+      ],
+      "transformation": "cherry-picked source commit and normalized the standalone YAML downsample branches; this scaffold is retained only for audit and must be re-bound to the updated FIA source before reuse"
+    },
+    "external_uav_detr_iros_2025": {
+      "title": "UAV-DETR: Efficient End-to-End Object Detection for Unmanned Aerial Vehicle Imagery",
+      "venue": "IROS 2025",
+      "publication_status": "peer_reviewed_conference",
+      "source_url": "https://doi.org/10.1109/IROS60139.2025.11246176",
+      "source_tables": [
+        "Table I",
+        "real-time comparison table"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value",
+      "transformation": "transcribe the R18 and R50 VisDrone validation rows",
+      "ccf_class": "B"
+    },
+    "external_nrqo_icme_2025": {
+      "title": "Revisiting DETR for Small Object Detection via Noise-Resilient Query Optimization",
+      "venue": "ICME 2025",
+      "publication_status": "peer_reviewed_conference",
+      "source_url": "https://doi.org/10.1109/ICME59968.2025.11209405",
+      "source_tables": [
+        "Table I"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value_split_unreported",
+      "transformation": "transcribe metrics while retaining the paper's missing split and input identities",
+      "ccf_class": "B"
+    },
+    "external_visdrone_comparison_json": {
+      "artifact": "paper_material/results/external_visdrone_comparison.json",
+      "sha256": "5655fefac8689c155fae3b7c26c6a7612d8b904906c04343534ab61d44ad8408",
+      "evidence_level": "curated_ccf_a_b_conference_publication_index",
+      "transformation": "normalize project rows and CCF A/B conference rows into explicit split, venue-rank, relative-position, protocol, metric, and runtime fields"
+    },
+    "external_visdrone_comparison_csv": {
+      "artifact": "paper_material/results/external_visdrone_comparison.csv",
+      "sha256": "985ef4ccc21bbbb6067f5e7e4cc7e5a48675b4fce92bd19a4757f776b2b6013d",
+      "evidence_level": "flattened_view_of_external_visdrone_comparison_json",
+      "transformation": "flatten JSON rows without changing values"
+    },
+    "external_hic_yolov5_icra_2024": {
+      "title": "HIC-YOLOv5: Improved YOLOv5 for Small Object Detection",
+      "venue": "ICRA 2024",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICRA57147.2024.10610273",
+      "source_tables": [
+        "Table IV",
+        "Table VI"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value",
+      "transformation": "transcribe separately labeled VisDrone validation and test rows; preserve unavailable AP75 as null"
+    },
+    "external_ema_icassp_2023": {
+      "title": "Efficient Multi-Scale Attention Module with Cross-Spatial Learning",
+      "venue": "ICASSP 2023",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICASSP49357.2023.10096516",
+      "source_tables": [
+        "Table 2",
+        "Section 4.4"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value",
+      "transformation": "transcribe the explicit VisDrone validation row and retain partial-pretraining and batch boundaries"
+    },
+    "external_vardet_icassp_2026": {
+      "title": "VARDet: Visual Autoregressive Multi-Scale Prediction and CLIP-Guided Semantics for UAV Small-Object Detection",
+      "venue": "ICASSP 2026",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11463846",
+      "official_program_url": "https://www.cmsworkshops.com/ICASSP2026/view_paper.php?PaperNum=1642",
+      "source_tables": [
+        "Table 1"
+      ],
+      "evidence_level": "original_formal_b_venue_publication_reported_value_from_user_supplied_table_capture",
+      "transformation": "transcribe the VisDrone and UAVDT validation rows; retain the paper's unified ResNet-50, 1333x800, COCO-style reimplementation boundary"
+    },
+    "external_resbidet_icassp_2026": {
+      "title": "ResBiDet: Efficient Dual-Branch Small Object Detection for UAVs under Resource-Constrained Conditions",
+      "venue": "ICASSP 2026",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "B",
+      "source_url": "https://doi.org/10.1109/ICASSP55912.2026.11464428",
+      "official_program_url": "https://cmsworkshops.com/ICASSP2026/view_paper.php?PaperNum=8864",
+      "source_tables": [
+        "IEEE Xplore abstract"
+      ],
+      "evidence_level": "original_formal_b_venue_abstract_reported_value",
+      "transformation": "transcribe only the abstract-reported VisDrone2019 and UAVDT AP50 values; preserve missing split, exact input, mAP50-95, and full-protocol fields"
+    },
+    "external_rafde_ijcai_2025": {
+      "title": "Towards Region-Adaptive Feature Disentanglement and Enhancement for Small Object Detection",
+      "venue": "IJCAI 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://www.ijcai.org/proceedings/2025/78",
+      "source_pdf": "https://www.ijcai.org/proceedings/2025/0078.pdf",
+      "doi": "10.24963/ijcai.2025/78",
+      "source_tables": [
+        "Tables 1-2",
+        "Section 4.2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the explicit VisDrone validation 640x640 RAFDE row and its module-wise ablation; retain YOLOv11m, batch, epoch, GPU, and missing AP75 boundaries"
+    },
+    "external_clusdet_iccv_2019": {
+      "title": "Clustered Object Detection in Aerial Images",
+      "venue": "ICCV 2019",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content_ICCV_2019/papers/Yang_Clustered_Object_Detection_in_Aerial_Images_ICCV_2019_paper.pdf",
+      "source_tables": [
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the ResNet-50 VisDrone validation row and preserve the original-plus-cluster-crop protocol"
+    },
+    "external_ufpmp_aaai_2022": {
+      "title": "UFPMP-Det: Toward Accurate and Efficient Object Detection on Drone Imagery",
+      "venue": "AAAI 2022",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/19986/19745",
+      "source_tables": [
+        "Table 1"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the ResNet-50 VisDrone validation row and retain 1333x800 input and 60-epoch protocol"
+    },
+    "external_querydet_cvpr_2022": {
+      "title": "QueryDet: Cascaded Sparse Query for Accelerating High-Resolution Small Object Detection",
+      "venue": "CVPR 2022",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Yang_QueryDet_Cascaded_Sparse_Query_for_Accelerating_High-Resolution_Small_Object_Detection_CVPR_2022_paper.pdf",
+      "source_tables": [
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the CSQ VisDrone validation row and retain four-patch high-resolution preprocessing"
+    },
+    "external_fbrt_yolo_aaai_2025": {
+      "title": "FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection",
+      "venue": "AAAI 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/download/32937/35092",
+      "source_tables": [
+        "Table 1",
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value_split_unreported",
+      "transformation": "transcribe parameter-near RT-DETR/YOLO and FBRT rows while retaining the paper's missing VisDrone split and input identities; training GPU is RTX 4090 and speed GPU is RTX 3080"
+    },
+    "external_dm_efs_iccv_2025": {
+      "title": "DM-EFS: Dynamically Multiplexed Expanded Features Set Form for Robust and Efficient Object Detection",
+      "venue": "ICCV 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Sharma_DM-EFS_Dynamically_Multiplexed_Expanded_Features_Set_Form_for_Robust_and_ICCV_2025_paper.pdf",
+      "source_tables": [
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the explicit 640x640 VisDrone validation row"
+    },
+    "external_ugs_iccv_2025": {
+      "title": "Uncertainty-Aware Gradient Stabilization for Small Object Detection",
+      "venue": "ICCV 2025",
+      "publication_status": "peer_reviewed_conference",
+      "ccf_class": "A",
+      "source_url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Sun_Uncertainty-Aware_Gradient_Stabilization_for_Small_Object_Detection_ICCV_2025_paper.pdf",
+      "source_tables": [
+        "Table 1",
+        "Table 2"
+      ],
+      "evidence_level": "original_formal_a_venue_publication_reported_value",
+      "transformation": "transcribe the 640x640 TPH-YOLOv5-x+UGS and DETR-family DINO-5scale+UGS VisDrone validation rows"
+    },
+    "external_ccf_a_b_venue_scope_2026": {
+      "title": "CCF Recommended International Conferences",
+      "publication_status": "official_ranking_directory",
+      "source_urls": [
+        "https://www.ccf.org.cn/Academic_Evaluation/CGAndMT/",
+        "https://www.ccf.org.cn/Academic_Evaluation/AI/"
+      ],
+      "venues": [
+        "AAAI",
+        "CVPR",
+        "ICCV",
+        "IJCAI",
+        "ICASSP",
+        "ICME",
+        "ICRA",
+        "IROS"
+      ],
+      "ccf_class": "A/B",
+      "evidence_level": "official_venue_scope_authority",
+      "transformation": "use only full or regular papers from listed CCF A/B conferences in the formal external comparison"
+    },
+    "bpdd_strict_pair_20260819": {
+      "title": "Same-authority same-seed FDR versus FDR+BPDD paired best-checkpoint val/test evaluation",
+      "artifact": "paper_material/evidence/bpdd_strict_pair_20260819/strict_pair_summary.json",
+      "sha256": "5e5c2ad7273a27f393e48e5e76e326cdc141feb95b7a164ac7b8f60eb80566c0",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "source_commit": "848f00cb7a40907e3884885ecd5bbd474450758a",
+      "evaluator_commit": "2997705c8f448cee10339eb87daed818dcef8e1e",
+      "protocol_manifest_sha256": "52c4e49e822100acf882e60562335d27ac5c24ba07bb26160a0f0c65c8c1ca24",
+      "initial_state_sha256": "51aab2eb3fb7d123501c69c7b8dc90ff3ea0b9344a108edeef2c7d6dcdbb742d",
+      "evidence_level": "same_authority_same_seed_best_checkpoint_independent_exact_val_test",
+      "metrics_available": [
+        "precision",
+        "recall",
+        "f1",
+        "map50",
+        "map75",
+        "map"
+      ],
+      "splits_available": ["val", "test"],
+      "transformation": "select each arm's best checkpoint, independently evaluate both checkpoints on frozen VisDrone val and test protocols, preserve exact JSON/log/script hashes, and compute same-split paired percentage-point differences"
+    },
+    "unified_complexity_20260820": {
+      "title": "Unified RTX 4090 end-to-end complexity and latency benchmark",
+      "artifact": "paper_material/evidence/unified_complexity_20260820/unified_complexity_raw.json",
+      "sha256": "71ecb8f21030d416b3bb5d736cb4cc03a5a53afce98bc05c494e748087c0343c",
+      "benchmark_script": "scripts/benchmark_unified_complexity.py",
+      "benchmark_script_sha256": "e74b22dc626ec335f91b1b01b87c60fe32e8b2d48cbad9a6281b168c55e838e3",
+      "source_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+      "runtime_source_commit": "07d900d32a0c810cce43b8146abe78040e46e677",
+      "evidence_level": "same_hardware_exact_checkpoint_unified_measurement",
+      "protocol": {
+        "device": "NVIDIA GeForce RTX 4090",
+        "imgsz": 640,
+        "batch": 1,
+        "half": false,
+        "warmup_iterations": 100,
+        "measured_iterations_per_authority": 300,
+        "authorities": 5,
+        "latency_scope": "preprocess_inference_postprocess"
+      },
+      "transformation": "preserve all 1500 raw synchronized latency samples and derive median, linear P90, FPS, Params, GFLOPs, and peak allocated CUDA memory"
+    },
+    "generated_unified_complexity_contract": {
+      "title": "Completed unified complexity and real-time measurement summary",
+      "artifact": "paper_material/results/complexity_results.json",
+      "sha256": "131a4a5660b74a58cc7b80c82e264698144c4753a4884e83ee6b879773f0049c",
+      "source_id": "unified_complexity_20260820",
+      "evidence_level": "generated_from_same_hardware_exact_checkpoint_measurement",
+      "transformation": "combine the user-confirmed A-E accuracy columns with exact-checkpoint unified complexity measurements and retain a separate strict FDR/FDR+BPDD overhead pair"
+    }
+  },
+  "revocations": [
+    {
+      "id": "pre_revision_fia_results_20260817",
+      "status": "scope_limited",
+      "scope": "The original standalone rows remain invalid as revised P3-only evidence. Their published best.pt bytes are re-registered under new source IDs only as existing cascading-checkpoint evaluations at the user's direction.",
+      "replacement_status": "superseded_by_existing_best_checkpoint_evaluation",
+      "replacement_source_ids": [
+        "fia_existing_best_independent_val",
+        "fdr_fia_existing_best_independent_val"
+      ],
+      "formal_numeric_use_allowed": false,
+      "record": "paper_material/evidence/fia_results_status.json"
+    },
+    {
+      "id": "cascading_fia_only_superseded_20260819",
+      "status": "superseded_not_deleted",
+      "scope": "The retained fia_existing_best_independent_val record is exact for its older cascading topology but is no longer the canonical FIA-only ablation result.",
+      "replacement_status": "superseded_by_fresh_p3_only_best_checkpoint_exact",
+      "replacement_source_ids": [
+        "fia_p3_only_best_checkpoint_exact"
+      ],
+      "historical_numeric_use_allowed": true,
+      "formal_numeric_use_allowed": false,
+      "record": "paper_material/evidence/fia_results_status.json"
+    }
+  ],
+  "normalizations": [
+    {
+      "id": "strict_control_evaluator_fia_boolean_key",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "evidence/strict-control-test-d97e1eb7/evaluate_strict_control_test.py",
+        "git_blob_oid": "4e5b241a8cce558014adc65c6ef6aa94bed0a159",
+        "canonical_sha256": "e8367b486105ec6d732d5174a550d4805565a69a0ac3b9061dba92831aa7f1d5"
+      },
+      "destination": {
+        "path": "evidence/strict-control-test-d97e1eb7/evaluate_strict_control_test.py",
+        "canonical_sha256": "b5d67c9e20c2547caf666c0597fee64368b8878eeba7d08be928c76483d391d0"
+      },
+      "transformation": "legacy_boolean_key_to_fia_enabled",
+      "reason": "Keep the imported control identity aligned with the repository-wide FIA naming contract without changing metrics."
+    },
+    {
+      "id": "strict_control_report_fia_boolean_key",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+        "git_blob_oid": "1fa38adc334441607b5799aeaf243422bcc7d9ff",
+        "canonical_sha256": "6fe5f2aacbf75cf88c70f57eadbb157a957229e6a253bae236579500c331006b"
+      },
+      "destination": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval.json",
+        "canonical_sha256": "6e5897c6add04926d0a5afff47a59a4697be17ebf6940eff7b3173787fa56086"
+      },
+      "transformation": "legacy_boolean_key_to_fia_enabled",
+      "reason": "Normalize the method identity field while preserving every evaluation metric and protocol field."
+    },
+    {
+      "id": "strict_control_amendment_fia_and_canonical_binding",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval-amendment.json",
+        "git_blob_oid": "f14bddc8609c27427bf40e09656120e0b84ae1e0",
+        "canonical_sha256": "3cc0ca7e5174b0befb0bc43fe06b92c916479337a47322afba181e6b6ff387e8"
+      },
+      "destination": {
+        "path": "evidence/strict-control-test-d97e1eb7/strict-control-test-eval-amendment.json",
+        "canonical_sha256": "e14f23ff8c480f1f89b3a06dd9bd37c9b18a99c2e3f7d56c8de57e6c4ccc5cf7"
+      },
+      "transformation": "legacy_boolean_assertion_to_fia_and_canonical_git_blob_hash_binding",
+      "reason": "Normalize the assertion name and bind the amendment to the named report's canonical Git bytes."
+    },
+    {
+      "id": "historical_snapshot_scope_through_epoch11",
+      "source": {
+        "repository": "https://github.com/kkc236/uav-detection-baselines.git",
+        "commit": "0a9fbff9d7f0cdfa8b8117a50f1ae3a78f60c725",
+        "path": "research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/README.md",
+        "git_blob_oid": "1b84b205dd03f14226ac1b27c46a4b2d2a003269",
+        "canonical_sha256": "b51a885dd391de78f15153135b1d779448c6750c2b7812d3fd2791bac0254932"
+      },
+      "destination": {
+        "path": "research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/README.md",
+        "canonical_sha256": "eeece2b622be50a169c0914e2fd67b20d7a665dd4f0a4b44fa0766eabf492ef4"
+      },
+      "transformation": "correct_historical_snapshot_scope_through_epoch11",
+      "reason": "The directory label is retained for stable references, while the machine-readable records contain completed epochs 1 through 11."
+    }
+  ]
+}

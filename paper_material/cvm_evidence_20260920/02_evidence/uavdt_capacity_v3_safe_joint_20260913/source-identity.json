@@ -1,0 +1,17 @@
+{
+  "format_version": 1,
+  "method": "lrs_gfdr_capacity_v3_safe_bpdd_fia",
+  "method_revision": "v3-safe-loc-kd-decay80-100-no-cls-kd-uavdt",
+  "code_repository": "https://github.com/kkc236/uav-detection-baselines.git",
+  "code_branch": "codex/uavdt-capacity-v3-safe-joint-20260913",
+  "code_commit": "b9f492320d7be35b846c504de84ea3a85077df76",
+  "code_tree": "d317252ad9846ce00e8cc3a59077a7ac4766c1c3",
+  "config_path": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia-uavdt.yaml",
+  "config_sha256": "58877A22446897DED14F48C1041E9D9D566F65FBC224AA49F4741B320E751AB8",
+  "dataset": "UAVDT",
+  "class_count": 3,
+  "class_names": ["car", "truck", "bus"],
+  "weights_committed": false,
+  "dataset_committed": false,
+  "credentials_committed": false
+}

@@ -1,0 +1,114 @@
+{
+  "protocol": "Common converted-label test, final checkpoints, maxDets=300",
+  "image_count": 1610,
+  "units": "AP percentage points; raw JSON AP values multiplied by 100",
+  "category_order": "Original dataset category ID, 0 through 9",
+  "dfine_identity": "Our scratch-adapted D-FINE-L reproduction; training recipe differs from Full",
+  "overall": {
+    "dfine_AP": 22.554355939110078,
+    "full_AP": 24.133495712514403,
+    "delta_AP_points": 1.5791397734043255
+  },
+  "classes": [
+    {
+      "category_id": 0,
+      "category_name": "pedestrian",
+      "dfine_final_test_AP": 15.132130458677182,
+      "full_final_test_AP": 16.488515096994863,
+      "delta_AP_points": 1.3563846383176816,
+      "display_dfine_AP": "15.13",
+      "display_full_AP": "16.49",
+      "display_delta_AP_points": "+1.36"
+    },
+    {
+      "category_id": 1,
+      "category_name": "people",
+      "dfine_final_test_AP": 9.820735464438,
+      "full_final_test_AP": 10.285897581242692,
+      "delta_AP_points": 0.46516211680469155,
+      "display_dfine_AP": "9.82",
+      "display_full_AP": "10.29",
+      "display_delta_AP_points": "+0.47"
+    },
+    {
+      "category_id": 2,
+      "category_name": "bicycle",
+      "dfine_final_test_AP": 7.039878443530395,
+      "full_final_test_AP": 8.66180739160494,
+      "delta_AP_points": 1.6219289480745447,
+      "display_dfine_AP": "7.04",
+      "display_full_AP": "8.66",
+      "display_delta_AP_points": "+1.62"
+    },
+    {
+      "category_id": 3,
+      "category_name": "car",
+      "dfine_final_test_AP": 50.65790481368689,
+      "full_final_test_AP": 51.5722441785761,
+      "delta_AP_points": 0.9143393648892086,
+      "display_dfine_AP": "50.66",
+      "display_full_AP": "51.57",
+      "display_delta_AP_points": "+0.91"
+    },
+    {
+      "category_id": 4,
+      "category_name": "van",
+      "dfine_final_test_AP": 29.77503051811949,
+      "full_final_test_AP": 30.984244672917182,
+      "delta_AP_points": 1.2092141547976922,
+      "display_dfine_AP": "29.78",
+      "display_full_AP": "30.98",
+      "display_delta_AP_points": "+1.21"
+    },
+    {
+      "category_id": 5,
+      "category_name": "truck",
+      "dfine_final_test_AP": 27.510098738147516,
+      "full_final_test_AP": 29.63567989305527,
+      "delta_AP_points": 2.125581154907753,
+      "display_dfine_AP": "27.51",
+      "display_full_AP": "29.64",
+      "display_delta_AP_points": "+2.13"
+    },
+    {
+      "category_id": 6,
+      "category_name": "tricycle",
+      "dfine_final_test_AP": 12.634739644450455,
+      "full_final_test_AP": 16.765293999072977,
+      "delta_AP_points": 4.130554354622522,
+      "display_dfine_AP": "12.63",
+      "display_full_AP": "16.77",
+      "display_delta_AP_points": "+4.13"
+    },
+    {
+      "category_id": 7,
+      "category_name": "awning-tricycle",
+      "dfine_final_test_AP": 12.717542471696476,
+      "full_final_test_AP": 14.41620319172048,
+      "delta_AP_points": 1.6986607200240051,
+      "display_dfine_AP": "12.72",
+      "display_full_AP": "14.42",
+      "display_delta_AP_points": "+1.70"
+    },
+    {
+      "category_id": 8,
+      "category_name": "bus",
+      "dfine_final_test_AP": 43.596478561534056,
+      "full_final_test_AP": 44.15443594981364,
+      "delta_AP_points": 0.5579573882795827,
+      "display_dfine_AP": "43.60",
+      "display_full_AP": "44.15",
+      "display_delta_AP_points": "+0.56"
+    },
+    {
+      "category_id": 9,
+      "category_name": "motor",
+      "dfine_final_test_AP": 16.65902027682033,
+      "full_final_test_AP": 18.370635170145846,
+      "delta_AP_points": 1.7116148933255175,
+      "display_dfine_AP": "16.66",
+      "display_full_AP": "18.37",
+      "display_delta_AP_points": "+1.71"
+    }
+  ]
+}

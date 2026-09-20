@@ -1,0 +1,25 @@
+{
+  "status": "complete",
+  "framework": "Ultralytics",
+  "checkpoint": {
+    "model_class": "CapacityBPDDFIASafeDetectionModel",
+    "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+    "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061",
+    "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/last.pt",
+    "checkpoint_sha256": "1E826E331AF4FF5E4B4B3A6459B45950418DC08A202188D101594A33AEE35B5A",
+    "checkpoint_epoch": -1,
+    "source_field": "model"
+  },
+  "processed_images": 1610,
+  "parameters": 35243576,
+  "prediction_sha256": "3B366DD6B65EE89D70DE0FC2D1C3D09D8CA1FAF75AB5A61397F6EAE5098A6D29",
+  "evaluation": {
+    "imgsz": 640,
+    "resize": "PIL bilinear stretch_xy",
+    "precision": "fp32",
+    "conf": 0.001,
+    "topk": 300,
+    "nms": false,
+    "tta": false
+  }
+}

@@ -1,0 +1,1325 @@
+
+=== PAGE 1 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query
+Manipulation for Efficient Tiny Object Detection
+Zhangchi Hu
+huzhangchi@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Peixi Wu
+wupeixi@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Jie Chen
+chenjie02@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Huyue Zhu
+huyuezhu@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Yijun Wang
+wangyijun@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Yansong Peng
+pengyansong@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Hebei Li∗
+lihebei@mail.ustc.edu.cn
+University of Science and Technology
+of China
+Hefei, Anhui, China
+Xiaoyan Sun
+sunxiaoyan@ustc.edu.cn
+University of Science and Technology
+of China
+Institute of Artificial Intelligence,
+Hefei Comprehensive National
+Science Center
+Hefei, Anhui, China
+Abstract
+Tiny object detection plays a vital role in drone surveillance, re-
+mote sensing, and autonomous systems, enabling the identifica-
+tion of small targets across vast landscapes. However, existing
+methods suffer from inefficient feature leverage and high com-
+putational costs due to redundant feature processing and rigid
+query allocation. To address these challenges, we propose Dome-
+DETR, a novel framework with Density-Oriented Feature-Query
+Manipulation for Efficient Tiny Object Detection. To reduce fea-
+ture redundancies, we introduce a lightweight Density-Focal Ex-
+tractor (DeFE) to produce clustered compact foreground masks.
+Leveraging these masks, we incorporate Masked Window Atten-
+tion Sparsification (MWAS) to focus computational resources on
+the most informative regions via sparse attention. Besides, we
+propose Progressive Adaptive Query Initialization (PAQI), which
+adaptively modulates query density across spatial areas for better
+∗Corresponding author.
+Permission to make digital or hard copies of all or part of this work for personal or
+classroom use is granted without fee provided that copies are not made or distributed
+for profit or commercial advantage and that copies bear this notice and the full citation
+on the first page. Copyrights for components of this work owned by others than the
+author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or
+republish, to post on servers or to redistribute to lists, requires prior specific permission
+and/or a fee. Request permissions from permissions@acm.org.
+MM ’25, Dublin, Ireland.
+© 2025 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+ACM ISBN 979-8-4007-2035-2/2025/10
+https://doi.org/10.1145/3746027.3754861
+query allocation. Extensive experiments demonstrate that Dome-
+DETR achieves state-of-the-art performance (+3.3 AP on AI-TOD-
+V2 and +2.5 AP on VisDrone) while maintaining low computa-
+tional complexity and a compact model size. Code is available at
+https://github.com/RicePasteM/Dome-DETR.
+CCS Concepts
+•Computing methodologies → Object detection.
+Keywords
+tiny object detection, detection transformer, visual object detection
+ACM Reference Format:
+Zhangchi Hu, Peixi Wu, Jie Chen, Huyue Zhu, Yijun Wang, Yansong Peng,
+Hebei Li, and Xiaoyan Sun. 2025. Dome-DETR: DETR with Density-Oriented
+Feature-Query Manipulation for Efficient Tiny Object Detection. In Pro-
+ceedings of the 33rd ACM International Conference on Multimedia (MM ’25),
+October 27–31, 2025, Dublin, Ireland. ACM, New York, NY, USA, 15 pages.
+https://doi.org/10.1145/3746027.3754861
+1 Introduction
+Object detection is a core task in computer vision, supporting ap-
+plications like autonomous driving and robotic navigation. Re-
+cent progress has been largely driven by CNN-based methods
+[5, 7, 8, 16, 20, 28, 30, 31, 33, 38]. More recently, Detection Transform-
+ers (DETR) introduced Transformer-based end-to-end detection
+[3]. Subsequent variants [4, 10, 19, 22, 27, 47, 51, 53] have further
+enhanced performance and speed. However, these advancements
+primarily target generic object detection, leaving critical challenges
+unresolved for detecting tiny objects—particularly in aerial imagery
+from drones or satellites.
+arXiv:2505.05741v2  [cs.CV]  8 Aug 2025
+
+=== PAGE 2 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+DQ-DETR
+1805
+Model Params
+100 M50 M10 M
+//
+GFLOPs
+Ours-S Ours-M
+Ours-L
+D-FINE-S D-FINE-M D-FINE-L
+RT-DETR-S
+RT-DETR-M
+RT-DETR-L
+DNTR DINO-DETRDetectoRS w/ RFLA
+DetectoRS w/ NWD
+DetectoRS Deformable-DETR
+YOLOv12-X
+YOLOv12-L
+YOLOv12-M
+YOLOv12-S
+Cascade R-CNN
+DETR-DC5
+AP on AI−TOD𝑡𝑒𝑠𝑡
+Figure 1: Comparisons with other detectors on the AI-TOD-
+V2 test set. More statistics is on Table 1.
+Tiny object detection, which focuses on localizing and classify-
+ing objects occupying only a few pixels, is critical for tasks like
+remote sensing, drone monitoring, and autonomous navigation.
+Its challenge stems from the fragile and sparse feature represen-
+tation of tiny objects. These objects heavily rely on low-level spa-
+tial details, which are often lost in deeper layers of feature hier-
+archies. Maintaining high-resolution feature maps help preserve
+such information but comes at the cost of increased computational
+complexity and memory consumption. Deformable DETR [53] al-
+leviates some of this burden through sparse deformable attention,
+yet still suffers from high inference latency due to its broad multi-
+scale attention. RT-DETR [51] improves inference speed by decou-
+pling intra-scale and cross-scale interactions but relies heavily on
+deep, low-resolution features, resulting in degraded performance
+on small-scale targets. These issues highlight the pressing need
+for detection frameworks that can balance fine-grained feature
+preservation with computational efficiency.
+Beyond feature representation, query allocation poses another
+challenge for tiny object detection, especially in aerial images with
+dense and complex object distributions [40, 52]. Existing DETR-like
+methods [3, 15, 19, 47, 51, 53] use a fixed number of queries (𝐾 = 100
+in DETR, 𝐾 = 300 in Deformable-DETR), which simplifies imple-
+mentation but reduces recall in dense scenes and wastes resources
+in sparse ones. Some aerial images [ 40] contain over 1,500 tiny
+objects, far exceeding typical query capacities. DDQ-DETR [ 49]
+increases query density (using 𝐾 = 900) and applies class-agnostic
+NMS with manually set IoU thresholds to filter redundant predic-
+tions. However, its rigid query count and fixed NMS thresholds
+introduce low recall in dense scenes and remain insensitive to vari-
+ations in instance density. Meanwhile, DQ-DETR [12] introduces
+dynamic query adjustment through a categorical counting module
+that estimates a classified number for query allocation. Although
+promising, its counting head relies on manually tuned classification
+hyperparameters across different datasets, and module design leads
+to substantial computational overhead. These challenges under-
+score the need for an adaptive query mechanism that dynamically
+AI-TOD-V2 VisDrone2019 COCO2017
+(A)
+(B)
+Figure 2: (A) Comparison of foreground proportions across
+different datasets; and (B) Visualization of foreground re-
+gions (highlighted in yellow) in samples from these datasets.
+aligns query density with instance distributions while eliminating
+manual tuning and preserving efficiency. To this end, tiny object
+detection remains challenging due to the fragile nature of small
+object features and the inefficiency of fixed-query mechanisms in
+handling diverse instance densities.
+In this paper, we introduce Dome-DETR, a novel and efficient
+end-to-end object detection framework which improves small and
+tiny object detection. First, in satellite, drone, and natural imagery,
+the foreground typically occupies only a small portion of the frame
+(see Figure 2), leading to excessive computation on less informative
+background regions. This highlights the potential for acceleration
+by emphasizing foreground areas. Moreover, shallow CNN features
+inherently capture rich spatial density cues. To leverage this, we
+design a lightweight (A) Density-Focal Extractor (DeFE) that
+produces density response heatmaps closely aligned with ground-
+truth annotations. These heatmaps enhance multi-scale encoder
+features and guide progressive query initialization in the decoder.
+Second, while deep features provide scene-level context, instance-
+level details in shallow features are essential for detecting small
+objects—but come with high attention costs. To mitigate this, we
+use DeFE-generated maps to suppress irrelevant regions via (B)
+Masked Window Attention Sparsification (MW AS), focusing
+attention on meaningful windows. Finally, fixed-query mechanisms
+in DETR struggle with large variations in object counts. We address
+this with (C) Progressive Adaptive Query Initialization (PAQI),
+which adaptively allocates queries by decoding density maps into
+dynamic suppression thresholds, removing the need for hand-tuned
+hyperparameters while improving recall in dense scenes.
+
+=== PAGE 3 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Experimental results on the AI-TOD-V2 [40] dataset show that
+Dome-DETR achieves state-of-the-art performance in tiny object
+detection, outperforming existing models in both accuracy and effi-
+ciency. Specifically, Dome-DETR-M and Dome-DETR-L reach 34.0%
+(+3.2 AP) and 34.6% (+3.3 AP) on the AI-TOD-V2 test set, with only
+252.6 and 358.7 GFLOPs, respectively. On the VisDrone [52] val set,
+Dome-DETR-L also achieves 39.0% (+2.5 AP). By effectively tack-
+ling core challenges in feature representation and query allocation,
+Dome-DETR marks a substantial step forward for DETR-based tiny
+object detection. In summary, our main contributions are:
+• We propose Dome-DETR, a novel DETR-based framework
+for end-to-end tiny object detection, which efficiently en-
+hances feature utilization and query initialization through
+a finely-tuned density map, improving both accuracy and
+efficiency.
+• We introduce the Density-Focal Extractor (DeFE) and
+Masked Window Attention Sparsification (MWAS) to fo-
+cus computation on informative regions, thereby enhancing
+both efficiency and detection accuracy.
+• We present Progressive Adaptive Query Initialization (PAQI)
+to overcome the limitations of rigid query allocation, which
+adaptively adjusts the number and placement of object
+queries based on density estimation.
+• We achieve state-of-the-art performance on the AI-TOD-V2
+and VisDrone-DET-2019 datasets while maintaining a low
+computational cost, outperforming all existing models.
+2 Related Work
+2.1 Small / Tiny Object Detection
+Tiny object detection presents significant challenges due to lim-
+ited pixel information and complex distributions. Traditional CNN-
+based detectors, such as Faster R-CNN [7, 31] and FCOS [35], strug-
+gle with small objects due to inadequate feature representation
+and the lack of long-range dependency modeling. Early solutions
+focused on data augmentation (e.g., copy-paste strategies [13]) and
+specialized loss functions [ 39, 41–43], which reformulate Inter-
+section over Union (IoU) to consider absolute and relative object
+sizes. Recent transformer-based models, such as DETR variants
+[3, 4, 15, 19, 27, 47, 51, 53], mitigate these issues by eliminating
+hand-crafted components (e.g., NMS) and leveraging self-attention.
+DQ-DETR [12] introduces dynamic query selection, using density
+maps to adjust query numbers and positions based on instance den-
+sity. However, these methods heavily depend on manually designed
+bounding-box representations or finely tuned hyperparameters,
+making optimization challenging.
+2.2 Real-Time / End-to-End Object Detectors
+The YOLO series has led real-time object detection through advance-
+ments in architecture, data augmentation, and training techniques
+[30, 38]. Despite its efficiency, YOLO relies on Non-Maximum Sup-
+pression (NMS), introducing latency and trade-offs in speed and ac-
+curacy. DETR [3] removes hand-crafted components like NMS and
+anchors but suffers from high computational costs [15, 19, 47, 53],
+limiting real-time use. Recent models—RT-DETR [ 51], LW-DETR
+[4], and D-FINE [ 27]—optimize DETR for real-time applications.
+Meanwhile, YOLOv10 [37] eliminates NMS, marking a shift toward
+fully end-to-end detection. However, these methods underperform
+on tiny objects due to insufficient focus on shallow features.
+2.3 UA V-specific detector
+Recent UAV-specific detectors have tackled tiny object detection
+challenges in aerial imagery. QueryDet [44] and ClusDet [45] used
+coarse-to-fine pipelines for better localization but suffered from
+high computational costs. Recent UAV-OD methods [21, 23, 32, 33]
+are devoted to lightweighting models or optimizing the processing
+pipeline for practical use. UAV-DETR [48] integrated multi-scale
+spatial features with frequency-aware processing, using frequency-
+focused downsampling and semantic calibration to enhance tiny
+object detection. However, these methods focus solely on small
+objects and overlook the detection of extremely tiny targets, which
+remains a significant challenge in UAV-based vision applications.
+3 Method
+3.1 Overview
+As shown in Figure 3, our study proposes Dome-DETR, which is
+built upon D-FINE [27]. We enhance the model with three compo-
+nents, i.e. (A) Density-Focal Extractor (DeFE) for density prediction,
+(B) Masked Window Attention Sparsification (MWAS) for efficient
+shallow feature enhancement, and (C) Progressive Adaptive Query
+Initialization (PAQI) for dynamic query manipulation.
+3.2 Density-Focal Extractor
+In DETRs, backbone generates spatially-channel encoded feature
+maps via multi-scale extraction, learned end-to-end to transform
+basic visual cues into high-level semantics. As a result, foreground
+object regions exhibit distinctive activations, while backgrounds
+maintain low responses. Prior studies show that shallow features
+retain vital spatial cues for small objects [25, 36], but they are chal-
+lenging to exploit due to: (1) High-resolution maps causing prohibi-
+tive computation, and (2) Redundant background areas dominating
+attention, weakening instance-level signals.
+To tackle this, we propose the Density-Focal Extractor (DeFE), a
+lightweight module that explicitly learns instance density distribu-
+tions to guide efficient feature enhancement and query allocation.
+As shown in Figure 3(A), DeFE processes the shallowest backbone
+feature map 𝐹𝑆 ∈ R 𝐻 ×𝑊 ×𝐶 through a cascaded network using
+depthwise separable convolutions with dilation rates (1, 2, 3) for
+multi-scale context capture while staying efficient. A lightweight at-
+tention block enhances salient areas via channel-wise recalibration.
+The output passes through a density head with a 3×3 convolution
+and bilinear upsampling, producing a normalized density heatmap
+𝐷𝑝𝑟𝑒𝑑 ∈ R 𝐻 ×𝑊 ×1. Thus, DeFE can be formulated as:
+𝐹 ′
+𝑆 = 𝑓DSConv (𝐹𝑆 ), (1)
+𝐹𝐺 = 1
+𝐻𝑊
+𝐻∑︁
+𝑖=1
+𝑊∑︁
+𝑗=1
+𝐹 ′
+𝑆 (𝑖, 𝑗 ), (2)
+𝐷pred = Upsample(Sigmoid(𝑊𝑃 ∗ 𝐹𝐺 )), (3)
+where 𝑓DSConv (·) applies cascaded depthwise separable convolu-
+tions with varying dilation rates to extract spatially rich features.
+𝐹𝐺 is a compact global representation obtained via Global Average
+
+=== PAGE 4 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+Backbone
+DeFE
+Decoder & 
+Head
+MWAS
+Conv + Avg. Pool
+DW Dilated Conv
+DW Dilated Conv
+×3 ×3Channel Gate GAP
+Linear
+×2
+Density Recall
+Focal Loss (DRFL)
+Encoder
+(A) Density-Focal Extractor (DeFE)
+CCFF
+PAQI
+(B) Masked Window Attention Sparsification (MWAS) (C) Progressive Adaptive Query Initialization (PAQI)
+Cluster & Filter
+Selected Windows
+ Selected Sparse Tokens
+Sparse Tokens
+Axis Permuted Encoder (APE)
+Global PE
+Regional PE
+𝐃
+𝐓Cast
+Position
+Density
+= 𝟎
+ ≥
+ A <
+ ≥ <
+B C E
+Comp. & Suppress.
+Add. Pos. Enc.
+Sigmoid Act.
+IoU
+Feature Tokens Bef./Aft. Encoder Layers
+Fixed/Candidate/Suppressed Bounding Boxes
+Core/Flexible Queries
+X Values
+Position
+IoU𝑀
+IoU𝑁
+~Top-𝐾𝑀Top-𝐾𝑁
+Progressive
+Query Selection
+Density Based
+Dynamic NMS
+≥
+ D
+A
+B
+C
+D E
+Figure 3: The overall pipeline of our proposed model. The process begins with the backbone network extracting multi-scale
+features from the input image. Subsequently, (A) the Density-Focal Extractor (DeFE) processes shallow features to generate a
+predicted density map, which is supervised by our proposed Density Recall Focal Loss (DRFL). These features are then fed into
+the Encoder, where (B) Masked Window Attention Sparsification (MW AS) selectively processes tokens based on the density map
+predicted by (A), and the selected tokens are further enhanced by our proposed Axis Permuted Encoder (APE). Concurrently,
+features are fused and passed to (C) Progressive Adaptive Query Initialization (PAQI), which progressively initializes and
+refines object queries. Finally, the Decoder and Head layers utilize these refined features and queries to produce the final object
+detection output.
+Pooling (GAP). 𝑊𝑃 denotes a convolution layer projecting features
+into a single-channel density map, followed by a sigmoid func-
+tion and bilinear upsampling to restore the original resolution and
+distribution.
+The ground-truth density map 𝐷𝑔𝑡 is generated by convolving
+Gaussian kernels centered at each object’s coordinates, with kernel
+sizes proportional to their bounding boxes. This encodes both in-
+stance locations and relative scales into a continuous supervision
+signal. To train DeFE, we propose Density Recall Focal Loss (DRFL),
+which emphasizes accurate density estimation in critical regions:
+L𝐷𝑅𝐹 𝐿 =
+𝐻,𝑊∑︁
+𝑖,𝑗
+h
+𝛼𝑖,𝑗 (𝑑𝑝𝑟𝑒𝑑
+𝑖,𝑗 − 𝑑𝑔𝑡
+𝑖,𝑗 )2 + 𝛽 ·1 (𝑑𝑝𝑟𝑒𝑑
+𝑖,𝑗 < 𝑑𝑔𝑡
+𝑖,𝑗 ) · 𝑑𝑔𝑡
+𝑖,𝑗
+i
+, (4)
+where 𝛼𝑖,𝑗 =
+√︃
+𝑑𝑔𝑡
+𝑖,𝑗 adaptively weights positions based on ground-
+truth density, and 𝛽 penalizes underestimation in dense regions.
+This ensures balanced learning across sparse and crowded areas
+while reducing FN in heavy occlusion. Despite high estimation ac-
+curacy, the module adds only 0.8M parameters thanks to optimized
+depthwise convolutions and attention.
+3.3 Masked Window Attention Sparsification
+The high resolution of shallow features is vital for capturing fine
+details of tiny objects but also incurs significant computational
+cost. Applying global attention to such dense maps results in high
+memory usage and latency. To alleviate this, we propose Masked
+Window Attention Sparsification (MWAS), which selectively fo-
+cuses computation on key foreground regions while discarding
+redundant background. As shown in Figure 3(B), MWAS comprises
+two main stages: Foreground Token Pruning and Axis Permuted
+Encoder (APE).
+Using the density map predicted by the DeFE, we first generate
+a binary mask that retains high-density regions and prunes low-
+density background. This significantly reduces the tokens involved
+in attention while preserving essential object details.
+Density-Based Mask Generation. Given the shallow feature
+map 𝐹𝑆 from the backbone and the density heatmap 𝐷pred ∈
+R 𝐻 ×𝑊 ×1 from DeFE, where each element 𝑑pred
+𝑖,𝑗 denotes the es-
+timated object density at position (𝑖, 𝑗 ), we generate a binary mask
+𝑀𝑏 ∈ 0, 1𝐻 ×𝑊 by applying an adaptive threshold 𝑇𝑏 to 𝐷pred:
+𝑀 (𝑖,𝑗 )
+𝑏 = 1
+
+𝑑pred
+𝑖,𝑗 > 𝑇𝑏
+
+, (5)
+where𝑇𝑏 is determined by the minimal adjustment steps𝑘∗ required
+to activate at least one foreground region:
+𝑘∗ = min
+
+𝑘 ∈ N
+
+∑︁
+𝑖,𝑗
+1
+
+𝑑pred
+𝑖,𝑗 > 𝑇init − 𝑘Δ𝑇
+
+> 0
+
+, (6)
+𝑇𝑏 = 𝑇init − 𝑘∗Δ𝑇 , (7)
+
+=== PAGE 5 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Attention
+Layer
+Partitioned 
+Tokens 𝐹𝑃
+Attention
+Layer
+Axis
+Permutation
+Axis
+PermutationEnhanced
+Tokens 𝐹𝑊
+𝑜𝑢𝑡
+(A) Axis Permuted Encoder (APE)
+(B) Self-Attention B&A AxisPermutation
+Axis Permutation
+Glob. & Rel. Pos.
+Axis Permutation
+Atten. Layer 1
+𝐹𝑃 𝐹𝑊 𝐹𝑊
+𝑖𝑚1 𝐹𝑊
+𝑖𝑚2 𝐹𝑊
+𝑜𝑢𝑡
+Atten. Layer 2
+Figure 4: An illustration of the (A) Axis Permuted Encoder
+(APE) and the (B) Self-Attention Before and After Axis Per-
+mutation.
+where 𝑇init denotes the initial threshold and Δ𝑇 is the decrement
+step. This formulation ensures 𝑇𝑏 is the highest threshold satisfy-
+ing Í
+𝑖,𝑗 𝑀 (𝑖,𝑗 )
+𝑏 > 0, preserving meaningful object regions while
+suppressing background redundancy.
+Window Partitioning and Background Token Pruning. The
+shallow backbone feature map 𝐹𝑆 is divided into non-overlapping
+windows of size (ℎ, 𝑤), ensuring structured processing. To de-
+termine which windows contain valid foreground information, a
+window-level mask is computed by applying max pooling over the
+binary mask 𝑀𝑏:
+𝑀 (𝑖,𝑗 )
+𝑊 = max
+(𝑝,𝑞 ) ∈𝑊𝑖,𝑗
+𝑀 (𝑝,𝑞 )
+𝑏 , (8)
+where 𝑊𝑖,𝑗 represents the set of pixels within the (𝑖, 𝑗 )-th window.
+If 𝑀 (𝑖,𝑗 )
+𝑊 = 1, the window is retained for further processing. The
+selected 𝑘 windows are then collected as 𝐹𝑃 ∈ R 𝑘 ×ℎ×𝑤 ×𝐶.
+Secondly, attention is efficiently computed within each window,
+enhancing object details while minimizing redundant global interac-
+tions. To improve cross-window communication, we introduce axis
+permuted attention, enabling both regional focus and long-range
+dependencies across high-confidence areas.
+Axis Permuted Encoder for Feature Enhancement. For each
+valid window, the corresponding feature map 𝐹 (𝑖,𝑗 )
+𝑃 is augmented
+with relative and global positional encodings. The Axis Permuted
+Encoder (APE) then refines features by processing these windows
+with sequential self-attention, incorporating a spatial permutation
+mechanism, as shown in Figure 4. Given the position-encoded
+window feature 𝐹 (𝑖,𝑗 )
+𝑊 ,𝑘 , where 𝑘 is the intermediate state index, the
+first self-attention is computed as:
+𝑄 (𝑖,𝑗 )
+1 = 𝐾 (𝑖,𝑗 )
+1 = 𝑉 (𝑖,𝑗 )
+1 = 𝐹 (𝑖,𝑗 )
+𝑊 , (9)
+𝐹 (𝑖,𝑗 )
+𝑊 ,1 = FFN(MSA(𝑄 (𝑖,𝑗 ), 𝐾 (𝑖,𝑗 ), 𝑉 (𝑖,𝑗 ) )), (10)
+where MSA(·) denotes multi-head self-attention, capturing intra-
+window dependencies. To establish long-range spatial interactions,
+Algorithm 1 Progressive Query Initialization for Object Detection
+1: Input: Memory M ∈ R𝐵×𝑁 ×𝐶, Window Mask W, Feature Map
+F, Density Map D
+2: Output: Query Features Q, Bounding Boxes B, Classification
+Scores S𝑐𝑙𝑠
+3: Hyperparameters: Max Query Nums 𝐾𝑀, Min Query Nums
+𝐾𝑁 , Max IoU Thres. 𝐼𝑜𝑈 𝑀, Min IoU Thres. 𝐼𝑜𝑈 𝑁
+4: # Generate initial anchors and valid mask
+5: A ← GenerateAnchors(S)
+6: M𝑜𝑢𝑡 , S𝑒𝑛𝑐 ← ClsHead(M)
+7: # Select Top-𝐾𝑀 features based on scores
+8: M𝑇 , S𝑇 , A𝑇 ← SelectTopK(M𝑜𝑢𝑡 , S𝑒𝑛𝑐 , A, 𝐾𝑀 )
+9: # Split into core and flexible queries
+10: M1, S1, A1 ← M𝑇 [: 𝐾𝑁 ], S𝑇 [: 𝐾𝑁 ], A𝑇 [: 𝐾𝑁 ]
+11: M2, S2, A2 ← M𝑇 [𝐾𝑁 : 𝐾𝑀 ], S𝑇 [𝐾𝑁 : 𝐾𝑀 ], A𝑇 [𝐾𝑁 : 𝐾𝑀 ]
+12: # Filter flexible queries based on high density response mask
+13: A2 ← A2 [W[A2] > 0]
+14: M𝑓 𝑖𝑛𝑎𝑙 , A𝑓 𝑖𝑛𝑎𝑙 , S𝑓 𝑖𝑛𝑎𝑙 ← Concat{( M1, M2), (A1, A2), (S1, S2)}
+15: # Generate bounding boxes and apply dynamic NMS
+16: B𝑟𝑎𝑤 ← BboxHead(M𝑓 𝑖𝑛𝑎𝑙 , A𝑓 𝑖𝑛𝑎𝑙 )
+17: T ← 𝐼𝑜𝑈 𝑁 + D × (𝐼𝑜𝑈 𝑀 − 𝐼𝑜𝑈 𝑁 )
+18: B𝑓 𝑖𝑛𝑎𝑙 ← DynamicNMS(B𝑟𝑎𝑤 , S𝑓 𝑖𝑛𝑎𝑙 , T)
+19: Return M𝑓 𝑖𝑛𝑎𝑙 , B𝑓 𝑖𝑛𝑎𝑙 , S𝑓 𝑖𝑛𝑎𝑙
+we permute feature axes and apply a second self-attention pass:
+𝑄 (𝑖,𝑗 )
+2 = 𝐾 (𝑖,𝑗 )
+2 = 𝑉 (𝑖,𝑗 )
+2 = Permute(𝐹 (𝑖,𝑗 )
+𝑊 ,1 ), (11)
+𝐹 (𝑖,𝑗 )
+𝑊 ,2 = MSA(𝑄 (𝑖,𝑗 )
+2 , 𝐾 (𝑖,𝑗 )
+2 , 𝑉 (𝑖,𝑗 )
+2 ), (12)
+where Permute(·) rearranges spatial dimensions to propagate in-
+formation across windows. The refined features are then passed
+through a feedforward network (FFN) with residual connections:
+𝐹 (𝑖,𝑗 )
+𝑊 ,out = FFN(Permute(𝐹 (𝑖,𝑗 )
+𝑊 ,2 )) . (13)
+This encoding scheme effectively captures both local and global
+dependencies while maintaining computational efficiency, allowing
+MWAS to focus resources on high-confidence object regions.
+3.4 Progressive Adaptive Query Initialization
+Existing DETR variants typically use a fixed number of queries (e.g.,
+300), selected based on token scores. However, this static allocation
+fails to adapt to varying object densities, leading to inefficiency in
+sparse scenes and insufficient queries in dense ones. Prior works
+have attempted solutions via categorized query counts [12] or dense
+queries [49], but these lack adaptability to object distribution and
+require extra hyperparameter tuning, increasing complexity across
+datasets.
+We propose Progressive Adaptive Query Initialization
+(PAQI), which dynamically adjusts query density based on scene
+complexity without manual threshold tuning. Our method is based
+on the observation that Top-K encoder queries are often redundant
+in sparse regions and inadequate in dense ones. Many are also ini-
+tialized in background regions, offering no benefit. To address this,
+PAQI progressively initializes queries by focusing on high-response
+
+=== PAGE 6 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+Table 1: Experiments on AI-TODV2. All models are trained on the trainval split and evaluated on the test split with 800 × 800
+input resolution. † notes a re-implementation of the results. * denotes re-implementation with 4 feature map layers for fair
+comparison. ★ denotes an average value across all data in the split.
+Method #Params. GFLOPs AP AP 50 AP75 AP𝑣𝑡 AP𝑡 AP𝑠 AP𝑚
+Non-end-to-end Object Detectors
+Cascade R-CNN [CVPR 2018] [2] 68.9M 88.7 15.1 34.2 11.2 0.1 11.5 26.7 38.5
+DetectoRS [Arxiv 2020] [29] 134.8M ≈ 160 16.1 35.5 12.5 0.1 12.6 28.3 40.0
+DetectoRS w/ NWD [ISPRS 2022] [39] – – 20.8 49.3 14.3 6.4 19.7 29.6 38.3
+DetectoRS w/ RFLA [ECCV 2022] [42] – – 24.8 55.2 18.5 9.3 24.8 30.3 38.2
+DNTR [TGRS 2024] [18] 128.4M 298.1 26.2 56.7 20.2 12.8 26.4 31.0 37.0
+End-to-end Object Detectors
+DETR-DC5 [ECCV 2020] [3] 41M 113.1 10.4 32.5 3.9 3.6 9.3 13.2 24.6
+YOLOv12-S† [Arxiv 2025] [34] 9.1M 19.6 11.5 25.4 9.0 2.7 11.8 18.0 23.7
+YOLOv12-M† [Arxiv 2025] [34] 19.6M 60.1 14.0 30.7 11.1 3.6 14.6 20.0 26.3
+YOLOv12-L† [Arxiv 2025] [34] 26.5M 83.0 14.6 31.0 12.0 4.1 15.3 20.3 27.6
+YOLOv12-X† [Arxiv 2025] [34] 59.3M 185.4 16.1 33.5 13.4 5.4 17.0 21.4 28.5
+Deformable-DETR* [ICLR 2021] [53] 40M 232.5 18.2 59.7 10.2 5.8 16.8 25.2 34.0
+DINO-DETR* [ICLR 2023] [47] 47M 338.6 25.6 61.3 17.4 12.7 25.3 31.7 39.4
+DQ-DETR* [ECCV 2024] [12] 58.7M 1805.4★ 30.2 68.6 22.3 15.3 30.5 36.5 44.6
+D-FINE-S* [ICLR 2024] [27] 11.6M 112.4 30.1 64.1 25.5 14.0 30.4 36.0 45.4
+D-FINE-M* [ICLR 2024] [27] 22.3M 211.4 30.8 65.4 25.3 14.3 30.1 37.6 46.8
+D-FINE-L* [ICLR 2024] [27] 34M 327.5 31.3 66.7 24.9 15.3 31.0 38.4 46.6
+Dome-DETR-S (Ours) 13.2M 154.2★ 33.3 (+3.2) 67.5 28.9 17.8 33.0 38.4 46.4
+Dome-DETR-M (Ours) 23.9M 252.6★ 34.0 (+3.2) 68.4 29.9 18.4 34.3 39.0 46.9
+Dome-DETR-L (Ours) 36.0M 358.7★ 34.6 (+3.3) 69.2 32.0 19.0 35.6 39.8 47.3
+regions in the density map while filtering out low-response ar-
+eas. This eliminates dataset-specific tuning and enables adaptive,
+scene-aligned query generation.
+Candidate Query Selection via Classification Scores. As
+shown in Algorithm 1, PAQI first generates anchors based on the
+image’s spatial distribution. The encoded feature memory is passed
+through a classification head to obtain objectness scores, reflecting
+the likelihood of each anchor containing an object. To balance
+redundancy and coverage in dense areas, the Top-𝐾𝑀 features by
+score are selected as candidate queries.
+Query Splitting and Density-Aware Sampling. To improve
+robustness under varying densities, the selected queries are split
+into: (1) a core set of the first 𝐾𝑁 queries as a strong baseline, and
+(2) a flexible set of the remaining𝐾𝑀 − 𝐾𝑁 for refinement. Density-
+aware filtering is applied using a high-response mask from DeFE,
+discarding low-response queries to avoid oversampling sparse re-
+gions while ensuring dense areas receive sufficient attention.
+Bounding Box Generation and Dynamic NMS. To further
+adapt query count to density, refined queries predict bounding
+boxes via a regression head, followed by density-aware dynamic
+Non-Maximum Suppression (NMS).
+Traditional NMS uses a fixed IoU threshold, which may cause ex-
+cessive suppression in dense regions or too many anchors in sparse
+areas. To address this, we dynamically adjust the IoU threshold:
+T = 𝐼𝑜𝑈 𝑁 + D × (𝐼𝑜𝑈 𝑀 − 𝐼𝑜𝑈 𝑁 ), (14)
+where D is the predicted density of the final mask-filtered tokens,
+and the IoU threshold adapts to it. This avoids over-suppression in
+dense areas while reducing queries in sparse regions. Specifically, a
+higher IoU threshold is used in dense regions to prevent excessive
+suppression, and a stricter threshold in sparse regions to improve
+efficiency, enhancing both detection performance and speed.
+4 Experiment
+4.1 Datasets
+We conduct experiments on two aerial datasets: AI-TOD-V2 and
+VisDrone, both of which primarily contain tiny and small objects.
+AI-TOD-V2. AI-TOD-V2 [41] consists of 28,036 aerial images
+with a total of 752,745 annotated object instances. The dataset is split
+into three subsets: 11,214 images for training, 2,804 for validation,
+and 14,018 for testing. The dataset is characterized by extremely
+small object sizes, with an average object size of only 12.7 pixels.
+Notably, 86% of the objects are smaller than 16 pixels, and even the
+largest object does not exceed 64 pixels. Additionally, the number
+of objects per image varies significantly, ranging from 1 to 2,667,
+with an average of 24.64 objects per image and a standard deviation
+of 63.94.
+VisDrone. VisDrone [52] comprises 14,018 drone-captured im-
+ages, with 6,471 images in the training set, 548 in the validation
+set, and 3,190 in the test set. The dataset spans 10 categories. It
+features a diverse range of objects, including pedestrians, vehicles,
+
+=== PAGE 7 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Table 2: Experiments on VisDrone. All models are trained on
+the train split and evaluated on the val split with 800 × 800
+input resolution. † notes a re-implementation of the results.
+★ denotes an average value across all data in the split.
+Method #Params. GFLOPs AP AP 50 AP75
+Non-end-to-end Object Detectors
+Cascade R-CNN [2] 68.9M 236.4 22.6 38.8 23.2
+DetectoRS w/RFLA [42] 134.8M 160.0 27.4 45.3 23.9
+CEASC† [6] ≈ 90M 150.2★ 28.7 50.7 24.7
+DNTR [18] 128.37M 373.4 33.1 53.8 34.8
+End-to-end Object Detectors
+YOLOv12-L† [34] 26.5M 82.4 25.9 39.1 28.1
+YOLOv12-X† [34] 59.3M 184.6 27.7 42.1 29.9
+UAV-DETR† [48] 45.5M 247.1 32.4 51.9 33.6
+DQ-DETR† [12] 58.7M 1782.4★ 35.2 54.9 35.6
+D-FINE-S† [27] 11.6M 112.4 31.2 53.8 36.1
+D-FINE-M† [27] 22.3M 211.4 33.6 56.9 37.6
+D-FINE-L† [27] 34.4M 327.5 36.5 58.0 38.2
+Dome-DETR-S (Ours) 13.2M 176.5★ 33.5 (+2.3) 56.6 37.8
+Dome-DETR-M (Ours) 23.9M 284.6★ 36.1 (+2.5) 59.8 39.4
+Dome-DETR-L (Ours) 36.0M 376.4★ 39.0 (+2.5) 61.1 40.8
+Table 3: Overall ablation for our proposed Dome-DETR on
+AI-TOD-V2 test split.
+DeFE MS-W AS PAQI AP AP 𝑣𝑡 AP𝑡 AP𝑠 AP𝑚
+✗ ✗ ✗ 30.1 14.0 30.4 36.0 45.4
+✓ ✓ ✗ 31.2 17.4 31.9 36.6 45.4
+✓ ✗ ✓ 32.1 16.9 32.5 37.6 45.9
+✓ ✓ ✓ 33.3 17.8 33.0 38.4 46.4
+and bicycles, and exhibits variations in object density, from sparse
+to highly crowded scenes. The average number of objects per image
+is 40.7, with a standard deviation of 46.41.
+4.2 Evaluation Metric
+To assess the performance of our proposed method, we use the
+Average Precision (AP) metric with a maximum detection limit
+of 1,500 objects. Specifically, AP is calculated as the average AP
+value over the range of IoU thresholds from 0.50 to 0.95, with a
+step size of 0.05. Furthermore, we employ scale-specific AP evalu-
+ations in AI-TOD-V2[24, 50], including 𝐴𝑃𝑣𝑡 , 𝐴𝑃𝑡 , 𝐴𝑃𝑠, and 𝐴𝑃𝑚,
+which correspond to very tiny, tiny, small, and medium-sized object
+evaluations, as defined in [40].
+4.3 Implementation Details
+Based on the D-FINE structure [ 27], we employ a 1-layer trans-
+former encoder, a deformable transformer decoder, and HGNetv2
+as our CNN backbone [ 51]. Our model is trained on 8× NVIDIA
+4090 GPUs. Following D-FINE [27], we apply the same random crop
+Table 4: Hyperparameter ablation studies of Dome-DETR-S
+on AI-TOD-V2 test split.
+IoU𝑁 IoU𝑀 AP AR
+0.4 0.9 33.3 48.6
+0.4 0.7 32.5 47.2
+0.6 0.9 32.7 48.6
+T𝑖𝑛𝑖𝑡 AP
+0.1 32.9
+0.05 33.3
+0.03 32.3
+H/W AP AP 𝑣𝑡 AP𝑡 AP𝑠 AP𝑚
+5 31.8 17.9 33.0 36.2 44.7
+10 33.3 17.8 33.0 38.4 46.4
+20 32.4 17.3 32.7 38.4 46.8
+and scale augmentation strategies. Additionally, we apply mixup
+[46] and Mosaic [1] techniques for VisDrone training, with Mosaic
+set to a probability of 1 and mixup set to a probability of 0.2.
+We provide three versions of our model: Small, Medium, and
+Large, with increasing parameter size and computational complex-
+ity. Detailed hyperparameter configurations for different Dome-
+DETR models can be found in Appendix D.
+4.4 Main Results
+AI-TOD-V2. Table 2 presents our main results on the AI-TOD-
+V2 [41] test split. We compare Dome-DETR with strong baselines,
+including both non-end-to-end and end-to-end detectors. Except
+for YOLOv12, all non-end-to-end detectors use ResNet50 with FPN
+[9]. We re-implemented several DETR-like models on AI-TOD-V2;
+all except DETR use 4-scale feature maps from backbone stages 1–4.
+Results in Table 1 show our Dome-DETR-M and Dome-DETR-L
+achieve the best AP scores of 34.0 and 34.6, surpassing other state-
+of-the-art methods. Dome-DETR-L improves over the baseline by
++3.7%, +4.6%, +1.4%, and +0.7% in 𝐴𝑃𝑣𝑡 , 𝐴𝑃𝑡 , 𝐴𝑃𝑠, and 𝐴𝑃𝑚, with
+greater gains in 𝐴𝑃𝑣𝑡 and 𝐴𝑃𝑡 . Our model outperforms advanced
+DETR-like methods on AI-TOD-V2. LRP evaluation results are in
+Appendix A.
+VisDrone. Table 2 presents results of VisDrone [ 52] on the
+validation split. Our Dome-DETR-L achieves the best AP (39.0%),
+surpassing D-FINE-L by +2.5% AP. Similarly, Dome-DETR-M out-
+performs D-FINE-M by +2.5% AP, while Dome-DETR-S exceeds
+D-FINE-S by +2.3% AP. Compared to DQ-DETR, Dome-DETR-L
+improves AP, AP50, and AP75 by +3.8%, +6.2%, and +5.2%, respec-
+tively.
+4.5 Efficiency Analysis
+Despite its enhanced capabilities, Dome-DETR maintains competi-
+tive efficiency. As shown in Table 1, Dome-DETR achieves superior
+accuracy while maintaining competitive efficiency. Compared to D-
+FINE-L (34M params, 327.5 GFLOPs), Dome-DETR-L (36M params,
+358.7 GFLOPs on average) improves AP by 2.5 points with only
+a 5.9% parameter increase and only 31.2 higher average GFLOPs.
+Meanwhile, Dome-DETR-M and Dome-DETR-S also achieves bet-
+ter performance while maintaining efficiency, demonstrating the
+effectiveness of our density-guided sparsification. More analysis
+could be found in Appendix B.
+
+=== PAGE 8 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+Dome-DETR-L (Ours)
+ Dome-DETR-L (Ours)
+DQ-DETR
+ DQ-DETR
+D-FINE-L
+ D-FINE-L
+Figure 5: Visualization of comparison between our proposed method and other methods under different scenes on AI-TOD-V2
+test split. The green, red, and blue boxes represent TP, FP, and FN, respectively.
+4.6 Ablation Study
+Density-Focal Extractor (DeFE), Masked Window Attention Spar-
+sification (MWAS) and Progressive Adaptive Query Initialization
+(PAQI) are the newly proposed contributions. We conduct a series
+of ablation studies to verify the effectiveness of each component
+proposed in this paper, with D-FINE-S chosen as the comparison
+DETR-like baseline.
+Main ablation experiment. Table 3 shows the performance
+of our contributions separately on AI-TOD-V2. Incorporating each
+proposed component leads to a notable improvement in perfor-
+mance. Specifically, adding DeFE alone enhances AP from 30.1
+to 31.2, while integrating PAQI further boosts it to 32.1. The full
+model, which combines all three components, achieves the best
+performance, reaching an AP of 33.3. This demonstrates the com-
+plementary benefits of DeFE, MWAS, and PAQI in refining tiny
+object detection capabilities.
+Hyperparameter Sensitivity Analysis. Table 4 highlights the
+impact of key hyperparameters on Dome-DETR-S performance.
+For IoU 𝑁 and IoU 𝑀, the best AP (33.3) is achieved at (0.4, 0.9),
+as a moderate negative threshold prevents excessive suppression
+of true positives, while a stricter positive threshold ensures high-
+quality detections. Lowering IoU𝑀 to 0.7 slightly reduces AP due
+to increased ambiguity in positive assignments, whereas increasing
+IoU𝑁 to 0.6 marginally drops AP by over-filtering hard positives.
+For the query initialization threshold 𝑇init, 0.05 provides the best
+balance, achieving AP 32.6. Raising it to 0.1 slightly decreases AP
+(32.9) due to excessive pruning, whereas lowering it to 0.03 signifi-
+cantly degrades AP (32.3) by introducing unnecessary background
+noise. For window size 𝐻 /𝑊 , 𝐻 /𝑊 = 10 offers the best trade-off.
+A smaller 𝐻 /𝑊 enhances very tiny objects but lowers overall AP,
+while a larger 𝐻 /𝑊 benefits medium-sized objects at the cost of
+smaller object performance. This suggests an intermediate window
+resolution balances fine detail and global context.
+4.7 Visualization Analysis
+Figure 5 presents a comparative analysis of our method against
+other models across different detection scenarios on the AI-TOD-V2
+test split. By incorporating density-oriented feature-query manipu-
+lation, Dome-DETR achieves performance improvements in both
+dense and sparse scenes. Additional visualizations of the interme-
+diate processing steps are provided in Appendix C.
+5 Conclusion
+In this paper, we present Dome-DETR, a novel end-to-end object de-
+tection framework tailored for tiny object detection. Motivated by
+the unique challenges of small object detection including inefficient
+feature utilization and imbalanced query allocation, we introduce
+Density-Focal Extractor (DeFE), Masked Window Attention Spar-
+sification (MWAS), and Progressive Adaptive Query Initialization
+(PAQI) to effectively addresses these issues, therefore achieving
+state-of-the-art results on the AI-TOD-V2 and VisDrone datasets
+in both accuracy and efficiency. Future work may explore more
+advanced architectures or bounding box representations to further
+enhance DETR-like models for small object detection. We hope
+Dome-DETR inspires continued progress in this area—unfolding
+new possibilities beneath the vast celestial dome.
+
+=== PAGE 9 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Acknowledgements
+This work was in part supported by the National Natural Sci-
+ence Foundation of China under grants 62472399, 62032006 and
+62021001.
+References
+[1] Alexey Bochkovskiy, Chien-Yao Wang, and Hong-Yuan Mark Liao. 2020. Yolov4:
+Optimal speed and accuracy of object detection. arXiv preprint arXiv:2004.10934
+(2020).
+[2] Zhaowei Cai and Nuno Vasconcelos. 2018. Cascade r-cnn: Delving into high
+quality object detection. In Proceedings of the IEEE conference on computer vision
+and pattern recognition. 6154–6162.
+[3] Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexan-
+der Kirillov, and Sergey Zagoruyko. 2020. End-to-end object detection with
+transformers. In European conference on computer vision . Springer, 213–229.
+[4] Qiang Chen, Xiangbo Su, Xinyu Zhang, Jian Wang, Jiahui Chen, Yunpeng
+Shen, Chuchu Han, Ziliang Chen, Weixiang Xu, Fanrong Li, et al . 2024. LW-
+DETR: a transformer replacement to yolo for real-time detection. arXiv preprint
+arXiv:2406.03459 (2024).
+[5] Jifeng Dai, Yi Li, Kaiming He, and Jian Sun. 2016. R-fcn: Object detection via
+region-based fully convolutional networks. Advances in neural information
+processing systems 29 (2016).
+[6] Bowei Du, Yecheng Huang, Jiaxin Chen, and Di Huang. 2023. Adaptive sparse
+convolutional networks with global context enhancement for faster object de-
+tection on drone images. In Proceedings of the IEEE/CVF conference on computer
+vision and pattern recognition . 13435–13444.
+[7] Ross Girshick. 2015. Fast r-cnn. In Proceedings of the IEEE international conference
+on computer vision. 1440–1448.
+[8] Kaiming He, Georgia Gkioxari, Piotr Dollár, and Ross Girshick. 2017. Mask r-cnn.
+In Proceedings of the IEEE international conference on computer vision . 2961–2969.
+[9] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual
+learning for image recognition. In Proceedings of the IEEE conference on computer
+vision and pattern recognition . 770–778.
+[10] Shihua Huang, Zhichao Lu, Xiaodong Cun, Yongjun Yu, Xiao Zhou, and Xi Shen.
+2024. DEIM: DETR with Improved Matching for Fast Convergence.arXiv preprint
+arXiv:2412.04234 (2024).
+[11] Yecheng Huang, Jiaxin Chen, and Di Huang. 2022. UFPMP-Det: Toward accurate
+and efficient object detection on drone imagery. In Proceedings of the AAAI
+conference on artificial intelligence, Vol. 36. 1026–1033.
+[12] Yi-Xin Huang, Hou-I Liu, Hong-Han Shuai, and Wen-Huang Cheng. 2024. Dq-
+detr: Detr with dynamic query for tiny object detection. In European Conference
+on Computer Vision. Springer, 290–305.
+[13] Mate Kisantal, Zbigniew Wojna, Jakub Murawski, Jacek Naruniec, and
+Kyunghyun Cho. 2019. Augmentation for small object detection. arXiv preprint
+arXiv:1902.07296 (2019).
+[14] Onur Can Koyun, Reyhan Kevser Keser, Ibrahim Batuhan Akkaya, and Be-
+hçet Uğur Töreyin. 2022. Focus-and-Detect: A small object detection framework
+for aerial images. Signal Processing: Image Communication 104 (2022), 116675.
+[15] Feng Li, Hao Zhang, Shilong Liu, Jian Guo, Lionel M Ni, and Lei Zhang. 2022. Dn-
+detr: Accelerate detr training by introducing query denoising. In Proceedings of
+the IEEE/CVF conference on computer vision and pattern recognition . 13619–13627.
+[16] Tsung-Yi Lin, Piotr Dollár, Ross Girshick, Kaiming He, Bharath Hariharan, and
+Serge Belongie. 2017. Feature pyramid networks for object detection. In Proceed-
+ings of the IEEE conference on computer vision and pattern recognition . 2117–2125.
+[17] Chenguang Liu, Guangshuai Gao, Ziyue Huang, Zhenghui Hu, Qingjie Liu, and
+Yunhong Wang. 2024. Yolc: You only look clusters for tiny object detection in
+aerial images. IEEE transactions on intelligent transportation systems 25, 10 (2024),
+13863–13875.
+[18] Hou-I Liu, Yu-Wen Tseng, Kai-Cheng Chang, Pin-Jyun Wang, Hong-Han Shuai,
+and Wen-Huang Cheng. 2024. A denoising fpn with transformer r-cnn for tiny
+object detection. IEEE Transactions on Geoscience and Remote Sensing (2024).
+[19] Shilong Liu, Feng Li, Hao Zhang, Xiao Yang, Xianbiao Qi, Hang Su, Jun Zhu, and
+Lei Zhang. 2022. Dab-detr: Dynamic anchor boxes are better queries for detr.
+arXiv preprint arXiv:2201.12329 (2022).
+[20] Wei Liu, Dragomir Anguelov, Dumitru Erhan, Christian Szegedy, Scott Reed,
+Cheng-Yang Fu, and Alexander C Berg. 2016. Ssd: Single shot multibox detec-
+tor. In Computer Vision–ECCV 2016: 14th European Conference, Amsterdam, The
+Netherlands, October 11–14, 2016, Proceedings, Part I 14 . Springer, 21–37.
+[21] Yang Liu, Peng Sun, Nickolas Wergeles, and Yi Shang. 2021. A survey and
+performance evaluation of deep learning methods for small object detection.
+Expert Systems with Applications 172 (2021), 114602.
+[22] Depu Meng, Xiaokang Chen, Zejia Fan, Gang Zeng, Houqiang Li, Yuhui Yuan, Lei
+Sun, and Jingdong Wang. 2021. Conditional detr for fast training convergence.
+In Proceedings of the IEEE/CVF international conference on computer vision . 3651–
+3660.
+[23] Payal Mittal, Raman Singh, and Akashdeep Sharma. 2020. Deep learning-based
+object detection in low-altitude UAV datasets: A survey. Image and Vision com-
+puting 104 (2020), 104046.
+[24] MiXaiLL76. 2024. Faster-COCO-Eval: Faster interpretation of the original CO-
+COEval. (2024).
+[25] Jinlai Ning, Haoyan Guan, and Michael Spratling. 2023. Rethinking the backbone
+architecture for tiny object detection. arXiv preprint arXiv:2303.11267 (2023).
+[26] Kemal Oksuz, Baris Can Cam, Emre Akbas, and Sinan Kalkan. 2020. A Ranking-
+based, Balanced Loss Function Unifying Classification and Localisation in Object
+Detection. arXiv:arXiv:2009.13592
+[27] Yansong Peng, Hebei Li, Peixi Wu, Yueyi Zhang, Xiaoyan Sun, and Feng Wu.
+2024. D-FINE: redefine regression Task in DETRs as Fine-grained distribution
+refinement. arXiv preprint arXiv:2410.13842 (2024).
+[28] Yansong Peng, Hebei Li, Yueyi Zhang, Xiaoyan Sun, and Feng Wu. 2024. Scene
+Adaptive Sparse Transformer for Event-based Object Detection. In2024 IEEE/CVF
+Conference on Computer Vision and Pattern Recognition (CVPR) . 16794–16804.
+https://doi.org/10.1109/CVPR52733.2024.01589
+[29] Siyuan Qiao, Liang-Chieh Chen, and Alan Yuille. 2021. Detectors: Detecting
+objects with recursive feature pyramid and switchable atrous convolution. In
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition .
+10213–10224.
+[30] Joseph Redmon, Santosh Divvala, Ross Girshick, and Ali Farhadi. 2016. You
+only look once: Unified, real-time object detection. In Proceedings of the IEEE
+conference on computer vision and pattern recognition . 779–788.
+[31] Shaoqing Ren, Kaiming He, Ross Girshick, and Jian Sun. 2016. Faster R-CNN: To-
+wards real-time object detection with region proposal networks.IEEE transactions
+on pattern analysis and machine intelligence 39, 6 (2016), 1137–1149.
+[32] Chao Shen, Caiwen Ma, and Wei Gao. 2023. Multiple attention mechanism
+enhanced YOLOX for remote sensing object detection. Sensors 23, 3 (2023), 1261.
+[33] Shiyi Tang, Shu Zhang, and Yini Fang. 2024. HIC-YOLOv5: Improved YOLOv5
+for small object detection. In 2024 IEEE International Conference on Robotics and
+Automation (ICRA). IEEE, 6614–6619.
+[34] Yunjie Tian, Qixiang Ye, and David Doermann. 2025. Yolov12: Attention-centric
+real-time object detectors. arXiv preprint arXiv:2502.12524 (2025).
+[35] Zhi Tian, Chunhua Shen, Hao Chen, and Tong He. 2019. Fcos: Fully convolutional
+one-stage object detection. In Proceedings of the IEEE/CVF international conference
+on computer vision. 9627–9636.
+[36] Zhengzhong Tu, Hossein Talebi, Han Zhang, Feng Yang, Peyman Milanfar, Alan
+Bovik, and Yinxiao Li. 2022. Maxvit: Multi-axis vision transformer. In European
+conference on computer vision . Springer, 459–479.
+[37] Ao Wang, Hui Chen, Lihao Liu, Kai Chen, Zijia Lin, Jungong Han, et al . 2024.
+Yolov10: Real-time end-to-end object detection. Advances in Neural Information
+Processing Systems 37 (2024), 107984–108011.
+[38] Chengcheng Wang, Wei He, Ying Nie, Jianyuan Guo, Chuanjian Liu, Yunhe
+Wang, and Kai Han. 2023. Gold-YOLO: Efficient object detector via gather-and-
+distribute mechanism. Advances in Neural Information Processing Systems 36
+(2023), 51094–51112.
+[39] Jinwang Wang, Chang Xu, Wen Yang, and Lei Yu. 2021. A normalized Gaussian
+Wasserstein distance for tiny object detection. arXiv preprint arXiv:2110.13389
+(2021).
+[40] Jinwang Wang, Wen Yang, Haowen Guo, Ruixiang Zhang, and Gui-Song Xia.
+2021. Tiny object detection in aerial images. In 2020 25th international conference
+on pattern recognition (ICPR) . IEEE, 3791–3798.
+[41] Chang Xu, Jinwang Wang, Wen Yang, Huai Yu, Lei Yu, and Gui-Song Xia. 2022.
+Detecting tiny objects in aerial images: A normalized Wasserstein distance and
+a new benchmark. ISPRS Journal of Photogrammetry and Remote Sensing 190
+(2022), 79–93.
+[42] Chang Xu, Jinwang Wang, Wen Yang, Huai Yu, Lei Yu, and Gui-Song Xia. 2022.
+RFLA: Gaussian receptive field based label assignment for tiny object detection.
+In European conference on computer vision . Springer, 526–543.
+[43] Chang Xu, Jinwang Wang, Wen Yang, and Lei Yu. 2021. Dot distance for tiny
+object detection in aerial images. In Proceedings of the IEEE/CVF conference on
+computer vision and pattern recognition . 1192–1201.
+[44] Chenhongyi Yang, Zehao Huang, and Naiyan Wang. 2022. QueryDet: Cascaded
+sparse query for accelerating high-resolution small object detection. In Pro-
+ceedings of the IEEE/CVF Conference on computer vision and pattern recognition .
+13668–13677.
+[45] Fan Yang, Heng Fan, Peng Chu, Erik Blasch, and Haibin Ling. 2019. Clustered
+object detection in aerial images. In Proceedings of the IEEE/CVF international
+conference on computer vision . 8311–8320.
+[46] Hongyi Zhang, Moustapha Cisse, Yann N Dauphin, and David Lopez-Paz. 2017.
+mixup: Beyond empirical risk minimization. arXiv preprint arXiv:1710.09412
+(2017).
+[47] Hao Zhang, Feng Li, Shilong Liu, Lei Zhang, Hang Su, Jun Zhu, Lionel M Ni, and
+Heung-Yeung Shum. 2022. Dino: Detr with improved denoising anchor boxes for
+end-to-end object detection. arXiv preprint arXiv:2203.03605 (2022).
+[48] Huaxiang Zhang, Kai Liu, Zhongxue Gan, and Guo-Niu Zhu. 2025. UAV-DETR:
+Efficient End-to-End Object Detection for Unmanned Aerial Vehicle Imagery.
+
+=== PAGE 10 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+arXiv preprint arXiv:2501.01855 (2025).
+[49] Shilong Zhang, Xinjiang Wang, Jiaqi Wang, Jiangmiao Pang, Chengqi Lyu, Wen-
+wei Zhang, Ping Luo, and Kai Chen. 2023. Dense distinct query for end-to-end
+object detection. In Proceedings of the IEEE/CVF conference on computer vision
+and pattern recognition. 7329–7338.
+[50] ZhangchiHu. 2025. Faster-COCO-Eval-AITOD: Faster interpretation of the origi-
+nal aitodpycocotools. (2025).
+[51] Yian Zhao, Wenyu Lv, Shangliang Xu, Jinman Wei, Guanzhong Wang, Qingqing
+Dang, Yi Liu, and Jie Chen. 2024. Detrs beat yolos on real-time object detection. In
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition .
+16965–16974.
+[52] Pengfei Zhu, Longyin Wen, Dawei Du, Xiao Bian, Heng Fan, Qinghua Hu, and
+Haibin Ling. 2021. Detection and tracking meet drones challenge. IEEE Transac-
+tions on Pattern Analysis and Machine Intelligence 44, 11 (2021), 7380–7399.
+[53] Xizhou Zhu, Weijie Su, Lewei Lu, Bin Li, Xiaogang Wang, and Jifeng Dai. 2020.
+Deformable detr: Deformable transformers for end-to-end object detection.arXiv
+preprint arXiv:2010.04159 (2020).
+
+=== PAGE 11 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Dome-DETR: DETR with Density-Oriented Feature-Query
+Manipulation for Efficient Tiny Object Detection
+Appendix
+A LRP evaluation result for AI-TOD-V2
+To comprehensively evaluate the performance of Dome-DETR on
+AI-TOD-V2 [41], we adopt the Localization Recall Precision (LRP)
+metric [26, 50], which provides a fine-grained assessment of detec-
+tion quality by jointly considering localization, recall, and precision.
+Unlike traditional metrics such as mAP, LRP explicitly accounts for
+errors in object localization, classification, and duplicate detections.
+The LRP score is computed as follows:
+LRP = 1
+𝑁
+𝑁∑︁
+𝑖=1
+ 𝜆loc ·𝐸loc,𝑖 + 𝜆rec ·𝐸rec,𝑖 + 𝜆prec ·𝐸prec,𝑖
+ , (15)
+where 𝐸loc,𝑖 represents the localization error, which measures the
+IoU deviation between predicted and ground-truth bounding boxes.
+𝐸rec,𝑖 denotes the recall error, penalizing missed detections. 𝐸prec,𝑖
+quantifies the precision error, accounting for false positives and du-
+plicate predictions. 𝜆loc, 𝜆rec, 𝜆prec are weighting factors to balance
+these error components.
+For AI-TOD-V2, we report the Optimal LRP (oLRP), which is the
+minimum LRP score achieved when setting the optimal confidence
+threshold. Lower oLRP values indicate better detection performance.
+Results can be seen in Table 5.
+B Efficiency analysis of MW AS and PAQI
+This section presents an analysis of the efficiency of MWAS and
+PAQI across various detection scenarios, employing both quantita-
+tive and qualitative methods.
+B.1 Theoretical Limit of GFLOPs
+Thanks to its dynamic design, the computational cost of Dome-
+DETR adapts to the detection scenario. In dense scenes, the over-
+head increases, while in sparse scenes, it remains close to the base-
+line. This is attributed to the dynamic nature of MW ASand PAQI,
+which adjust feature enhancement and query initialization based
+on scene complexity.
+In the densest scenarios, MWAS enhances all regions and PAQI
+generates the maximum number of queries. In contrast, under
+sparse conditions, only one region is enhanced and the minimum
+number of queries is used. These behaviors are based on experi-
+ments conducted on the AI-TOD-V2 dataset.
+As shown in Table 6, Dome-DETR’s complexity varies signifi-
+cantly across scenarios. Under dense settings, the number of en-
+hanced windows (100) and queries (1500) leads to higher GFLOPs:
+193.8 (S), 282.8 (M), and 398.9 (L). In sparse scenes, both values drop
+(1 window, 300 queries), reducing GFLOPs by 36.4%, 21.4%, and
+15.2% for Dome-DETR-S, M, and L, respectively. This confirms the
+architecture’s scalability and efficiency across varying densities.
+Table 5: Comparison of LRP metrics on AI-TOD-V2 dataset.
+Lower values indicate better performance.
+Method oLRP ↓ LRP FP ↓ LRP FN ↓
+DINO-DETR [47] 78.9 27.5 35.3
+DQ-DETR [12] 73.4 25.1 33.5
+D-FINE-L [27] 72.5 24.2 32.7
+Dome-DETR-L (Ours) 70.1 23.1 32.2
+Table 6: Computational Complexity of Dome-DETR Models
+in Different Scenarios
+Model Scenario Enhanced
+Windows
+Query
+Count GFLOPs
+Dome-DETR-S Dense 100 1500 193.8
+Sparse 1 300 123.3
+Dome-DETR-M Dense 100 1500 282.8
+Sparse 1 300 222.3
+Dome-DETR-L Dense 100 1500 398.9
+Sparse 1 300 338.4
+Table 7: Comparison of dynamic query quantity methods on
+the AI-TOD-V2 test set. ˆ𝑁𝑄 and 𝜎 (𝑁𝑄 ) represent the mean
+and standard deviation of initialized queries, respectively.
+QAR is the Query Ample Rate.
+Model ˆ𝑁𝑄 𝜎 (𝑁𝑄 ) QAR ↑
+DQ-DETR [12] 409.5 117.7 92.4
+Dome-DETR-L (Ours) 498.9 170.5 99.9
+B.2 Efficiency Analysis of MW AS
+To evaluate the efficiency of MWAS, we count the number of ground
+truth objects per image, 𝑁𝐺𝑇 , and the number of enhanced regions
+by the MWAS module, 𝑁𝑒𝑛ℎ𝑎𝑛𝑐𝑒 , when running the Dome-DETR-L
+model on the AI-TOD-V2 benchmark’s validation split. The corre-
+sponding plot is shown in Figure 6. As observed from the figure,
+𝑁𝑒𝑛ℎ𝑎𝑛𝑐𝑒 exhibits an increasing trend as 𝑁𝐺𝑇 increases. Across the
+entire dataset, the average value is 36.1, with a standard deviation
+of 26.3, indicating that MWAS effectively sparsifies the attention
+on shallow features, thereby improving the model’s efficiency.
+B.3 Efficiency Analysis of PAQI
+To evaluate the effectiveness of PAQI, we count the number of
+ground truth objects per image, 𝑁𝐺𝑇 , and the final number of
+initialized queries by the PAQI module, 𝑁𝑄, when running the
+
+=== PAGE 12 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+Dome-DETR-L model on the AI-TOD-V2 benchmark’s validation
+split. The corresponding plot is shown in Figure 7. As observed
+from the figure, 𝑁𝑄 exhibits an increasing trend as 𝑁𝐺𝑇 increases,
+indicating that PAQI adapts its query allocation based on scene
+complexity. Across the entire dataset, the average value ˆ𝑁𝑄 is 498.9,
+with a standard deviation of 170.5, reflecting considerable flexibility.
+Furthermore, we introduce a new evaluation metric named
+Query Ample Rate (QAR) , which quantifies the probability that
+the number of initialized queries exceeds the number of ground
+truth objects in a dataset. Formally, we define QAR as:
+QAR = 1
+𝑀
+𝑀∑︁
+𝑖=1
+1 (𝑁 (𝑖 )
+𝑄 > 𝑁 (𝑖 )
+𝐺𝑇 ), (16)
+where 𝑀 is the total number of images in the dataset,𝑁 (𝑖 )
+𝑄 and 𝑁 (𝑖 )
+𝐺𝑇
+denote the number of initialized queries and ground truth objects
+in the 𝑖-th image, respectively, and 1 (·) is the indicator function
+that returns 1 if the condition is true and 0 otherwise. A higher
+QAR indicates that the PAQI module frequently initializes more
+queries than ground truth objects, ensuring sufficient representa-
+tion for accurate and robust object detection. A detailed comparison
+with other dynamic query quantity models is presented in Table 7.
+This indicates that PAQI effectively initializes queries based on the
+underlying object density distribution of each scene.
+C Visualization of our proposed method
+Visualization of detection process of our proposed method can be
+seen in Figure 8a and Figure 8b.
+Original Image with Detections.The leftmost column displays
+original aerial images with detections. Green boxes denote true
+positives (TP) and red boxes indicate false positives (FP). Dome-
+DETR effectively detects tiny objects (e.g., vehicles, pedestrians)
+across varying object densities, demonstrating robustness in both
+sparse and dense scenes.
+Predicted Density Map from DeFE. The second column shows
+density maps generated by the Density-Focal Extractor (DeFE),
+encoding instance locations and relative scales. Brighter regions
+represent higher object density. These maps align well with ground-
+truth annotations, highlighting DeFE’s effectiveness in capturing
+spatial density.
+MW AS Enhanced Regions. The third column illustrates re-
+gions enhanced by Masked Window Attention Sparsification
+(MW AS). Guided by density maps, MWAS prunes background to-
+kens and focuses on foreground regions, reducing computation
+while preserving object details. Axis-permuted attention further
+improves cross-window information flow.
+Queries Generated by PAQI. The rightmost column presents
+queries from Progressive Adaptive Query Initialization (PAQI).
+Green points are final queries; blue ones are filtered. PAQI adjusts
+query density based on scene complexity, enhancing recall in dense
+areas while maintaining efficiency in sparse regions.
+The visualization confirms that the combination of DeFE, MWAS,
+and PAQI enables the model to achieve state-of-the-art performance
+while maintaining low computational costs.
+Figure 6: Ground truth counts and corresponding enhanced
+window counts of images across AI-TOD-V2 test set of Dome-
+DETR-L.
+Figure 7: Ground truth counts and corresponding query
+counts of images across AI-TOD-V2 test set of Dome-DETR-L.
+D Implementation Details
+Table 9 summarizes the hyperparameter settings for Dome-DETR.
+All variants use HGNetV2 backbones (B4, B2, B0 for L, M, S, respec-
+tively) pre-trained on ImageNet, and adopt the AdamW optimizer,
+following the baseline D-FINE [27] setup.
+Each model is trained with a total batch size of 8 for 120 epochs
+with advanced augmentation, followed by 40 epochs without it. All
+models use four feature levels for multi-scale representation, with
+feature extraction from encoder layer 3.
+Dome-DETR-L and Dome-DETR-M use a GELAN hidden dimen-
+sion of 128, while Dome-DETR-S uses 64. The transformer decoder
+consists of 6, 4, and 3 layers for Dome-DETR-L, M, and S, respec-
+tively. Training employs classification, regression, and L𝐷𝑅𝐹 𝐿 loss
+(weight=1). The base learning rate is 2.5e-4 for Dome-DETR-L and
+2e-4 for the others, with weight decay set at 1.25e-4 for Dome-
+DETR-L and 1e-4 for the rest. For stable training,𝑇𝑖𝑛𝑖𝑡 is 5e-2 across
+all models. IoU thresholds are set at 0.4 (𝐼𝑜𝑈 𝑁 ) and 0.9 (𝐼𝑜𝑈 𝑀). The
+MWAS module uses a fixed window size of 10, and the adaptive
+position encoding (APE) module applies a single attention layer
+twice (1 × 2) for efficient spatial encoding.
+
+=== PAGE 13 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Table 8: Additional comparisons with classic works on VisDrone validation split. Latency is measured on an NVIDIA T4 GPU
+unless otherwise noted. Results show our proposed Dome-DETR achieve comparable performance with much lower latency.
+Method Input Size ↓ #Params. ↓ GFLOPs ↓ Latency (ms) ↓ AP (%) ↑ AP50 (%) ↑ AP75 (%) ↑
+Focus&Detect [14] 1000 ×600 - - 1362 (NVIDIA 2080Ti) 42.0 66.1 44.6
+YOLC [17] 1024 ×640 - 151 441 (NVIDIA 2080Ti) 39.6 63.7 41.6
+UFPMP-Det-ResNet50 [11] 1333 ×800 65M 443 >100 36.6 62.4 36.7
+UFPMP-Det-ResNeXt101 [11] 1333 ×800 104M 758 >200 40.1 66.8 41.3
+Dome-DETR-M (Ours) 800 ×800 24M 285 <15 36.1 59.8 39.4
+Dome-DETR-L (Ours) 800 ×800 36M 376 <20 39.0 61.1 40.8
+Dome-DETR-L (Ours) 1200 ×800 36M 402 <20 40.5 64.5 42.5
+E Frequently Asked Questions During Review
+E.1 Design Details of DeFE
+The Density-Focal Extractor is a lightweight yet effective module
+designed to generate precise object density priors, which guide
+subsequent feature enhancement and query initialization. Its key
+design details and innovations are as follows:
+Multi-scale dilated convolutions with strategic rates: DeFE
+employs three parallel dilated convolutions with rates of 1, 2, and 3.
+This design is purposeful: a dilation rate of 1 captures fine-grained
+local features (critical for tiny object boundaries), while rates of 2
+and 3 expand the receptive field to aggregate contextual information
+from medium and larger ranges, respectively. By fusing these multi-
+scale features, DeFE effectively models both the detailed texture
+of tiny objects and their spatial distribution patterns in complex
+scenes (e.g., dense clusters or sparse arrangements).
+End-to-end density probability generation: After feature
+fusion, a global average pooling layer aggregates high-level con-
+textual cues, ensuring the density estimation is not biased by local
+noise. A 1×1 convolution followed by a sigmoid activation then
+compresses the fused features into a pixel-wise density probability
+map (range 0–1), where higher values indicate regions with a higher
+likelihood of containing objects. This map serves as a "spatial atten-
+tion guide" for subsequent modules, enabling the model to focus
+on foreground regions.
+Efficiency optimization: Despite its multi-scale design, DeFE
+remains lightweight, adding only 0.8M parameters and 17.6 GFLOPs
+to the overall model. This efficiency is achieved through the use
+of depthwise separable convolutions (DS-conv) in the feature ex-
+traction stage, which drastically reduce computational overhead
+compared to standard convolutions, while bilinear upsampling pre-
+serves spatial resolution without excessive cost. This balance of
+performance and efficiency makes DeFE suitable for real-time ap-
+plications.
+E.2 Difference Between Previous Cluster-aware
+Cropping Based Methods
+Some reviewers suggested comparing our method with classic ap-
+proaches in the field of UAV object detection, such as Focus&Detect,
+YOLC, and UFPMP. These methods mainly rely on the Cluster-
+aware Cropping strategy: they first cluster and crop regions of
+interest in the image, then perform detection using detectors, and
+finally reorganize and map the detection boxes back to the origi-
+nal image. Although these methods have unique advantages, they
+have an upper limit in real-time performance. This is because their
+strategies introduce heavy CPU and I/O tasks, making it impossible
+to achieve good parallelism.
+In contrast, Dome-DETR emphasizes using density maps to guide
+the enhancement of regional features and the progressive initializa-
+tion of Object Queries, and completes object detection in the image
+in a single step , thereby ensuring high detection efficiency and
+low latency.
+More comparisons with these methods are shown in Table 8.
+E.3 Contribution of Each Component in PAQI
+To clarify the specific contribution of each sub-module in the Pro-
+gressive Adaptive Query Initialization (PAQI) framework, we con-
+ducted ablation experiments by incrementally adding components
+to the baseline model:
+Candidate Query Selection: This component expands the ini-
+tial query budget from 300 to 1500, significantly increasing the
+model’s capacity to capture potential object instances. This ex-
+pansion directly boosts recall (AR improves from 46.0 to 49.1) by
+covering more spatial regions, especially in dense scenes where
+tiny objects are clustered. However, the larger query pool also in-
+troduces higher computational overhead, as more queries require
+additional feature interactions.
+Query Splitting & Density-Aware Sampling: Building on
+the expanded query set, this module refines query allocation by
+distinguishing between "core queries" (targeting high-density ob-
+ject regions) and "flexible queries" (adapting to sparse areas). It
+suppresses redundant queries in background or low-information
+regions, reducing unnecessary computations (lower GFLOPs com-
+pared to the previous step). This refinement yields a notable AP
+improvement from 32.4 to 33.0, striking a better balance between
+coverage and efficiency.
+Bounding Box Generation & Dynamic NMS: The final
+component introduces density-aware non-maximum suppression
+(NMS), which adjusts suppression thresholds based on local object
+density. In dense regions with overlapping boxes, it retains more
+true positives by relaxing the threshold, while in sparse regions, it
+tightens the threshold to filter false positives. This dynamic mech-
+anism pushes AP to the highest value of 33.3, ensuring optimal
+accuracy-efficiency trade-offs, particularly in complex scenes with
+varying object distributions. distributions.
+
+=== PAGE 14 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland. Zhangchi Hu et al.
+Original Image
+with Detections
+Predicted
+Density Map from DeFE
+MWAS Enhanced
+Regions
+Queries Generated
+By PAQI
+(a) AI-TOD-V2 test split
+Original Image
+with Detections
+Predicted
+Density Map from DeFE
+MWAS Enhanced
+Regions
+Queries Generated
+By PAQI
+(b) VisDrone val split
+Figure 8: Visualization of our proposed method under different scenes across two datasets.
+
+=== PAGE 15 ===
+Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection MM ’25, October 27–31, 2025, Dublin, Ireland.
+Table 9: Hyperparameter settings for different Dome-DETR models.
+Setting Dome-DETR-L Dome-DETR-M Dome-DETR-S
+Backbone Name HGNetv2-B4 HGNetv2-B2 HGNetv2-B0
+GELAN Hidden Dimension 128 128 64
+GELAN Depth 3 2 1
+Decoder Layers 6 4 3
+Sampling Point Number (S: 4, M: 4, L: 4, X: 4) (S: 4, M: 4, L: 4, X: 4) (S: 4, M: 4, L: 4, X: 4)
+Number of feature levels 4 4 4
+Use encoder layer index 3 3 3
+Weight of L𝐷𝑅𝐹 𝐿 1 1 1
+Window Size of MWAS 10 10 10
+Number of attention layers in APE 1(×2) 1(×2) 1(×2)
+𝑇𝑖𝑛𝑖𝑡 5e-2 5e-2 5e-2
+𝐼𝑜𝑈 𝑁 , 𝐼𝑜𝑈 𝑀 0.4, 0.9 0.4, 0.9 0.4, 0.9
+Base LR 2.5e-4 2e-4 2e-4
+Backbone LR 1.25e-5 2e-5 1e-4
+Weight Decay 1.25e-4 1e-4 1e-4
+Total Batch Size 8 8 8
+Epochs (w/ + w/o Adv. Aug.) 120 + 40 120 + 40 120 + 40

@@ -1,0 +1,17 @@
+{
+  "train": {
+    "images": 6471,
+    "annotations": 343204,
+    "sha256": "da01bfb0b105a83aeb9af484fa412abdcc09b2fdd2f7522872a04a768270a130"
+  },
+  "val": {
+    "images": 548,
+    "annotations": 38759,
+    "sha256": "92d2866fe6e6ff4c3101b82c01b7718eb78b3759399042c4501d893798fc8bfa"
+  },
+  "test": {
+    "images": 1610,
+    "annotations": 75102,
+    "sha256": "0f8c9f7bd5d17d9948381d656d31de03e0e6073a114261573f73744ce4caf087"
+  }
+}

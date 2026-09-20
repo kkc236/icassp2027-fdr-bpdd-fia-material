@@ -1,0 +1,39 @@
+{
+  "status": "complete",
+  "command": [
+    "/root/miniconda3/envs/lrs-v2/bin/python",
+    "-u",
+    "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py",
+    "--checkpoint",
+    "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+    "--data-yaml",
+    "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "--output-dir",
+    "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/test800",
+    "--split",
+    "test",
+    "--imgsz",
+    "800",
+    "--batch",
+    "8",
+    "--workers",
+    "8",
+    "--device",
+    "0",
+    "--expected-images",
+    "1610",
+    "--anchor-scale-reference",
+    "640"
+  ],
+  "fixed_scale": 0.8,
+  "test_parameter_search": false,
+  "metrics": {
+    "precision": 0.40505898160345294,
+    "recall": 0.3522001373580541,
+    "f1": 0.37678471050832313,
+    "map50": 0.2996699409138242,
+    "map75": 0.14442455445158697,
+    "map": 0.15484704235870173
+  },
+  "processed_images": 1610
+}

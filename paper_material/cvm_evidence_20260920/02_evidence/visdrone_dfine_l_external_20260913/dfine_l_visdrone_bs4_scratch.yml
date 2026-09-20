@@ -1,0 +1,40 @@
+__include__: ['../dataset/custom_detection.yml', '../runtime.yml', './include/dataloader.yml', './include/optimizer.yml', './include/dfine_hgnetv2.yml']
+output_dir: __DFINE_OUTPUT_DIR__
+num_classes: 10
+remap_mscoco_category: False
+eval_spatial_size: [640, 640]
+epochs: 100
+seed: 0
+use_amp: False
+use_ema: True
+# Scratch adaptation: do not freeze random stem weights or BN statistics.
+HGNetv2:
+  name: B4
+  return_idx: [1, 2, 3]
+  pretrained: False
+  freeze_stem_only: True
+  freeze_at: -1
+  freeze_norm: False
+optimizer:
+  type: AdamW
+  lr: 0.00025
+  betas: [0.9, 0.999]
+  weight_decay: 0.000125
+  params:
+    # The inherited 0.05x backbone LR is a pretrained fine-tuning setting.
+    - params: '^(?=.*backbone)(?!.*(?:norm|bn)).*$'
+      lr: 0.00025
+    - params: '^(?=.*(?:norm|bn)).*$'
+      weight_decay: 0.0
+train_dataloader:
+  dataset:
+    img_folder: __TRAIN_IMG_FOLDER__
+    ann_file: __TRAIN_ANN_FILE__
+  total_batch_size: 4
+  num_workers: 8
+val_dataloader:
+  dataset:
+    img_folder: __VAL_IMG_FOLDER__
+    ann_file: __VAL_ANN_FILE__
+  total_batch_size: 4
+  num_workers: 8

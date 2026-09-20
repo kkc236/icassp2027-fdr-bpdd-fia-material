@@ -1,0 +1,202 @@
+{
+  "search_date": "2026-09-16",
+  "purpose": "Find local backups of current Full and D-FINE final-val per-box predictions without contacting server or running models",
+  "requested_sha256": {
+    "joint_final_val.jsonl": "d946fc4fff304873707ea558f9b702644873f1a7c7b00496fb9512ca74783d72",
+    "dfine_final_val.jsonl": "9f2892072bfc5b60991f8d0543664ffca177e492a3c01304a4ee5de3a8dbf51c"
+  },
+  "method": "rg --files --hidden, exclude dependency/git directories, exclude main workspace from outside scope; list relevant research ZIP/TAR members without extraction",
+  "roots": [
+    {
+      "root": "C:/Users/16946/Downloads",
+      "exists": true,
+      "scoped_files_enumerated": 358,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "C:/Users/16946/Desktop",
+      "exists": true,
+      "scoped_files_enumerated": 5552,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "C:/Users/16946/Documents",
+      "exists": true,
+      "scoped_files_enumerated": 36974,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/codex-transfer",
+      "exists": true,
+      "scoped_files_enumerated": 2,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/data",
+      "exists": true,
+      "scoped_files_enumerated": 12588,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/dataset",
+      "exists": true,
+      "scoped_files_enumerated": 594,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/train",
+      "exists": true,
+      "scoped_files_enumerated": 2703,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/temp",
+      "exists": true,
+      "scoped_files_enumerated": 4,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/BaiduNetdiskDownload",
+      "exists": true,
+      "scoped_files_enumerated": 404,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/360Downloads",
+      "exists": true,
+      "scoped_files_enumerated": 3,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/lab",
+      "exists": true,
+      "scoped_files_enumerated": 0,
+      "rg_returncode": 1,
+      "had_enumeration_stderr": false
+    },
+    {
+      "root": "D:/kc.lab",
+      "exists": true,
+      "scoped_files_enumerated": 34,
+      "rg_returncode": 0,
+      "had_enumeration_stderr": false
+    }
+  ],
+  "unique_files_enumerated": 59216,
+  "exact_target_paths": [],
+  "outside_workspace_jsonl_paths": [
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-gcte/docs/evidence/final-saded-fresh100-seed0-go/cache/view_manifests.jsonl.gz",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-control-fdr-v1/fdr-epochs.jsonl",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-control-fdr-v1/optimizer-evidence.jsonl",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-fdr-fdr-v1/fdr-epochs.jsonl",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-fdr-fdr-v1/optimizer-evidence.jsonl",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/fdr-formal-d97e1eb7/formal-seed0-fdr-fdr-v1/fdr-epochs.jsonl",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/fdr-formal-d97e1eb7/formal-seed0-fdr-fdr-v1/optimizer-evidence.jsonl",
+    "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/research/fdr/evidence/d97e1eb7/runtime-update-epoch0012/fdr-epochs.jsonl"
+  ],
+  "research_archives_checked": [
+    {
+      "path": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/server-evidence/fdr-d97e1eb7/fdr-gate2-screen-evidence-v2.tar.gz",
+      "member_count": 11,
+      "relevant_member_names": [
+        "fdr-screen-d97e1eb7/screen-seed0-fdr-fdr-v1/fdr-epochs.jsonl",
+        "fdr-screen-d97e1eb7/screen-seed0-fdr-fdr-v1/optimizer-evidence.jsonl",
+        "fdr-screen-d97e1eb7/screen-seed0-control-fdr-v1/fdr-epochs.jsonl",
+        "fdr-screen-d97e1eb7/screen-seed0-control-fdr-v1/optimizer-evidence.jsonl"
+      ]
+    },
+    {
+      "path": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER-lpr/server-evidence/fdr-d97e1eb7/fdr-preflight-formal-epoch0010-v1.tar.gz",
+      "member_count": 11,
+      "relevant_member_names": [
+        "fdr-formal-d97e1eb7/formal-seed0-fdr-fdr-v1/fdr-epochs.jsonl",
+        "fdr-formal-d97e1eb7/formal-seed0-fdr-fdr-v1/optimizer-evidence.jsonl"
+      ]
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-07/scratch-rtdetr-l-btdse-matched-baseline-100ep.zip",
+      "member_count": 26,
+      "relevant_member_names": [
+        "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch0_pred.jpg",
+        "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch1_pred.jpg",
+        "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch2_pred.jpg"
+      ]
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-08/FDR-YAML-Declarative-v1-overlay.zip",
+      "member_count": 35,
+      "relevant_member_names": []
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-08/FDR-YAMLs-v1.zip",
+      "member_count": 5,
+      "relevant_member_names": []
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-08/bpdd-fdr-work.zip",
+      "member_count": 787,
+      "relevant_member_names": [
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-control-fdr-v1/fdr-epochs.jsonl",
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-control-fdr-v1/optimizer-evidence.jsonl",
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-fdr-fdr-v1/fdr-epochs.jsonl",
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/fdr-screen-d97e1eb7/screen-seed0-fdr-fdr-v1/optimizer-evidence.jsonl",
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/fdr-formal-d97e1eb7/formal-seed0-fdr-fdr-v1/fdr-epochs.jsonl",
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/live-snapshot-epoch0010/fdr-formal-d97e1eb7/formal-seed0-fdr-fdr-v1/optimizer-evidence.jsonl",
+        "bpdd-fdr-work/research/fdr/evidence/d97e1eb7/runtime-update-epoch0012/fdr-epochs.jsonl"
+      ]
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-08/ultralytics-main(1).zip",
+      "member_count": 1329,
+      "relevant_member_names": []
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-08/ultralytics-main.zip",
+      "member_count": 1329,
+      "relevant_member_names": []
+    },
+    {
+      "path": "C:/Users/16946/Documents/xwechat_files/wxid_1xfzyj10od6w12_86cf/msg/file/2026-09/exp.zip",
+      "member_count": 14,
+      "relevant_member_names": [
+        "exp/val_batch0_pred.jpg",
+        "exp/val_batch1_pred.jpg",
+        "exp/val_batch2_pred.jpg"
+      ]
+    },
+    {
+      "path": "C:/Users/16946/Downloads/exp.zip",
+      "member_count": 14,
+      "relevant_member_names": [
+        "exp/val_batch0_pred.jpg",
+        "exp/val_batch1_pred.jpg",
+        "exp/val_batch2_pred.jpg"
+      ]
+    },
+    {
+      "path": "D:/data/results.zip",
+      "member_count": 7,
+      "relevant_member_names": []
+    }
+  ],
+  "alternate_rendered_predictions": [
+    {
+      "path": "C:/Users/16946/Downloads/exp.zip",
+      "sha256": "93d415aca26cf0aca7eaa5fec780c5b41430c86cca81cd661c23a8ace56196eb",
+      "members": "exp/val_batch0..2_pred.jpg and corresponding labels.jpg",
+      "identity_evidence": "paper_data.txt lists only car/truck/bus, 32,621,369 parameters, mAP50-95 0.1696",
+      "decision": "Reject as current VisDrone Full/D-FINE illustration: three-class different model/dataset, no matching checkpoint identity."
+    }
+  ],
+  "conclusion": "No current final-val prediction JSONL found in enumerated outside-workspace paths or checked research archives. This is a bounded local-backup search, not proof of absence everywhere. No server connection, training, or inference was performed."
+}

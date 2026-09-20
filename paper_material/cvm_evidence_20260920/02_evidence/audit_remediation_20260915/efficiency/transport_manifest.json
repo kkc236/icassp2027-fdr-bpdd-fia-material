@@ -1,0 +1,93 @@
+{
+  "transport_sha256": "3bc41ef99cfc9304b7bbc95008de5d477cbbfc37ae94677010be2b56eb1a00cb",
+  "files": {
+    "v1/deployment.json": {
+      "sha256": "a574743c4c535d7f1cf9b822eaef70d6d0db8dca6c7d85457a588e440a126f90",
+      "size": 571
+    },
+    "v1/measure.py": {
+      "sha256": "ba7eb0973217c565889b42863c19c4f0d2762b7c4475415031deda6e43948f25",
+      "size": 11160
+    },
+    "v1/measurement.log": {
+      "sha256": "1c0d61fb5a0d2241b425454424bd14f772da087da339bce0e4f8630cbec0825a",
+      "size": 730
+    },
+    "v2/Baseline.json": {
+      "sha256": "79a7fa2bde6cc1114fef32630b880baec71faae6a1ae96d1f76c04208fdf5487",
+      "size": 10000
+    },
+    "v2/CURRENT.json": {
+      "sha256": "1f6fdda5d86d59e4d56cf2d7bb2e318f09d24ea43ad5ee60de598011b5cb5cb4",
+      "size": 65
+    },
+    "v2/FAILED.json": {
+      "sha256": "9a37c4dfd84d692abd49d685b9621a30667e532a4ae8478b39f629bc427d28d0",
+      "size": 101
+    },
+    "v2/deployment.json": {
+      "sha256": "af6a61107c5af34dfae4ccfadb4466e0ec778936ced25ac590833c6d65cb00b5",
+      "size": 571
+    },
+    "v2/initialization_probe.json": {
+      "sha256": "01330c3fc8853335eea05c7348d8162123243e84320f9ad211b3739a762e19f2",
+      "size": 321
+    },
+    "v2/measure.py": {
+      "sha256": "693d050f534e05cabb0937b53088d7c20670157e8bc2f97ccee6e3749ccbe00d",
+      "size": 11158
+    },
+    "v2/measurement.log": {
+      "sha256": "c431ff51b200b15596a8c99702dd4800bd5fcef0ad03dc79954542004b3c8db4",
+      "size": 3120
+    },
+    "v3/Baseline.json": {
+      "sha256": "db2ea063db755809df28e674cc0105040429f0678067c30069ef9b27cb5a973e",
+      "size": 10057
+    },
+    "v3/COMPLETE.json": {
+      "sha256": "a4cb8d69b66dc497e0ef8a174cc657843b45c4370fb8822d63dd77a8a3e2e80b",
+      "size": 121
+    },
+    "v3/CURRENT.json": {
+      "sha256": "0cb87b61f0afab118ac222a0af92bc06c579959aeea208461294d16becf11b39",
+      "size": 28
+    },
+    "v3/Full.json": {
+      "sha256": "def7d3bee1552e93a37f1278bef12775930c71c9d140c662af7117b6b4729984",
+      "size": 10805
+    },
+    "v3/G.json": {
+      "sha256": "af2313e2721ed5612b860eacac6a8344929f31ad43eb3ef5d442be9626083f75",
+      "size": 10457
+    },
+    "v3/G_B.json": {
+      "sha256": "b07cd69f296425753ad49cbc96ee0abac8a93784ad8dad7ccdae75d6ad9d8678",
+      "size": 10740
+    },
+    "v3/G_F.json": {
+      "sha256": "bd145164697b4fadfa8fe66a6aae04c3b4469c92f9a8e0da665f207b8e221a81",
+      "size": 10510
+    },
+    "v3/deployment.json": {
+      "sha256": "0baf028b8a110cb34073b314722c8ae1760f47126c603ebd1905332e925ec569",
+      "size": 571
+    },
+    "v3/efficiency.json": {
+      "sha256": "2fa6c070b0c69ee021962f491b86b87274476f458eb9521e12be014d7dd669ed",
+      "size": 63341
+    },
+    "v3/initialization_probe.json": {
+      "sha256": "01330c3fc8853335eea05c7348d8162123243e84320f9ad211b3739a762e19f2",
+      "size": 321
+    },
+    "v3/measure.py": {
+      "sha256": "57c09032533451df81cbdeaadbb528f39a605955e1166b5e41ddbfc9d0fa5420",
+      "size": 12203
+    },
+    "v3/measurement.log": {
+      "sha256": "660b987e95854ba074eaed240f2dac797b308bddf15e52f80c4f55385a5bdd6c",
+      "size": 194
+    }
+  }
+}

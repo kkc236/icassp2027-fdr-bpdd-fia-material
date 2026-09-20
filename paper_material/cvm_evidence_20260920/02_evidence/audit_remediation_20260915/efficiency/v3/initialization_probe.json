@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "initial_state_sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B",
+  "compared_tensor_count": 994,
+  "mismatches": [],
+  "extra_keys_fia_only": true,
+  "extra_tensor_count": 19,
+  "fia_residual_scale": 0.0,
+  "kind": "replay_of_original_initialization_not_new_training"
+}

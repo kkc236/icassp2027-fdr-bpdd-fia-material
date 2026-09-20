@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "files_hashed": 1437,
+  "original_copies_checked": 1423,
+  "claim_entries": 17,
+  "claim_paths_checked": 166,
+  "reference_entries": 25,
+  "manuscript": {
+    "pages": 13,
+    "tables": 6,
+    "figures": 4,
+    "references": 25,
+    "unchanged_from_release": true
+  },
+  "native_test_AP": [
+    "17.743",
+    "23.604"
+  ],
+  "uavdt_AP": [
+    "14.1200",
+    "16.9600"
+  ],
+  "baseline_strict_val_AP": "21.911",
+  "G_F_best_logged_val": {
+    "epoch": 97,
+    "AP": "29.773"
+  },
+  "timing_samples_checked": 1500,
+  "timing": [
+    {
+      "arm": "Baseline",
+      "samples": 300,
+      "batch_median_ms": 59.55884559080005
+    },
+    {
+      "arm": "G",
+      "samples": 300,
+      "batch_median_ms": 66.19985005818307
+    },
+    {
+      "arm": "G_F",
+      "samples": 300,
+      "batch_median_ms": 69.0439403988421
+    },
+    {
+      "arm": "G_B",
+      "samples": 300,
+      "batch_median_ms": 104.89666601642966
+    },
+    {
+      "arm": "Full",
+      "samples": 300,
+      "batch_median_ms": 107.9197870567441
+    }
+  ],
+  "new_training": false,
+  "new_model_inference": false,
+  "scope": "Byte integrity, source mapping, recorded metric arithmetic; not a fresh scientific replication"
+}

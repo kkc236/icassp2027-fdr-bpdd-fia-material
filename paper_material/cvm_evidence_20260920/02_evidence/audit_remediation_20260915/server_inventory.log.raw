@@ -1,0 +1,191 @@
+[?2004l
+{
+  "scope": "/root/sj-tmp",
+  "read_only": true,
+  "repositories": [
+    {
+      "path": "/root/sj-tmp/lrs-v2/ac-bpdd-residual-v1-code",
+      "head": {
+        "returncode": 0,
+        "stdout": "29e6c69dd1c3c340cf1b8cb5ca35f5f1b14ae91d",
+        "stderr": ""
+      },
+      "bpdd_commit": {
+        "returncode": 128,
+        "stdout": "",
+        "stderr": "fatal: git cat-file: could not get object info"
+      }
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/bpdd-capacity-v1-code",
+      "head": {
+        "returncode": 0,
+        "stdout": "c10910ac2fe3abbbd4ee41aaa29103a5aa0be059",
+        "stderr": ""
+      },
+      "bpdd_commit": {
+        "returncode": 128,
+        "stdout": "",
+        "stderr": "fatal: git cat-file: could not get object info"
+      }
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-code",
+      "head": {
+        "returncode": 0,
+        "stdout": "4fd54d2e926b93107304a9ba51ba66edd7d75c99",
+        "stderr": ""
+      },
+      "bpdd_commit": {
+        "returncode": 128,
+        "stdout": "",
+        "stderr": "fatal: git cat-file: could not get object info"
+      }
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code",
+      "head": {
+        "returncode": 0,
+        "stdout": "5ef57473e89e3b91aa5236a18066aed99f5afc0f",
+        "stderr": ""
+      },
+      "bpdd_commit": {
+        "returncode": 0,
+        "stdout": "commit",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/code",
+      "head": {
+        "returncode": 0,
+        "stdout": "de10a55781a625addaabd9ece95b7655c7f854ed",
+        "stderr": ""
+      },
+      "bpdd_commit": {
+        "returncode": 128,
+        "stdout": "",
+        "stderr": "fatal: git cat-file: could not get object info"
+      }
+    }
+  ],
+  "weights": [
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2/formal-seed0-lrs_fdr_feasible-v2/weights/last.pt",
+      "bytes": 199486299
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+      "bytes": 199486299
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2/formal-seed0-lrs_fdr_ac_bpdd-v2/weights/last.pt",
+      "bytes": 67291409
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2/formal-seed0-lrs_fdr_ac_bpdd-v2/weights/best.pt",
+      "bytes": 67291409
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-lrs-best-v1/formal-seed0-lrs_fdr_bpdd-historical-best-v1/weights/last.pt",
+      "bytes": 199480740
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-lrs-best-v1/formal-seed0-lrs_fdr_bpdd-historical-best-v1/weights/best.pt",
+      "bytes": 199480740
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/last.pt",
+      "bytes": 67290961
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+      "bytes": 67290961
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-clean-fdr-geometry-20260908/formal-seed0-clean-fdr-geometry-v1/weights/last.pt",
+      "bytes": 67290897
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-clean-fdr-geometry-20260908/formal-seed0-clean-fdr-geometry-v1/weights/best.pt",
+      "bytes": 67290897
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-20260908/formal-seed0-lrs_gfdr-v1/weights/last.pt",
+      "bytes": 199481179
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-20260908/formal-seed0-lrs_gfdr-v1/weights/best.pt",
+      "bytes": 199481179
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-fia-20260909/formal-seed0-lrs_gfdr_fia-v1/weights/last.pt",
+      "bytes": 67904242
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-fia-20260909/formal-seed0-lrs_gfdr_fia-v1/weights/best.pt",
+      "bytes": 67904242
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-ac-bpdd-residual-20260909/formal-seed0-lrs_gfdr_ac_bpdd_residual-v1/weights/last.pt",
+      "bytes": 67291857
+    },
+    {
+      "path": "/root/sj-tmp/runs/visdrone-v2-ac-bpdd-residual-20260909/formal-seed0-lrs_gfdr_ac_bpdd_residual-v1/weights/best.pt",
+      "bytes": 67291857
+    },
+    {
+      "path": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/last.pt",
+      "bytes": 71856782
+    },
+    {
+      "path": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+      "bytes": 71856782
+    },
+    {
+      "path": "/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd/weights/last.pt",
+      "bytes": 71243482
+    },
+    {
+      "path": "/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd/weights/best.pt",
+      "bytes": 71243482
+    },
+    {
+      "path": "/root/sj-tmp/results/lrs-gfdr-capacity-v2/formal-seed0-lrs_gfdr_capacity_v2_bpdd/weights/last.pt",
+      "bytes": 71241022
+    },
+    {
+      "path": "/root/sj-tmp/results/lrs-gfdr-capacity-v2/formal-seed0-lrs_gfdr_capacity_v2_bpdd/weights/best.pt",
+      "bytes": 71241022
+    },
+    {
+      "path": "/root/sj-tmp/results/lrs-gfdr-capacity-v2-fia/formal-seed0-lrs_gfdr_capacity_v2_bpdd_fia/weights/last.pt",
+      "bytes": 71854322
+    },
+    {
+      "path": "/root/sj-tmp/results/lrs-gfdr-capacity-v2-fia/formal-seed0-lrs_gfdr_capacity_v2_bpdd_fia/weights/best.pt",
+      "bytes": 71854322
+    }
+  ],
+  "archives": [],
+  "source_sha256": {
+    "/root/sj-tmp/lrs-v2/code/src/fdr_head.py": "edd0f795f8b789a39b02144ed1492a338d734ac224ef3f2a413137ea43ac26ee",
+    "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/fdr_head.py": "faf52c3ffa49f5a1cc94be49d773cb849817917c65debeb09f4c47d376ac23fc",
+    "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/rtdetr_bpdd_capacity.py": "ab1693ac97b1875cbf4a8a5e608b1bba097fb50b35bfe335b40149b3bcd9fe75",
+    "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/bpdd_capacity.py": "38df591604ac891219a66ad9e4ff48240880c9711d4b81e1672c80c8ef3b8db9",
+    "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/bpdd_capacity_loss.py": "dee01d47ab6bacbe120b21f7f6cd0f82d4131890caf1e2c7966bf10882e4eef2",
+    "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/rtdetr_bpdd_capacity_fia.py": "9e40ecf65129ab5bef05391d0415b229968b5e929b515d71c9670c94f7ad6550"
+  },
+  "gpu": {
+    "returncode": 0,
+    "stdout": "NVIDIA GeForce RTX 4090, 2 MiB, 24564 MiB, 0 %",
+    "stderr": ""
+  },
+  "disk": {
+    "returncode": 0,
+    "stdout": "Filesystem         Size  Used Avail Use% Mounted on\n/dev/mapper/vg-lv   50G   41G  9.9G  81% /root/sj-tmp",
+    "stderr": ""
+  }
+}
+CODEX_DONE_a6b9d8ee57004666bb7c29ac2781953c0
+[?2004h(base) ]0;root@dee31ea771a8: /root@dee31ea771a8:/# 

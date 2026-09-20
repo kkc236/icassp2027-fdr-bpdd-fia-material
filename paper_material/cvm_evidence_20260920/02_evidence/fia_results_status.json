@@ -1,0 +1,335 @@
+{
+  "format_version": 1,
+  "status": "fia_only_p3_exact_val_test_three_module_four_decimal_val_test_available",
+  "updated_at": "2026-08-19",
+  "revoked_source_ids": [
+    "fia_formal100_val_exact",
+    "fia_ablation_release_dfr_bdpp_fia",
+    "fia_terminal_val"
+  ],
+  "valid_fia_result_source_ids": [
+    "fia_p3_only_best_checkpoint_exact",
+    "fdr_fia_existing_best_independent_val",
+    "fia_updated_three_module_checkpoint_best_val",
+    "fia_updated_three_module_terminal_val",
+    "fia_updated_three_module_terminal_test",
+    "fia_updated_three_module_text_val",
+    "fia_updated_three_module_text_test"
+  ],
+  "superseded_source_ids": [
+    "fia_existing_best_independent_val"
+  ],
+  "canonical_fia_only_source_id": "fia_p3_only_best_checkpoint_exact",
+  "revocation_scope": "Pre-revision standalone FIA result identities remain withdrawn. The older exact cascading FIA-only checkpoint record is retained but superseded by the fresh corrected P3-only exact best.pt evaluation. The historical terminal screenshot remains only rounded evidence for the corrected three-module observation.",
+  "user_reported_updated_result_direction": "superseded_by_direct_best_checkpoint_evaluation",
+  "user_report_is_formal_numeric_evidence": false,
+  "updated_three_module_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone val",
+    "epoch": 96,
+    "selection": "maximum checkpoint-embedded training-history mAP50-95",
+    "metrics": {
+      "precision": 0.56996,
+      "recall": 0.49848,
+      "map50": 0.48982,
+      "map75": null,
+      "map": 0.29618
+    },
+    "delta_from_bpdd_map_pp": 0.392213043118556,
+    "delta_strict_paired": false,
+    "evidence_level": "checkpoint_embedded_best_val",
+    "source_id": "fia_updated_three_module_checkpoint_best_val",
+    "graph": {
+      "p3_only": true,
+      "fia_layer": 22,
+      "fia_layer_from": 21,
+      "layer_23_from": 21,
+      "decoder_from": [22, 25, 28]
+    }
+  },
+  "updated_three_module_terminal_val_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone val",
+    "metrics": {
+      "precision": 0.569,
+      "recall": 0.499,
+      "map50": 0.490,
+      "map75": null,
+      "map": 0.296
+    },
+    "paper_display": {
+      "precision": "≈0.569",
+      "recall": "≈0.499",
+      "map50": "≈0.490",
+      "map75": "待补",
+      "map": "≈0.296",
+      "delta": "约 +0.37 pp"
+    },
+    "delta_reference": "RT-DETR-L+FDR+BPDD",
+    "delta_from_displayed_bpdd_map_pp": 0.374,
+    "delta_strict_paired": false,
+    "evidence_level": "terminal_screenshot_rounded",
+    "source_id": "fia_updated_three_module_terminal_val",
+    "usage": "canonical_source_for_standard_ablation_row_E"
+  },
+  "updated_three_module_test_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone test",
+    "images": 1610,
+    "instances": 75102,
+    "metrics": {
+      "precision": 0.519,
+      "recall": 0.436,
+      "f1": null,
+      "map50": 0.408,
+      "map75": null,
+      "map": 0.234
+    },
+    "delta_reference": "RT-DETR-L+FDR+BPDD",
+    "delta_from_bpdd_map_pp": 0.23409356127704894,
+    "delta_strict_paired": false,
+    "evidence_level": "terminal_screenshot_rounded",
+    "source_id": "fia_updated_three_module_terminal_test",
+    "claim": "positive_test_observation",
+    "rounding_note": "Values are displayed to three or four decimals in the terminal screenshot; AP75 and F1 are not displayed and remain null."
+  },
+  "updated_three_module_text_val_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone val",
+    "metrics": {
+      "precision": 0.5693,
+      "recall": 0.4991,
+      "f1": 0.5285,
+      "map50": 0.4898,
+      "map75": 0.3042,
+      "map": 0.2961
+    },
+    "delta_reference": "RT-DETR-L+FDR+BPDD",
+    "delta_from_bpdd_map_pp": 0.384213043118556,
+    "delta_strict_paired": false,
+    "evidence_level": "user_supplied_text_report_4dp",
+    "source_id": "fia_updated_three_module_text_val",
+    "usage": "canonical_source_for_standard_ablation_row_E",
+    "screenshot_crosscheck": "matches the archived val panel after three-decimal display rounding"
+  },
+  "updated_three_module_text_test_observation": {
+    "method": "RT-DETR-L+FDR+BPDD+FIA",
+    "split": "VisDrone test",
+    "images": 1610,
+    "instances": 75102,
+    "metrics": {
+      "precision": 0.5189,
+      "recall": 0.4361,
+      "f1": 0.4634,
+      "map50": 0.4081,
+      "map75": 0.2327,
+      "map": 0.2337
+    },
+    "delta_reference": "RT-DETR-L+FDR+BPDD",
+    "delta_from_bpdd_map_pp": 0.20409356127704894,
+    "delta_strict_paired": false,
+    "evidence_level": "user_supplied_text_report_4dp",
+    "source_id": "fia_updated_three_module_text_test",
+    "claim": "positive_test_observation",
+    "screenshot_crosscheck": "matches the archived test panel after three-decimal display rounding"
+  },
+  "updated_standalone_results": {
+    "fia_only": {
+      "existing_web_assets_audited": true,
+      "existing_web_asset_decision": "older_cascading_asset_superseded",
+      "updated_p3_only_artifact_status": "fresh_best_checkpoint_exact_val_test_complete",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "source_commit": "118ad631eff93ad806f85ea47819578e6e00bfc5",
+      "checkpoint_sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+      "release_asset": {
+        "name": "fia-p3-only-final-20260819.tar.gz",
+        "asset_id": 520838108,
+        "size_bytes": 62725579,
+        "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+        "updated_at": "2026-08-19T12:52:19Z",
+        "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz"
+      },
+      "raw_evidence_artifacts": {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json",
+        "graph_identity_normalization": "paper_material/evidence/fia_p3_only_20260819/graph-identity-normalization.json",
+        "release_content_manifest": "paper_material/evidence/fia_p3_only_20260819/MANIFEST.sha256"
+      },
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "fia_layer_from_raw": -1,
+        "fia_layer_from_effective": 21,
+        "layer_23_from": 21,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "p3_only_standalone"
+      },
+      "val_metrics": {
+        "precision": 0.4871962209136635,
+        "recall": 0.42531734343807504,
+        "f1": 0.4509443663180429,
+        "map50": 0.39874518726363956,
+        "map75": 0.2218076018094571,
+        "map": 0.22705639514425527
+      },
+      "test_metrics": {
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_reference_source_id": "strict_control_val",
+      "delta_map_pp": 0.7946395144255269,
+      "test_delta_reference_source_id": "strict_control_test_exact",
+      "test_delta_map_pp": 0.8101032384120604,
+      "delta_strict_paired": false,
+      "per_class_available": true,
+      "per_class_count": 10,
+      "per_class_artifacts": {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json#per_class",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json#per_class"
+      },
+      "val_evidence_level": "best_checkpoint_independent_val_exact",
+      "test_evidence_level": "best_checkpoint_independent_test_exact"
+    },
+    "fdr_fia": {
+      "existing_web_assets_audited": true,
+      "existing_web_asset_decision": "accepted_as_existing_published_best_not_p3_only",
+      "updated_p3_only_artifact_status": "not_required_user_selected_existing_best",
+      "source_id": "fdr_fia_existing_best_independent_val",
+      "checkpoint_sha256": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
+      "val_metrics": {
+        "precision": 0.5775238641748943,
+        "recall": 0.4908887926435492,
+        "f1": 0.530693811231827,
+        "map50": 0.486314064615312,
+        "map75": 0.29972392008500426,
+        "map": 0.29494032070762063
+      },
+      "test_metrics": {
+        "precision": 0.5189669713045484,
+        "recall": 0.43165506726917735,
+        "f1": 0.46065437704605916,
+        "map50": 0.4074392932750549,
+        "map75": 0.23587873005461435,
+        "map": 0.23464538660213996
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_map_pp": 0.5280571609979634,
+      "val_evidence_level": "best_checkpoint_independent_val_exact",
+      "test_evidence_level": "best_checkpoint_independent_test_exact"
+    },
+    "numeric_values_registered": true,
+    "evaluation_artifact": "paper_material/evidence/fia_existing_best_evaluation.json"
+  },
+  "superseded_standalone_results": {
+    "fia_only_cascading": {
+      "result_status": "superseded",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact",
+      "source_id": "fia_existing_best_independent_val",
+      "checkpoint_sha256": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
+      "graph_identity": {
+        "p3_only": false,
+        "fia_layer": 22,
+        "fia_layer_raw_from": -1,
+        "fia_layer_resolved_from": 21,
+        "layer_23_from": -1,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "published_cascading_standalone"
+      },
+      "val_metrics": {
+        "precision": 0.4794334980185041,
+        "recall": 0.4141938299458384,
+        "f1": 0.44443223821449405,
+        "map50": 0.38567545133764725,
+        "map75": 0.2096736111592438,
+        "map": 0.21679545343355132
+      },
+      "test_metrics": {
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921
+      },
+      "historical_numeric_use_allowed": true,
+      "canonical_ablation_use_allowed": false
+    }
+  },
+  "web_release_audit": {
+    "repository": "https://github.com/kkc236/uav-detection-baselines",
+    "release_url": "https://github.com/kkc236/uav-detection-baselines/releases/tag/DFR-BDPP-FIA",
+    "release_id": 371026410,
+    "release_tag": "DFR-BDPP-FIA",
+    "release_updated_at": "2026-08-17T02:39:01Z",
+    "displayed_asset_count": 11,
+    "custom_asset_count": 9,
+    "autogenerated_source_archive_count": 2,
+    "hidden_updated_standalone_assets_found": true,
+    "canonical_p3_only_fia_asset": {
+      "asset_id": 520838108,
+      "name": "fia-p3-only-final-20260819.tar.gz",
+      "size_bytes": 62725579,
+      "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+      "updated_at": "2026-08-19T12:52:19Z",
+      "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz",
+      "source_id": "fia_p3_only_best_checkpoint_exact"
+    },
+    "standalone_candidates": {
+      "fia_only": {
+        "web_assets_present": true,
+        "archive_asset_id": 517500041,
+        "archive_name": "fia-seed0-20260815-211156.zip",
+        "archive_sha256": "17eb96a577f20a99370f87f6a33374a7f402a9989a4d692f8961dce0fd9aab0a",
+        "log_asset_id": 517500310,
+        "log_name": "log1.log",
+        "log_sha256": "e97cc9908e1dc9e7045cc156b8a6a5277e720bfc720308844c366b935c5239fe",
+        "observed_checkpoint_layer_23_from": -1,
+        "required_updated_checkpoint_layer_23_from": 21,
+        "decision": "superseded_by_fresh_p3_only_exact_evaluation",
+        "numeric_use_allowed": true,
+        "numeric_use_scope": "historical independent val and test exact only; not canonical revised P3-only evidence"
+      },
+      "fdr_fia": {
+        "web_assets_present": true,
+        "archive_asset_id": 517500327,
+        "archive_name": "fdr-fia-seed0-20260815-211203.zip",
+        "archive_sha256": "30fc5c418a4f24b8e8c6ee3a44ddc88d94ba236225f178e689cfe81540afc900",
+        "log_asset_id": 517500538,
+        "log_name": "log2.log",
+        "log_sha256": "5adc7d357b0514652f98390a267441e36f8e961314d8c75f6fa9395448b7d5fd",
+        "observed_checkpoint_layer_23_from": -1,
+        "required_updated_checkpoint_layer_23_from": 21,
+        "decision": "accepted_as_existing_published_best_not_p3_only",
+        "numeric_use_allowed": true,
+        "numeric_use_scope": "independent val and test exact; not revised P3-only evidence"
+      }
+    }
+  },
+  "updated_run_identity_requirements": {
+    "fia_only_exact_source_commit": "118ad631eff93ad806f85ea47819578e6e00bfc5",
+    "fia_only_exact_checkpoint_sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+    "fia_only_config_worktree_sha256": "d0bbf25614e1dfe64e2b5237d44a3a8dc101369a24bb9485b7ecaad23596dffb",
+    "fdr_fia_config_worktree_sha256": "3fcadd8599c5af37da47c76de7f326d1191009f8fc0ba3077608bdef22de78bc",
+    "fia_source_worktree_sha256": "21973c175426e73b82abb94e8ab11b862fd30eedc484554a930effc70ad829fb",
+    "checkpoint_layer_23_from": 21,
+    "checkpoint_decoder_from": [22, 25, 28],
+    "required_provenance": [
+      "training source identity",
+      "config hash",
+      "checkpoint hash",
+      "seed",
+      "dataset split",
+      "evaluator settings"
+    ]
+  },
+  "claim_boundary": {
+    "allowed": "Report the fresh FIA-only P3-only best.pt exact results on val (mAP 0.22705639514425527, AP75 0.2218076018094571) and test (mAP 0.18551746406283812, AP75 0.18201140298044138), including the explicitly non-paired arithmetic gains over the canonical exact baselines. Report the corrected P3-only three-module four-decimal text results with their existing precision boundary.",
+    "forbidden": "Use the superseded cascading FIA-only record as canonical P3-only evidence, claim unsupplied per-class metrics for the fresh FIA-only run, mix val and test comparisons, claim more than four-decimal precision for the three-module text reports, or call supplementary arithmetic deltas strict paired causal gains."
+  }
+}

@@ -1,0 +1,889 @@
+{
+  "claims": [
+    {
+      "id": "table1",
+      "location": "Table 1 / tab:system / source/table_system.tex",
+      "claim": "VisDrone完整检测器比较；native与common evaluator分面独立比较。",
+      "values": {
+        "units": "原始AP为0–1；论文展示值为百分数；差值为百分点",
+        "native_raw": {
+          "baseline": {
+            "AP": 0.1774255119033785,
+            "AP50": 0.32253902272226276,
+            "AP75": 0.17565032033246722
+          },
+          "full": {
+            "AP": 0.23604003874539384,
+            "AP50": 0.4124088910885405,
+            "AP75": 0.235463862958051
+          }
+        },
+        "native_display": {
+          "baseline_AP": 17.743,
+          "full_AP": 23.604,
+          "delta_AP": 5.861
+        },
+        "common_final_display": {
+          "dfine": [
+            22.554,
+            38.656,
+            22.72,
+            13.338
+          ],
+          "full": [
+            24.133,
+            41.885,
+            24.044,
+            14.575
+          ],
+          "metric_order": [
+            "AP",
+            "AP50",
+            "AP75",
+            "APs"
+          ],
+          "delta_AP": 1.579
+        },
+        "common_best_display": {
+          "dfine": [
+            22.679,
+            38.94,
+            22.713,
+            13.478
+          ],
+          "full": [
+            24.229,
+            42.009,
+            24.208,
+            14.618
+          ]
+        },
+        "common_final_AP_unrounded_percent": {
+          "dfine": 22.554355939110078,
+          "full": 24.133495712514403,
+          "delta": 1.5791397734043255
+        }
+      },
+      "evidence": [
+        "01_manuscript/source/table_system.tex",
+        "02_evidence/reevaluation_completion_20260915/baseline_best_800_20260915/files/test/imgsz640/summary.json",
+        "02_evidence/reevaluation_completion_20260915/baseline_best_800_20260915/files/test/imgsz640/BEST_EPOCH_IDENTITY.json",
+        "02_evidence/reevaluation_completion_20260915/baseline_best_800_20260915/comparisons/FULL_CAPACITY_B_F/test/imgsz640/summary.json",
+        "02_evidence/reevaluation_completion_20260915/baseline_best_800_20260915/MANIFEST.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_final_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/joint_final_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_best_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/joint_best_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/cross-protocol-manifest.json"
+      ],
+      "limitations": [
+        "Native Full精确源为0.23604003874539384（23.604）；另一NATIVE_TEST_RERUN历史快照23.602不是本表来源。",
+        "仅在各分面内比较；D-FINE-L为scratch-adapted reproduction，训练配方及有效batch不同。",
+        "原始common-evaluator预测JSONL未由本条证明已在本地归档；报告/哈希与完整预测资产应区分。"
+      ]
+    },
+    {
+      "id": "table2",
+      "location": "Table 2 / tab:uavdt / source/table_uavdt.tex",
+      "claim": "UAVDT本地转换标签validation上，作者确认的Full相对Baseline的导出指标。",
+      "values": {
+        "units": "百分数/百分点",
+        "baseline": {
+          "AP": 14.12,
+          "AP50": 24.21,
+          "AP75": 14.97
+        },
+        "full": {
+          "AP": 16.96,
+          "AP50": 29.16,
+          "AP75": 17.5
+        },
+        "delta": {
+          "AP": 2.84,
+          "AP50": 4.95,
+          "AP75": 2.53
+        },
+        "class_AP": {
+          "car": [
+            30.38,
+            34.65
+          ],
+          "truck": [
+            2.58,
+            4.06
+          ],
+          "bus": [
+            9.4,
+            12.19
+          ]
+        },
+        "identity": "author-confirmed Full",
+        "checkpoint_verified": false,
+        "bundled_source_matches_current_full": false
+      },
+      "evidence": [
+        "01_manuscript/source/table_uavdt.tex",
+        "01_manuscript/inputs/uavdt/baseline-exp/paper_data.txt",
+        "01_manuscript/inputs/uavdt/exp/paper_data.txt",
+        "01_manuscript/inputs/uavdt/metrics_review.json",
+        "01_manuscript/inputs/uavdt/author_confirmation.json",
+        "01_manuscript/inputs/uavdt/inventory.json",
+        "01_manuscript/inputs/uavdt/previous_export_comparison.json",
+        "01_manuscript/inputs/uavdt/configs/UAVDT.yaml",
+        "01_manuscript/inputs/uavdt/src",
+        "01_manuscript/inputs/uavdt/RESULT_REVIEW_ZH.md"
+      ],
+      "limitations": [
+        "作者确认Full身份不等于checkpoint独立核验；不得改写为checkpoint_verified=true。",
+        "导出包附带的旧源码与当前VisDrone Full源码不一致，须保留冲突记录。",
+        "官方benchmark split映射及完成训练的确切配方未独立闭合；这是本地转换标签validation结果。"
+      ]
+    },
+    {
+      "id": "table3",
+      "location": "Table 3 / tab:lrsversions / source/table_lrsversions.tex",
+      "claim": "完整FDR/FGL移植、路径重设计、几何变体与GCDL的100轮历史设计比较。",
+      "values": {
+        "units": "AP百分数",
+        "rows": [
+          {
+            "model": "Full FDR/FGL transfer",
+            "AP": 29.078,
+            "AP50": 48.473
+          },
+          {
+            "model": "Path redesign (historical Clean)",
+            "AP": 29.696,
+            "AP50": 49.32
+          },
+          {
+            "model": "Path redesign + geometry",
+            "AP": 29.361,
+            "AP50": 49.13
+          },
+          {
+            "model": "GCDL (historical LRS-GFDR)",
+            "AP": 29.62,
+            "AP50": 49.382
+          }
+        ],
+        "GCDL_minus_transfer_AP": 0.542,
+        "epochs_per_run": 100
+      },
+      "evidence": [
+        "01_manuscript/source/table_lrsversions.tex",
+        "01_manuscript/inputs/historical_fdr_results.csv",
+        "01_manuscript/inputs/clean_fdr_results.csv",
+        "01_manuscript/inputs/geometry_fdr_results.csv",
+        "01_manuscript/inputs/lrs_gfdr_results.csv",
+        "01_manuscript/inputs/original_fdr_run.json",
+        "01_manuscript/inputs/clean_fdr_authority.json",
+        "01_manuscript/inputs/lrs_comparison_provenance.json",
+        "01_manuscript/inputs/clean_fdr_historical_config.yaml",
+        "01_manuscript/inputs/clean_fdr_historical_math.py",
+        "01_manuscript/inputs/clean_fdr_historical_loss.py"
+      ],
+      "limitations": [
+        "Original是完整FDR/FGL移植；Clean是中间路径variant，不能替代主移植参照。",
+        "Original额外preliminary-box与DN-FDR监督开启，Clean/geometry/G关闭；表内同时改变了参考和监督路径。",
+        "这些是历史设计运行，并非全源码和全初始化严格匹配消融；Path redesign AP略高于GCDL必须保留。",
+        "GCDL相对host的大幅增益包括继承FDR表示的贡献，不能全部归因于几何/LQS。"
+      ]
+    },
+    {
+      "id": "table4",
+      "location": "Table 4 / tab:components, tab:efficiency / source/table_components.tex",
+      "claim": "五种配置的VisDrone验证精度、完整未融合参数、执行计算量和batch8吞吐量。",
+      "values": {
+        "metric_order": [
+          "AP_percent",
+          "AP50_percent",
+          "params_M",
+          "GFLOPs",
+          "batch8_ms",
+          "images_per_second"
+        ],
+        "rows": {
+          "Baseline": [
+            21.911,
+            38.663,
+            32.827,
+            105.597,
+            59.559,
+            134.321
+          ],
+          "G": [
+            29.62,
+            49.382,
+            33.157,
+            105.804,
+            66.2,
+            120.846
+          ],
+          "G_F": [
+            29.773,
+            49.548,
+            33.458,
+            109.28,
+            69.044,
+            115.868
+          ],
+          "G_B": [
+            29.277,
+            48.783,
+            34.942,
+            130.575,
+            104.897,
+            76.266
+          ],
+          "Full": [
+            30.109,
+            49.89,
+            35.244,
+            134.051,
+            107.92,
+            74.129
+          ]
+        },
+        "timing_protocol": {
+          "GPU": "RTX 4090",
+          "precision": "FP32",
+          "input": "640x640",
+          "batch": 8,
+          "warmup_batches_per_arm": 100,
+          "timed_batches_per_arm": 300
+        },
+        "GF_training": {
+          "best_epoch": 97,
+          "best_AP_fraction": 0.29773,
+          "final_epoch": 100,
+          "final_AP_fraction": 0.29761,
+          "results_csv_sha256": "97D61D7A95D6E98D1096E2EAA35C35E8209BC598C483F9713AF67D691BEDDA5E"
+        }
+      },
+      "evidence": [
+        "01_manuscript/source/table_components.tex",
+        "01_manuscript/inputs/lrs_gfdr_results.csv",
+        "02_evidence/visdrone_g_f_training_20260909/results.csv",
+        "02_evidence/visdrone_g_f_training_20260909/args.yaml",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-results.csv",
+        "02_evidence/batch8_efficiency_20260916/v1/efficiency.json",
+        "02_evidence/batch8_efficiency_20260916/v1/measure.py",
+        "02_evidence/batch8_efficiency_20260916/verification.json",
+        "02_evidence/audit_remediation_20260915/full_flops/v2/complete_report.json",
+        "02_evidence/audit_remediation_20260915/full_flops/v2/arithmetic_count.json",
+        "02_evidence/audit_remediation_20260915/full_flops/v2/trace.py",
+        "02_evidence/audit_remediation_20260915/full_flops/v2/counter_source.py",
+        "02_evidence/audit_remediation_20260915/efficiency/v3/efficiency.json",
+        "07_historical_context/results/main_results.json",
+        "02_evidence/baseline_strict_val/fdr-vs-control-strict-final-paper-metrics.json",
+        "02_evidence/baseline_strict_val/fdr-formal-seed0-control-d97e1eb7-epoch-0100.json",
+        "02_evidence/baseline_strict_val/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md"
+      ],
+      "limitations": [
+        "batch8_efficiency_20260916/v1是当前论文唯一时间数据来源。efficiency/v3中的batch1时间仅为历史记录，不进入本表。",
+        "13.49 ms若由整批耗时摊销得到，不能描述为单张请求响应延迟；吞吐量是固定输入模型批处理测量。",
+        "GFLOPs按v2口径统计已执行模型forward，MAC=2；参数采用完整未融合模型口径，不与fused count混用。",
+        "Baseline 21.911的原始文档将其定义为统一独立val复评结果，而非已核验的训练CSV峰值；归档保留该口径差异，不能改称所有行均来自同一种日志。",
+        "其他历史配置不全是严格配对；G+B低于G，且B为专家与监督的组合，表不能单独证明KD或gate的AP收益。"
+      ]
+    },
+    {
+      "id": "table5",
+      "location": "Table 5 / tab:sensitivity / source/table_sensitivity.tex",
+      "claim": "完整8种split/checkpoint/cap组合下共同评价器AP敏感性。",
+      "values": {
+        "units": "AP百分数，delta由未四舍五入值计算",
+        "columns": [
+          "checkpoint",
+          "split",
+          "cap",
+          "D_FINE",
+          "Full",
+          "delta"
+        ],
+        "rows": [
+          [
+            "final",
+            "val",
+            100,
+            28.477,
+            30.501,
+            2.024
+          ],
+          [
+            "final",
+            "val",
+            300,
+            28.501,
+            30.528,
+            2.027
+          ],
+          [
+            "final",
+            "test",
+            100,
+            22.511,
+            24.097,
+            1.586
+          ],
+          [
+            "final",
+            "test",
+            300,
+            22.554,
+            24.133,
+            1.579
+          ],
+          [
+            "best",
+            "val",
+            100,
+            28.773,
+            30.703,
+            1.929
+          ],
+          [
+            "best",
+            "val",
+            300,
+            28.796,
+            30.727,
+            1.931
+          ],
+          [
+            "best",
+            "test",
+            100,
+            22.637,
+            24.19,
+            1.553
+          ],
+          [
+            "best",
+            "test",
+            300,
+            22.679,
+            24.229,
+            1.55
+          ]
+        ]
+      },
+      "evidence": [
+        "01_manuscript/source/table_sensitivity.tex",
+        "01_manuscript/inputs/external_sensitivity/EXTERNAL_SENSITIVITY.json",
+        "01_manuscript/inputs/external_sensitivity/cross-protocol-manifest.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_final_val.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_final_val.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_final_test.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_final_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_best_val.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_best_val.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_best_test.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/dfine_best_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/joint_final_val.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/joint_final_val.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/joint_final_test.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/joint_final_test.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/joint_best_val.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/joint_best_val.cap300.json",
+        "01_manuscript/inputs/external_sensitivity/joint_best_test.cap100.json",
+        "01_manuscript/inputs/external_sensitivity/joint_best_test.cap300.json"
+      ],
+      "limitations": [
+        "final test/cap300是预先登记的主要外部终点；其余为完整披露的敏感性结果。",
+        "cap100复用每图总上限300的导出预测并应用COCOeval每类别截断，不是把检测器改成只输出100个预测。",
+        "两个训练配方不一致，不能将差值称为同配方结构因果效应。"
+      ]
+    },
+    {
+      "id": "table6",
+      "location": "Table 6 / tab:literature / source/table_literature.tex",
+      "claim": "文献报告的VisDrone val上下文比较，区别于本项目复测。",
+      "values": {
+        "metric_order": [
+          "epochs",
+          "params_M",
+          "AP_percent",
+          "AP50_percent"
+        ],
+        "rows": {
+          "RemDet-L": [
+            300,
+            35.3,
+            29.3,
+            47.4
+          ],
+          "BDNet": [
+            300,
+            2.59,
+            31.2,
+            50.5
+          ],
+          "Full": [
+            100,
+            35.244,
+            30.109,
+            49.89
+          ]
+        },
+        "input": 640
+      },
+      "evidence": [
+        "01_manuscript/source/table_literature.tex",
+        "01_manuscript/inputs/references.json",
+        "04_literature/comparison_candidates/CANDIDATES_ZH.md",
+        "04_literature/comparison_candidates/B_CONFERENCE_NO_RETEST_ZH.md",
+        "04_literature/comparison_candidates/sources/BDNet_CVPR2026.pdf",
+        "04_literature/comparison_candidates/sources/BDNet_CVPR2026_supplement.pdf"
+      ],
+      "limitations": [
+        "文献配方及评价流程不同，不是同协议复测排名。",
+        "RemDet AP/AP50来自作者论文，35.3M来自官方仓库；当前索引所见本地副本主要是来源审计，若无原PDF/仓库快照，不得称两者均已物理归档。",
+        "RemDet作者全文：https://xinzhongzhu.github.io/document/RemDet_AAAI.pdf；官方仓库：https://github.com/HZAI-ZJNU/RemDet。"
+      ]
+    },
+    {
+      "id": "figure1",
+      "location": "Figure 1 / fig:bubble / source/figure_bubble.tex",
+      "claim": "VisDrone验证AP–参数量–计算量气泡图，保留各论文来源与协议边界。",
+      "values": {
+        "axes": {
+          "x": "Parameters M",
+          "y": "VisDrone validation AP percent",
+          "area": "GFLOPs"
+        },
+        "metric_order": [
+          "params_M",
+          "AP_percent",
+          "GFLOPs"
+        ],
+        "points": {
+          "Full": [
+            35.244,
+            30.109,
+            134.051
+          ],
+          "RT-DETR-L host": [
+            32.827,
+            21.911,
+            105.597
+          ],
+          "FGHDet": [
+            43.9,
+            32.1,
+            238.9
+          ],
+          "YOLOv7 reported by FGHDet": [
+            37.2,
+            27.2,
+            105.3
+          ],
+          "BDNet": [
+            2.59,
+            31.2,
+            52.44
+          ],
+          "YOLO11 reported by BDNet": [
+            25.3,
+            28.7,
+            87.28
+          ],
+          "YOLO12 reported by BDNet": [
+            29.2,
+            29.3,
+            89.4
+          ],
+          "YOLO26 reported by BDNet": [
+            26.3,
+            27.7,
+            93.8
+          ]
+        }
+      },
+      "evidence": [
+        "01_manuscript/source/figure_bubble.tex",
+        "01_manuscript/source/bubble_plot_data.json",
+        "01_manuscript/source/bubble_comparison_data.csv",
+        "01_manuscript/source/build_bubble_figures.py",
+        "01_manuscript/assets/bubble_comparison.png",
+        "04_literature/research_notes/BUBBLE_DATA_AUDIT_ZH.md",
+        "04_literature/cvm_papers/03_FGHDet_CVM2025.pdf",
+        "04_literature/comparison_candidates/sources/BDNet_CVPR2026.pdf",
+        "04_literature/comparison_candidates/sources/BDNet_CVPR2026_supplement.pdf"
+      ],
+      "limitations": [
+        "FGHDet和其YOLOv7行使用Tables2/5的val精度及Table6同名结构的640成本，不使用Table6 test精度。",
+        "FGHDet预训练情况未报告；不能声称全图所有点均scratch或同一训练/成本统计协议。",
+        "BDNet论文中的YOLO11/12/26为其作者重训，非本项目复测；保留原表标签与审计说明。",
+        "气泡图数据中的旧绝对路径是历史出处；本条evidence给归档内可用路径。"
+      ]
+    },
+    {
+      "id": "figure2",
+      "location": "Figure 2 / fig:overview / source/figure_overview.tex",
+      "claim": "当前GCDL、共享FIA、box-conditioned expert与选择性监督的整合架构。",
+      "values": {
+        "base_decoder_layers": 6,
+        "ordinary_queries": 300,
+        "edge_bins": 33,
+        "sampling_levels": [
+          "P2",
+          "P3",
+          "P4"
+        ],
+        "GCDL_legacy_name": "LRS-GFDR",
+        "LQS_legacy_name": "LRS",
+        "source_commit": "a43056af2a843ec9bae109d3420367c13f3bcef6"
+      },
+      "evidence": [
+        "01_manuscript/source/figure_overview.tex",
+        "01_manuscript/source/body.tex",
+        "01_manuscript/assets/architecture_dense.png",
+        "01_manuscript/inputs/publication_name_mapping.json",
+        "01_manuscript/inputs/sampling_points.json",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_head.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_math.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_loss.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fia.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/bpdd_capacity.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/bpdd_capacity_loss.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/rtdetr_bpdd_capacity_fia.py",
+        "03_protocol_and_methods/methods/CURRENT_JOINT_METHOD_ZH.md"
+      ],
+      "limitations": [
+        "架构图是实现示意，不能替代功能源码证据。",
+        "旧UAVDT导出源码不用于证明本图与当前VisDrone Full实现一致。",
+        "论文改名不更改旧训练run和源码目录标识。"
+      ]
+    },
+    {
+      "id": "figure3",
+      "location": "Figure 3 / fig:externalclasses / source/figure_external_classes.tex",
+      "claim": "共同评价器final test全部10类AP对照。",
+      "values": {
+        "images": 1610,
+        "classes": 10,
+        "checkpoint": "final",
+        "cap": 300,
+        "overall_AP_percent": {
+          "D_FINE": 22.554355939110078,
+          "Full": 24.133495712514403,
+          "delta": 1.5791397734043255
+        },
+        "ordering": "original category ID 0–9"
+      },
+      "evidence": [
+        "01_manuscript/source/figure_external_classes.tex",
+        "01_manuscript/source/build_external_figure.py",
+        "01_manuscript/assets/class_comparison.png",
+        "01_manuscript/inputs/external_class_profile/numeric_values.json",
+        "01_manuscript/inputs/external_class_profile/source/dfine_final_test.report.json",
+        "01_manuscript/inputs/external_class_profile/source/joint_final_test.report.json",
+        "01_manuscript/inputs/external_class_profile/source/dfine_final_test.cap300.json",
+        "01_manuscript/inputs/external_class_profile/source/joint_final_test.cap300.json",
+        "01_manuscript/inputs/external_class_profile/SHA256_MANIFEST.json"
+      ],
+      "limitations": [
+        "全10类均保留，不能只挑增益较大的类别。",
+        "报告来源为common evaluator；不得混入native类别指标。",
+        "展示完整检测器差异，不单独归因于某个模块；训练配方差异仍适用。"
+      ]
+    },
+    {
+      "id": "figure4",
+      "location": "Figure 4 / fig:motivation / source/figure_motivation.tex",
+      "claim": "全部验证标注的输入尺度分布及理想化边界位移IoU动机。",
+      "values": {
+        "images": 548,
+        "annotations": 38759,
+        "input": [
+          640,
+          640
+        ],
+        "resize": "independent-axis stretch",
+        "equivalent_side": "sqrt(w*h*640^2/(W*H))",
+        "bins_px": [
+          "[0,8)",
+          "[8,16)",
+          "[16,32)",
+          "[32,64)",
+          "[64,infinity)"
+        ],
+        "bin_counts": [
+          6856,
+          14011,
+          12414,
+          4580,
+          898
+        ],
+        "below_32px_count": 33281,
+        "below_32px_display_percent": 85.9,
+        "gt_gzip_sha256": "7959b5a87cfed051303d9234ca192a2ecd61be2e5691187533cfcc90af614abd",
+        "gt_json_sha256": "92d2866fe6e6ff4c3101b82c01b7718eb78b3759399042c4501d893798fc8bfa"
+      },
+      "evidence": [
+        "01_manuscript/source/figure_motivation.tex",
+        "01_manuscript/source/build_motivation_figure.py",
+        "01_manuscript/assets/scale_and_geometry.png",
+        "01_manuscript/inputs/motivation_profile.json",
+        "01_manuscript/qualitative/gt_reconstructed/instances_val.json.gz",
+        "01_manuscript/qualitative/asset_manifest.json",
+        "02_evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915/dataset-preflight.json",
+        "02_evidence/visdrone_dfine_l_external_20260913/convert_visdrone_yolo_to_coco.py"
+      ],
+      "limitations": [
+        "32px阈值为拉伸到640输入后等效边长，不等于COCO按原图面积定义的APs分组。",
+        "IoU位移曲线是解析几何示例，不是训练检测器实测误差分布。",
+        "qualitative目录中的GT现为该图真实依赖，不能因取消定性图片而剔除。"
+      ]
+    },
+    {
+      "id": "mechanism_geometry",
+      "location": "Method feasible decoding; Appendix numerical checks / sec:geometryevidence",
+      "claim": "参考尺度/精度下界约束可表示正extent，保留隐含中心；反向使用identity surrogate。",
+      "values": {
+        "test_input_sizes": [
+          0.1,
+          1e-8
+        ],
+        "test_dtypes": [
+          "FP16",
+          "BF16",
+          "FP32",
+          "FP64"
+        ],
+        "nominal_size_dtype_cases": 8,
+        "wrapper_test": {
+          "layers": 6,
+          "device": "CPU",
+          "autocast": "BF16",
+          "fixed_integral_edges": -4,
+          "assertions": [
+            "FP32 output boxes",
+            "positive corner extents"
+          ]
+        },
+        "source_test_commit": "f56b210",
+        "current_decode_AST_match": true
+      },
+      "evidence": [
+        "01_manuscript/source/body.tex",
+        "01_manuscript/inputs/frozen_fdr_math.py",
+        "01_manuscript/inputs/geometry_evidence/current_function_check.json",
+        "01_manuscript/inputs/geometry_evidence/geometry_evidence_manifest.json",
+        "01_manuscript/inputs/geometry_evidence/correctness_test_summary.json",
+        "01_manuscript/inputs/geometry_evidence/archived_correctness/red.xml",
+        "01_manuscript/inputs/geometry_evidence/archived_correctness/numerical.xml",
+        "01_manuscript/inputs/geometry_evidence/archived_correctness/regression-final.xml",
+        "01_manuscript/inputs/geometry_evidence/source_f56b210/tests/test_no_server_correctness.py",
+        "01_manuscript/inputs/geometry_evidence/source_f56b210/tests/test_fdr_feasible_geometry.py",
+        "01_manuscript/inputs/geometry_evidence/source_f56b210/src/fdr_math.py"
+      ],
+      "limitations": [
+        "测试为受控合成数值检查，不证明训练失败频率、检测AP收益或所有实数范围安全。",
+        "1e-8为名义输入：转换至FP16后会下溢为0；八例不能均描述为实际严格正参考。",
+        "中心保持的针对性检查包括FP64普通/非对称情形；不能从PASS虚构具体修复后数值。",
+        "历史runtime JSONL缺失和secondary-summary触发率不作为正文主要证据。"
+      ]
+    },
+    {
+      "id": "mechanism_lqs",
+      "location": "Method layerwise quality shrinkage / sec:lrssupervision",
+      "claim": "同图同层合格匹配的detached IoU权重向组均值收缩，保持总和与排序并降低方差。",
+      "values": {
+        "formula": "q'=(1-alpha_l)*q+alpha_l*mean(q)",
+        "variance_factor": "(1-alpha_l)^2",
+        "alpha_first_layer": 0.25,
+        "alpha_final_layer": 0,
+        "decoder_layers": 6,
+        "FGL_coefficient": 0.15,
+        "minimum_group_size": 2,
+        "eligible_left_bin_condition": "0 < left_bin_index < 31 for all four edges"
+      },
+      "evidence": [
+        "01_manuscript/source/body.tex",
+        "01_manuscript/source/check_formulation.py",
+        "01_manuscript/inputs/frozen_fdr_loss.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_loss.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_math.py",
+        "01_manuscript/inputs/lrs_comparison_provenance.json"
+      ],
+      "limitations": [
+        "均值/总和/方差性质主要由公式与源码保证；不能自动推导独立AP收益。",
+        "全零组保持零；不提供无条件正监督下界。",
+        "严格代数性质在精确算术成立，实现在浮点中另作总和残差修正。"
+      ]
+    },
+    {
+      "id": "mechanism_selective_transfer",
+      "location": "Method correspondence, edge selection and joint box geometry",
+      "claim": "只对同图/同query/同GT匹配进行专家监督；混合学生保留边与拟替换专家边后再检查整框IoU。",
+      "values": {
+        "reference_frame": "same query fixed distribution frame for student, teacher and mixed decode",
+        "layer_checks": 6,
+        "edge_support": "[W0,W32]",
+        "rejected_pair_weight": 0
+      },
+      "evidence": [
+        "01_manuscript/source/body.tex",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/bpdd_loss.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/bpdd_capacity.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/bpdd_capacity_loss.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_head.py",
+        "02_evidence/audit_remediation_20260915/source-a43056a/src/fdr_math.py",
+        "01_manuscript/inputs/sampling_points.json"
+      ],
+      "limitations": [
+        "gate检查当前预测下拟转移target的几何质量，不保证下一次optimizer update后IoU改善。",
+        "同reference解码应按冻结源码解释，不能虚构reference rebase。",
+        "当前五臂表联合改变专家与监督，不隔离gate/KD独立准确率效应。"
+      ]
+    },
+    {
+      "id": "controlled_fia_pair",
+      "location": "Experiments five-arm comparison / G+B versus Full",
+      "claim": "G+B与Full为当前最直接匹配的FIA-off/on对照；共享源码和共享初始化一致。",
+      "values": {
+        "G_B_best_AP": 29.277,
+        "Full_best_AP": 30.109,
+        "best_delta_AP_points": 0.832,
+        "G_B_final_AP": 28.939,
+        "Full_final_AP": 30.065,
+        "final_delta_AP_points": 1.126,
+        "shared_source_files_identical": 239,
+        "shared_initial_state_tensors_identical": 994,
+        "extra_FIA_state_tensors": 19,
+        "FIA_initial_gamma": 0,
+        "Full_commit": "a43056af2a843ec9bae109d3420367c13f3bcef6",
+        "G_B_commit": "5ef57473e89e3b91aa5236a18066aed99f5afc0f"
+      },
+      "evidence": [
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-results.csv",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-results.csv",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-authority.json",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-authority.json",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/fia_controlled_pair_authority.json",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/joint-args.yaml",
+        "02_evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-args.yaml",
+        "02_evidence/audit_remediation_20260915/SOURCE_PAIR_RESOLUTION_ZH.md",
+        "02_evidence/audit_remediation_20260915/source_pair_comparison.json",
+        "02_evidence/audit_remediation_20260915/source-recovery.json",
+        "02_evidence/audit_remediation_20260915/efficiency/v3/initialization_probe.json",
+        "02_evidence/audit_remediation_20260915/efficiency/v3/measure.py"
+      ],
+      "limitations": [
+        "该对照支持专家配置下加入F的条件差异，不等于F在所有基座都有效。",
+        "两臂best epoch不同不等于协议失配；应同时保留100轮CSV与final方向。",
+        "共享state相同不意味着额外FIA参数不存在；额外分支gamma初始化为0。",
+        "不是多随机种子统计显著性证明。"
+      ]
+    },
+    {
+      "id": "source_identity",
+      "location": "Current implementation and naming provenance",
+      "claim": "当前VisDrone Full冻结源码、历史G+B源码、权重指纹与名称映射分别保存。",
+      "values": {
+        "Full_commit": "a43056af2a843ec9bae109d3420367c13f3bcef6",
+        "G_B_commit": "5ef57473e89e3b91aa5236a18066aed99f5afc0f",
+        "Full_best_checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6",
+        "baseline_epoch100_checkpoint_sha256": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+        "public_names": {
+          "GCDL": "historical LRS-GFDR",
+          "LQS": "historical LRS"
+        }
+      },
+      "evidence": [
+        "02_evidence/audit_remediation_20260915/source-a43056a",
+        "02_evidence/audit_remediation_20260915/source-5ef5747",
+        "02_evidence/audit_remediation_20260915/source-recovery.json",
+        "02_evidence/audit_remediation_20260915/source_pair_comparison.json",
+        "02_evidence/batch8_efficiency_20260916/v1/efficiency.json",
+        "01_manuscript/inputs/publication_name_mapping.json",
+        "01_manuscript/inputs/uavdt/author_confirmation.json",
+        "01_manuscript/inputs/uavdt/inventory.json"
+      ],
+      "limitations": [
+        "源代码与checkpoint哈希能证明记录身份，不等于所有权重实体均存储于此Git归档。",
+        "UAVDT作者确认单独登记，其旧源码冲突不能用当前VisDrone源码覆盖。",
+        "历史AC-BPDD命名不得自动映射为当前Capacity-BPDD-v3-Safe。"
+      ]
+    },
+    {
+      "id": "build_and_scope",
+      "location": "Current rendered manuscript / build_manifest.json, verification.json",
+      "claim": "归档针对当前13页稿的实际6表4图11公式，保留构建与内容核验。",
+      "values": {
+        "pages": 13,
+        "tables": 6,
+        "figures": 4,
+        "equations": 11,
+        "references": 25,
+        "rendered_table_labels": [
+          "tab:system",
+          "tab:uavdt",
+          "tab:lrsversions",
+          "tab:components",
+          "tab:sensitivity",
+          "tab:literature"
+        ],
+        "rendered_figure_labels": [
+          "fig:bubble",
+          "fig:overview",
+          "fig:externalclasses",
+          "fig:motivation"
+        ]
+      },
+      "evidence": [
+        "01_manuscript/build.py",
+        "01_manuscript/build_manifest.json",
+        "01_manuscript/verification.json",
+        "01_manuscript/source/body.tex",
+        "01_manuscript/inputs/original_source_hashes.json"
+      ],
+      "limitations": [
+        "build.py仍保存被pop的旧表定义；table_native/table_external/table_mechanism等存在不代表当前独立渲染表。",
+        "旧source_files绝对路径及hash不是物理原件；应结合归档实际文件和manifest查验。",
+        "本索引不是新实验，不改变现有数值与图表。"
+      ]
+    },
+    {
+      "id": "baseline_validation_provenance",
+      "location": "Table 4 Baseline validation row",
+      "claim": "Baseline验证AP 21.911与AP50 38.663来自历史统一独立复评，并关联相同epoch100权重。",
+      "values": {
+        "AP_fraction": 0.2191068567584638,
+        "AP50_fraction": 0.3866331521256526,
+        "AP75_fraction": 0.21302012140512083,
+        "images": 548,
+        "targets": 38759,
+        "input": 640,
+        "batch": 8,
+        "conf": 0.001,
+        "max_det": 300,
+        "NMS": false,
+        "predictions_per_arm": 164400,
+        "registered_report_sha256": "8FFD439C4C48044C0D1937019CE58DDB857CE8FCED64C0082CBC28EDD44333E8",
+        "checkpoint_sha256": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+        "display_percent": {
+          "AP": 21.911,
+          "AP50": 38.663,
+          "AP75": 21.302
+        }
+      },
+      "evidence": [
+        "02_evidence/baseline_strict_val/fdr-vs-control-strict-final-paper-metrics.json",
+        "02_evidence/baseline_strict_val/fdr-formal-seed0-control-d97e1eb7-epoch-0100.json",
+        "02_evidence/baseline_strict_val/FDR_RTDETR_L_STRICT_CONTROL_AND_RESULTS_2026-08-09_ZH.md",
+        "07_historical_context/results/main_results.json"
+      ],
+      "limitations": [
+        "未找到将21.911确认为100轮训练CSV最佳值的原始CSV证据；不得把历史转录标签等同训练原件。",
+        "该值不同于2026-09-15新冻结环境下的640重评值；应保持当前表实际使用口径，不混写为一次统一新复评。",
+        "checkpoint实体不必嵌入Git，按权重索引记录本地路径、发布地址与SHA256。"
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,26 @@
+{
+  "checkpoint": {
+    "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd/weights/best.pt",
+    "checkpoint_epoch": -1,
+    "checkpoint_sha256": "661A27E0BE7BD7E7685E7A8AC889D558E0051306FF0BB72ACC8F154C023A377A",
+    "model_class": "CapacityBPDDDetectionModel",
+    "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd.yaml",
+    "model_yaml_sha256": "50E490DB7D4EA3CA3B6EE17504B4AB0563E7A7B133139CC5E1092616F6343E4B",
+    "source_field": "model"
+  },
+  "evaluation": {
+    "conf": 0.001,
+    "imgsz": 640,
+    "nms": false,
+    "precision": "fp32",
+    "resize": "PIL bilinear stretch_xy",
+    "topk": 300,
+    "tta": false
+  },
+  "framework": "Ultralytics",
+  "parameters": 34942100,
+  "prediction_sha256": "B83D3B0F2CF62CB548650A23191E3C61E2C03297C6DEA003234D9D56D9B1078F",
+  "processed_images": 1610,
+  "status": "complete",
+  "variant": "LRS-GFDR + Capacity-BPDD-v3-Safe (BPDD-only)"
+}

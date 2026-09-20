@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{Complete-detector comparisons on converted-label VisDrone test. All use 640 input and at most 300 detections. Panels have separate evaluation pipelines and must be compared within each panel. D-FINE-L is our scratch-adapted reproduction; training recipes and effective batches differ (Sec.~\ref{sec:protocol}). Panel (b) is the primary external endpoint; panel (c) uses native validation selection.}
+\label{tab:system}\label{tab:native}\label{tab:external}
+\small\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.12}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llrrrr@{}}
+\toprule
+Model & Checkpoint & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AP}_{s}$ \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{(a) Native evaluator: complete-system improvement over the host}}\\[2pt]
+RT-DETR-L & Validation-selected & 17.743 & 32.254 & 17.565 & -- \\
+\textbf{Full (ours)} & Validation-selected & \textbf{23.604} & \textbf{41.241} & \textbf{23.546} & -- \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{(b) Common evaluator: final checkpoints (primary)}}\\[2pt]
+D-FINE-L (reprod.) & Final & 22.554 & 38.656 & 22.720 & 13.338 \\
+\textbf{Full (ours)} & Final & \textbf{24.133} & \textbf{41.885} & \textbf{24.044} & \textbf{14.575} \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{(c) Common evaluator: validation-selected checkpoints (secondary)}}\\[2pt]
+D-FINE-L (reprod.) & Validation-selected & 22.679 & 38.940 & 22.713 & 13.478 \\
+\textbf{Full (ours)} & Validation-selected & \textbf{24.229} & \textbf{42.009} & \textbf{24.208} & \textbf{14.618} \\
+\bottomrule
+\end{tabular*}
+\end{table*}

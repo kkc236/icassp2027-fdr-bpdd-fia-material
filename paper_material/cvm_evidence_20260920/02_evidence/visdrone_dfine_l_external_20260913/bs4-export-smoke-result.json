@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "scope": "two real validation images, CPU export + ID mapping + common COCO evaluation; not final accuracy",
+  "joint_completion_epoch": 100,
+  "output": "/root/sj-tmp/eval/visdrone_dfine_bs4_cross_20260914/export-smoke-x7wd3_j6"
+}

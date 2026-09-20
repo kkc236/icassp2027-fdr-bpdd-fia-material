@@ -1,0 +1,748 @@
+ Computational Visual Media
+ https://doi.org/10.26599/CVM.2025.9450474                              Vol. 11, No. 3, June 2025, 483–496
+
+ Research Article
+
+
+
+FastMAE: Efficient masked autoencoder with offline tokenizer
+
+Meng-Hao Guo1 , Chen Wang2 , Wei Liu3 , and Shi-Min Hu1 ( )
+
+c The Author(s) 2025.
+
+
+Abstract Masked autoencoders (MAEs) have recen-                  has been widely adopted in both computer vision
+tly achieved great success in computer vision.                   and natural language processing (NLP). Self-
+They can automatically extract representations from              supervised learning (SSL), aiming to learn a general
+unlabeled data and improve the performance of                    representation from unlabeled data, is a popular
+various downstream tasks. However, training an MAE               method during the pre-training stage. The crucial
+model requires substantial resources, which limits               step in SSL is to define the pretext task. In recent
+their accessibility to many academic institutions: often         years, several pretext tasks have emerged, including
+laboratories in universities lack the necessary resources.       geometric learning [1], contrastive learning [2–5],
+This issue significantly hinders the development of              generative learning [6, 7]. We focus on one of the
+this field. In this paper, we propose FastMAE, an                generative methods, masked image modeling (MIM).
+efficient MAE approach. Inspired by the idea of offline             MIM was inspired by the success of masked
+tokenizers in natural language processing, FastMAE
+                                                                 language modeling (MLM) in NLP [8], which
+presents a novel way to build an offline vision tokenizer,
+                                                                 first randomly masks some words in a sentence
+which can provide high-level semantics in an efficient
+                                                                 and then reconstructs them. BERT [8] pioneers
+way. Benefiting from the offline tokenizer, FastMAE
+                                                                 MLM and uses a transformer as the network
+becomes an efficient vision learner. Our experiments
+demonstrate that FastMAE can achieve 83.6% accuracy              architecture. BEiT [6], the first work to introduce
+with ViT-B in only 18.8 h on 8 NVIDIA Tesla-                     MIM into computer vision, tries to conduct a visual
+V100 GPUs, which is 31.3× faster than the original               codebook by using discrete VAE (dVAE) [9] as the
+MAE, providing a resource friendly baseline for the              reconstruction target to provide semantic guidance.
+computer vision community. Moreover, it also achieves            Subsequently, many advanced MIM-based methods
+comparable performance to state-of-the-art methods.              have appeared, focusing on various aspects of the
+We hope our research will attract more people to engage          problem, including the reconstruction target [10,
+in MAE-related research and that we can advance its              11], encoder architecture [12–14], high-dimension
+development together.                                            input [15], and contrastive learning [16, 17]. In
+Keywords deep learning; computer vision; masked                  this paper, we concentrate on the reconstruction
+               image modeling (MIM)                              target.
+                                                                    There are two kinds of reconstruction target:
+                                                                 low-level targets and high-level targets. MAE [7]
+1 Introduction                                                   is a representative work considering a low-level
+The pretraining followed by fine-tuning paradigm target. It changes the reconstruction target from
+                                                                 a dVAE to raw pixels, improving performance.
+1 Department of Computer Science, Tsinghua University, Beijing Furthermore, MAE does not put masked tokens
+  100084, China. E-mail: M.-H. Guo, gmh20@mails.tsinghua.edu.cn; into the encoder, which significantly reduces the
+   S.-M. Hu, shimin@tsinghua.edu.cn ( ).
+                                                                 computational overhead and allows models to
+2 University of Pennsylvania, Philadelphia, PA 19104, USA.
+                                                                 be easily scaled up to billions of parameters.
+   E-mail: cw.chenwang@outlook.com.
+3 Tencent Data Platform, Shenzhen 518057, China. E-mail: However, there are obvious gaps between low-level
+  wl2223@columbia.edu.                                           targets and common downstream tasks such as
+ Manuscript received: 2024-01-08; accepted: 2024-12-18           recognition, detection, and segmentation. To address
+
+                                                         483
+484                                                                              M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+this, researchers have tried to introduce high-level       2     Related work
+features as reconstruction targets by building discrete
+                                                           2.1    Masked language modeling
+codebooks [6, 18], adopting exponential moving
+average (EMA) teachers [16, 19, 20], and using             Masked language modeling (MLM) is a popular pre-
+frozen online teachers [10, 21–24]. However, obtaining     training approach in NLP. It first randomly masks
+high-level reconstruction targets requires additional      a few tokens and then recovers their positions in a
+computation. As can be seen, reconstructing low-level      pre-defined dictionary. BERT [8] was the first work
+and high-level targets each has its own advantages and     to present masked language modeling. It further
+disadvantages. The former is efficient and less costly,    proposed next sentence prediction as another pretext
+but neglects critical high-level semantic information      task. With the help of these two pretext tasks,
+for downstream tasks. Recovering high-level targets        BERT successfully learns general representations of
+can provide beneficial semantic information, but           words and sentences in context from many unlabeled
+requires an online teacher model to build high-level       sentences. It opened the era of large-scale pre-training
+guidance, which brings extra computation and run-          in NLP. Many NLP MLM-based models followed, such
+time memory overhead, which conflicts with our goal        as ALBERT [25] and ELECTRA [26]. The definition
+here to reduce computation.                                of proxy tasks is crucial for the success of MLM.
+   In this paper, we present a novel MIM recon-            Recovering masked words intuitively brings two clear
+struction target that can not only capture high-           bonuses: high-level semantics and efficiency.
+level semantics, but also provide superior efficiency.
+                                                           2.2    Masked image modeling
+Our idea is inspired by the success of using an
+offline codebook in masked language modeling. MLM          Inspired by the success of MLM, MIM is a generative
+defines a semantic codebook before pretraining, which      self-supervised learning technique designed to apply
+allows it to obtain semantics quickly. Motivated by        the achievements of MLM to computer vision.
+this strategy, we strive to develop an offline visual      BEiT [6] introduced MIM [27–29] to computer
+tokenizer, which can provide high-level semantics in       vision. It randomly masks about 40% of the tokens
+an efficient way. Using this offline visual tokenizer,     and reconstructs their discrete encodings provided
+we can build an efficient and effective MIM model          by dVAE. BEiT has provided significant advances
+which we call FastMAE.                                     in computer vision, particularly in scaling up the
+   The contributions of this paper are in summary:         model size. Given the outstanding performance of
+• The concept of an offline visual tokenizer, which        BEiT, numerous works have followed-up, resulting
+     can efficiently provide a high-level semantic         in improvements to MIM in several directions.
+     reconstruction target for an MIM method.              ConvMAE [12], HiViT [13], and GreenMIM [30]
+     Benefiting from it, we present an efficient MIM       aim to enhance the MIM encoder by introducing
+     method: FastMAE.                                      hierarchical architectures or convolution operations.
+• In order to build the offline tokenizer, we propose      Long-sequence MAE [15] explores the input influence
+     a strategy for image discretization, enabling         during the pre-training stage. CMAE [16] introduces
+     efficient querying of image features without          contrastive learning into MIM and enhances its
+     compromising the performance of the MIM               semantic comprehension ability. EVA [31] explores
+     method.                                               the scaling up capability of MIM. VideoMAE [32]
+• Extensive experiments which demonstrate that             extends MIM to video processing.
+     our method significantly speeds up the pre-             This paper focuses on reconstruction targets
+     training of MAE (by 31.3×) and achieves               of MIM models. Many previous works, including
+     comparable results with state-of-the-art (SOTA)       MAE [7], PeCo [33], MVP [10], etc., have studied
+     methods. More importantly, we provide a               different MIM reconstruction targets. They focus
+     lightweight baseline, which requires only 18.8        on two main directions. On one hand, existing
+     h on 8 NVIDIA Tesla-V100 GPUs for the pre-            methods reconstruct low-level targets such as raw
+     training stage. It enables researchers with limited   pixels and image gradients. However, a significant
+     computing resources to participate in and advance     semantic gap exists between these targets and
+     this field.                                           downstream tasks, such as image classification,
+FastMAE: Efficient masked autoencoder with offline tokenizer                                                                 485
+
+
+making them less effective. On the other hand,                 with linear complexity, reducing the computational
+researchers have explored use of high-level semantic           overhead of transformers. SwinV2 [56] explores
+features as reconstruction guidance, e.g., in DINO             the scaling-up capability of vision transformers.
+teacher [11], CLIP teacher [10], and EMA teacher [19].         DeiT [57] improves the training recipe for vision
+Nevertheless, using an online teacher brings extra             transformers. SegFormer [58], PCT [43], UniFormer
+computational overhead, which conflicts with our goal          [59], VideoSwin [60], TransGAN [61], etc., broaden
+of efficient training. In this paper, we propose a new         the application field of vision transformers. In this
+reconstruction target using an offline vision tokenizer,       paper, following MAE [7], we mainly focus on how to
+which can combine the efficiency of low-level targets          train a better basic ViT [55].
+with the semantics of high-level targets.
+2.3   Contrastive learning                                     3     Method
+Aiming to discriminate between different instances,            3.1     General description
+contrastive learning [3, 4, 34–36] is a self-supervised
+                                                               As Fig. 1 shows, the general formulation of masked
+learning method. It was introduced into vision by
+                                                               image modeling can be summarized as
+InstDisc [2], which presents an instance-level non-
+parametric classifier to learn image representations.                   MIM = Loss((g(Ifull ), f (Imasked ))  (1)
+The key to the success of contrastive learning lies            where g and f denote different functions, which
+in the selection of positive and negative samples.             can be parameterized as neural networks. g is
+Typically, positive samples can be obtained by two             called the teacher model, which can be a frozen
+different augmentations of the same image, while               model, a HoG function, an identity function, etc.
+the use of negative samples has been explored by               f is an autoencoder (AE), which contains both an
+researchers in different ways. SimCLR [4] increases            encoder and decoder. Ifull denotes an original input
+the number of negative samples by adopting a large             image and Imasked represents an image degraded by
+batch size, while BYOL [5] argues that negative                masking some regions. The whole MIM process can
+samples are not necessary for contrastive learning. In         be regarded as a representation learning process by
+addition to exploring positive and negative samples,           reconstructing image features g(Ifull ) from masked
+some other methods consider multi-view contrastive             image Imasked .
+learning [37], cluster-based approaches [38], dense              In this paper, we wish to develop an efficient
+prediction tasks [39], etc.                                    MIM method for researchers with limited resources.
+                                                               As explained in the introduction, we observe that
+2.4   Vision transformers
+                                                               reconstruction targets limit the efficiency of current
+Inspired by the success of transformers in NLP,                MIM methods, as shown in Table 1. Thus, we
+vision transformers (ViTs) [40–54] were introduced             aim to address this problem by providing better
+into computer vision as a basic backbone network.              guidance (through function g). We hope the proposed
+Recently, ViTs have quickly conquered various                  reconstruction target can efficiently provide high-level
+leaderboards and challenged the dominant role of               semantics for the masked image modeling method.
+convolutional neural networks (CNNs) in computer                 Specifically, we intend to change function g from an
+vision. ViTs were brought into computer vision                 inference process to a query (or index lookup) process
+by ViT [55], which divides an image into 16 ×                  with O(1) computational complexity, which can be
+16 words and treats images as 1D sequences.                    written as
+This allows ViT to process images with natural                           g = inference(x) → g = query(x)            (2)
+language methods. Several attempts have been
+made to improve ViTs. Swin transformer [40] makes              Table 1 Attributes of different reconstruction targets. We desire
+transformers more suitable for vision tasks by                 semantic reconstruction targets that can be quickly obtained
+
+computing self-attention in local windows. PVT [42]                     Target             Rapid access          Semantics
+and PVTv2 [41] enhance vision transformers by                        Image target               X                    ×
+introducing an hierarchical architecture. External                   Online target              ×                    X
+
+attention [44] explores a new attention model                        Offline target             X                    X
+486                                                                                               M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+
+
+Fig. 1 Pipeline of masked image modeling. The difference between our method and others LIES in the reconstruction target: existing methods
+usually recover original images or an online teacher target. Our FastMAE reconstructs an offline target.
+
+
+
+ Here, the right arrow → denotes “can be transformed                   offline target are clearly shown in Table 1 and Fig. 2.
+into”. To achieve this, we present an offline tokenizer.               Our core idea is to exchange expensive computation
+As Fig. 3 shows, it first preprocesses required tokens                 and run-time memory with cheap disk storage. It
+and saves them on disk in the offline stage. Then,                     is common in computer science, to trade space for
+in the pre-training stage, we can query the related                    time in this way: for instance, bucket sort [62] also
+tokens from the disk. In this way, we can reduce                       adopts a similar idea. In the following, we introduce
+computational overhead and run-time memory at                          how we construct an offline tokenizer and pre-train
+the cost of disk storage. The advantages of our                        FastMAE.
+
+
+
+
+                                       Fig. 2   Time consumed for different reconstruction targets.
+FastMAE: Efficient masked autoencoder with offline tokenizer                                                                         487
+
+
+                                                                         human brain’s encoding of natural language.
+                                                                            In general, there are two ways to obtain high-
+                                                                         level semantics. The first one is to adopt an online
+                                                                         siamese network and exponential moving average
+                                                                         (EMA) updating [3, 16], an approach commonly used
+                                                                         in contrastive learning. The second is to use an frozen
+                                                                         online pre-trained teacher [63], such as MAE [7],
+                                                                         iBOT [20], DINO [64], etc., which provides semantics
+                                                                         in the pre-training process, an approach commonly
+                                                                         used in masked image modeling.
+                                                                            We apply the second strategy and employ a frozen
+                                                                         teacher. Differing from the use of online teachers,
+Fig. 3 Offline process and pre-training process. Each white box is
+                                                                         we use an offline tokenizer to provide high-level
+a whole and the starting point of each query is at the intersection of   information and substitute the inference process with
+the white lines, such as the red box.                                    a query process with O(1) complexity. Compared to
+                                                                         online teachers, it replaces the computational cost
+3.2     Offline tokenizer                                                and run-time memory overhead with cheaper disk
+3.2.1    Goals                                                           storage.
+Before introducing the visual offline tokenizer, let us                  3.2.3    Discretizing images
+explore the reasons why the reconstruction targets in                    Differing from natural language, raw images are
+MLM can efficiently provide high-level information.                      continuous, which makes them unavailable for offline
+We believe the following two points are crucial. Firstly,                querying. Dosovitskiy [55] proposed regarding a local
+the tokens in natural language processing are discrete.                  region (a 16 × 16 patch) as a word. However, as
+The discrete property of natural language words                          shown in Fig. 4(a) → 4(c), he augments images by
+implies that tokens are finite and can be encoded                        randomly scaling and cropping them, resulting in
+in a pre-defined dictionary, e.g., encoding cat as 1,                    an countless number of possible results, which also
+dog as 2, human as 3, etc. After encoding, words can                     cannot be saved and queried offline. Instead, we adopt
+be quickly indexed with O(1) complexity. The second                      a different processing strategy to discretize images, as
+point is that language is an abstract expression of                      shown in Fig. 4(a) → 4(b) → 4(d). We treat each 16
+human consciousness; it has been pre-processed by                        × 16 region as an inseparable unit, and the starting
+the human brain. Its semantic level is higher than                       coordinates of our cropped images in Fig. 4(b) →
+an image. Due to these two characteristics of natural                    4(d) are always located at coordinates at a multiple
+language, MLM can achieve offline encoding and                           of 16 such as (0, 0), (0, 16), (16, 0), etc. In this
+provide high-level information efficiently.                              setting, we can randomly choose a cropped view from
+   Compared to natural language, images are                              the set Fig. 4(d) for each training iteration. Due to
+continuous and raw representations lack human
+abstraction, so do not enjoy the above two properties.
+These obstacles prevent MIM from building an offline
+tokenizer and from acquiring high-level guidance
+efficiently. Thus, in this paper, our goal is to give
+images the above two properties, to achieve an
+efficient masked image modeling method.
+3.2.2    High-level semantics
+In visual self-supervised learning, providing high-level
+supervision usually refers to using an intermediate
+layer of a neural network as supervision instead of
+                                                                         Fig. 4 Image discretization. Note that in the process (b) Middle
+raw image supervision. The idea behind this is to                        image → (d) Our augmented view, each starting point coordinate in
+use neural networks to encode images instead of the                      the red box is a multiple of 16.
+488                                                                               M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+the above discretization rule, we can easily index the      strategies to adjust the learning rate to improve the
+correspondence between image patches and off-shelf          training process. We applied various offline tokenizers
+high-level semantic features, as introduced in the next     to provide high-level information such as MAE [7] and
+section.                                                    DINO [64]. ViT-S/B was selected as the pre-trained
+3.2.4 Pre-training                                          encoder. Results after 60 and 300 epochs are reported.
+As Fig. 3 shows, the whole process can be divided           The 60 epoch version is intended as a lightweight
+into two parts, an offline stage and a pre-training         baseline, which only needs to be trained on 8 NVIDIA
+stage. In the offline stage (see Fig. 3(a)), we take the    Tesla-V100 GPUs for 18.8 h and speeds up MAE by
+resized image (as shown in Fig. 4(b)) as input, and         31.3 times. It serves as a computing friendly baseline
+process it by using a tokenizer (the offline teacher).      for researchers with limited computational resources.
+Then, we save the inference results on disk and wait        We use the 300 epoch version for fair comparisons to
+for usage in the pre-training stage. In the pre-training    existing SOTA methods.
+stage, (see Fig. 3(b)), we randomly select a cropped        4.1.2 Fine-tuning
+sample from the set in Fig. 4(d) each time as the input     We kept the setting the same as for MAE [7]. We
+view. Then, we can efficiently query the off-shelf high-    applied the AdamW [70] optimizer with a weight
+level semantic features obtained in the offline stage       decay of 0.05, and an initial learning rate of 5 × 10−4 .
+to get high-level guidance quickly, which significantly     Drop path rate and layer decay were also applied,
+speeds up the pre-training process. We now given            and set to 0.1 and 0.65, to avoid overfitting. We fine-
+an example using a 224 × 224 input image. The first         tuned our models for 100 epochs with a batch size
+cropped sample in Fig. 4(d) corresponds to the region       of 1024. During fine-tuning, we adopted strong data
+from (0, 0) to (14, 14) in off-the-shelf features. In the   augmentation like MAE, including random clipping,
+same way, the second cropped sample corresponds to          random horizontal flipping, mixup, cutmix, etc. We
+the region from (1, 0) to (15, 14) in the off-the-shelf     used the same configuration for fine-tuning ViT-B
+features.                                                   and ViT-S.
+                                                            4.1.3 Linear probing
+4     Experiments                                           Linear probing means adding a linear classifier on
+                                                            the top of the encoder and only training the added
+To demonstrate the effectiveness and efficiency of          classifier. For a fair comparison, our configuration
+our proposed FastMAE, we have conducted extensive           follows MAE [7]. We trained the linear classifier for
+quantitative and qualitative experiments on various         90 epochs using the LARS optimizer with a learning
+benchmarks, including ImageNet [65], COCO [66],             rate of 0.1, and a batch size 16,384.
+and ADE20K [67]. Experiments were conducted using           4.1.4 Segmentation settings
+PyTorch [68] and Jittor [69]. Our main results is
+                                                            Following the original MAE [7], we conducted
+that our 60 epochs baseline achieves comparable
+                                                            semantic segmentation experiments based on
+results to MAE [7] with 1600 training epochs. For 300
+                                                            UperNet [71]. We adopted the AdamW [70] optimizer
+epochs training, we show that obtains comparable
+                                                            with an initial learning rate of 10−4 , weight decay
+performance to SOTA models.
+                                                            0.05. batch size 16, drop path rate 0.1 and input size
+4.1     Experimental setting                                512 × 512. Poly policy was used to adjust the learning
+4.1.1    Pre-training                                       rate and a warm-up strategy was also used. 160,000
+Following MAE [7], we pretrained our FastMAE                training iterations were used for a fair comparison.
+on the ImageNet [65] dataset. The input size and            All segmentation experiments were conducted on the
+patch size were set as 224 × 224 and 16, respectively,      ADE20K [67] dataset.
+resulting in a sequence of length 196. Then, we             4.1.5 Detection settings
+randomly masked 75% to obtain a sequence of                 We used Mask R-CNN [72] as our detection head.
+length 49 as our input. For training, we adopted the        With a 1× (12 epochs) training schedule, we applied
+AdamW [70] optimizer with an initial learning rate of       a AdamW optimizer with an initial learning rate of
+1.5 × 10−4 , a batch size 4096, and weight decay 0.05.      0.0003, weight decay 0.05, drop path rate 0.2, and
+We applied a cosine annealing schedule and warm-up          batch size 16. Linear learning rate decay was used to
+FastMAE: Efficient masked autoencoder with offline tokenizer                                                                           489
+
+
+adjust the learning rate. All models were based on                      Table 3 Ablation study on teacher models. DINO-B means the
+                                                                        DINO method with ViT-B backbone. -L means ViT-L model. All
+mmdetection [73] and COCO [70] datasets.                                encoder models are ViT-B
+
+4.2     Bag of tricks                                                       Teacher         Offline        Online         Accuracy (%)
+                                                                            MAE-B               ×            X                84.4
+4.2.1    All layers matter
+                                                                            MAE-B               X            ×                84.3
+Most methods only supervise the output of the last
+                                                                            MAE-L               ×            X                84.6
+decoder layer. In our experiments, we found that                            DINO-B              ×            X                84.5
+only supervising the last decoder layer does not                            DINO-B              X            ×                84.5
+provide sufficient guidance. We claim in addition to                        CLIP-B              ×            X                84.4
+supervising the last decoder layer, all encoder layers                      CLIP-B              X            ×                84.4
+need to be supervised. A similar idea was proposed                          iBOT-B              ×            X                84.7
+in ConvMAE [12], naming it a multi-scale decoder,                           iBOT-B              X            ×                84.6
+which supervises the different hierarchical outputs.
+                                                                        Table 4 Ablation study on bag of tricks, using ViT-B as our encoder
+Instead, we supervise all outputs of encoder layers                     with 300 training epochs and offline DINO-B as teacher model. ALM =
+and provide a stronger signal.                                          all layers matter
+
+4.2.2    Guidance normalization                                           Patch Norm        Channel Norm         ALM       Accuracy (%)
+                                                                                ×                   ×                ×         83.9
+Some existing methods do not reconstruct the original
+                                                                                X                   ×                ×         84.2
+target directly, but reconstruct a normalized target.
+                                                                                ×                   X                ×         84.1
+For an F ∈ RN ×C target, MAE [7] normalizes
+                                                                                ×                   ×               X          84.1
+on channel dimension and TEC [21] normalizes on
+                                                                                ×                   X               X          84.4
+patch dimension. In our experiments, we also found                              X                   ×               X          84.5
+that normalizing guidance can significantly improve
+the fine-tuned accuracy. We compare different
+                                                                        also saves 15%–45% of run-time memory. Of course,
+normalizations in Table 4.
+                                                                        we also note that the offline teacher consumes about
+4.3     Ablation study                                                  1 TB of disk (which only costs about $70 for an
+4.3.1    Offline teacher vs. online teacher                             SSD, much cheaper than the saved computational
+We compare offline teachers and online teachers                         resources and run-time memory). We note that the
+in Table 3 and Table 2. Table 3 shows that there is a                   offline teacher does not bring additional overhead
+little difference (less than 0.1%) between online and                   as the teacher model becomes larger, which is
+offline versions for different teacher models, including                beneficial when using larger models as a guide
+DINO [64], MAE [7], iBOT [20], and CLIP [80]. As                        such as EVA [31].
+for other influences, we provide a comprehensive                        4.3.2    Choice of teacher
+comparison of online and offline teachers in Table 2,                   Table 3 shows results of experiments to compare
+which demonstrates that offline teachers have a clear                   different teachers, including different models and
+advantage in terms of speed and run-time memory.                        different sizes. We can see that teachers based on
+For example, an offline teacher achieves 2.7 times                      contrastive learning (DINO) have slightly better
+speedup when using ViT-Large as the online teacher                      results than teachers based on MIM (MAE). This
+and 1.8 times speedup when using ViT-Base as the                        indicates that the features learned by contrastive
+online teacher. Furthermore, the offline teacher mode                   learning have higher semantics. Furthermore, a larger
+
+Table 2 Ablation study on online teacher and offline teacher. Our model is faster than MAE because FastMAE only has a one layer decoder.
+All student backbones were ViT-B
+
+  Method        Teacher      Epoch      Online      Offline    Time (s)         Run-time memory (MB)        Disk (TB)      Accuracy (%)
+  MAE            Image        300         —           —          0.14                    7857                    0              82.9
+  FastMAE       MAE-B         300          ×          X          0.09                    5371                  0.94             84.3
+  FastMAE       MAE-B         300         X           ×          0.16                    6225                    0              84.4
+  FastMAE        MAE-L        300          ×          X          0.09                    5372                  1.25             84.6
+  FastMAE        MAE-L        300         X           ×          0.25                    7805                    0              84.7
+490                                                                                           M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+teacher can provide more semantic information and                   training strategies and settings, including optimizer,
+achieve better results than the base teacher.                       batch size, learning rate, etc., as for the repre-
+4.3.3    Epoch, decoder depth, architecture                         sentative work MAE [7]. We show the results of our
+The number of epochs is a common hyperparameter                     method after 60 epochs and 300 epochs. Table 6
+in self-supervised learning; usually, more epochs                   compares existing methods to our FastMAE on
+will lead to better results. The same applies to                    the ImageNet validation set. It demonstrates that
+FastMAE, as shown in Table 5, FastMAE achieves                      FastMAE after 300 epochs surpasses other popular
+83.6% accuracy after 60 epochs, and after 300 epochs,               methods trained for more epochs, including MAE [7],
+it achieves 84.6% accuracy, As for the decoder depth,               SimMIM [75], iBOT [20], PeCo [33], ConvMAE [12],
+we performed an ablation study from a 1-layer decoder               etc. in terms of fine-tuned accuracy metrics. Figure 5
+to a 4-layer decoder and found that decoder depth                   clearly shows that FastMAE is 31.3 times faster than
+only slightly influences fine-tuned accuracy. Therefore,            MAE [7] while reaching 83.6% top-1 accuracy. Our
+in order to save computation and run-time memory,                   experiments on 8 NVIDIA Tesla-V100 GPUs show
+we choose a one layer transformer as our decoder                    that FastMAE only needs 18.8 h to achieve 83.6%
+by default. Table 5 also compare different sizes of                 top-1 accuracy, but MAE takes almost 600 h.
+student architecture (ViT-B vs. ViT-S). It indicates                4.4.2    Semantic segmentation
+that our method is suitable for different scales of                 Aiming to assign each pixel a semantic label,
+student models and with larger model achieves better                semantic segmentation is a fundamental vision
+performance.                                                        task. Like for image classification, for fairness of
+4.3.4    Bag of tricks                                              comparison, we also used the same training and
+The bag of tricks mainly comprises feature nor-                     inference settings used for MAE [7]. For instance,
+malization and all layers matter. Table 4 considers                 we fine-tuned our method for 100 epochs with batch
+two normalization methods, channel normalization,                   size 16. Furthermore, we used UperNet [71] as
+and patch normalization. We found that patch                        our segmentation head, to keep the same setting
+normalization gives a slightly better result than                   as for previous methods. We conducted semantic
+channel normalization and patch normalization                       segmentation experiments on the ADE20K dataset.
+achieves a 0.3% improvement compared to using                       As Table 7 shows, FastMAE after 60 epochs achieves
+the original features. Therefore, we choose patch                   comparable results to those of popular models
+normalization by default. Furthermore, we find                      including MAE [7]. Our 300-epoch model, achieves
+that using all layers matter brings about 0.2%                      50.7 mIoU and outperforms all other models including
+improvement to FastMAE.                                             iBOT [20] and PeCo [33].
+                                                                    4.4.3    Object detection and instance segmentation
+4.4     Comparison to existing methods
+                                                                    For object detection, we chose Mask R-CNN for
+To demonstrate the effectiveness of our method, we
+also compared FastMAE to existing MIM methods
+on common visual tasks, including image recognition,
+object detection, semantic segmentation, and instance
+segmentation.
+4.4.1    Image classification.
+For fairness of comparison, we adopted the same
+Table 5 Ablation study on encoder models and training epochs. All
+teachers are offline teachers
+
+   Encoder         Epochs        Teacher         Accuracy (%)
+   ViT-B              60         DINO-B              83.5
+   ViT-B             300         DINO-B              84.3
+   ViT-B              60         iBOT-B              83.6           Fig. 5 Comparison of FastMAE to MAE. Horizontal axis: training
+   ViT-B             300         iBOT-B              84.6           time. Vertical axis: accuracy after fine-tuning. FastMAE only needs
+                                                                    18.8 h to achieve 83.6% top-1 accuracy while MAE takes almost 600 h.
+   ViT-S             300         iBOT-B              81.8
+                                                                    To reach the same accuracy, MAE takes 31.3× longer than FastMAE.
+FastMAE: Efficient masked autoencoder with offline tokenizer                                                                                 491
+
+
+Table 6 Comparison to state-of-the-art methods on the ImageNet validation set. FT accuracy = fine-tuned accuracy. Linear accuracy denotes
+linear probing accuracy. ? denotes offline teacher
+
+  Method                Epochs         Guidance        Pre-training data      Architecture           FT accuracy (%)        Linear accuracy (%)
+  Supervised               300           Label               IN1K                     ViT-B                 81.8                    —
+  MoCo v3 [18]             300        EMA Teacher            IN1K                     ViT-B                 83.0                   76.2
+  DINO [18]                400        EMA Teacher            IN1K                     ViT-B                 83.3                   77.3
+  BEiT [6]                 300          DALLE           IN1K+D250M                    ViT-B                 83.2                   37.6
+  MAE [7]                  300           Image               IN1K                     ViT-B                 82.9                   61.5
+  MAE [7]                1600            Image               IN1K                     ViT-B                 83.6                   67.8
+  CIM [74]                 300           Image               IN1K                     ViT-B                 83.3                   67.8
+  MaskFeat [11]            800           HoG                 IN1K                     ViT-B                 84.0                    —
+  CAE [18]                 300          Encoder              IN1K                     ViT-B                 83.6                   64.1
+  iBOT [20]              1600         EMA Teacher            IN1K                     ViT-B                 84.0                   77.1
+  SimMIM [75]              800           Image               IN1K                     ViT-B                 83.8                   56.7
+  SIM [76]               1600         EMA Teacher            IN1K                     ViT-B                 84.1                   78.0
+  SdAE [77]                300        EMA Teacher            IN1K                     ViT-B                 84.1                   64.9
+  MVP [10]                 300           CLIP            OpenAI400M                   ViT-B                 84.4                   75.4
+  ConvMAE [12]             400           Image               IN1K                 ConViT-B                  84.4                   66.9
+  PeCo [33]                300           Image               IN1K                     ViT-B                 84.1                    —
+  GreenMIM [30]            800           Image               IN1K                     Swin-B                83.8
+  Data2Vec [78]            800        EMA Teacher            IN1K                     ViT-B                 84.2                    —
+  HiViT [13]               800           Image               IN1K                     HiViT-B               84.2                    —
+  BoostedMAE [19]          800        EMA Teacher            IN1K                     ViT-B                 84.2                   66.1
+  FastMIM [79]             400           Image               IN1K                     ViT-B                 83.6                    —
+                                             ?
+  FastMAE                   60          iBOT                 IN1K                     ViT-B                 83.6                   69.3
+  FastMAE                  300          iBOT?                IN1K                     ViT-B                 84.6                   72.8
+
+
+Table 7 Comparison to state-of-the-art methods on the ADE20K           and instance segmentation results in Table 8. Under
+validation set. For fairness, we used ViT-B as the backbone for all
+methods                                                                Mask R-CNN 1×, our 60-epoch model achieves better
+                                                                       performance than a 300 epoch BEiT [6] model for
+    Method                 Epochs           SSL          mIoU
+                                                                       both object detection and instance segmentation. Our
+    DeiT [57]                 300            ×           47.0
+                                                                       300-epoch model clearly outperforms the MAE 1600-
+    MoCo V3 [18]              300            X           47.2
+    DINO [64]                 400            X           47.2
+                                                                       epoch model for both object detection and instance
+    BEiT [6]                  300            X           44.7
+                                                                       segmentation.
+    BEiT [6]                  800            X           45.6
+    MAE [7]                   300            X           45.8         Table 8 Object detection and instance segmentation on COCO
+    MAE [7]                  1600            X           48.1         2017 dataset. Mask R-CNN 1× denotes models are based on Mask
+                                                                      R-CNN [72] and we train them for 12 epochs. APb and APm refer
+    CIM [74]                  300            X           43.5
+                                                                      to bounding box AP and mask AP respectively. † represents our
+    iBOT [20]                1600            X           50.0         implementation. For fair comparison, ViT-B is the backbone for all
+    CAE [18]                  300            X           48.3         methods
+
+    CAE [18]                 1600            X           50.2                                                Mask R-CNN 1×
+                                                                           Method
+    PeCo [33]                 800            X           48.5                             Epochs     APb    APb50   APb75   APm    APm
+                                                                                                                                     50    APm
+                                                                                                                                             75
+    BootMAE [19]              800            X           49.2              MoCo v3            300    45.5    67.1   49.4    41.5    65.5   44.4
+    FastMAE                      60          X           47.8              DINO               400    46.8    68.6   50.9    41.5    65.3   44.5
+    FastMAE                   300            X           50.7              BEiT               300    39.5    60.6   43.0    35.9    57.7   38.5
+                                                                           BEiT               800    42.1    63.3   46.0    37.8    60.1   40.6
+
+our detection method, as used in previous methods.                         PeCo               800    47.8    —       —      42.6     —      —
+                                                                                  †
+All other settings such as batch size, tuning epochs,                      MAE             1600      47.6    68.4   52.1    42.3    65.6   45.7
+
+learning rate, were the same as used by MAE [7] for                        FastMAE              60   46.7    67.7   50.9    41.5    64.6   44.4
+
+fairness of comparison. We present object detection                        FastMAE            300    49.0   69.9    53.7    43.3   66.8    46.7
+492                                                                                     M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+5     Conclusions                                               [5] Grill, J.-B.; Strub, F.; Altché, F.; Tallec, C.; Richemond,
+                                                                    P.; Buchatskaya, E.; Doersch, C.; Avila Pires, B.; Guo,
+In this paper, we have presented an efficient masked
+                                                                    Z.; Gheshlaghi Azar, M.; et al. Bootstrap your own
+image modeling method: FastMAE. The core idea of                    latent-a new approach to self-supervised learning. arXiv
+FastMAE is that an offline teacher is a more efficient              preprint arXiv:2006.07733, 2020.
+approach than an online teacher for masked image                [6] Bao, H.; Dong, L.; Piao, S.; Wei, F. Beit: BERT
+modeling. Benefiting from FastMAE, we can complete                  pre-training of image transformers. arXiv preprint
+the pre-training phase of masked image modeling in                  arXiv:2106.08254, 2021.
+only 18.8 h with 8 NVIDIA Tesla-V100 GPUs, which                [7] He, K.; Chen, X.; Xie, S.; Li, Y.; Dollár, P.; Girshick,
+enables more researchers with limited computing                     R. Masked autoencoders are scalable vision learners.
+resources to carry out related research, promoting                  In: Proceedings of the IEEE/CVF Conference on
+development of this field.                                          Computer Vision and Pattern Recognition, 16000–
+                                                                    16009, 2022.
+Acknowledgements                                                [8] Devlin, J.; Chang, M.-W.; Lee, K.; Toutanova, K.
+This work was supported by the National Science                     BERT: Pre-training of deep bidirectional transformers
+and Technology Major Project (Grant No. 2021ZD0112902),             for language understanding. arXiv preprint arXiv:
+the National Natural Science Foundation of China                    1810.04805, 2018.
+(Grant Nos. 623B2057 and 62220106003), Tsinghua                 [9] Ramesh, A.; Pavlov, M.; Goh, G.; Gray, S.; Voss, C.;
+University Initiative Scientific Research Program,                  Radford, A.; Chen, M.; Sutskever, I. Zero-shot text-
+                                                                    to-image generation. arXiv preprint arXiv:2102.12092,
+and Tsinghua–Tencent Joint Laboratory for Internet
+                                                                    2021.
+Innovation Technology. The authors sincerely
+                                                               [10] Wei, L.; Xie, L.; Zhou, W.; Li, H.; Tian, Q. MVP:
+appreciate the dedicated effort and valuable feedback
+                                                                    Multimodality-guided visual pre-training. In: Computer
+from the anonymous reviewers and editor, which
+                                                                    Vision – ECCV 2022. Lecture Notes in Computer
+significantly improved the manuscript.
+                                                                    Science, Vol. 13676. Avidan, S.; Brostow, G.; Cissé,
+                                                                    M.; Farinella, G. M.; Hassner, T. Eds. Springer Cham,
+Declaration of competing interest
+                                                                    337–353, 2022.
+The authors have no competing interests to declare             [11] Wei, C.; Fan, H.; Xie, S.; Wu, C. Y.; Yuille, A.;
+that are relevant to the content of this article. The               Feichtenhofer, C. Masked feature prediction for self-
+author Shi-Min Hu is the Editor-in-Chief of this                    supervised visual pre-training. In: Proceedings of
+journal.                                                            the IEEE/CVF Conference on Computer Vision and
+                                                                    Pattern Recognition, 14648–14658, 2022.
+
+References                                                     [12] Gao, P.; Ma, T.; Li, H.; Dai, J.; Qiao, Y. ConvMAE:
+                                                                    Masked convolution meets masked autoencoders. arXiv
+ [1] Gidaris, S.; Singh, P.; Komodakis, N. Unsupervised             preprint arXiv:2205.03892, 2022.
+     representation learning by predicting image rotations.    [13] Zhang, X.; Tian, Y.; Xie, L.; Huang, W.; Dai, Q.; Ye,
+     arXiv preprint arXiv:1803.07728, 2018.                         Q.; Tian, Q. HiViT: A simpler and more efficient design
+ [2] Wu, Z.; Xiong, Y.; Yu, S. X.; Lin, D. Unsupervised             of hierarchical vision transformer. In: Proceedings
+     feature learning via non-parametric instance                   of the 11th International Conference on Learning
+     discrimination. In: Proceedings of the IEEE Con-               Representations, 2023.
+     ference on Computer Vision and Pattern Recognition,       [14] Tian, K.; Jiang, Y.; Diao, Q.; Lin, C.; Wang, L.; Yuan,
+     3733–3742, 2018.                                               Z. Designing BERT for convolutional networks: Sparse
+ [3] He, K.; Fan, H.; Wu, Y.; Xie, S.; Girshick, R.                 and hierarchical masked modeling. arXiv preprint
+     Momentum contrast for unsupervised visual                      arXiv:2301.03580, 2023.
+     representation learning. In: Proceedings of the IEEE/     [15] Hu, R.; Debnath, S.; Xie, S.; Chen, X. Exploring
+     CVF Conference on Computer Vision and Pattern                  long-sequence masked autoencoders. arXiv preprint
+     Recognition, 9729–9738, 2020.                                  arXiv:2210.07224, 2022.
+ [4] Chen, Ting, Kornblith, S.; Norouzi, M.; Hinton, G.        [16] Huang, Z.; Jin, X.; Lu, C.; Hou, Q.; Cheng, M. M.; Fu,
+     A simple framework for contrastive learning of visual          D.; Shen, X.; Feng, J. Contrastive masked autoencoders
+     representations. arXiv preprint arXiv:2002.05709, 2020.        are stronger vision learners. IEEE Transactions on
+FastMAE: Efficient masked autoencoder with offline tokenizer                                                             493
+
+
+    Pattern Analysis and Machine Intelligence Vol. 46, No.          Li, L.; Geng, Y. SAM-driven MAE pre-training
+    4, 2506–2517, 2024.                                             and background-aware meta-learning for unsupervised
+[17] Lu, C.-Z.; Jin, X.; Huang, Z.; Hou, Q.; Cheng,                 vehicle re-identification. Computational Visual Media
+     M.-M.; Feng, J. CMAE-V: Contrastive masked                     Vol. 10, No. 4, 771–789, 2024.
+     autoencoders for video action recognition. arXiv           [30] Huang, L.; You, S.; Zheng, M.; Wang, F.; Qian, C.;
+     preprint arXiv:2301.06018, 2023.                                Yamasaki, T. Green hierarchical vision transformer
+[18] Chen, X.; Ding, M.; Wang, X.; Xin, Y.; Mo, S.; Wang,            for masked image modeling. arXiv preprint arXiv:
+     Y.; Han, S.; Luo, P.; Zeng, G.; Wang, J. Context                2205.13515, 2022.
+     autoencoder for self-supervised representation learning.   [31] Fang, Y.; Wang, W.; Xie, B.; Sun, Q.; Wu, L.; Wang,
+     arXiv preprint arXiv:2202.03026, 2022.                          X.; Huang, T.; Wang, X.; Cao, Y. EVA: Exploring the
+[19] Dong, X.; Bao, J.; Zhang, T.; Chen, D.; Zhang, W.;              limits of masked visual representation learning at scale.
+     Yuan, L.; Chen, D.; Wen, F.; Yu, N. Bootstrapped                arXiv preprint arXiv:2211.07636, 2022.
+     masked autoencoders forVision BERT pretraining. In:        [32] Tong, Z.; Song, Y.; Wang, J.; Wang, L. Videomae:
+     Computer Vision – ECCV 2022. Lecture Notes in                   Masked autoencoders are data-efficient learners for
+     Computer Science, Vol. 13690. Avidan, S.; Brostow, G.;          self-supervised video pre-training. arXiv preprint
+     Cissé, M.; Farinella, G. M.; Hassner, T. Eds. Springer         arXiv:2203.12602, 2022.
+     Cham, 247–264, 2022.                                       [33] Dong, X.; Bao, J.; Zhang, T.; Chen, D.; Zhang, W.;
+[20] Zhou, J.; Wei, C.; Wang, H.; Shen, W.; Xie, C.; Yuille,         Yuan, L.; Chen, D.; Wen, F.; Yu. N. PeCo: Perceptual
+     A.; Kong, T. iBOT: Image bert pre-training with online          codebook for BERT pre-training of vision transformers.
+     tokenizer. arXiv preprint arXiv:2111.07832, 2021.               arXiv preprint arXiv:2111.12710, 2021.
+[21] Gao, S.; Zhou, P.; Cheng, M.-M.; Yan, S. Towards           [34] Bardes, A.; Ponce, J.; LeCun, Y. VICRegL: Self-
+     sustainable self-supervised learning. arXiv preprint            supervised learning of local visual features. arXiv
+     arXiv:2210.11016, 2022.                                         preprint arXiv:2210.01571, 2022.
+[22] Hou, Z.; Sun, F.; Chen, Y.-K.; Xie, Y.; Kung, S.-Y.        [35] Ma, H.; Li, M.; Yang, J.; Patashnik, O.; Lischinski, D.;
+     MILAN: Masked image pretraining on language assisted            Cohen-Or, D.; Huang, H. CLIP-Flow: Decoding images
+     representation. arXiv preprint arXiv:2208.06049, 2022.          encoded in CLIP space. Computational Visual Media
+[23] Tian, Y.; Xie, L.; Wang, Z.; Wei, L.; Zhang, X.;                Vol. 10, No. 6, 1157–1168, 2024.
+     Jiao, J.; Wang, Y.; Tian, Q.; Ye, Q. Integrally pre-       [36] Li, J.; Huang, Y.; Wu, M.; Zhang, B.; Ji, X.; Zhang,
+     trained transformer pyramid networks. arXiv preprint            C. CLIP-SP: Vision-language model with adaptive
+     arXiv:2211.12735, 2022.                                         prompting for scene parsing. Computational Visual
+[24] Zhou, P.; Zhou, Y.; Si, C.; Yu, W.; Ng, T. K.; Yan,             Media Vol. 10, No. 4, 741–752, 2024.
+     S. Mugs: A multi-granular self-supervised learning         [37] Tian, Y.; Krishnan, D.; Isola, P. Contrastive multiview
+     framework. arXiv preprint arXiv:2203.14415, 2022.               coding. In: Computer Vision – ECCV 2020. Lecture
+[25] Lan, Z.; Chen, M.; Goodman, S.; Gimpel, K.; Sharma,             Notes in Computer Science, Vol. 12356. Vedaldi, A.;
+     P.; Soricut, R. Albert: A lite bert for self-supervised         Bischof, H.; Brox, T.; Frahm, J.-M. Eds. Springer Cham,
+     learning of language representations. arXiv preprint            776–794. Springer, 2020.
+     arXiv:1909.11942, 2019.                                    [38] Caron, M.; Misra, I.; Mairal, J.; Goyal, P.; Bojanowski,
+[26] Clark, K.; Luong, M.-T.; Le, Q. V.; Manning,                    P.; Joulin, A. Unsupervised learning of visual features
+     C. D. ELECTRA: Pre-training text encoders as                    by contrasting cluster assignments. arXiv preprint
+     discriminators rather than generators. arXiv preprint           arXiv:2006.09882, 2021.
+     arXiv:2003.10555, 2020.                                    [39] Xie, Z.; Lin, Y.; Zhang, Z.; Cao, Y.; Lin, S.; Hu, H.
+[27] Li, Y.; Fan, H.; Hu, R.; Feichtenhofer, C.; He,                 Propagate yourself: Exploring pixel-level consistency
+     K. Scaling language-image pre-training via masking.             for unsupervised visual representation learning. In:
+     In: Proceedings of the IEEE/CVF Conference on                   Proceedings of the IEEE/CVF Conference on Computer
+     Computer Vision and Pattern Recognition, 23390–                 Vision and Pattern Recognition, 16684–16693, 2021.
+     23400, 2023.                                               [40] Liu, Z.; Lin, Y.; Cao, Y.; Hu, H.; Wei, Y.; Zhang, Z.;
+[28] Ji, G.-P.; Zhuge, M.; Gao, D.; Fan, D.-P.; Sakaridis,           Lin, S.; Guo, B. Swin transformer: Hierarchical vision
+     C.; Gool, L. V. Masked vision-language transformer in           transformer using shifted windows. In: Proceedings of
+     fashion. arXiv preprint arXiv:2210.15110, 2022.                 the IEEE/CVF International Conference on Computer
+[29] Wang, D.; Wang, Q.; Min, W.; Gai, D.; Han, Q.;                  Vision, 9992–10002, 2021.
+494                                                                                       M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+[41] Wang, W.; Xie, E.; Li, X.; Fan, D. P.; Song, K.;            [53] Guo, M.-H.; Xu, J.; Zhang, Y.; Song, J.; Peng, H.;
+     Liang, D.; Lu, T.; Luo, P.; Shao, L. PVT v2:                     Deng, Y.-X.; Dong, X.; Nakayama, K.; Geng, Z.; Wang,
+     Improved baselines with pyramid vision transformer.              C.; et al. R-bench: Graduate-level multi-disciplinary
+     Computational Visual Media Vol. 8, No. 3, 415–424,               benchmarks for LLM & MLLM complex reasoning
+     2022.                                                            evaluation. arXiv preprint arXiv:2505.02018, 2025.
+[42] Wang, W.; Xie, E.; Li, X.; Fan, D.-P.; Song, K.;            [54] Guo, M.-H.; Chu, X.; Yang, Q.; Mo, Z.-H.; Shen, Y.;
+     Liang, D.; Lu, T.; Luo, P.; Shao, L. Pyramid                     Li, P.-L.; Lin, X.; Zhang, J.; Chen, X.-S.; Zhang, Y.;
+     vision transformer: A versatile backbone for dense               et al. RBench-V: A primary assessment for visual
+     prediction without convolutions. In: Proceedings of              reasoning models with multi-modal outputs. arXiv
+     the IEEE/CVF International Conference on Computer                preprint arXiv:2505.16770, 2025.
+     Vision, 548–558, 2021.                                      [55] Dosovitskiy, A.; Beyer, L.; Kolesnikov, A.; Weissenborn,
+[43] Guo, M. H.; Cai, J. X.; Liu, Z. N.; Mu, T. J.; Martin,           D.; Zhai, X.; Unterthiner, T.; Dehghani, M.; Minderer,
+     R. R.; Hu, S. M. PCT: Point cloud transformer.                   M.; Heigold, G.; Gelly, S.; et al. An image is worth
+     Computational Visual Media Vol. 7, No. 2, 187–199,               16x16 words: Transformers for image recognition at
+     2021.                                                            scale. arXiv preprint arXiv:2010.11929, 2020.
+[44] Guo, M.-H.; Liu, Z. N.; Mu, T. J.; Hu, S. Beyond self-      [56] Liu, Z.; Hu, H.; Lin, Y.; Yao, Z.; Xie, Z.; Wei, Y.; Ning,
+     attention: External attention using two linear layers for        J.; Cao, Y.; Zhang, Z.; Dong, L.; et al. Swin transformer
+     visual tasks. arXiv preprint arXiv:2105.02358, 2007.             v2: Scaling up capacity and resolution. In: Proceedings
+[45] Yuan, L.; Chen, Y.; Wang, T.; Yu, W.; Shi, Y.;                   of the IEEE/CVF conference on computer vision and
+     Jiang, Z.-H.; Tay, F. E.; Feng, J.; Yan, S. Tokens-to-           pattern recognition, 12009–12019, 2022.
+     token ViT: Training vision transformers from scratch        [57] Touvron, H.; Cord, M.; Douze, M.; Massa, F.;
+     on ImageNet. In: Proceedings of the IEEE/CVF                     Sablayrolles, A.; J0egou, H. Training data-efficient
+     International Conference on Computer Vision, 558–567,            image transformers & distillation through attention.
+     2021.                                                            In: Proceedings of the 38th International Conference
+[46] Guo, M.-H.; Lu, C.-Z.; Liu, Z.-N.; Cheng, M.-M.; Hu,             on Machine Learning, 10347–10357, 2021.
+     S.-M. Visual attention network. Computational Visual        [58] Xie, E.; Wang, W.; Yu, Z.; Anandkumar, A.; Alvarez,
+     Media Vol. 9, No. 4, 733–752, 2023.                              J. M.; Luo, P. SegFormer: Simple and efficient design
+[47] Guo, M.-H.; Lu, C.-Z.; Hou, Q.; Liu, Z.; Cheng, M.-              for semantic segmentation with transformers. arXiv
+     M.; Hu, S.-M. SegNeXt: Rethinking convolutional                  preprint arXiv:2105.15203, 2021.
+     attention design for semantic segmentation. arXiv           [59] Li, K.; Wang, Y.; Gao, P.; Song, G.; Liu, Y.; Li, H.;
+     preprint arXiv:2209.08575, 2022.                                 Qiao, Y. UniFormer: Unified transformer for efficient
+[48] Dai, Z.; Liu, H.; Le, Q. V.; Tan, M. CoATNet: Marrying           spatiotemporal representation learning. arXiv preprint
+     convolution and attention for all data sizes. arXiv              arXiv:2201.04676, 2022.
+     preprint arXiv:2106.04803, 2021.                            [60] Liu, Z.; Ning, J.; Cao, Y.; Wei, Y.; Zhang, Z.; Lin,
+[49] Geng, Z.; Guo, M.-H.; Chen, H.; Li, X.; Wei, K.; Lin, Z.         S.; Hu, H. Video swin transformer. In: Proceedings of
+     Is attention better than matrix decomposition? arXiv             the IEEE/CVF Conference on Computer Vision and
+     preprint arXiv:2109.04553, 2021.                                 Pattern Recognition, 3192–3201, 2022.
+
+[50] Han, K.; Xiao, A.; Wu, E.; Guo, J.; Xu, C.; Wang,           [61] Jiang, Y.; Chang, S.; Wang, Z. TransGAN: Two pure
+     Y. Transformer in transformer. In: Proceedings of the            transformers can make one strong GAN, and that can
+     35th International Conference on Neural Information              scale up. arXiv preprint arXiv:2102.07074, 2021.
+     Processing Systems, 15908–15919, 2021.                      [62] Leiserson, C. E.; Rivest, R. L.; Cormen, T. H.; Stein, C.
+[51] Xu, Y.; Zhang, Q.; Zhang, J.; Tao, D. ViTAE: Vision              Introduction to Algorithms, Vol. 3. MIT Press, 1994.
+     transformer advanced by exploring intrinsic inductive       [63] Xue, H.; Gao, P.; Li, H.; Qiao, Y.; Sun, H.; Li, H.; Luo, J.
+     bias. arXiv preprint arXiv:2106.03348, 2021.                     Stare at what you see: Masked image modeling without
+[52] Carion, N.; Massa, F.; Synnaeve, G.; Usunier, N.;                reconstruction. arXiv preprint arXiv:2211.08887, 2022.
+     Kirillov, A.; Zagoruyko, S. End-to-end object detection     [64] Caron, M.; Touvron, H.; Misra, I.; Jégou, H.; Mairal,
+     with transformers. In: Computer Vision – ECCV                    J.; Bojanowski, P.; Joulin, A. Emerging properties
+     2020. Lecture Notes in Computer Science, Vol. 12346.             in self-supervised vision transformers. arXiv preprint
+     Vedaldi, A.; Bischof, H.; Brox, T.; Frahm, J.-M. Eds.            arXiv:2104.14294, 2021.
+     Springer Cham, 213–229, 2020.                               [65] Deng, J.; Dong, W.; Socher, R.; Li, L.-J.; Kai, L.; Li, F.-F.
+FastMAE: Efficient masked autoencoder with offline tokenizer                                                             495
+
+
+     ImageNet: A large-scale hierarchical image database.        [77] Chen, Y.; Liu, Y.; Jiang, D.; Zhang, X.; Dai, W.; Xiong,
+     In: Proceedings of the IEEE Conference on Computer               H.; Tian, Q. SdAE: Self-distillated masked autoencoder.
+     Vision and Pattern Recognition, 248–255, 2009.                   arXiv preprint arXiv:2208.00449, 2022.
+[66] Lin, T.-Y.; Maire, M.; Belongie, S.; Hays, J.; Perona,      [78] Baevski, A.; Hsu, W. N.; Xu, Q.; Babu, A.; Gu,
+     P.; Ramanan, D.; Dollár, P.; Zitnick, C. L. Microsoft           J.; Auli, M. data2vec: A general framework for self-
+     COCO: Common objects in context. In: Computer                    supervised learning in speech, vision and language. In:
+     Vision – ECCV 2014. Lecture Notes in Computer                    Proceedings of the 39th International Conference on
+     Science, Vol. 8693. Fleet, D.; Pajdla, T.; Schiele, B.;          Machine Learning, 1298–1312, 2022.
+     Tuytelaars, T. Eds. Springer Cham, 740– 755, 2014.          [79] Guo, J.; Han, K.; Wu, H.; Tang, Y.; Wang, Y.; Xu,
+[67] Zhou, B.; Zhao, H.; Puig, X.; Fidler, S.; Barriuso, A.;          C. FastMIM: Expediting masked image modeling pre-
+     Torralba, A. Scene parsing through ADE20K dataset.               training for vision. arXiv preprint arXiv:2212.06593,
+     In: Proceedings of the IEEE conference on computer               2022.
+     vision and pattern recognition, 633–641, 2017.              [80] Radford, A.; Kim, J. W.; Hallacy, C.; Ramesh, A.; Goh,
+[68] Paszke, A.; Gross, S.; Massa, F.; Lerer, A.; Bradbury,           G.; Agarwal, S.; Sastry, G.; Askell, A.; Mishkin, P.;
+     J.; Chanan, G.; Killeen, T.; Lin, Z.; Gimelshein, N.;            Clark, J.; et al. Learning transferable visual models
+     Antiga, L.; et al. Pytorch: An imperative style, high-           from natural language supervision. In: Proceedings of
+     performance deep learning library. In: Proceedings               the 38th International Conference on Machine Learning,
+     of the 33rd International Conference on Neural                   8748–8763, 2021.
+     Information Processing Systems, 8026–8037, 2019.
+[69] Hu, S. M.; Liang, D.; Yang, G. Y.; Yang, G. W.; Zhou,                          Meng-Hao Guo is a Ph.D. candidate
+     W. Y. Jittor: A novel deep learning framework with                             under the supervision of Prof. Shi-Min
+     meta-operators and unified graph execution. Science                            Hu in Tsinghua University. His research
+                                                                                    interests include computer vision and
+     China Information Sciences Vol. 63, No. 12, Article No.
+                                                                                    computer graphics. He has published
+     222103, 2020.
+                                                                                    papers various journals and conferences
+[70] Loshchilov, I.; Hutter, F. Decoupled weight decay                              such as IEEE TPAMI, ACM TOG,
+     regularization. arXiv preprint arXiv:1711.05101, 2017.                         NeurIPS, CVPR, and CVMJ.
+[71] Xiao, T.; Liu, Y.; Zhou, B.; Jiang, Y.; Sun, J.
+     Unified perceptual parsing for scene understanding.                            Chen Wang is a Ph.D. student at
+     In: Computer Vision – ECCV 2018. Lecture Notes in                              the University of Pennsylvania. He
+     Computer Science, Vol. 11209. Ferrari, V.; Hebert, M.;                         received his bachelor and master degrees
+     Sminchisescu, C.; Weiss, Y. Eds. Springer Cham, 418–                           in computer science from Tsinghua
+                                                                                    University. His research interests include
+     434, 2018.
+                                                                                    computer graphics and computer vision.
+[72] He, K.; Gkioxari, G.; Dollár, P.; Girshick, R. Mask
+     R-CNN. In: Proceedings of the IEEE International
+     Conference on Computer Vision, 2961–2969, 2017.
+                                                                                      Wei Liu received his Ph.D. degree
+[73] Chen, K.; Wang, J.; Pang, J.; Cao, Y.; Xiong, Y.; Li, X.;
+                                                                                      in electrical engineering and computer
+     Sun, S.; Feng, W.; Liu, Z.; Xu, J.; et al. MMDetection:
+                                                                                      science from Columbia University, in
+     Open MMLab detection toolbox and benchmark. arXiv                                2012. He is currently a distinguished
+     preprint arXiv:1906.07155, 2019.                                                 scientist of Tencent and the director of
+[74] Fang, Y.; Dong, L.; Bao, H.; Wang, X.; Wei, F.                                   Ads Multimedia AI with the Tencent
+     Corrupted image modeling for self-supervised visual                              Data Platform. He was a research staff
+     pre-training. arXiv preprint arXiv:2202.03382, 2022.                             member of the IBM T. J. Watson
+[75] Xie, Z.; Zhang, Z.; Cao, Y.; Lin, Y.; Bao, J.; Yao,         Research Center from 2012 to 2015. He has long
+                                                                 been devoted to fundamental research and technological
+     Z.; Dai, Q.; Hu, H. SimMIM: A simple framework
+                                                                 development in core fields of AI, including deep learning,
+     for masked image modeling. In: Proceedings of the
+                                                                 machine learning, reinforcement learning, computer vision,
+     IEEE/CVF Conference on Computer Vision and                  information retrieval, big data, etc. To date, he has more
+     Pattern Recognition, 9653–9663, 2022.                       than 280 peer-reviewed technical papers, and more than 30
+[76] Tao, C.; Zhu, X.; Huang, G.; Qiao, Y.; Wang, X.;            US patents. He currently serves on the editorial boards of
+     Dai, J. Siamese image modeling for self-supervised          IEEE TPAMI, IEEE TNNLS, and IEEE Intelligent Systems.
+     vision representation learning. arXiv preprint arXiv:       He is a fellow of the IAPR and IMA, and an elected member
+     2206.01204, 2022.                                           of the ISI.
+496                                                                                      M.-H. Guo, C. Wang, W. Liu, et al.
+
+
+                    Shi-Min Hu is currently a professor of      permits use, sharing, adaptation, distribution and reproduc-
+                    computer science at Tsinghua University.    tion in any medium or format, as long as you give appropriate
+                    He received his Ph.D. degree from           credit to the original author(s) and the source, provide a link
+                    Zhejiang University in 1996. His research   to the Creative Commons licence, and indicate if changes
+                    interests include geometry processing,      were made.
+                    image & video processing, rendering,           The images or other third party material in this article are
+                    computer animation, and CAD. He has         included in the article’s Creative Commons licence, unless
+                    published more than 100 papers in           indicated otherwise in a credit line to the material. If material
+journals and refereed conferences. He is Editor-in-Chief of     is not included in the article’s Creative Commons licence and
+Computational Visual Media, and on the editorial boards         your intended use is not permitted by statutory regulation or
+of several journals, including Computer Aided Design and        exceeds the permitted use, you will need to obtain permission
+Computer & Graphics.                                            directly from the copyright holder.
+                                                                   To view a copy of this licence, visit http://
+Open Access This article is licensed under a Creative           creativecommons.org/licenses/by/4.0/.
+Commons Attribution 4.0 International License, which              To submit a manuscript, please go to https://jcvm.org.
+

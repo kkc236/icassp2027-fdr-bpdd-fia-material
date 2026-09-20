@@ -1,0 +1,230 @@
+{
+  "bundle_sha256": "94762649577ed8528c4813ee46f0bea0a02a34e0588b293d28836cb3f9eab205",
+  "files": [
+    {
+      "path": "files\\COMPLETE.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/COMPLETE.json",
+      "sha256": "4328da786c69fff639c6776df7b2d2579ccf688a4e32f9808adea70aab8cb79c"
+    },
+    {
+      "path": "files\\CURRENT.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/CURRENT.json",
+      "sha256": "3fea8b795ce08c220c83ef188c6f4fa2572e0e25f38c56f96dcb6a7e10e90ccc"
+    },
+    {
+      "path": "files\\INSTALL_MANIFEST.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/INSTALL_MANIFEST.json",
+      "sha256": "a86e197427020822eab4a4288e59cb67080f56a0df3c0f352a73648fb0096411"
+    },
+    {
+      "path": "files\\SERVER_TESTS_PASSED.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/SERVER_TESTS_PASSED.json",
+      "sha256": "76799b4b57665141b3b76d893c344d2c45e23290ce0880414999040c067d10d6"
+    },
+    {
+      "path": "files\\STATUS.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/STATUS.json",
+      "sha256": "2772137b4a8f135def4e0ff24a39d0e3d8dbd5a0692877bd9d6100b9cf193b0b"
+    },
+    {
+      "path": "files\\previous_code\\scripts\\eval_baseline_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/previous_code/scripts/eval_baseline_anchor_scale.py",
+      "sha256": "caafce5d5a25216ef9edbfbd6464611b51f59907ecee646536b2aaef5b52f6b3"
+    },
+    {
+      "path": "files\\previous_code\\tests\\test_baseline_anchor_scale_cli.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/previous_code/tests/test_baseline_anchor_scale_cli.py",
+      "sha256": "47bb283c3c6e1ed6dca03cb214720163f0c7f85d4af51e835daaaacedeeb24d5"
+    },
+    {
+      "path": "files\\runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/runner.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files\\runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/runner.py",
+      "sha256": "70e4154d372fac902261a5f0d4a8b48942f4a4398aa689883931489fab7b9b4d"
+    },
+    {
+      "path": "files\\server_tests.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/server_tests.log",
+      "sha256": "045651ca37e5703b3d9ded487c5d1d999d9be7fb411049caaaf1729fc55a91d1"
+    },
+    {
+      "path": "files\\server_tests.xml",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/server_tests.xml",
+      "sha256": "036ee2b8cc685562dc7ce6ce64235461e93142ae70d786a8f2541102d1737421"
+    },
+    {
+      "path": "files\\val_calibrated_640\\protocol.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/val_calibrated_640/protocol.json",
+      "sha256": "e723567fecd3b0b7d982b991b4be0ad08fe9283bbea8830de7607c3b244486e0"
+    },
+    {
+      "path": "files\\val_calibrated_640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/val_calibrated_640/summary.json",
+      "sha256": "78a44dd570344998e67557893be38a76ea5b966c5451b0e9a3c6aebec4d14729"
+    },
+    {
+      "path": "files\\val_calibrated_640.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/val_calibrated_640.log",
+      "sha256": "da3d6ea01ef742c4426146173aaecd66486c69e564a8d27bc42c661fcb915693"
+    },
+    {
+      "path": "files\\val_calibrated_800\\protocol.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/val_calibrated_800/protocol.json",
+      "sha256": "3db3f79fbf551647799df787321c7196407fe3a2542c82088b3b6814a2a07932"
+    },
+    {
+      "path": "files\\val_calibrated_800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/val_calibrated_800/summary.json",
+      "sha256": "4bfbf11e13e61e92f225de918c16c92d65060b00abbfed919f43937f635372ac"
+    },
+    {
+      "path": "files\\val_calibrated_800.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v3/val_calibrated_800.log",
+      "sha256": "4131620a64699146b1152362984825801c00ce2688f79009fc4042014c196d22"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\CURRENT.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/CURRENT.json",
+      "sha256": "56399aa4d693c87c758943feb46737f48437dbbf82cc0b1138653f9396a3c32a"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\FAILED.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/FAILED.json",
+      "sha256": "acb817352407011c379c4fd8df835378820c4d9d33793a3405ac75bb1d9613d2"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\INSTALL_MANIFEST.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/INSTALL_MANIFEST.json",
+      "sha256": "51eeac9b88bc8ef0ac02553a8e7a1caed8d3f32e36300c625461fed43d72244d"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\SERVER_TESTS_PASSED.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/SERVER_TESTS_PASSED.json",
+      "sha256": "14af4bef9593b52077dc98c8890685bb838798438800eb5256f3c432f456296f"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/runner.log",
+      "sha256": "4bc7d411d33c76b5e5d0e8e9aacd5cc71c99a3d266993d3c025c3a43b7ad20c5"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/runner.py",
+      "sha256": "70e4154d372fac902261a5f0d4a8b48942f4a4398aa689883931489fab7b9b4d"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\server_tests.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/server_tests.log",
+      "sha256": "e3f463460f329af4cb8a4c987c6a19b99202503d9b329fe3f5b942a7332df90f"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\server_tests.xml",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/server_tests.xml",
+      "sha256": "feb1a48cc2697820eefb9a893265cc3da8b987cf9dcc886f0ec58f8db294b3af"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\val_calibrated_640\\FAILED.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/val_calibrated_640/FAILED.json",
+      "sha256": "d5813a8b94b867eded156dcf8cdbedb820be7fa1e278a46b6fe24d048304096b"
+    },
+    {
+      "path": "files\\previous_attempt_v1\\val_calibrated_640.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915/val_calibrated_640.log",
+      "sha256": "bef5e557a232151e2e369cf376c15fd4e811f10c82441b68a8b58f51b49b1741"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\CURRENT.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/CURRENT.json",
+      "sha256": "ac75f56f6e42abf32302071ef4c571e7063f698b28b29e3cd5476f594fc4b85c"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\FAILED.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/FAILED.json",
+      "sha256": "00eefb81332da46218f558af3df47486c849264c120cd3ca9a9790eab558cae1"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\INSTALL_MANIFEST.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/INSTALL_MANIFEST.json",
+      "sha256": "086b6837ded5b4dd7754d6e5c2676a6328e9f9a4752b14d951cafaf7d42c0251"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\SERVER_TESTS_PASSED.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/SERVER_TESTS_PASSED.json",
+      "sha256": "ecf12f65f4fa2d79154bf3dc017be0bb972d37b53b4d14b07e80095dc330ba05"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\previous_code\\scripts\\eval_baseline_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/previous_code/scripts/eval_baseline_anchor_scale.py",
+      "sha256": "fe5201a0f2a1885933135c37c08b32ad66c5dccd08aa14896886f1e241127044"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\previous_code\\tests\\test_baseline_anchor_scale_cli.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/previous_code/tests/test_baseline_anchor_scale_cli.py",
+      "sha256": "edb1360097cb38b0b5d4a51eeaedce70635a552773eb9b19a9de33408c13b6b9"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/runner.log",
+      "sha256": "901c74c5459c929f244fbd7aee48917f2fa2a4bf9753d33eec63a0a952cab702"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/runner.py",
+      "sha256": "70e4154d372fac902261a5f0d4a8b48942f4a4398aa689883931489fab7b9b4d"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\server_tests.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/server_tests.log",
+      "sha256": "f4d02bd2b20223e4357ff673674cf4aad1bf8de4c97155fbac6e226b8ebf21a2"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\server_tests.xml",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/server_tests.xml",
+      "sha256": "46bb18386c7f1769956b6e60eec1f3a9761ef7f9955281ca9a6ad160693efb0f"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\val_calibrated_640\\protocol.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/val_calibrated_640/protocol.json",
+      "sha256": "e723567fecd3b0b7d982b991b4be0ad08fe9283bbea8830de7607c3b244486e0"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\val_calibrated_640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/val_calibrated_640/summary.json",
+      "sha256": "eeef2517e3fcca29365e3409d184421bc8eae66117a9fca8ae7be25ce03b1511"
+    },
+    {
+      "path": "files\\previous_attempt_v2\\val_calibrated_640.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/val_calibrated_640.log",
+      "sha256": "5d4b3cbc507c3ae4229a85ee9d498945614bd3033d8ea02f219569c44acea773"
+    },
+    {
+      "path": "files\\installed_code\\src\\inference_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/src/inference_anchor_scale.py",
+      "sha256": "92aa5f3a6a2c869ccff66cec16391575fab231bef3d870859290ee291ddf358b"
+    },
+    {
+      "path": "files\\installed_code\\scripts\\eval_baseline_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py",
+      "sha256": "2f8bcf02bee6294489226fcd71ce3d7a44d992def83a8927eb7b91b33c416998"
+    },
+    {
+      "path": "files\\installed_code\\tests\\test_inference_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/tests/test_inference_anchor_scale.py",
+      "sha256": "80638f0783d4bc00246031d12a7a4a322fb4f1bf97023da7723fd8857ece19f5"
+    },
+    {
+      "path": "files\\installed_code\\tests\\test_baseline_anchor_scale_cli.py",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/tests/test_baseline_anchor_scale_cli.py",
+      "sha256": "980728850aa8bd683b6e4a82b47071d8b2ec5dd493e53183f9a63d1a01a94b74"
+    },
+    {
+      "path": "files\\installed_code\\docs\\BASELINE_ANCHOR_SCALE_ZH.md",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/docs/BASELINE_ANCHOR_SCALE_ZH.md",
+      "sha256": "5804c5ae040f80732b33134cac311f1b2d78981c27ad486cf403a15cb14ccdbd"
+    }
+  ]
+}

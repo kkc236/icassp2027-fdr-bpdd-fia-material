@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCDL · 原图复刻</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eceff1;color:#28323c;font:13px/1.4 "Segoe UI","Microsoft YaHei",sans-serif}button{font:inherit;color:inherit;background:white;border:1px solid #c8cfd4;border-radius:4px;padding:6px 10px;cursor:pointer}button:hover{background:#eaf0f2}button:disabled{opacity:.42;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #54756e;outline-offset:2px}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:2;padding:10px 16px;background:#fafbfc;border-bottom:1px solid #d5dce0}.toolbar strong{font-weight:600;margin-right:12px}.group{display:flex;align-items:center;gap:5px;padding-right:10px;margin-right:4px;border-right:1px solid #d5dce0}.group:last-child{border:0}.toolbar label{display:flex;gap:6px;align-items:center;white-space:nowrap}.toolbar input{accent-color:#54756e}.toolbar output{min-width:39px;text-align:center;font-variant-numeric:tabular-nums}#message{padding:7px 18px;color:#6a757e;background:#f5f7f8;border-bottom:1px solid #e0e4e7;font-size:12px}#viewport{width:100%;overflow:auto;padding:12px}#diagram{display:block;background:#fff;margin:0 auto;flex-shrink:0}.editing .node{cursor:move}.editing .edge-hit{pointer-events:stroke;cursor:pointer}.edge-hit{pointer-events:none}.node.selected>rect,.node.selected>ellipse,.node.selected>polygon{stroke-width:2.8}.edge.selected .edge-path{stroke-width:2.8}.point-handle{fill:white;stroke:#54756e;stroke-width:2;cursor:grab}.mid-handle{fill:#e8f0ed;stroke:#54756e;stroke-width:1;cursor:crosshair}.point-handle:hover{fill:#e8f0ed}#diagram{touch-action:pan-x pan-y}.editing #diagram{touch-action:none}body.clean .toolbar,body.clean #message{display:none}body.clean #viewport{padding:0;background:white}.return{display:none}body.clean .return{display:block;position:fixed;right:12px;bottom:12px;z-index:5;opacity:.7}@media(max-width:800px){.toolbar{gap:6px;padding:8px}.toolbar strong{display:none}#message{font-size:11px}.group{padding-right:5px;margin-right:0}}@media print{.toolbar,#message,.return{display:none!important}body,#viewport{background:white;padding:0}#diagram{width:100%!important;height:auto!important}#handles{display:none}.edge.selected .edge-path{stroke-width:1.9}}
+</style></head><body>
+<header class="toolbar"><strong>GCDL · 原图复刻</strong><div class="group"><button id="minus" aria-label="缩小">−</button><output id="zoom-label">100%</output><button id="plus" aria-label="放大">＋</button><button id="fit">适应宽度</button><button id="actual">1:1</button></div><div class="group"><label><input id="edit" type="checkbox">编辑</label><button id="straight" disabled>拉直线段</button><button id="restore-one" disabled>恢复选中</button><button id="undo" disabled>撤销</button><button id="reset">恢复原图</button></div><div class="group"><button id="export-svg">导出 SVG</button><button id="export-png">导出 PNG</button><button id="export-html">保存 HTML</button><button id="clean">只看图</button></div></header>
+<div id="message" role="status">按原图布局查看 · 1448 × 1086</div>
+<main id="viewport"><svg id="diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1448 1086" width="1448" height="1086" aria-label="GCDL完整检测器和G、F、B模块结构图" role="img"><style>text{font-family:"Times New Roman",Times,serif;} .node text{pointer-events:none;} .edge-path{pointer-events:none;} .edge-hit{pointer-events:stroke;} </style><rect x="0" y="0" width="1448" height="1086" fill="#FFFFFF"/></svg></main>
+<button class="return" onclick="document.body.classList.remove('clean')">返回工具栏</button>
+<script id="svg-initial" type="text/plain"><style>text{font-family:"Times New Roman",Times,serif;} .node text{pointer-events:none;} .edge-path{pointer-events:none;} .edge-hit{pointer-events:stroke;} </style><rect x="0" y="0" width="1448" height="1086" fill="#FFFFFF"/></script>
+<script id="saved-state" type="application/json"></script>
+<script>const NS='http://www.w3.org/2000/svg';
+const c={ink:'#28323C',g:'#566D83',gf:'#EDF1F5',f:'#54756E',ff:'#E8F0ED',b:'#846B54',bf:'#F1ECE5',neutral:'#F5F6F7',border:'#B6BEC5'};
+const el=(tag,attrs={},parent)=>{const n=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))if(v!==undefined&&v!==null)n.setAttribute(k,v);if(parent)parent.append(n);return n;};
+const svg=document.querySelector('#diagram');
+const defs=el('defs',{},svg);
+for(const [key,color]of Object.entries({ink:c.ink,f:c.f,g:c.g,b:c.b})){
+ const marker=el('marker',{id:'arrow-'+key,viewBox:'0 0 10 10',refX:9.2,refY:5,markerWidth:6,markerHeight:6,orient:'auto',markerUnits:'strokeWidth'},defs);
+ el('path',{d:'M0 0 L10 5 L0 10 Z',fill:color},marker);
+}
+const frameLayer=el('g',{id:'frames'},svg),edgeLayer=el('g',{id:'connections'},svg),nodeLayer=el('g',{id:'modules'},svg),labelLayer=el('g',{id:'annotations'},svg),handleLayer=el('g',{id:'handles','data-editor':'true'},svg);
+const nodes=new Map(),edges=new Map();
+function markerFor(stroke){return stroke===c.f?'f':stroke===c.g?'g':(stroke===c.b||stroke==='#8C725B')?'b':'ink';}
+function textAt(parent,x,y,lines,opts={}){
+ const size=opts.size||20,lh=opts.lineHeight||size*1.08,a=Array.isArray(lines)?lines:[lines];
+ const g=el('g',{'class':opts.cls||undefined,id:opts.id||undefined},parent);
+ a.forEach((line,i)=>{
+  const t=el('text',{x,y:y+(i-(a.length-1)/2)*lh,'font-size':size,'fill':opts.fill||c.ink,'text-anchor':opts.anchor||'start','font-weight':opts.bold?'700':'400','font-style':opts.italic?'italic':'normal'},g);
+  t.innerHTML=line;
+  if(opts.textWidth&&t.getComputedTextLength()>opts.textWidth){t.setAttribute('textLength',opts.textWidth);t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  if(opts.halo){t.setAttribute('paint-order','stroke');t.setAttribute('stroke','#fff');t.setAttribute('stroke-width','5');t.setAttribute('stroke-linejoin','round');}
+ });return g;
+}
+const d={c,
+ rect(id,x,y,w,h,fill,stroke,rx=0,extra={}){return el('rect',{id,x,y,width:w,height:h,rx,fill:fill||'none',stroke:stroke||'none','stroke-width':1.7,...extra},frameLayer);},
+ text(x,y,lines,opts={}){return textAt(labelLayer,x,y,lines,opts);},
+ node(id,x,y,w,h,lines,opts={}){
+  if(nodes.has(id))throw Error('Duplicate node '+id);
+  const g=el('g',{id,'class':'node','data-node':id,tabindex:'0',role:'button','aria-label':(Array.isArray(lines)?lines.join(' '):lines).replace(/<[^>]+>/g,'')},nodeLayer);
+  const attrs={fill:opts.fill||c.neutral,stroke:opts.stroke||c.ink,'stroke-width':opts.strokeWidth||1.7};
+  let shape;
+  if(opts.shape==='ellipse'||opts.shape==='circle')shape=el('ellipse',{cx:x+w/2,cy:y+h/2,rx:w/2,ry:h/2,...attrs},g);
+  else if(opts.shape==='trapezoid')shape=el('polygon',{points:`${x},${y} ${x+w},${y} ${x+w-13},${y+h} ${x+13},${y+h}`,...attrs},g);
+  else shape=el('rect',{x,y,width:w,height:h,rx:opts.rx??3,...attrs},g);
+  const fs=opts.fontSize||19;
+  if(lines!=='')textAt(g,x+w/2,y+h/2+fs*.34+(opts.textDy||0),lines,{size:fs,anchor:'middle',bold:opts.bold,fill:opts.textFill||c.ink,lineHeight:opts.lineHeight,textWidth:opts.textWidth});
+  nodes.set(id,{id,x,y,w,h,dx:0,dy:0,element:g,shape});return g;
+ },
+ edge(id,points,opts={}){
+  if(edges.has(id))throw Error('Duplicate edge '+id);
+  const stroke=opts.stroke||c.ink,g=el('g',{id,'class':'edge','data-edge':id,tabindex:'0',role:'button','aria-label':id.replaceAll('_',' ')},edgeLayer);
+  const path=el('path',{'class':'edge-path',fill:'none',stroke,'stroke-width':opts.width||1.9,'stroke-linejoin':'miter','stroke-linecap':'butt','stroke-dasharray':opts.dash?'5 3':undefined,'marker-end':opts.arrow===false?undefined:`url(#arrow-${markerFor(stroke)})`},g);
+  const hit=el('path',{'class':'edge-hit',fill:'none',stroke:'transparent','stroke-width':14},g);
+  const e={id,points:points.map(p=>[...p]),initial:points.map(p=>[...p]),opts,element:g,path,hit};edges.set(id,e);renderEdge(e);return g;
+ },
+ path(id,pathD,opts={}){return el('path',{id,d:pathD,fill:opts.fill||'none',stroke:opts.stroke||c.ink,'stroke-width':opts.width||1.7},labelLayer);}
+};
+function renderEdge(e){const path=e.points.map((p,i)=>(i?'L':'M')+p.map(v=>Math.round(v*100)/100).join(' ')).join(' ');e.path.setAttribute('d',path);e.hit.setAttribute('d',path);}
+function buildA(d){
+ const {ink,g,gf,f,ff,b,bf,border,neutral}=d.c;
+ d.rect('panel_a',15,19,1418,267,'#fff',border);
+ d.text(25,48,'(a) Complete detector',{size:29,bold:true});
+ d.rect('decoder_group',616,55,454,174,gf,g,4);
+ d.text(843,83,'RT-DETR decoder (Decoder layer × 6)',{size:22,bold:true,anchor:'middle',textWidth:411});
+ d.text(25,126,'Image',{size:20});
+ d.node('a_backbone',83,112,115,62,'Backbone',{fontSize:21});
+ d.node('a_encoder',225,95,119,96,['Hybrid','encoder'],{shape:'trapezoid',fontSize:22,fill:neutral});
+ d.node('a_f',420,157,141,45,'F: P<tspan baseline-shift="sub" font-size="70%">3</tspan> refinement',{fill:ff,stroke:f,fontSize:20,bold:true,textWidth:126,textFill:f});
+ d.node('a_attention',637,111,161,80,['Attention + FFN','(queries)'],{fontSize:21,textWidth:143});
+ d.node('a_class',861,97,166,41,'Class head',{fontSize:21});
+ d.node('a_g',862,157,165,54,['G: GCDL','localization'],{fill:gf,stroke:g,fontSize:22,bold:true,lineHeight:22});
+ d.node('a_b',1179,110,117,77,['B: Local','expert'],{fill:bf,stroke:b,fontSize:23,bold:true,lineHeight:23});
+ d.node('a_output',1324,116,99,69,['Classes','+ boxes'],{fontSize:23,lineHeight:22});
+ d.node('a_shared',726,238,289,38,'Shared local features: P<tspan baseline-shift="sub" font-size="70%">2</tspan>, P<tspan baseline-shift="sub" font-size="70%">3</tspan><tspan baseline-shift="super" font-size="70%">*</tspan>, P<tspan baseline-shift="sub" font-size="70%">4</tspan>',{fontSize:20,stroke:f,fill:ff,textWidth:270,textFill:f});
+ d.edge('a_input',[[28,143],[83,143]],{target:'a_backbone'});
+ d.edge('a_backbone_encoder',[[198,143],[231.5,143]],{source:'a_backbone',target:'a_encoder'});
+ d.edge('a_p5',[[343,102],[616,102]],{source:'a_encoder'});
+ d.edge('a_p4',[[338,140],[616,140]],{source:'a_encoder'});
+ d.edge('a_p3',[[332,181],[420,181]],{source:'a_encoder',target:'a_f'});
+ d.edge('a_f_attention',[[561,181],[637,181]],{stroke:f,source:'a_f',target:'a_attention'});
+ d.text(376,94,'P<tspan baseline-shift="sub" font-size="70%">5</tspan>',{size:20});
+ d.text(376,132,'P<tspan baseline-shift="sub" font-size="70%">4</tspan>',{size:20});
+ d.text(366,173,'P<tspan baseline-shift="sub" font-size="70%">3</tspan>',{size:20});
+ d.text(575,171,'P<tspan baseline-shift="sub" font-size="70%">3</tspan><tspan baseline-shift="super" font-size="70%">*</tspan>',{size:20,fill:f});
+ d.edge('a_query_class',[[798,150],[831,150],[831,117],[861,117]],{source:'a_attention',target:'a_class'});
+ d.edge('a_query_g',[[798,150],[831,150],[831,183],[862,183]],{source:'a_attention',target:'a_g'});
+ d.edge('a_class_bus',[[1027,117],[1062,117],[1062,138],[1145,138]],{arrow:false,source:'a_class',target:'a_joint'});
+ d.edge('a_g_bus',[[1027,182],[1062,182],[1062,138],[1145,138]],{arrow:false,source:'a_g',target:'a_joint'});
+ d.edge('a_final_query',[[719,191],[719,221],[1145,221],[1145,138]],{arrow:false,source:'a_attention',target:'a_joint'});
+ d.edge('a_bundle_b',[[1145,138],[1179,138]],{source:'a_joint',target:'a_b'});
+ d.node('a_joint',1141.5,134.5,7,7,'',{shape:'circle',fill:ink,stroke:ink});
+ d.text(1129,122,'Base predictions',{size:17,anchor:'middle',textWidth:99});
+ d.text(1011,229,'Final query',{size:17,anchor:'middle',halo:true});
+ d.edge('a_local_b',[[1015,258],[1189,258],[1189,192]],{stroke:f,source:'a_shared',target:'a_b'});
+ d.text(1265,207,'(After final layer)',{size:16,anchor:'middle',textWidth:120});
+ d.edge('a_b_output',[[1296,150],[1324,150]],{source:'a_b',target:'a_output'});
+}
+
+/* Native SVG reconstruction of panel (b), at the source's 1448 × 1086 canvas. */
+function buildG(d) {
+  const c = d.c;
+  const sub = (s) => `<tspan baseline-shift="sub" font-size="70%" font-style="${/[a-z]/i.test(s) ? 'italic' : 'normal'}">${s}</tspan>`;
+  const it = (s) => `<tspan font-style="italic">${s}</tspan>`;
+  const m = (s, n = '') => it(s) + (n ? sub(n) : '');
+  const sbar = '<tspan font-style="italic" text-decoration="overline">s</tspan>';
+  const warm = '#8C725B';
+  const trainingFill = '#FCFAF7';
+  const fill = '#F8FAFB';
+
+  d.rect('g-panel', 15, 307, 1418, 418, c.gf, c.g);
+  d.text(25, 341, '(b) GCDL localization (G)', {size: 31, bold: true, fill: '#35516A'});
+  d.rect('g1-frame', 30, 354, 640, 197, '#FCFDFE', '#7D99AF');
+  d.rect('g2-frame', 681, 354, 738, 197, '#FCFDFE', '#7D99AF');
+  d.text(41, 393, 'G.1 Distribution accumulation', {size: 25, bold: true, fill: '#35516A'});
+  d.text(1407, 389, 'G.2 Center-preserving geometry', {size: 25, bold: true, fill: '#35516A', anchor: 'end'});
+  d.rect('g3-frame', 30, 565, 1388, 140, trainingFill, warm, 0, {'stroke-dasharray': '5 3'});
+  d.text(41, 599, 'G.3 LQS-weighted FGL • training only', {size: 25, bold: true, fill: '#715744'});
+
+  // G.1: accumulated edge distributions. Only the query-feature skip is detached.
+  d.node('g-query', 42, 414, 119, 55, ['Query features', m('h', 'l')], {fill, stroke: c.ink, fontSize: 19, rx: 3});
+  d.node('g-prev-query', 42, 490, 110, 40, `sg(${m('h', 'l−1')})`, {fill, stroke: c.ink, fontSize: 21, rx: 3});
+  d.node('g-query-add', 178, 441, 31, 31, '+', {fill: '#F9FAFC', stroke: c.ink, fontSize: 27, shape: 'circle'});
+  d.node('g-edge-head', 222, 430, 101, 52, 'Edge head', {fill, stroke: c.ink, fontSize: 21, rx: 3});
+  d.node('g-logit-add', 363, 441, 31, 31, '+', {fill: '#F9FAFC', stroke: c.ink, fontSize: 27, shape: 'circle'});
+  d.node('g-integral', 417, 430, 157, 52, 'Softmax + Integral', {fill, stroke: c.ink, fontSize: 21, rx: 3});
+  d.text(340, 443, m('Δz', 'l'), {size: 23, anchor: 'middle'});
+  d.text(350, 512, m('z', 'l−1'), {size: 22, anchor: 'middle'});
+  d.text(503, 523, `${m('z', 'l')} = ${m('z', 'l−1')} + ${m('Δz', 'l')}`, {size: 25, anchor: 'middle'});
+  d.text(632, 446, 'offsets', {size: 22, anchor: 'middle'});
+  d.edge('g-query-to-add', [[161, 445], [177, 445], [184, 447]], {source: 'g-query', target: 'g-query-add'});
+  d.edge('g-prev-query-to-add', [[152, 510], [193.5, 510], [193.5, 472]], {source: 'g-prev-query', target: 'g-query-add'});
+  d.edge('g-add-to-head', [[209, 456.5], [222, 456.5]], {source: 'g-query-add', target: 'g-edge-head'});
+  d.edge('g-head-to-add', [[323, 456.5], [363, 456.5]], {source: 'g-edge-head', target: 'g-logit-add'});
+  d.edge('g-prev-logits', [[378.5, 507], [378.5, 472]], {target: 'g-logit-add'});
+  d.edge('g-add-to-integral', [[394, 456.5], [417, 456.5]], {source: 'g-logit-add', target: 'g-integral'});
+
+  // G.2: one fixed decoding reference across layers; updated boxes serve attention.
+  d.node('g-reference-fixed', 817, 323, 452, 28, `Fixed decoding reference ${m('r', '0')} (all six layers)`, {fill: '#F2F6F9', stroke: '#3E5265', fontSize: 19, textDy: -3, rx: 3});
+  d.node('g-reference-offsets', 706, 425, 117, 61, ['Reference', '+ offsets'], {fill, stroke: c.ink, fontSize: 21, rx: 3});
+  d.node('g-center', 863, 410, 113, 35, 'Center', {fill, stroke: c.ink, fontSize: 21, rx: 3});
+  d.node('g-raw-extent', 863, 463, 113, 37, 'Raw extent', {fill, stroke: c.ink, fontSize: 21, rx: 3});
+  d.node('g-extent-floor', 1004, 463, 109, 37, 'Extent floor', {fill: '#F4F0E9', stroke: c.ink, fontSize: 20, rx: 3});
+  d.node('g-box-assembly', 1137, 420, 116, 61, ['Box', 'assembly'], {fill, stroke: c.ink, fontSize: 23, rx: 3});
+  d.text(1058, 421, 'center unchanged', {size: 18, anchor: 'middle'});
+  d.text(1060, 525, 'Positive extent', {size: 20, anchor: 'middle'});
+  d.text(1275, 448, m('b', 'l'), {size: 25, anchor: 'middle'});
+  d.text(1355, 452, [`sg(${m('b', 'l')}):`, 'next-layer', 'attention reference'], {size: 20, anchor: 'middle', lineHeight: 21, textWidth: 128});
+  d.edge('g-integral-to-geometry', [[574, 456], [706, 456]], {source: 'g-integral', target: 'g-reference-offsets'});
+  d.edge('g-fixed-reference-to-geometry', [[817, 337], [764.5, 337], [764.5, 425]], {source: 'g-reference-fixed', target: 'g-reference-offsets'});
+  d.edge('g-offsets-to-center', [[823, 456], [836, 456], [836, 427.5], [863, 427.5]], {source: 'g-reference-offsets', target: 'g-center'});
+  d.edge('g-offsets-to-extent', [[823, 456], [836, 456], [836, 481.5], [863, 481.5]], {source: 'g-reference-offsets', target: 'g-raw-extent'});
+  d.edge('g-center-to-assembly', [[976, 427.5], [1137, 427.5]], {source: 'g-center', target: 'g-box-assembly'});
+  d.edge('g-extent-to-floor', [[976, 481.5], [1004, 481.5]], {source: 'g-raw-extent', target: 'g-extent-floor'});
+  d.edge('g-floor-to-assembly', [[1113, 481.5], [1128, 481.5], [1128, 465], [1137, 465]], {source: 'g-extent-floor', target: 'g-box-assembly'});
+  d.edge('g-box-to-attention-reference', [[1253, 452], [1306, 452]], {source: 'g-box-assembly'});
+
+  // G.3: detached matched-IoU quality is smoothed over eligible matches.
+  d.node('g-matched-iou', 49, 643, 190, 41, `sg(matched IoU): ${m('s', 'i')}`, {fill: '#FCFAF7', stroke: warm, fontSize: 21, rx: 3});
+  d.node('g-lqs', 277, 643, 145, 41, 'LQS smoothing', {fill: '#FCFAF7', stroke: warm, fontSize: 21, rx: 3});
+  d.node('g-eligible-mean', 522, 581, 176, 47, [`Eligible mean ${sbar}`, '(over eligible samples)'], {fill: '#FCFAF7', stroke: warm, fontSize: 19, rx: 3});
+  d.node('g-smoothed-quality', 477, 643, 265, 41, `${m('s′', 'i')} = (1 − ${m('α', 'l')}) ${m('s', 'i')} + ${m('α', 'l')}${sbar}`, {fill: '#FCFAF7', stroke: warm, fontSize: 24, rx: 3});
+  d.node('g-fgl-weights', 776, 643, 149, 41, 'FGL weights', {fill: '#FCFAF7', stroke: warm, fontSize: 21, rx: 3});
+  d.node('g-training-edge-logits', 969, 581, 160, 33, `edge logits ${m('z', 'l')}`, {fill: '#FCFAF7', stroke: warm, fontSize: 21, rx: 3});
+  d.node('g-training-gt', 1166, 581, 207, 33, `GT encoded using ${m('r', '0')}`, {fill: '#FCFAF7', stroke: warm, fontSize: 20, rx: 3});
+  d.node('g-fgl-loss', 966, 640, 178, 50, 'FGL loss', {fill: '#F1ECE5', stroke: warm, fontSize: 24, shape: 'ellipse'});
+  const tr = {stroke: warm, dash: true};
+  d.edge('g-iou-to-lqs', [[239, 665], [277, 665]], {...tr, source: 'g-matched-iou', target: 'g-lqs'});
+  d.edge('g-lqs-to-quality', [[422, 665], [477, 665]], {...tr, source: 'g-lqs', target: 'g-smoothed-quality'});
+  d.edge('g-mean-to-quality', [[610, 628], [610, 643]], {...tr, source: 'g-eligible-mean', target: 'g-smoothed-quality'});
+  d.edge('g-quality-to-weights', [[742, 665], [776, 665]], {...tr, source: 'g-smoothed-quality', target: 'g-fgl-weights'});
+  d.edge('g-weights-to-loss', [[925, 665], [966, 665]], {...tr, source: 'g-fgl-weights', target: 'g-fgl-loss'});
+  d.edge('g-logits-to-fgl', [[1050, 614], [1050, 640]], {...tr, source: 'g-training-edge-logits', target: 'g-fgl-loss'});
+  d.edge('g-gt-to-fgl', [[1203, 614], [1203, 665], [1144, 665]], {...tr, source: 'g-training-gt', target: 'g-fgl-loss'});
+}
+
+function buildFB(d) {
+  const c = d.c;
+  const sub = value => `<tspan baseline-shift="sub" font-size="70%" font-style="${/[a-z]/i.test(value) ? 'italic' : 'normal'}">${value}</tspan>`;
+  const sup = value => `<tspan baseline-shift="super" font-size="70%">${value}</tspan>`;
+  const it = value => `<tspan font-style="italic">${value}</tspan>`;
+  const p3 = `${it('P')}${sub('3')}`;
+  const p3s = `${it('P')}${sub('3')}${sup('*')}`;
+  const r0 = `${it('r')}${sub('0')}`;
+
+  // Panel (c): shared P3 refinement.
+  d.rect('f_frame', 15, 745, 602, 274, '#FFFFFF', c.f);
+  d.rect('f_header', 15, 745, 602, 41, c.ff, c.f);
+  d.text(25, 776, `(c) Shared P${sub('3')} refinement (F)`, {
+    size: 28, fill: c.f, bold: true, id: 'f_title', textWidth: 311
+  });
+
+  d.edge('f_input', [[30, 857], [83, 857]], {stroke: c.f, target: 'f_residual'});
+  d.edge('f_to_gates', [[179, 857], [192, 857]], {source: 'f_residual', target: 'f_gates'});
+  d.edge('f_to_blend', [[299, 857], [334, 857]], {stroke: c.f, source: 'f_gates', target: 'f_blend'});
+  d.edge('f_skip', [[57, 857], [57, 957], [419, 957], [419, 909]], {stroke: c.f, target: 'f_blend'});
+  d.edge('f_output', [[504, 858], [534, 858]], {stroke: c.f, source: 'f_blend'});
+
+  d.node('f_residual', 83, 825, 96, 62, ['Residual', 'blocks × 2'], {
+    fill: c.neutral, stroke: c.ink, fontSize: 19, lineHeight: 23
+  });
+  d.node('f_gates', 192, 825, 107, 62, ['Channel +', 'spatial gates'], {
+    fill: c.neutral, stroke: c.ink, fontSize: 19, lineHeight: 23
+  });
+  d.node('f_blend', 334, 828, 170, 81, [
+    'Residual blend',
+    `${p3s} = ${p3} + ${it('γ')} (${it('R')} − ${p3})`
+  ], {fill: c.neutral, stroke: c.ink, fontSize: 19, lineHeight: 31});
+  d.text(30, 849, p3, {size: 20, fill: c.f, id: 'f_input_label'});
+  d.text(309, 846, 'R', {size: 20, fill: c.f, id: 'f_refined_label'});
+  d.text(540, 863, p3s, {size: 22, fill: c.f, id: 'f_output_label'});
+  d.text(199, 948, `${p3} skip`, {size: 20, id: 'f_skip_label'});
+  d.text(568, 919, ['Shared by', 'decoder and', 'local expert'], {
+    size: 17, fill: c.f, anchor: 'middle', lineHeight: 18, id: 'f_shared_label'
+  });
+
+  // Panel (d): box-conditioned local expert.
+  d.rect('b_frame', 635, 745, 798, 274, '#FFFFFF', c.b);
+  d.rect('b_header', 635, 745, 798, 36, c.bf, c.b);
+  d.text(646, 776, '(d) Box-conditioned local expert (B)', {
+    size: 28, fill: c.b, bold: true, id: 'b_title', textWidth: 370
+  });
+  d.rect('b_training_frame', 646, 913, 776, 102, '#FFFFFF', c.b, 0, {'stroke-dasharray': '5 3'});
+
+  d.edge('b_query_to_attention', [[813, 820], [848, 820], [848, 840], [865, 840]], {
+    source: 'b_query', target: 'b_attention'
+  });
+  d.edge('b_tokens_to_attention', [[814, 881], [848, 881], [848, 867], [865, 867]], {
+    source: 'b_tokens', target: 'b_attention'
+  });
+  d.edge('b_attention_to_ln', [[982, 852], [1004, 852]], {source: 'b_attention', target: 'b_ln'});
+  d.edge('b_ln_to_class', [[1062, 852], [1079, 852], [1079, 820], [1102, 820]], {
+    source: 'b_ln', target: 'b_class_residual'
+  });
+  d.edge('b_ln_to_edge', [[1062, 852], [1079, 852], [1079, 881], [1101, 881]], {
+    source: 'b_ln', target: 'b_edge_residual'
+  });
+  d.edge('b_class_to_add', [[1218, 821], [1241, 821]], {source: 'b_class_residual', target: 'b_class_add'});
+  d.edge('b_base_class', [[1255, 799], [1255, 807]], {target: 'b_class_add'});
+  d.edge('b_class_to_output', [[1269, 821], [1353, 821]], {source: 'b_class_add', target: 'b_classes'});
+  d.edge('b_edge_to_add', [[1209, 881], [1226, 881]], {source: 'b_edge_residual', target: 'b_edge_add'});
+  d.edge('b_base_edge', [[1241, 857], [1241, 866]], {target: 'b_edge_add'});
+  d.edge('b_add_to_decode', [[1256, 881], [1272, 881]], {source: 'b_edge_add', target: 'b_decode'});
+  d.edge('b_decode_to_boxes', [[1354, 881], [1369, 881]], {source: 'b_decode', target: 'b_boxes'});
+
+  d.node('b_query', 650, 794, 163, 51, ['Augmented query', `final query, sg(${it('μ')}, ${it('H')})`], {
+    fill: c.neutral, stroke: c.ink, fontSize: 18, lineHeight: 20
+  });
+  d.node('b_tokens', 650, 855, 164, 50, ['Local tokens', `${it('P')}${sub('2')}, ${p3s}, ${it('P')}${sub('4')}; sg(base box)`], {
+    fill: c.neutral, stroke: c.ink, fontSize: 18, lineHeight: 20
+  });
+  d.node('b_attention', 865, 823, 117, 58, ['Local attention', '+ FFN × 2'], {
+    fill: c.neutral, stroke: c.ink, fontSize: 18, lineHeight: 21
+  });
+  d.node('b_ln', 1004, 828, 58, 51, ['Final', 'LN'], {
+    fill: c.neutral, stroke: c.ink, fontSize: 19, lineHeight: 21
+  });
+  d.node('b_class_residual', 1102, 805, 116, 31, 'Class residual', {
+    fill: c.bf, stroke: c.b, fontSize: 18
+  });
+  d.node('b_edge_residual', 1101, 866, 108, 31, 'Edge residual', {
+    fill: c.bf, stroke: c.b, fontSize: 18
+  });
+  d.node('b_class_add', 1241, 807, 28, 28, '+', {fill: c.neutral, stroke: c.ink, fontSize: 25, shape: 'circle'});
+  d.node('b_edge_add', 1226, 866, 30, 30, '+', {fill: c.neutral, stroke: c.ink, fontSize: 25, shape: 'circle'});
+  d.node('b_classes', 1353, 807, 70, 30, 'Classes', {fill: c.neutral, stroke: c.ink, fontSize: 18});
+  d.node('b_decode', 1272, 861, 82, 44, ['Decode', `with same ${r0}`], {
+    fill: c.bf, stroke: c.ink, fontSize: 16, lineHeight: 18
+  });
+  d.node('b_boxes', 1369, 868, 54, 28, 'Boxes', {fill: c.neutral, stroke: c.ink, fontSize: 18});
+  d.text(1263, 797, 'base class', {size: 17, anchor: 'middle', id: 'b_base_class_label'});
+  d.text(1263, 855, 'base edge logits', {size: 17, anchor: 'middle', id: 'b_base_edge_label'});
+
+  // The detached teacher receives the combined expert logits.
+  d.edge('b_teacher_to_loss', [[904, 954], [1094, 954]], {
+    stroke: c.b, dash: true, source: 'b_teacher_logits', target: 'b_kl_loss'
+  });
+  d.edge('b_student_to_loss', [[904, 996], [1094, 969]], {
+    stroke: c.b, dash: true, source: 'b_student_logits', target: 'b_kl_loss'
+  });
+  d.node('b_teacher_logits', 676, 940, 228, 44, ['sg(base edge logits', '+ edge residual)'], {
+    fill: c.bf, stroke: c.b, fontSize: 18, lineHeight: 20
+  });
+  d.node('b_student_logits', 690, 987, 214, 25, 'G edge logits', {fill: c.bf, stroke: c.b, fontSize: 19});
+  d.node('b_kl_loss', 1094, 936, 207, 49, 'Masked KL loss', {
+    fill: c.bf, stroke: c.b, fontSize: 22, shape: 'ellipse'
+  });
+  d.node('b_teacher_label', 916, 941, 62, 26, 'Teacher', {
+    fill: '#FFFFFF', stroke: 'none', fontSize: 18, rx: 0
+  });
+  d.node('b_student_label', 916, 982, 66, 26, 'Student', {
+    fill: '#FFFFFF', stroke: 'none', fontSize: 18, rx: 0
+  });
+  d.text(652, 935, 'Selective distillation · training only', {
+    size: 20, fill: c.b, bold: true, id: 'b_training_title', textWidth: 245
+  });
+  d.text(1328, 971, 'Supervises G', {size: 17, id: 'b_supervision_label', textWidth: 82});
+  d.text(1070, 1008, 'Shared assignment + quality / IoU checks', {
+    size: 18, id: 'b_shared_checks', textWidth: 291
+  });
+
+  // Bottom legend.
+  d.rect('legend_frame', 15, 1036, 1418, 39, '#FFFFFF', c.border, 1);
+  d.edge('legend_forward_arrow', [[100, 1055], [147, 1055]], {stroke: c.ink});
+  d.text(163, 1061, 'Forward computation', {size: 18, id: 'legend_forward_label', textWidth: 127});
+  d.edge('legend_training_arrow', [[379, 1055], [425, 1055]], {stroke: c.b, dash: true});
+  d.text(440, 1061, 'Training only', {size: 18, id: 'legend_training_label', textWidth: 81});
+  d.text(667, 1061, 'sg:  stop-gradient', {size: 18, id: 'legend_stop_gradient', textWidth: 95});
+  d.text(901, 1061, `${it('h')}${sub('l')}:  query features`, {size: 18, id: 'legend_query_features', textWidth: 109});
+  d.text(1168, 1061, `${it('s')}${sub('i')}:  matched-IoU quality`, {size: 18, id: 'legend_iou_quality', textWidth: 145});
+}
+
+buildA(d);buildG(d);buildFB(d);
+// Match the narrow serif labels while retaining real selectable SVG text.
+for(const n of nodes.values())for(const t of n.element.querySelectorAll('text')){
+ const width=t.getComputedTextLength();
+ if(width>n.w-12&&!t.hasAttribute('textLength')){t.setAttribute('textLength',n.w-12);t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+}
+const original={nodes:Object.fromEntries([...nodes].map(([id,n])=>[id,[0,0]])),edges:Object.fromEntries([...edges].map(([id,e])=>[id,e.points.map(p=>[...p])]))};
+const storeKey='gcdl-muted-1to1:v1:'+location.pathname+':'+(document.querySelector('#saved-state').dataset.revision||'base');
+let selection=null,drag=null,undoStack=[],editing=false,scale=1,savedNoticeTimer;
+const message=document.querySelector('#message'),undoButton=document.querySelector('#undo');
+function tell(s){message.textContent=s;}
+function snapshot(){return {nodes:Object.fromEntries([...nodes].map(([id,n])=>[id,[n.dx,n.dy]])),edges:Object.fromEntries([...edges].map(([id,e])=>[id,e.points.map(p=>[...p])]))};}
+function validState(v){return v&&v.nodes&&v.edges&&Object.keys(v.nodes).length===nodes.size&&Object.keys(v.edges).length===edges.size&&[...nodes.keys()].every(id=>Array.isArray(v.nodes[id])&&v.nodes[id].length===2&&v.nodes[id].every(Number.isFinite))&&[...edges.keys()].every(id=>Array.isArray(v.edges[id])&&v.edges[id].length>=2&&v.edges[id].every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)));}
+function restore(v){if(!validState(v))return false;for(const[id,n]of nodes){[n.dx,n.dy]=v.nodes[id];n.element.setAttribute('transform',`translate(${n.dx} ${n.dy})`);}for(const[id,e]of edges){e.points=v.edges[id].map(p=>[...p]);renderEdge(e);}drawHandles();return true;}
+function save(){try{localStorage.setItem(storeKey,JSON.stringify(snapshot()));tell('修改已自动保存');}catch{tell('浏览器无法保存，可导出 HTML 保留修改');}undoButton.disabled=!undoStack.length;}
+function pushUndo(s=snapshot()){undoStack.push(s);if(undoStack.length>80)undoStack.shift();undoButton.disabled=false;}
+function point(evt){const p=new DOMPoint(evt.clientX,evt.clientY);return p.matrixTransform(svg.getScreenCTM().inverse());}
+function select(type,id){selection={type,id};for(const n of nodes.values())n.element.classList.toggle('selected',type==='node'&&n.id===id);for(const e of edges.values())e.element.classList.toggle('selected',type==='edge'&&e.id===id);document.querySelector('#straight').disabled=type!=='edge';document.querySelector('#restore-one').disabled=false;drawHandles();}
+function clearSelection(){selection=null;nodes.forEach(n=>n.element.classList.remove('selected'));edges.forEach(e=>e.element.classList.remove('selected'));document.querySelector('#straight').disabled=true;document.querySelector('#restore-one').disabled=true;drawHandles();}
+function drawHandles(){handleLayer.replaceChildren();if(!editing||selection?.type!=='edge')return;const e=edges.get(selection.id);e.points.forEach((p,i)=>el('circle',{cx:p[0],cy:p[1],r:5.5,'class':'point-handle','data-index':i,tabindex:0,role:'button','aria-label':'连接点 '+(i+1)},handleLayer));for(let i=0;i<e.points.length-1;i++){const a=e.points[i],b=e.points[i+1];if(Math.hypot(a[0]-b[0],a[1]-b[1])<26)continue;el('rect',{x:(a[0]+b[0])/2-3.5,y:(a[1]+b[1])/2-3.5,width:7,height:7,'class':'mid-handle','data-mid':i},handleLayer);}}
+function moveNode(id,dx,dy,from){const n=nodes.get(id),[oldx,oldy]=from.nodes[id];n.dx=oldx+dx;n.dy=oldy+dy;n.element.setAttribute('transform',`translate(${n.dx} ${n.dy})`);for(const[eid,e]of edges){let pts=from.edges[eid].map(p=>[...p]);for(const[end,bound]of [[0,e.opts.source],[pts.length-1,e.opts.target]])if(bound===id){const near=end===0?1:end-1;const old=from.edges[eid][end],oldNear=from.edges[eid][near];pts[end]=[old[0]+dx,old[1]+dy];if(pts.length>2){if(Math.abs(old[0]-oldNear[0])<.01)pts[near][0]+=dx;else if(Math.abs(old[1]-oldNear[1])<.01)pts[near][1]+=dy;}}e.points=pts;renderEdge(e);}}
+svg.addEventListener('pointerdown',event=>{
+ if(!editing||event.button!==0)return;const p=point(event),handle=event.target.closest('[data-index],[data-mid]'),node=event.target.closest('[data-node]'),edge=event.target.closest('[data-edge]');
+ if(handle&&selection?.type==='edge'){
+  const before=snapshot(),e=edges.get(selection.id);let index=Number(handle.dataset.index);
+  if(handle.hasAttribute('data-mid')){index=Number(handle.dataset.mid)+1;e.points.splice(index,0,[p.x,p.y]);}
+  drag={type:'point',id:e.id,index,start:p,pointOrigin:[...e.points[index]],before};
+ }else if(node){select('node',node.dataset.node);drag={type:'node',id:node.dataset.node,start:p,before:snapshot()};}
+ else if(edge){select('edge',edge.dataset.edge);tell('拖动圆点调整连接；拖动小方块增加拐点');return;}
+ else{clearSelection();return;}
+ event.preventDefault();svg.setPointerCapture(event.pointerId);
+});
+svg.addEventListener('pointermove',event=>{
+ if(!drag)return;const p=point(event);let dx=p.x-drag.start.x,dy=p.y-drag.start.y;
+ if(event.shiftKey){if(Math.abs(dx)>Math.abs(dy))dy=0;else dx=0;}
+ if(drag.type==='node')moveNode(drag.id,dx,dy,drag.before);
+ else{const e=edges.get(drag.id);e.points[drag.index]=[Math.max(0,Math.min(1448,drag.pointOrigin[0]+dx)),Math.max(0,Math.min(1086,drag.pointOrigin[1]+dy))];renderEdge(e);drawHandles();}
+});
+function finishDrag(event,cancel=false){if(!drag)return;if(cancel)restore(drag.before);else{if(JSON.stringify(snapshot())!==JSON.stringify(drag.before)){pushUndo(drag.before);save();}}drag=null;drawHandles();if(svg.hasPointerCapture(event.pointerId))svg.releasePointerCapture(event.pointerId);}
+svg.addEventListener('pointerup',event=>finishDrag(event));svg.addEventListener('pointercancel',event=>finishDrag(event,true));
+document.querySelector('#edit').addEventListener('change',event=>{editing=event.target.checked;document.body.classList.toggle('editing',editing);clearSelection();tell(editing?'拖动模块或选择连线；Shift 可限制移动方向':'按原图布局查看 · 1448 × 1086');});
+document.querySelector('#straight').onclick=()=>{if(selection?.type!=='edge')return;pushUndo();const e=edges.get(selection.id);e.points=[e.points[0],e.points.at(-1)];renderEdge(e);drawHandles();save();};
+document.querySelector('#restore-one').onclick=()=>{if(!selection)return;pushUndo();if(selection.type==='edge'){const e=edges.get(selection.id),base=original.edges[e.id];e.points=base.map(p=>[...p]);for(const[end,bound]of [[0,e.opts.source],[e.points.length-1,e.opts.target]])if(nodes.has(bound)){const n=nodes.get(bound),near=end===0?1:end-1;e.points[end][0]+=n.dx;e.points[end][1]+=n.dy;if(e.points.length>2){if(Math.abs(base[end][0]-base[near][0])<.01)e.points[near][0]+=n.dx;else if(Math.abs(base[end][1]-base[near][1])<.01)e.points[near][1]+=n.dy;}}renderEdge(e);}else{const n=nodes.get(selection.id);moveNode(n.id,-n.dx,-n.dy,snapshot());}drawHandles();save();};
+undoButton.onclick=()=>{if(undoStack.length){restore(undoStack.pop());save();}};
+document.querySelector('#reset').onclick=()=>{pushUndo();restore(original);clearSelection();save();};
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'){if(drag){restore(drag.before);drag=null;}document.body.classList.remove('clean');clearSelection();return;}
+ if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'&&editing){event.preventDefault();undoButton.click();return;}
+ if(!editing||!selection||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.key))return;
+ const step=event.shiftKey?1:5,dx=event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0,dy=event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0;
+ if(selection.type==='node'){event.preventDefault();const before=snapshot();moveNode(selection.id,dx,dy,before);pushUndo(before);save();}
+ else if(document.activeElement?.hasAttribute('data-index')){event.preventDefault();const e=edges.get(selection.id),i=Number(document.activeElement.dataset.index);pushUndo();e.points[i][0]+=dx;e.points[i][1]+=dy;renderEdge(e);drawHandles();handleLayer.querySelector(`[data-index="${i}"]`)?.focus();save();}
+});
+function zoom(value){scale=Math.max(.3,Math.min(3,value));svg.style.width=(1448*scale)+'px';svg.style.height=(1086*scale)+'px';document.querySelector('#zoom-label').textContent=Math.round(scale*100)+'%';}
+function fit(){zoom(Math.min(1,(document.querySelector('#viewport').clientWidth-24)/1448));}
+document.querySelector('#fit').onclick=fit;document.querySelector('#actual').onclick=()=>zoom(1);
+document.querySelector('#minus').onclick=()=>zoom(scale-.1);document.querySelector('#plus').onclick=()=>zoom(scale+.1);
+document.querySelector('#clean').onclick=()=>{document.body.classList.toggle('clean');clearSelection();};
+function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function cleanSVG(){const clone=svg.cloneNode(true);clone.querySelector('#handles')?.remove();clone.querySelectorAll('.edge-hit').forEach(n=>n.remove());clone.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));clone.removeAttribute('style');clone.setAttribute('xmlns',NS);clone.setAttribute('width','1448');clone.setAttribute('height','1086');return new XMLSerializer().serializeToString(clone);}
+document.querySelector('#export-svg').onclick=()=>download(new Blob([cleanSVG()],{type:'image/svg+xml;charset=utf-8'}),'gcdl-architecture.svg');
+document.querySelector('#export-html').onclick=()=>{const clone=document.documentElement.cloneNode(true);clone.querySelector('#diagram').innerHTML=document.querySelector('#svg-initial').textContent;clone.querySelector('#saved-state').textContent=JSON.stringify(snapshot()).replaceAll('<','\\u003c');clone.querySelector('#saved-state').dataset.revision=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);clone.querySelector('body').classList.remove('editing','clean');clone.querySelector('#edit').removeAttribute('checked');download(new Blob(['<!doctype html>\n'+clone.outerHTML],{type:'text/html;charset=utf-8'}),'gcdl-architecture.html');};
+document.querySelector('#export-png').onclick=()=>{const source=URL.createObjectURL(new Blob([cleanSVG()],{type:'image/svg+xml'})),im=new Image();im.onload=()=>{const canvas=document.createElement('canvas');canvas.width=2896;canvas.height=2172;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0,canvas.width,canvas.height);canvas.toBlob(blob=>download(blob,'gcdl-architecture-2x.png'));URL.revokeObjectURL(source);};im.onerror=()=>{tell('导出图片失败，请改用 SVG');URL.revokeObjectURL(source);};im.src=source;};
+const initialSaved=document.querySelector('#saved-state').textContent.trim();
+try{let v;try{v=JSON.parse(localStorage.getItem(storeKey)||'null');}catch{}if(!validState(v))v=JSON.parse(initialSaved||'null');if(validState(v))restore(v);}catch{}
+clearSelection();undoButton.disabled=true;
+tell(initialSaved?'已载入保存的图形 · 1448 × 1086':'按原图布局查看 · 1448 × 1086');
+fit();window.addEventListener('resize',()=>{if(!document.body.classList.contains('editing'))fit();});
+window.diagramInfo={nodes:()=>nodes.size,edges:()=>edges.size,viewBox:'0 0 1448 1086'};
+</script>
+</body></html>

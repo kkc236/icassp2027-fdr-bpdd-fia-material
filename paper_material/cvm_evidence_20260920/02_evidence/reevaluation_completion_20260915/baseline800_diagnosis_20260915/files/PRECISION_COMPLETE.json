@@ -1,0 +1,10 @@
+[
+  {
+    "name": "B_fresh640",
+    "exit_code": 0
+  },
+  {
+    "name": "B_fp16anchors800",
+    "exit_code": 0
+  }
+]

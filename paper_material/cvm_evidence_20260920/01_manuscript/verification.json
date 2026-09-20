@@ -1,0 +1,688 @@
+{
+  "status": "compiled_and_content_verified",
+  "single_file_test": true,
+  "initial_files": [
+    "main.tex"
+  ],
+  "compiler_passes": 3,
+  "pages": 13,
+  "page_word_counts": [
+    732,
+    506,
+    822,
+    413,
+    861,
+    835,
+    817,
+    751,
+    551,
+    750,
+    466,
+    834,
+    334
+  ],
+  "tables": 6,
+  "figures": 4,
+  "equations": 11,
+  "references": 25,
+  "numeric_table_cells_checked": 122,
+  "table_checks": [
+    {
+      "table": 1,
+      "row": 1,
+      "values": [
+        "17.743",
+        "32.254",
+        "17.565"
+      ]
+    },
+    {
+      "table": 1,
+      "row": 2,
+      "values": [
+        "23.604",
+        "41.241",
+        "23.546"
+      ]
+    },
+    {
+      "table": 1,
+      "row": 3,
+      "values": [
+        "22.554",
+        "38.656",
+        "22.720",
+        "13.338"
+      ]
+    },
+    {
+      "table": 1,
+      "row": 4,
+      "values": [
+        "24.133",
+        "41.885",
+        "24.044",
+        "14.575"
+      ]
+    },
+    {
+      "table": 1,
+      "row": 5,
+      "values": [
+        "22.679",
+        "38.940",
+        "22.713",
+        "13.478"
+      ]
+    },
+    {
+      "table": 1,
+      "row": 6,
+      "values": [
+        "24.229",
+        "42.009",
+        "24.208",
+        "14.618"
+      ]
+    },
+    {
+      "table": 2,
+      "row": 1,
+      "values": [
+        "14.12",
+        "24.21",
+        "14.97"
+      ]
+    },
+    {
+      "table": 2,
+      "row": 2,
+      "values": [
+        "16.96",
+        "29.16",
+        "17.50"
+      ]
+    },
+    {
+      "table": 2,
+      "row": 3,
+      "values": [
+        "+2.84",
+        "+4.95",
+        "+2.53"
+      ]
+    },
+    {
+      "table": 2,
+      "row": 4,
+      "values": [
+        "30.38",
+        "34.65",
+        "+4.27"
+      ]
+    },
+    {
+      "table": 2,
+      "row": 5,
+      "values": [
+        "2.58",
+        "4.06",
+        "+1.48"
+      ]
+    },
+    {
+      "table": 2,
+      "row": 6,
+      "values": [
+        "9.40",
+        "12.19",
+        "+2.79"
+      ]
+    },
+    {
+      "table": 3,
+      "row": 1,
+      "values": [
+        "29.078",
+        "48.473"
+      ]
+    },
+    {
+      "table": 3,
+      "row": 2,
+      "values": [
+        "29.696",
+        "49.320"
+      ]
+    },
+    {
+      "table": 3,
+      "row": 3,
+      "values": [
+        "29.361",
+        "49.130"
+      ]
+    },
+    {
+      "table": 3,
+      "row": 4,
+      "values": [
+        "29.620",
+        "49.382"
+      ]
+    },
+    {
+      "table": 4,
+      "row": 1,
+      "values": [
+        "21.911",
+        "38.663",
+        "32.827",
+        "105.597",
+        "59.559",
+        "134.321"
+      ]
+    },
+    {
+      "table": 4,
+      "row": 2,
+      "values": [
+        "29.620",
+        "49.382",
+        "33.157",
+        "105.804",
+        "66.200",
+        "120.846"
+      ]
+    },
+    {
+      "table": 4,
+      "row": 3,
+      "values": [
+        "29.773",
+        "49.548",
+        "33.458",
+        "109.280",
+        "69.044",
+        "115.868"
+      ]
+    },
+    {
+      "table": 4,
+      "row": 4,
+      "values": [
+        "29.277",
+        "48.783",
+        "34.942",
+        "130.575",
+        "104.897",
+        "76.266"
+      ]
+    },
+    {
+      "table": 4,
+      "row": 5,
+      "values": [
+        "30.109",
+        "49.890",
+        "35.244",
+        "134.051",
+        "107.920",
+        "74.129"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 1,
+      "values": [
+        "100",
+        "28.477",
+        "30.501",
+        "+2.024"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 2,
+      "values": [
+        "300",
+        "28.501",
+        "30.528",
+        "+2.027"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 3,
+      "values": [
+        "100",
+        "22.511",
+        "24.097",
+        "+1.586"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 4,
+      "values": [
+        "300",
+        "22.554",
+        "24.133",
+        "+1.579"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 5,
+      "values": [
+        "100",
+        "28.773",
+        "30.703",
+        "+1.929"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 6,
+      "values": [
+        "300",
+        "28.796",
+        "30.727",
+        "+1.931"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 7,
+      "values": [
+        "100",
+        "22.637",
+        "24.190",
+        "+1.553"
+      ]
+    },
+    {
+      "table": 5,
+      "row": 8,
+      "values": [
+        "300",
+        "22.679",
+        "24.229",
+        "+1.550"
+      ]
+    },
+    {
+      "table": 6,
+      "row": 1,
+      "values": [
+        "300",
+        "35.3",
+        "29.3",
+        "47.4"
+      ]
+    },
+    {
+      "table": 6,
+      "row": 2,
+      "values": [
+        "300",
+        "2.59",
+        "31.2",
+        "50.5"
+      ]
+    },
+    {
+      "table": 6,
+      "row": 3,
+      "values": [
+        "100",
+        "35.244",
+        "30.109",
+        "49.890"
+      ]
+    }
+  ],
+  "derived_differences_checked": 24,
+  "exact_sample_points": 41,
+  "historical_csv_checks": [
+    {
+      "file": "historical_fdr_results.csv",
+      "rows": 100,
+      "best_epoch": "92",
+      "AP": "29.078",
+      "AP50": "48.473"
+    },
+    {
+      "file": "clean_fdr_results.csv",
+      "rows": 100,
+      "best_epoch": "88",
+      "AP": "29.696",
+      "AP50": "49.320"
+    },
+    {
+      "file": "geometry_fdr_results.csv",
+      "rows": 100,
+      "best_epoch": "91",
+      "AP": "29.361",
+      "AP50": "49.130"
+    },
+    {
+      "file": "lrs_gfdr_results.csv",
+      "rows": 100,
+      "best_epoch": "92",
+      "AP": "29.620",
+      "AP50": "49.382"
+    }
+  ],
+  "geometry_lrs_source": "complete 100-epoch CSVs and registered track report; not a matched-source ablation certification",
+  "uavdt": {
+    "numeric_cells_checked": 18,
+    "raw_text_exports_verified": true,
+    "AP_gain": 2.84,
+    "current_full_identity": "author_confirmed_not_checkpoint_verified",
+    "official_split_mapping": "unverified",
+    "new_training": false
+  },
+  "overfull_boxes": 0,
+  "undefined_references": 0,
+  "missing_characters": 0,
+  "official_styles_unchanged": true,
+  "letter_paper": true,
+  "anonymous": true,
+  "review_line_rulers": true,
+  "fonts_embedded": true,
+  "type3_fonts": false,
+  "new_training": false,
+  "new_model_evaluation": false,
+  "efficiency_batch_sizes": [
+    8
+  ],
+  "internal_components": "validation only",
+  "original_sources_unchanged": true,
+  "origin_hashes_checked": 22,
+  "external_images_required": false,
+  "bibtex_required": false,
+  "shell_escape": false,
+  "known_template_warnings": [
+    "Official cvm_eso.sty identifies itself as everyshi",
+    "Legacy hyperref letterpaper option unused",
+    "epstopdf notes shell escape disabled; no EPS used"
+  ],
+  "archived_geometry_checks": [
+    {
+      "record": "red.xml",
+      "controlled_BF16_case": "failure"
+    },
+    {
+      "record": "numerical.xml",
+      "controlled_BF16_case": "pass"
+    },
+    {
+      "record": "regression-final.xml",
+      "controlled_BF16_case": "pass"
+    }
+  ],
+  "nominal_size_dtype_cases_passed": 8,
+  "center_preservation_case_passed": true,
+  "current_geometry_function_matches_archive": true,
+  "historical_training_trigger_rates_in_main_text": false,
+  "external_class_AP_values_checked": 20,
+  "external_class_differences_checked": 10,
+  "external_class_profile_checks": [
+    {
+      "category_id": 0,
+      "AP_values": [
+        15.132130458677182,
+        16.488515096994863
+      ],
+      "difference": 1.3563846383176816
+    },
+    {
+      "category_id": 1,
+      "AP_values": [
+        9.820735464438,
+        10.285897581242692
+      ],
+      "difference": 0.46516211680469155
+    },
+    {
+      "category_id": 2,
+      "AP_values": [
+        7.039878443530395,
+        8.66180739160494
+      ],
+      "difference": 1.6219289480745447
+    },
+    {
+      "category_id": 3,
+      "AP_values": [
+        50.65790481368689,
+        51.5722441785761
+      ],
+      "difference": 0.9143393648892086
+    },
+    {
+      "category_id": 4,
+      "AP_values": [
+        29.77503051811949,
+        30.984244672917182
+      ],
+      "difference": 1.2092141547976922
+    },
+    {
+      "category_id": 5,
+      "AP_values": [
+        27.510098738147516,
+        29.63567989305527
+      ],
+      "difference": 2.125581154907753
+    },
+    {
+      "category_id": 6,
+      "AP_values": [
+        12.634739644450455,
+        16.765293999072977
+      ],
+      "difference": 4.130554354622522
+    },
+    {
+      "category_id": 7,
+      "AP_values": [
+        12.717542471696476,
+        14.41620319172048
+      ],
+      "difference": 1.6986607200240051
+    },
+    {
+      "category_id": 8,
+      "AP_values": [
+        43.596478561534056,
+        44.15443594981364
+      ],
+      "difference": 0.5579573882795827
+    },
+    {
+      "category_id": 9,
+      "AP_values": [
+        16.65902027682033,
+        18.370635170145846
+      ],
+      "difference": 1.7116148933255175
+    }
+  ],
+  "external_class_profile_endpoint": "final; common converted-label test; complete systems only",
+  "qualitative_figure_status": "excluded from current revision by explicit user choice; optional tooling retained for future work",
+  "qualitative_gt_sha256": "92d2866fe6e6ff4c3101b82c01b7718eb78b3759399042c4501d893798fc8bfa",
+  "qualitative_gt_counts": {
+    "images": 548,
+    "annotations": 38759
+  },
+  "motivation_checks": {
+    "all_converted_val_annotations": true,
+    "method": "independent Decimal area thresholds and rectangle intersection/union",
+    "input_area_bins": [
+      6856,
+      14011,
+      12414,
+      4580,
+      898
+    ],
+    "input_below_32_count": 33281,
+    "original_area_below_32_count": 26586,
+    "analytic_curve_samples_checked": 243,
+    "model_execution": false
+  },
+  "method_hierarchy_verified": true,
+  "reference_publication_types_verified": true,
+  "external_sensitivity_checks": [
+    {
+      "checkpoint": "final",
+      "split": "val",
+      "max_det": 100,
+      "AP": [
+        28.476610956084453,
+        30.501095688246217
+      ],
+      "delta": 2.0244847321617634
+    },
+    {
+      "checkpoint": "final",
+      "split": "val",
+      "max_det": 300,
+      "AP": [
+        28.5009542822865,
+        30.528177072331314
+      ],
+      "delta": 2.0272227900448136
+    },
+    {
+      "checkpoint": "final",
+      "split": "test",
+      "max_det": 100,
+      "AP": [
+        22.511080403595322,
+        24.097420009420727
+      ],
+      "delta": 1.5863396058254047
+    },
+    {
+      "checkpoint": "final",
+      "split": "test",
+      "max_det": 300,
+      "AP": [
+        22.554355939110078,
+        24.133495712514403
+      ],
+      "delta": 1.579139773404325
+    },
+    {
+      "checkpoint": "best",
+      "split": "val",
+      "max_det": 100,
+      "AP": [
+        28.773380834458823,
+        30.702687682009568
+      ],
+      "delta": 1.9293068475507447
+    },
+    {
+      "checkpoint": "best",
+      "split": "val",
+      "max_det": 300,
+      "AP": [
+        28.795887807283677,
+        30.72697299369438
+      ],
+      "delta": 1.9310851864107015
+    },
+    {
+      "checkpoint": "best",
+      "split": "test",
+      "max_det": 100,
+      "AP": [
+        22.637104285704208,
+        24.189895957384287
+      ],
+      "delta": 1.5527916716800796
+    },
+    {
+      "checkpoint": "best",
+      "split": "test",
+      "max_det": 300,
+      "AP": [
+        22.678525333944666,
+        24.228513876937523
+      ],
+      "delta": 1.5499885429928568
+    }
+  ],
+  "external_sensitivity_AP_values_checked": 16,
+  "external_sensitivity_differences_checked": 8,
+  "publication_identity_mapping_verified": true,
+  "accuracy_and_cost_merged": true,
+  "historical_designs_location": "Main localization-design section; all four rows retained",
+  "numerical_implementation_checks_location": "Appendix A; developer failure chronology excluded from paper",
+  "publication_terminology": {
+    "core": "GCDL",
+    "weight_rule": "LQS",
+    "legacy_run_identifiers_unchanged": true
+  },
+  "dfine_batch_reduction_reason": {
+    "source": "direct author clarification",
+    "physical_batch": {
+      "attempted": 8,
+      "used": 4
+    },
+    "hardware": "RTX 4090, 24 GB",
+    "reason": "out-of-memory under this training setup",
+    "new_memory_test": false,
+    "other_recipe_differences_retained": true
+  },
+  "formulation_checks": {
+    "status": "passed",
+    "check_count": 8,
+    "scope": "Formula arithmetic and source-expression consistency only. No neural model, dataset prediction, training, autograd, or accuracy evaluation was run."
+  },
+  "image_stream_checks": [
+    {
+      "name": "Bubble",
+      "size": [
+        2592,
+        1710
+      ],
+      "lossless_rgb_matches": true
+    },
+    {
+      "name": "Overview",
+      "size": [
+        1448,
+        1086
+      ],
+      "lossless_rgb_matches": true
+    },
+    {
+      "name": "Classes",
+      "size": [
+        2500,
+        1064
+      ],
+      "lossless_rgb_matches": true
+    },
+    {
+      "name": "Motivation",
+      "size": [
+        2590,
+        893
+      ],
+      "lossless_rgb_matches": true
+    }
+  ],
+  "visual_review": "passed_all_13_pages",
+  "main_tex_sha256": "9d78076f1ce60d34e29917f65b01d87ca812b6d38e9422b4e3264352125364bf",
+  "pdf_sha256": "978d8eb663bc37bf4815fb8ad2ad055f403695fccec8514d6d36725ca56c4e8e",
+  "visual_review_notes": [
+    "All 13 pages inspected; UAVDT Table 2 and Section 4.3 on page 9 are legible, with no clipping or overlap.",
+    "Final pages 10-13 inspected after appendix ragged-bottom adjustment; excessive paragraph stretch removed.",
+    "All original figure assets and VisDrone table values retained."
+  ]
+}

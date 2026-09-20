@@ -1,0 +1,874 @@
+{
+  "schema_version": 1,
+  "created_date": "2026-09-17",
+  "source_directory": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/visdrone_dfine_l_external_20260913/common_evaluation_20260915",
+  "copy_directory": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_experiment_design_20260917/inputs/external_sensitivity",
+  "scope": "External complete-detector comparison: scratch-adapted D-FINE-L reproduction versus Full (LRS-GFDR + expert + shared P3); not internal-module test ablations",
+  "new_training": false,
+  "new_model_inference": false,
+  "new_coco_evaluation": false,
+  "source_manifest": {
+    "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\cross-protocol-manifest.json",
+    "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\cross-protocol-manifest.json",
+    "source_sha256": "3f953a8267105978a0038695a8a03aa3578b8cd3c59e88345e43322ad222fdf8",
+    "copy_sha256": "3f953a8267105978a0038695a8a03aa3578b8cd3c59e88345e43322ad222fdf8",
+    "copy_hash_match": true,
+    "status": "evaluation_complete",
+    "primary_endpoint": "final vs final; AP50:95 at maxDet=300",
+    "secondary_endpoints": "frozen native best; maxDet=100; AP50/AP75/APs/AR/per-class"
+  },
+  "verification": {
+    "result_jsons": 16,
+    "all_manifest_file_hashes_match": true,
+    "all_copied_bytes_match": true,
+    "all_embedded_metrics_match": true,
+    "all_metadata_match": true,
+    "all_eight_manifest_deltas_match": true,
+    "all_eight_comparison_md_rows_match": true,
+    "current_input_matches": [
+      {
+        "file": "dfine_final_test.cap300.json",
+        "current_input_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_literature_architecture_20260917\\inputs\\external_class_profile\\source\\dfine_final_test.cap300.json",
+        "current_input_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+        "source_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+        "match": true
+      },
+      {
+        "file": "joint_final_test.cap300.json",
+        "current_input_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_literature_architecture_20260917\\inputs\\external_class_profile\\source\\joint_final_test.cap300.json",
+        "current_input_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+        "source_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+        "match": true
+      },
+      {
+        "file": "dfine_final_test.cap300.json",
+        "current_input_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_class_profile\\source\\dfine_final_test.cap300.json",
+        "current_input_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+        "source_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+        "match": true
+      },
+      {
+        "file": "joint_final_test.cap300.json",
+        "current_input_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_class_profile\\source\\joint_final_test.cap300.json",
+        "current_input_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+        "source_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+        "match": true
+      }
+    ],
+    "source_report_matches": [
+      {
+        "file": "dfine_final_val.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_val.report.json",
+        "source_sha256": "0c159b43457e61e3c00c8ba0cc6e3b4fc147a578ca145d4a55be1b00fcaf2449",
+        "manifest_sha256": "0c159b43457e61e3c00c8ba0cc6e3b4fc147a578ca145d4a55be1b00fcaf2449",
+        "match": true,
+        "processed_images": 548,
+        "evaluation": {
+          "conf": 0.001,
+          "imgsz": 640,
+          "precision": "fp32",
+          "resize": "stretch_xy"
+        },
+        "checkpoint_record": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/last_evaluated.pth",
+        "checkpoint_sha256": "C9A535BFB8FF6AD9187D6ACF7512A8B0F3DCC376353E3F49915CD84B672B2A42",
+        "postprocess": {
+          "num_top_queries": 300,
+          "remap_mscoco_category": false,
+          "use_focal_loss": true
+        },
+        "prediction_file_manifest_sha256": "9f2892072bfc5b60991f8d0543664ffca177e492a3c01304a4ee5de3a8dbf51c",
+        "copied": false
+      },
+      {
+        "file": "joint_final_val.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_val.report.json",
+        "source_sha256": "b64dc5d25ce736dc9632d151ae7816d668847316c24a921b939ae6520156967b",
+        "manifest_sha256": "b64dc5d25ce736dc9632d151ae7816d668847316c24a921b939ae6520156967b",
+        "match": true,
+        "processed_images": 548,
+        "evaluation": {
+          "imgsz": 640,
+          "resize": "PIL bilinear stretch_xy",
+          "precision": "fp32",
+          "conf": 0.001,
+          "topk": 300,
+          "nms": false,
+          "tta": false
+        },
+        "checkpoint_record": {
+          "model_class": "CapacityBPDDFIASafeDetectionModel",
+          "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061",
+          "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/last.pt",
+          "checkpoint_sha256": "1E826E331AF4FF5E4B4B3A6459B45950418DC08A202188D101594A33AEE35B5A",
+          "checkpoint_epoch": -1,
+          "source_field": "model"
+        },
+        "checkpoint_sha256": null,
+        "postprocess": null,
+        "prediction_file_manifest_sha256": "d946fc4fff304873707ea558f9b702644873f1a7c7b00496fb9512ca74783d72",
+        "copied": false
+      },
+      {
+        "file": "dfine_final_test.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_test.report.json",
+        "source_sha256": "bebbc1e3109b193c1f2c60505a576d9499374eee4614e6f1849f177e08b2f467",
+        "manifest_sha256": "bebbc1e3109b193c1f2c60505a576d9499374eee4614e6f1849f177e08b2f467",
+        "match": true,
+        "processed_images": 1610,
+        "evaluation": {
+          "conf": 0.001,
+          "imgsz": 640,
+          "precision": "fp32",
+          "resize": "stretch_xy"
+        },
+        "checkpoint_record": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/last_evaluated.pth",
+        "checkpoint_sha256": "C9A535BFB8FF6AD9187D6ACF7512A8B0F3DCC376353E3F49915CD84B672B2A42",
+        "postprocess": {
+          "num_top_queries": 300,
+          "remap_mscoco_category": false,
+          "use_focal_loss": true
+        },
+        "prediction_file_manifest_sha256": "493b3f3dfac950ae7d3835e019510171f28866a87d53f742593c86ea4895d38b",
+        "copied": false
+      },
+      {
+        "file": "joint_final_test.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_test.report.json",
+        "source_sha256": "9da9bb00f2be26e7b4afaa86eeff5e671db5c0e6291382ed1a06838b84641acf",
+        "manifest_sha256": "9da9bb00f2be26e7b4afaa86eeff5e671db5c0e6291382ed1a06838b84641acf",
+        "match": true,
+        "processed_images": 1610,
+        "evaluation": {
+          "imgsz": 640,
+          "resize": "PIL bilinear stretch_xy",
+          "precision": "fp32",
+          "conf": 0.001,
+          "topk": 300,
+          "nms": false,
+          "tta": false
+        },
+        "checkpoint_record": {
+          "model_class": "CapacityBPDDFIASafeDetectionModel",
+          "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061",
+          "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/last.pt",
+          "checkpoint_sha256": "1E826E331AF4FF5E4B4B3A6459B45950418DC08A202188D101594A33AEE35B5A",
+          "checkpoint_epoch": -1,
+          "source_field": "model"
+        },
+        "checkpoint_sha256": null,
+        "postprocess": null,
+        "prediction_file_manifest_sha256": "3b366dd6b65ee89d70de0fc2d1c3d09d8ca1faf75ab5a61397f6eae5098a6d29",
+        "copied": false
+      },
+      {
+        "file": "dfine_best_val.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_best_val.report.json",
+        "source_sha256": "a900bfe326093086eb2c730c35783c572dca4e2e07cf1c1c2c1e6ea2273d4e64",
+        "manifest_sha256": "a900bfe326093086eb2c730c35783c572dca4e2e07cf1c1c2c1e6ea2273d4e64",
+        "match": true,
+        "processed_images": 548,
+        "evaluation": {
+          "conf": 0.001,
+          "imgsz": 640,
+          "precision": "fp32",
+          "resize": "stretch_xy"
+        },
+        "checkpoint_record": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/global_best.pth",
+        "checkpoint_sha256": "7B2E19B7244A128882710F35589C85B0B9841E08D4E355B26E5B6A98972F8D00",
+        "postprocess": {
+          "num_top_queries": 300,
+          "remap_mscoco_category": false,
+          "use_focal_loss": true
+        },
+        "prediction_file_manifest_sha256": "3e36d1929ba915df1bfbc2808d9ce7cf833740c638af26f374cf45f6f6c887e7",
+        "copied": false
+      },
+      {
+        "file": "joint_best_val.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_best_val.report.json",
+        "source_sha256": "5161d495b6294bb35f8145406521326a150433564420fe6955daec5259b50d63",
+        "manifest_sha256": "5161d495b6294bb35f8145406521326a150433564420fe6955daec5259b50d63",
+        "match": true,
+        "processed_images": 548,
+        "evaluation": {
+          "imgsz": 640,
+          "resize": "PIL bilinear stretch_xy",
+          "precision": "fp32",
+          "conf": 0.001,
+          "topk": 300,
+          "nms": false,
+          "tta": false
+        },
+        "checkpoint_record": {
+          "model_class": "CapacityBPDDFIASafeDetectionModel",
+          "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061",
+          "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+          "checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6",
+          "checkpoint_epoch": -1,
+          "source_field": "model"
+        },
+        "checkpoint_sha256": null,
+        "postprocess": null,
+        "prediction_file_manifest_sha256": "df8974814e722eedf58dd561b2ad7ce652b31f3c4d1862fd4bf5952529f51552",
+        "copied": false
+      },
+      {
+        "file": "dfine_best_test.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_best_test.report.json",
+        "source_sha256": "5b0941a490b12fa33ed4c41647d523e8254b4d5484888561078499e5bd870b99",
+        "manifest_sha256": "5b0941a490b12fa33ed4c41647d523e8254b4d5484888561078499e5bd870b99",
+        "match": true,
+        "processed_images": 1610,
+        "evaluation": {
+          "conf": 0.001,
+          "imgsz": 640,
+          "precision": "fp32",
+          "resize": "stretch_xy"
+        },
+        "checkpoint_record": "/root/sj-tmp/dfine-runs/dfine-l-visdrone-bs4-scratch-cross-20260914/global_best.pth",
+        "checkpoint_sha256": "7B2E19B7244A128882710F35589C85B0B9841E08D4E355B26E5B6A98972F8D00",
+        "postprocess": {
+          "num_top_queries": 300,
+          "remap_mscoco_category": false,
+          "use_focal_loss": true
+        },
+        "prediction_file_manifest_sha256": "c3bed85b3cf9d11139ca76d18af9ad176e7505efcfa80ba55ec96f7eb331f82a",
+        "copied": false
+      },
+      {
+        "file": "joint_best_test.report.json",
+        "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_best_test.report.json",
+        "source_sha256": "5e954d770963d7efef3745f8ee22ed3e849c14fd14f4de27084ecbe48b8b329d",
+        "manifest_sha256": "5e954d770963d7efef3745f8ee22ed3e849c14fd14f4de27084ecbe48b8b329d",
+        "match": true,
+        "processed_images": 1610,
+        "evaluation": {
+          "imgsz": 640,
+          "resize": "PIL bilinear stretch_xy",
+          "precision": "fp32",
+          "conf": 0.001,
+          "topk": 300,
+          "nms": false,
+          "tta": false
+        },
+        "checkpoint_record": {
+          "model_class": "CapacityBPDDFIASafeDetectionModel",
+          "model_yaml": "/root/sj-tmp/eval/uav-detection-baselines-fb0a6a16/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "model_yaml_sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061",
+          "checkpoint": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+          "checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6",
+          "checkpoint_epoch": -1,
+          "source_field": "model"
+        },
+        "checkpoint_sha256": null,
+        "postprocess": null,
+        "prediction_file_manifest_sha256": "7c44097189145e55baf6cc0d8d4e9b85e0984c4a9e70d942cc228918c80ca593",
+        "copied": false
+      }
+    ],
+    "raw_predictions_recomputed": false,
+    "checkpoint_consistency": [
+      {
+        "model": "dfine",
+        "checkpoint": "final",
+        "checkpoint_sha256": "c9a535bfb8ff6ad9187d6acf7512a8b0f3dcc376353e3f49915cd84b672b2a42",
+        "same_for_val_and_test": true
+      },
+      {
+        "model": "dfine",
+        "checkpoint": "best",
+        "checkpoint_sha256": "7b2e19b7244a128882710f35589c85b0b9841e08d4e355b26e5b6a98972f8d00",
+        "same_for_val_and_test": true
+      },
+      {
+        "model": "joint",
+        "checkpoint": "final",
+        "checkpoint_sha256": "1e826e331af4ff5e4b4b3a6459b45950418dc08a202188d101594a33aee35b5a",
+        "same_for_val_and_test": true
+      },
+      {
+        "model": "joint",
+        "checkpoint": "best",
+        "checkpoint_sha256": "39f006df9548b4d5da968b9302fc14678fabaf2009802bc09a68fb23dd146bc6",
+        "same_for_val_and_test": true
+      }
+    ]
+  },
+  "protocol": {
+    "evaluator": "pycocotools.COCOeval",
+    "evaluator_version": "2.0.11",
+    "iou_thresholds": "0.50:0.05:0.95",
+    "preprocessing": "PIL bilinear independent-axis stretch to 640x640; RGB/255; FP32",
+    "inference_batch": 1,
+    "confidence_threshold": 0.001,
+    "native_model_output_cap_per_image": 300,
+    "tta": false,
+    "extra_nms": false,
+    "max_dets_sensitivity": [
+      100,
+      300
+    ],
+    "max_dets_semantics": "COCOeval maxDets is the evaluation cap per image and category. maxDets=100 rescored the same archived predictions exported with a total model-output cap of 300; it is not a new inference run with top-100 model outputs.",
+    "reuse_evidence": "The archived pipeline exports each model/endpoint/split JSONL once, then calls the common evaluator with cap100 and cap300 on that same JSONL. The evaluator converts every exported detection and changes only evaluator.params.maxDets=[1,10,max_det].",
+    "evaluator_source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\evaluate_common.py",
+    "evaluator_source_sha256": "aadfe82f25a0a9ca2981e5de7b4d730b8548dd58de1509b74460530ac84e8d5f",
+    "evaluator_manifest_sha256": "aadfe82f25a0a9ca2981e5de7b4d730b8548dd58de1509b74460530ac84e8d5f",
+    "evaluator_source_hash_match": true,
+    "pipeline_source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\cross_protocol_bs4_pipeline.sh",
+    "pipeline_source_sha256": "200d6e0089499b8cd87a832048dd29c465139aecaf5f56c02f383b68c05cd6d5",
+    "dataset": {
+      "train": {
+        "images": 6471,
+        "annotations": 343204,
+        "sha256": "da01bfb0b105a83aeb9af484fa412abdcc09b2fdd2f7522872a04a768270a130"
+      },
+      "val": {
+        "images": 548,
+        "annotations": 38759,
+        "sha256": "92d2866fe6e6ff4c3101b82c01b7718eb78b3759399042c4501d893798fc8bfa"
+      },
+      "test": {
+        "images": 1610,
+        "annotations": 75102,
+        "sha256": "0f8c9f7bd5d17d9948381d656d31de03e0e6073a114261573f73744ce4caf087"
+      }
+    }
+  },
+  "rounding": {
+    "raw_ap_scale": "0 to 1",
+    "ap_display_scale": "percent = raw AP * 100",
+    "delta_scale": "percentage points = (Full raw AP - D-FINE raw AP) * 100",
+    "display_decimals": 3,
+    "rule": "Compute every delta from unrounded raw AP, then format once to three decimals. Never subtract rounded displayed AP.",
+    "exact_source_ap_tokens_retained": true
+  },
+  "limitations": [
+    "Single training seed; no significance test",
+    "Different training recipes and effective batch sizes",
+    "YOLO-derived converted annotations; original ignored regions unavailable",
+    "Test was previously accessible during development",
+    "Sensitivity covers recorded complete-system evaluation choices only; no causal attribution to individual modules",
+    "Hashes verify identity and copying of archived reports, not an independent model re-evaluation"
+  ],
+  "range": {
+    "min_delta_ap_pp_unrounded": 1.5499885429928584,
+    "max_delta_ap_pp_unrounded": 2.0272227900448136,
+    "all_eight_deltas_positive": true
+  },
+  "files": [
+    {
+      "file": "dfine_final_val.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_val.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_final_val.cap100.json",
+      "manifest_sha256": "2c4187f18b8c5867cca07b820c7c9d4ff90606093048e54d081256d57556a753",
+      "source_sha256": "2c4187f18b8c5867cca07b820c7c9d4ff90606093048e54d081256d57556a753",
+      "copy_sha256": "2c4187f18b8c5867cca07b820c7c9d4ff90606093048e54d081256d57556a753",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_final_val.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_val.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_final_val.cap100.json",
+      "manifest_sha256": "f636ed32a7a4f9b3e83b6a096eff699e0c491f3527bf5a92bdf8ea778b3f2120",
+      "source_sha256": "f636ed32a7a4f9b3e83b6a096eff699e0c491f3527bf5a92bdf8ea778b3f2120",
+      "copy_sha256": "f636ed32a7a4f9b3e83b6a096eff699e0c491f3527bf5a92bdf8ea778b3f2120",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_final_val.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_val.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_final_val.cap300.json",
+      "manifest_sha256": "fa6d4ceef0244a077e0bb47085aa7b96e29896f4f3955c599f381df1d286bb55",
+      "source_sha256": "fa6d4ceef0244a077e0bb47085aa7b96e29896f4f3955c599f381df1d286bb55",
+      "copy_sha256": "fa6d4ceef0244a077e0bb47085aa7b96e29896f4f3955c599f381df1d286bb55",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_final_val.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_val.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_final_val.cap300.json",
+      "manifest_sha256": "dd2e276f6235d8a57217996847e6a8bb18e58d56a4ba898e0568e717535f28f4",
+      "source_sha256": "dd2e276f6235d8a57217996847e6a8bb18e58d56a4ba898e0568e717535f28f4",
+      "copy_sha256": "dd2e276f6235d8a57217996847e6a8bb18e58d56a4ba898e0568e717535f28f4",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_final_test.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_test.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_final_test.cap100.json",
+      "manifest_sha256": "ba774a1dc1b049da462f15ebda5f44d233e16a80bc4da7b7daf6aac8da78adcf",
+      "source_sha256": "ba774a1dc1b049da462f15ebda5f44d233e16a80bc4da7b7daf6aac8da78adcf",
+      "copy_sha256": "ba774a1dc1b049da462f15ebda5f44d233e16a80bc4da7b7daf6aac8da78adcf",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_final_test.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_test.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_final_test.cap100.json",
+      "manifest_sha256": "e1670ca50993ac1e8040f00b18660927f769978b254e1f4c880192bc7bfc4b8d",
+      "source_sha256": "e1670ca50993ac1e8040f00b18660927f769978b254e1f4c880192bc7bfc4b8d",
+      "copy_sha256": "e1670ca50993ac1e8040f00b18660927f769978b254e1f4c880192bc7bfc4b8d",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_final_test.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_test.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_final_test.cap300.json",
+      "manifest_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+      "source_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+      "copy_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_final_test.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_test.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_final_test.cap300.json",
+      "manifest_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+      "source_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+      "copy_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_best_val.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_best_val.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_best_val.cap100.json",
+      "manifest_sha256": "41949dea8de41e0e28fbb9e93997204d979732c4806167027a765c6a67bec462",
+      "source_sha256": "41949dea8de41e0e28fbb9e93997204d979732c4806167027a765c6a67bec462",
+      "copy_sha256": "41949dea8de41e0e28fbb9e93997204d979732c4806167027a765c6a67bec462",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_best_val.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_best_val.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_best_val.cap100.json",
+      "manifest_sha256": "bb4f678397efb979a15e62b4bf991ad9b85aed1076af9d7a3bf2338ce8dee030",
+      "source_sha256": "bb4f678397efb979a15e62b4bf991ad9b85aed1076af9d7a3bf2338ce8dee030",
+      "copy_sha256": "bb4f678397efb979a15e62b4bf991ad9b85aed1076af9d7a3bf2338ce8dee030",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_best_val.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_best_val.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_best_val.cap300.json",
+      "manifest_sha256": "7c8dc8b28f9fd3f56376db57f5ebd6f7f21d640d8e33282cd9ae55a581614e40",
+      "source_sha256": "7c8dc8b28f9fd3f56376db57f5ebd6f7f21d640d8e33282cd9ae55a581614e40",
+      "copy_sha256": "7c8dc8b28f9fd3f56376db57f5ebd6f7f21d640d8e33282cd9ae55a581614e40",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_best_val.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_best_val.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_best_val.cap300.json",
+      "manifest_sha256": "ecf8284b19ee59edab50feb4a3535c48a1bcc1afda4e7e90ee40569b36b5cbdf",
+      "source_sha256": "ecf8284b19ee59edab50feb4a3535c48a1bcc1afda4e7e90ee40569b36b5cbdf",
+      "copy_sha256": "ecf8284b19ee59edab50feb4a3535c48a1bcc1afda4e7e90ee40569b36b5cbdf",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_best_test.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_best_test.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_best_test.cap100.json",
+      "manifest_sha256": "476eec380cd5a29849c91079ea50ef0b9b2a98a320baa081cf794728f3a97d57",
+      "source_sha256": "476eec380cd5a29849c91079ea50ef0b9b2a98a320baa081cf794728f3a97d57",
+      "copy_sha256": "476eec380cd5a29849c91079ea50ef0b9b2a98a320baa081cf794728f3a97d57",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_best_test.cap100.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_best_test.cap100.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_best_test.cap100.json",
+      "manifest_sha256": "20fc56a9677caf134376340c5c96883f998ea20421152195e47463f0c17add04",
+      "source_sha256": "20fc56a9677caf134376340c5c96883f998ea20421152195e47463f0c17add04",
+      "copy_sha256": "20fc56a9677caf134376340c5c96883f998ea20421152195e47463f0c17add04",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "dfine_best_test.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_best_test.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\dfine_best_test.cap300.json",
+      "manifest_sha256": "8ef0136cec3af0833cff8083df7549eaca58f6a36d57e9eea57b92a1589e620a",
+      "source_sha256": "8ef0136cec3af0833cff8083df7549eaca58f6a36d57e9eea57b92a1589e620a",
+      "copy_sha256": "8ef0136cec3af0833cff8083df7549eaca58f6a36d57e9eea57b92a1589e620a",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    },
+    {
+      "file": "joint_best_test.cap300.json",
+      "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_best_test.cap300.json",
+      "copy_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_experiment_design_20260917\\inputs\\external_sensitivity\\joint_best_test.cap300.json",
+      "manifest_sha256": "4d1b8618c31344f9400f2004b45d799d5c52511386694eaf1b8eaf07c0e8bfae",
+      "source_sha256": "4d1b8618c31344f9400f2004b45d799d5c52511386694eaf1b8eaf07c0e8bfae",
+      "copy_sha256": "4d1b8618c31344f9400f2004b45d799d5c52511386694eaf1b8eaf07c0e8bfae",
+      "manifest_hash_match": true,
+      "copy_hash_match": true,
+      "embedded_metrics_match": true
+    }
+  ],
+  "comparisons": [
+    {
+      "checkpoint": "final",
+      "split": "val",
+      "max_det": 100,
+      "display_dfine_ap": "28.477",
+      "display_full_ap": "30.501",
+      "display_delta_ap": "+2.024",
+      "is_primary": false,
+      "image_count": 548,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_final_val.cap100.json",
+        "ap_raw": 0.2847661095608445,
+        "ap_raw_source_token": "0.2847661095608445",
+        "ap_percent_unrounded": 28.476610956084453,
+        "ap_percent_3dp": "28.477",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "2c4187f18b8c5867cca07b820c7c9d4ff90606093048e54d081256d57556a753",
+        "copy_sha256": "2c4187f18b8c5867cca07b820c7c9d4ff90606093048e54d081256d57556a753"
+      },
+      "full": {
+        "file": "joint_final_val.cap100.json",
+        "ap_raw": 0.30501095688246216,
+        "ap_raw_source_token": "0.30501095688246216",
+        "ap_percent_unrounded": 30.501095688246217,
+        "ap_percent_3dp": "30.501",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "f636ed32a7a4f9b3e83b6a096eff699e0c491f3527bf5a92bdf8ea778b3f2120",
+        "copy_sha256": "f636ed32a7a4f9b3e83b6a096eff699e0c491f3527bf5a92bdf8ea778b3f2120"
+      },
+      "delta_ap_pp_unrounded": 2.0244847321617634,
+      "delta_ap_pp_3dp": "2.024",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "final",
+      "split": "val",
+      "max_det": 300,
+      "display_dfine_ap": "28.501",
+      "display_full_ap": "30.528",
+      "display_delta_ap": "+2.027",
+      "is_primary": false,
+      "image_count": 548,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_final_val.cap300.json",
+        "ap_raw": 0.285009542822865,
+        "ap_raw_source_token": "0.285009542822865",
+        "ap_percent_unrounded": 28.5009542822865,
+        "ap_percent_3dp": "28.501",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "fa6d4ceef0244a077e0bb47085aa7b96e29896f4f3955c599f381df1d286bb55",
+        "copy_sha256": "fa6d4ceef0244a077e0bb47085aa7b96e29896f4f3955c599f381df1d286bb55"
+      },
+      "full": {
+        "file": "joint_final_val.cap300.json",
+        "ap_raw": 0.30528177072331314,
+        "ap_raw_source_token": "0.30528177072331314",
+        "ap_percent_unrounded": 30.528177072331314,
+        "ap_percent_3dp": "30.528",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "dd2e276f6235d8a57217996847e6a8bb18e58d56a4ba898e0568e717535f28f4",
+        "copy_sha256": "dd2e276f6235d8a57217996847e6a8bb18e58d56a4ba898e0568e717535f28f4"
+      },
+      "delta_ap_pp_unrounded": 2.0272227900448136,
+      "delta_ap_pp_3dp": "2.027",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "final",
+      "split": "test",
+      "max_det": 100,
+      "display_dfine_ap": "22.511",
+      "display_full_ap": "24.097",
+      "display_delta_ap": "+1.586",
+      "is_primary": false,
+      "image_count": 1610,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_final_test.cap100.json",
+        "ap_raw": 0.2251108040359532,
+        "ap_raw_source_token": "0.2251108040359532",
+        "ap_percent_unrounded": 22.511080403595322,
+        "ap_percent_3dp": "22.511",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "ba774a1dc1b049da462f15ebda5f44d233e16a80bc4da7b7daf6aac8da78adcf",
+        "copy_sha256": "ba774a1dc1b049da462f15ebda5f44d233e16a80bc4da7b7daf6aac8da78adcf"
+      },
+      "full": {
+        "file": "joint_final_test.cap100.json",
+        "ap_raw": 0.24097420009420725,
+        "ap_raw_source_token": "0.24097420009420725",
+        "ap_percent_unrounded": 24.097420009420727,
+        "ap_percent_3dp": "24.097",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "e1670ca50993ac1e8040f00b18660927f769978b254e1f4c880192bc7bfc4b8d",
+        "copy_sha256": "e1670ca50993ac1e8040f00b18660927f769978b254e1f4c880192bc7bfc4b8d"
+      },
+      "delta_ap_pp_unrounded": 1.5863396058254042,
+      "delta_ap_pp_3dp": "1.586",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "final",
+      "split": "test",
+      "max_det": 300,
+      "display_dfine_ap": "22.554",
+      "display_full_ap": "24.133",
+      "display_delta_ap": "+1.579",
+      "is_primary": true,
+      "image_count": 1610,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_final_test.cap300.json",
+        "ap_raw": 0.22554355939110077,
+        "ap_raw_source_token": "0.22554355939110077",
+        "ap_percent_unrounded": 22.554355939110078,
+        "ap_percent_3dp": "22.554",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac",
+        "copy_sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac"
+      },
+      "full": {
+        "file": "joint_final_test.cap300.json",
+        "ap_raw": 0.24133495712514402,
+        "ap_raw_source_token": "0.24133495712514402",
+        "ap_percent_unrounded": 24.133495712514403,
+        "ap_percent_3dp": "24.133",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283",
+        "copy_sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283"
+      },
+      "delta_ap_pp_unrounded": 1.5791397734043255,
+      "delta_ap_pp_3dp": "1.579",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "best",
+      "split": "val",
+      "max_det": 100,
+      "display_dfine_ap": "28.773",
+      "display_full_ap": "30.703",
+      "display_delta_ap": "+1.929",
+      "is_primary": false,
+      "image_count": 548,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_best_val.cap100.json",
+        "ap_raw": 0.2877338083445882,
+        "ap_raw_source_token": "0.2877338083445882",
+        "ap_percent_unrounded": 28.773380834458823,
+        "ap_percent_3dp": "28.773",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "41949dea8de41e0e28fbb9e93997204d979732c4806167027a765c6a67bec462",
+        "copy_sha256": "41949dea8de41e0e28fbb9e93997204d979732c4806167027a765c6a67bec462"
+      },
+      "full": {
+        "file": "joint_best_val.cap100.json",
+        "ap_raw": 0.30702687682009566,
+        "ap_raw_source_token": "0.30702687682009566",
+        "ap_percent_unrounded": 30.702687682009568,
+        "ap_percent_3dp": "30.703",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "bb4f678397efb979a15e62b4bf991ad9b85aed1076af9d7a3bf2338ce8dee030",
+        "copy_sha256": "bb4f678397efb979a15e62b4bf991ad9b85aed1076af9d7a3bf2338ce8dee030"
+      },
+      "delta_ap_pp_unrounded": 1.9293068475507436,
+      "delta_ap_pp_3dp": "1.929",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "best",
+      "split": "val",
+      "max_det": 300,
+      "display_dfine_ap": "28.796",
+      "display_full_ap": "30.727",
+      "display_delta_ap": "+1.931",
+      "is_primary": false,
+      "image_count": 548,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_best_val.cap300.json",
+        "ap_raw": 0.28795887807283677,
+        "ap_raw_source_token": "0.28795887807283677",
+        "ap_percent_unrounded": 28.795887807283677,
+        "ap_percent_3dp": "28.796",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "7c8dc8b28f9fd3f56376db57f5ebd6f7f21d640d8e33282cd9ae55a581614e40",
+        "copy_sha256": "7c8dc8b28f9fd3f56376db57f5ebd6f7f21d640d8e33282cd9ae55a581614e40"
+      },
+      "full": {
+        "file": "joint_best_val.cap300.json",
+        "ap_raw": 0.3072697299369438,
+        "ap_raw_source_token": "0.3072697299369438",
+        "ap_percent_unrounded": 30.72697299369438,
+        "ap_percent_3dp": "30.727",
+        "image_count": 548,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "ecf8284b19ee59edab50feb4a3535c48a1bcc1afda4e7e90ee40569b36b5cbdf",
+        "copy_sha256": "ecf8284b19ee59edab50feb4a3535c48a1bcc1afda4e7e90ee40569b36b5cbdf"
+      },
+      "delta_ap_pp_unrounded": 1.9310851864107026,
+      "delta_ap_pp_3dp": "1.931",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "best",
+      "split": "test",
+      "max_det": 100,
+      "display_dfine_ap": "22.637",
+      "display_full_ap": "24.190",
+      "display_delta_ap": "+1.553",
+      "is_primary": false,
+      "image_count": 1610,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_best_test.cap100.json",
+        "ap_raw": 0.22637104285704207,
+        "ap_raw_source_token": "0.22637104285704207",
+        "ap_percent_unrounded": 22.637104285704208,
+        "ap_percent_3dp": "22.637",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "476eec380cd5a29849c91079ea50ef0b9b2a98a320baa081cf794728f3a97d57",
+        "copy_sha256": "476eec380cd5a29849c91079ea50ef0b9b2a98a320baa081cf794728f3a97d57"
+      },
+      "full": {
+        "file": "joint_best_test.cap100.json",
+        "ap_raw": 0.24189895957384286,
+        "ap_raw_source_token": "0.24189895957384286",
+        "ap_percent_unrounded": 24.189895957384287,
+        "ap_percent_3dp": "24.190",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 100,
+        "source_sha256": "20fc56a9677caf134376340c5c96883f998ea20421152195e47463f0c17add04",
+        "copy_sha256": "20fc56a9677caf134376340c5c96883f998ea20421152195e47463f0c17add04"
+      },
+      "delta_ap_pp_unrounded": 1.5527916716800787,
+      "delta_ap_pp_3dp": "1.553",
+      "manifest_delta_match": true
+    },
+    {
+      "checkpoint": "best",
+      "split": "test",
+      "max_det": 300,
+      "display_dfine_ap": "22.679",
+      "display_full_ap": "24.229",
+      "display_delta_ap": "+1.550",
+      "is_primary": false,
+      "image_count": 1610,
+      "evaluator": "pycocotools.COCOeval",
+      "evaluator_version": "2.0.11",
+      "dfine": {
+        "file": "dfine_best_test.cap300.json",
+        "ap_raw": 0.22678525333944666,
+        "ap_raw_source_token": "0.22678525333944666",
+        "ap_percent_unrounded": 22.678525333944666,
+        "ap_percent_3dp": "22.679",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "8ef0136cec3af0833cff8083df7549eaca58f6a36d57e9eea57b92a1589e620a",
+        "copy_sha256": "8ef0136cec3af0833cff8083df7549eaca58f6a36d57e9eea57b92a1589e620a"
+      },
+      "full": {
+        "file": "joint_best_test.cap300.json",
+        "ap_raw": 0.24228513876937524,
+        "ap_raw_source_token": "0.24228513876937524",
+        "ap_percent_unrounded": 24.228513876937523,
+        "ap_percent_3dp": "24.229",
+        "image_count": 1610,
+        "evaluator": "pycocotools.COCOeval",
+        "evaluator_version": "2.0.11",
+        "max_dets": 300,
+        "source_sha256": "4d1b8618c31344f9400f2004b45d799d5c52511386694eaf1b8eaf07c0e8bfae",
+        "copy_sha256": "4d1b8618c31344f9400f2004b45d799d5c52511386694eaf1b8eaf07c0e8bfae"
+      },
+      "delta_ap_pp_unrounded": 1.5499885429928584,
+      "delta_ap_pp_3dp": "1.550",
+      "manifest_delta_match": true
+    }
+  ],
+  "comparison_md": {
+    "source_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\COMPARISON.md",
+    "source_sha256": "e2e0e1645f11711027966a8f1445c4a40770d9293279d1b7f530f05c83e830d5",
+    "all_eight_display_rows_match": true
+  }
+}

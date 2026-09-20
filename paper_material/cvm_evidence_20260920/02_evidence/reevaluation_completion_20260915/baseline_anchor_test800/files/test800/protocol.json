@@ -1,0 +1,37 @@
+{
+  "protocol": {
+    "model": "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+    "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "task": "detect",
+    "mode": "val",
+    "split": "test",
+    "imgsz": 800,
+    "batch": 8,
+    "workers": 8,
+    "device": "0",
+    "conf": 0.001,
+    "max_det": 300,
+    "nms": false,
+    "half": false,
+    "rect": false,
+    "cache": false,
+    "plots": false,
+    "save_json": false,
+    "save_txt": false,
+    "verbose": true
+  },
+  "anchor_correction": {
+    "protocol": "reference-anchor-wh-scale-v1",
+    "requested": true,
+    "applied": true,
+    "reference_imgsz": 640,
+    "inference_imgsz": 800,
+    "scale": 0.8,
+    "training_changed": false,
+    "weights_changed": false
+  },
+  "hashes_before": {
+    "checkpoint": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+    "data_yaml": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63"
+  }
+}

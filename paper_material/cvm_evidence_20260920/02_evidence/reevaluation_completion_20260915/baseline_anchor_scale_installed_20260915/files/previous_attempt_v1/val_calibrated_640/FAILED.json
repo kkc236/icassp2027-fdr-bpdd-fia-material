@@ -1,0 +1,4 @@
+{
+  "status": "failed",
+  "error": "TypeError(\"select_device() got an unexpected keyword argument 'batch'\")"
+}

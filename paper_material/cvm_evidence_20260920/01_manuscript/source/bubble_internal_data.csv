@@ -1,0 +1,6 @@
+﻿id,display_label,parameters_m,ap50_95_percent,ap50_percent,gflops_per_image,source_id,source_label_verbatim,origin,accuracy_split,input_hw,epochs,pretraining,notes
+host,RT-DETR-L (our host),32.827,21.911,38.663,105.597,ours,,our archived run,native validation,640x640,100,none (scratch),Historical configurations; source and initialization matching not established for all pairs.
+g,GCDL,33.157,29.62,49.382,105.804,ours,,our archived run,native validation,640x640,100,none (scratch),Historical configurations; source and initialization matching not established for all pairs.
+gf,GCDL + F,33.458,29.773,49.548,109.28,ours,,our archived run,native validation,640x640,100,none (scratch),Historical configurations; source and initialization matching not established for all pairs.
+gb,GCDL + B,34.942,29.277,48.783,130.575,ours,,our archived run,native validation,640x640,100,none (scratch),Historical configurations; source and initialization matching not established for all pairs.
+full,Ours (Full),35.244,30.109,49.89,134.051,ours,,our archived run,native validation,640x640,100,none (scratch),Historical configurations; source and initialization matching not established for all pairs.

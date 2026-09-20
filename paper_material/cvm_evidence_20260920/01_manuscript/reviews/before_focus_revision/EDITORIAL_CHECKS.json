@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "revision": "GCDL / LQS publication terminology and definitions unified; experimental data and formulations preserved",
+  "positioning_zh": "面向无人机航拍监测，提供高精度目标检测与高速批量处理能力。",
+  "independent_agent_count_this_round": 1,
+  "independent_agent_roles": [
+    "Naming semantics and inherited-method attribution audit; actual visual inspection of pages 7-12"
+  ],
+  "reviewers_are_agents_not_human_peer_reviewers": true,
+  "literature_scope": "Targeted primary-source comparison; prior six CVM paper readings plus D-FINE, DEIM, version-verified DEIMv2 preprint, RemDet and BDNet experimental sections. Not an exhaustive systematic review.",
+  "research_note_sha256": {
+    "COMPARATIVE_EXPERIMENT_PRACTICES_ZH.md": "193194bab033756f5ed494411da9ef616c13fa20cb37fd139d876df563b1971b",
+    "EXPERIMENT_EDITORIAL_AUDIT_ZH.md": "adf8410c283818014251047bff0fafe251417b72dba5475b7a9312dc1b6a49bb",
+    "EXTERNAL_SENSITIVITY_AUDIT_ZH.md": "e407cc5fe6206e0d1e0e6334a623c111885cebd8167999a5b28fcc5acfff6267",
+    "LOCALIZATION_IDENTITY_ZH.md": "ad7471e8ea512b13ba9377d953a5b802768082f68707e1a05935269dd66ec641"
+  },
+  "current_review_report_sha256": {
+    "NAMING_FINAL_REVIEW_ZH.md": "33734efd885022a5fc9893c7697eb71acc47fee939d35402b102d383d02e9e05",
+    "FINAL_VISUAL_AND_RESOLUTION_ZH.md": "91525f220dd2ffc2f8ebf6f79fbf012ada53f38111234357436fe47739141d34"
+  },
+  "prior_review_scope": "cvm_experiment_design_20260917 and earlier snapshots; retained reports are historical except NAMING_FINAL_REVIEW_ZH and FINAL_VISUAL_AND_RESOLUTION_ZH",
+  "G_is_first_contribution": true,
+  "comparison_reference": "Full FDR/FGL transfer in the author RT-DETR host, not the official complete D-FINE detector",
+  "clean_role": "Author Path redesign within Our localization variants; all four rows and highest AP retained",
+  "publication_name_mapping": "inputs/publication_name_mapping.json",
+  "preliminary_head_and_stock_DN_retained": true,
+  "inherited_distribution_frame_attributed": true,
+  "accuracy_and_cost_merged": true,
+  "all_eight_external_evaluation_choices_reported": true,
+  "external_model_scores_are_not_independent_trials": true,
+  "original_numeric_values_preserved": true,
+  "numeric_cells_checked": 104,
+  "new_archived_external_AP_values_checked": 16,
+  "new_archived_external_differences_checked": 8,
+  "negative_results_retained": {
+    "geometry_vs_path_AP": -0.335,
+    "G_vs_path_AP": -0.076,
+    "GB_vs_G_AP": -0.343
+  },
+  "source_checks": {
+    "original_sources": 22,
+    "new_external_result_jsons": 16,
+    "manifest_and_current_test_source_matches": true
+  },
+  "new_training": false,
+  "new_model_evaluation": false,
+  "server_access": false,
+  "internal_components": "validation only",
+  "efficiency_batch_sizes": [
+    8
+  ],
+  "per_image_prediction_cases": "excluded by user",
+  "UAVDT_added": false,
+  "pages": 12,
+  "tables": 7,
+  "figures": 6,
+  "equations": 11,
+  "references": 19,
+  "main_tex_sha256": "631aa10d381f0a6f87bfcdc8fce393682093c630de8726b18567dbd4e244dcd2",
+  "pdf_sha256": "10e43284ae637ae613dce0cc029486dcf8ba0052ad87a16b74426519f3af5067",
+  "remaining_metadata": [
+    "real CVM paper ID"
+  ],
+  "external_submission_performed": false,
+  "publication_terminology": {
+    "core": "GCDL",
+    "weight_rule": "LQS",
+    "legacy_run_identifiers_unchanged": true
+  },
+  "terminology_decisions": "NAMING_DECISIONS_ZH.md",
+  "equations_byte_identical_to_previous_release": true,
+  "numeric_table_rows_identical_to_previous_release": true,
+  "old_input_files_unchanged": 71
+}

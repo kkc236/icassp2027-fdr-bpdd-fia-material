@@ -1,0 +1,140 @@
+{
+  "date": "2026-09-15",
+  "new_training": false,
+  "new_model_evaluation": false,
+  "recommended_methods": [
+    "RemDet-L (AAAI 2025; literature-reported results)",
+    "D-FINE-L (ICLR 2025; existing project experiment)",
+    "BDNet (CVPR 2026; literature-reported results)"
+  ],
+  "selection_update": "User explicitly declines new model evaluation or retraining and requests B-conference candidates. Use attributable literature-reported results plus existing D-FINE-L experiments. No additional DETR simultaneously verified as a recent CCF B main-conference method, about 30-40M parameters, and VisDrone AP near and below Full. DEIM-RT-DETRv2-M removed from current recommendations because its specific VisDrone result is unverified.",
+  "deim_rtdetrv2_m_evidence": {
+    "official_config": "https://github.com/Intellindust-AI-Lab/DEIM/blob/main/configs/deim_rtdetrv2/deim_r34vd_120e_coco.yml",
+    "official_params_m_rounded": 31,
+    "visdrone_ap_verified": false,
+    "current_recommendation": false
+  },
+  "rtdetr_r34_alternative": {
+    "conference": "CVPR 2024",
+    "official_params_m_rounded": 31,
+    "third_party_source": "https://ojs.aaai.org/index.php/AAAI/article/download/32937/35092",
+    "table": 1,
+    "reported_visdrone_ap": 27.2,
+    "reported_ap50": 46.0,
+    "split_verified": false,
+    "training_protocol_verified": false
+  },
+  "deim_s_evidence": {
+    "current_recommendation": false,
+    "official_config": "https://github.com/Intellindust-AI-Lab/DEIM/blob/main/configs/deim_dfine/deim_hgnetv2_s_coco.yml",
+    "third_party_source": "https://www.mdpi.com/2072-4292/17/11/1920",
+    "table": 7,
+    "reported_label": "DEIM-S",
+    "reported_split": "VisDrone2019-val",
+    "reported_ap": 28.1,
+    "reported_ap50": 46.9,
+    "official_visdrone_result": false,
+    "third_party_checkpoint_identity_verified": false
+  },
+  "bdnet_verified_pages": {
+    "main": [
+      6,
+      7
+    ],
+    "supplement": [
+      2
+    ]
+  },
+  "source_hashes": {
+    "BDNet_CVPR2026.pdf": "98df28644f522e5cab0004625947d89a9653d3ad1c57f6f75a322103c96f4058",
+    "BDNet_CVPR2026_supplement.pdf": "10bf2d6b8c9b8907562e1c5d4e714d4a0e90ad7ae79e4ee5f77b1951b2d057c0",
+    "NRQO_ICME2025_author.pdf": "6f5b7cd997cc563d1437278ee654270c67361c4e3eb6b7da58c4e4fac91de8fc",
+    "CCF_Recommend_2026.pdf": "e3abf1844d602d4b2302b3dfad0779ac7de89a03b1c7fd15737030ff59b965fb"
+  },
+  "user_constraints": {
+    "no_new_retraining": true,
+    "no_new_model_evaluation": true,
+    "new_detr_preferred_ccf_class": "B",
+    "preferred_years": [
+      2025,
+      2026
+    ],
+    "approximate_params_m_range": [
+      30,
+      40
+    ]
+  },
+  "b_conference_screening": [
+    {
+      "method": "NRQO",
+      "conference": "ICME 2025",
+      "ccf_2026_class": "B",
+      "author_paper": "https://arxiv.org/html/2507.19059v1",
+      "table": "I",
+      "pdf_page": 4,
+      "params_m": 63,
+      "visdrone_ap": 32.1,
+      "visdrone_ap50": 51.7,
+      "split_verified": false,
+      "input_size_verified": false,
+      "current_recommendation": false,
+      "reason": "Parameters outside requested range; reported AP above requested value; split unresolved"
+    },
+    {
+      "method": "DQ-DETR",
+      "conference": "ECCV 2024",
+      "ccf_2026_class": "B",
+      "paper": "https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/09775.pdf",
+      "table": 3,
+      "pdf_page": 10,
+      "params_m": null,
+      "visdrone_ap": 37.0,
+      "visdrone_ap50": 60.9,
+      "split": "val",
+      "current_recommendation": false,
+      "reason": "Reported AP exceeds requested close range; older than preferred years"
+    },
+    {
+      "method": "SODMAMBA-DETR",
+      "conference": "ICME 2025",
+      "ccf_2026_class": "B",
+      "doi": "10.1109/ICME59968.2025.11210059",
+      "params_m": null,
+      "visdrone_ap": null,
+      "original_experiment_table_verified": false,
+      "current_recommendation": false
+    },
+    {
+      "method": "IG-DETR",
+      "conference": "ICASSP 2026",
+      "ccf_2026_class": "B",
+      "official_program": "https://www.cmsworkshops.com/ICASSP2026/view_paper.php?PaperNum=2673&bare=1",
+      "params_m": null,
+      "visdrone_ap": null,
+      "visdrone_experiment_verified": false,
+      "current_recommendation": false
+    },
+    {
+      "method": "CBR-DETR",
+      "conference": "ICASSP 2026",
+      "ccf_2026_class": "B",
+      "official_program": "https://www.cmsworkshops.com/ICASSP2026/view_paper.php?PaperNum=16297&bare=1",
+      "params_m": null,
+      "visdrone_ap": null,
+      "visdrone_experiment_verified": false,
+      "current_recommendation": false
+    }
+  ],
+  "classification_corrections": {
+    "BMVC": "C in CCF 2026, not B",
+    "CFPT": "TGRS 2025 journal record verified; do not label ICASSP 2025"
+  },
+  "ccf_catalog": {
+    "source": "https://dengpingfan.github.io/papers/CCF-Recommend-2026.pdf",
+    "pages": {
+      "ICASSP_ICME_ICMR_B": 48,
+      "ECCV_B": 58,
+      "BMVC_C": 59
+    }
+  }
+}

@@ -1,0 +1,20 @@
+
+\begin{table}[t]
+\centering
+\caption{Complete-system VisDrone test comparison. Common evaluator with $\texttt{maxDet}=300$. D-FINE-L denotes our scratch-adapted reproduction; training recipes and effective batches differ (Sec.~\ref{sec:protocol}). Final is primary; best is selected by each model's native validation.}
+\label{tab:external}
+\small\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Model & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AP}_{s}$ \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Final checkpoint (primary)}}\\[2pt]
+D-FINE-L (reprod.) & 22.554 & 38.656 & 22.720 & 13.338 \\
+\textbf{Full (ours)} & \textbf{24.133} & \textbf{41.885} & \textbf{24.044} & \textbf{14.575} \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Validation-selected checkpoints (secondary)}}\\[2pt]
+D-FINE-L (reprod.) & 22.679 & 38.940 & 22.713 & 13.478 \\
+\textbf{Full (ours)} & \textbf{24.229} & \textbf{42.009} & \textbf{24.208} & \textbf{14.618} \\
+\bottomrule
+\end{tabular*}
+\end{table}

@@ -1,0 +1,60 @@
+[
+  {
+    "key": "zhu2021deformable",
+    "authors": "Xizhou Zhu and Weijie Su and Lewei Lu and Bin Li and Xiaogang Wang and Jifeng Dai",
+    "title": "Deformable DETR: Deformable Transformers for End-to-End Object Detection",
+    "venue": "ICLR",
+    "year": 2021,
+    "type": "inproceedings",
+    "url": "https://openreview.net/forum?id=koX9F3hvCG"
+  },
+  {
+    "key": "li2022dndetr",
+    "authors": "Feng Li and Hao Zhang and Shilong Liu and Jian Guo and Lionel M. Ni and Lei Zhang",
+    "title": "DN-DETR: Accelerate DETR Training by Introducing Query DeNoising",
+    "venue": "CVPR",
+    "year": 2022,
+    "type": "inproceedings",
+    "pages": "13619--13627",
+    "url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Li_DN-DETR_Accelerate_DETR_Training_by_Introducing_Query_DeNoising_CVPR_2022_paper.pdf"
+  },
+  {
+    "key": "zhang2023dino",
+    "authors": "Hao Zhang and Feng Li and Shilong Liu and Lei Zhang and Hang Su and Jun Zhu and Lionel M. Ni and Heung-Yeung Shum",
+    "title": "DINO: DETR with Improved DeNoising Anchor Boxes for End-to-End Object Detection",
+    "venue": "ICLR",
+    "year": 2023,
+    "type": "inproceedings",
+    "url": "https://openreview.net/forum?id=3mRwyG5one"
+  },
+  {
+    "key": "li2020gfl",
+    "authors": "Xiang Li and Wenhai Wang and Lijun Wu and Shuo Chen and Xiaolin Hu and Jun Li and Jinhui Tang and Jian Yang",
+    "title": "Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection",
+    "venue": "NeurIPS",
+    "year": 2020,
+    "type": "inproceedings",
+    "volume": "33",
+    "url": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/f0bda020d2470f2e74990a07a607ebd9-Abstract.html"
+  },
+  {
+    "key": "woo2018cbam",
+    "authors": "Sanghyun Woo and Jongchan Park and Joon-Young Lee and In So Kweon",
+    "title": "CBAM: Convolutional Block Attention Module",
+    "venue": "ECCV",
+    "year": 2018,
+    "type": "inproceedings",
+    "pages": "3--19",
+    "url": "https://openaccess.thecvf.com/content_ECCV_2018/papers/Sanghyun_Woo_Convolutional_Block_Attention_ECCV_2018_paper.pdf"
+  },
+  {
+    "key": "du2018uavdt",
+    "authors": "Dawei Du and Yuankai Qi and Hongyang Yu and Yifan Yang and Kaiwen Duan and Guorong Li and Weigang Zhang and Qingming Huang and Qi Tian",
+    "title": "The Unmanned Aerial Vehicle Benchmark: Object Detection and Tracking",
+    "venue": "ECCV",
+    "year": 2018,
+    "type": "inproceedings",
+    "pages": "370--386",
+    "url": "https://www.ecva.net/papers/eccv_2018/papers_ECCV/html/Dawei_Du_The_Unmanned_Aerial_ECCV_2018_paper.php"
+  }
+]

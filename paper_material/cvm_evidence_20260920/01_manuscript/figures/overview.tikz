@@ -1,0 +1,62 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize,
+box/.style={draw=ink!70,rounded corners=2pt,align=center,minimum height=.7cm,inner sep=3pt},
+arr/.style={-{Latex[length=2mm]},line width=.7pt,draw=ink},
+train/.style={arr,dashed,draw=featurecolor}]
+\path[use as bounding box] (-.05,-.47) rectangle (16.65,6.12);
+
+% The localization core is the main contribution; the expert extends it.
+\draw[draw=expertcolor,line width=.9pt,rounded corners=4pt,fill=expertfill!45]
+  (5.45,2.12) rectangle (10.05,5.83);
+\node[font=\sffamily\bfseries\small,text=expertcolor] at (7.75,5.50)
+  {Proposed GCDL ($G$)};
+\node[box,fill=white,text width=3.35cm,minimum height=1.04cm] (decoder) at (7.75,3.40)
+  {Distributional decoder\\Fixed reference frame\\Feasible box geometry};
+\node[box,fill=featurefill,text width=3.35cm] (lrs) at (7.75,4.70)
+  {FGL with LQS (train)\\Image--layer shrinkage\\Preserved total weight};
+\draw[train] (lrs.south) -- (decoder.north);
+\node[font=\sffamily\scriptsize,text=featurecolor] at (7.75,2.43)
+  {LQS changes supervision during training};
+
+\node[box,fill=basefill,text width=1.50cm,minimum height=1.02cm] (pyr) at (1.00,2.40)
+  {Image backbone\\Feature pyramid};
+\node[box,fill=basefill,text width=1.75cm] (basefeat) at (3.70,3.40)
+  {$\widetilde P_3,\ P_4,\ P_5$\\Base features};
+\node[box,fill=featurefill,text width=1.75cm] (shared) at (3.70,1.35)
+  {Shared P3\\refinement ($F$)};
+\node[box,fill=basefill,text width=3.35cm] (local) at (7.75,1.10)
+  {$P_2,\ \widetilde P_3,\ P_4$\\Local visual evidence};
+\draw[arr] (pyr.north) |- node[pos=.65,above] {$P_4,\ P_5$} (basefeat.west);
+\draw[arr] (pyr.east) -- ++(.38,0) |- node[pos=.72,above] {$P_3$} (shared.west);
+\draw[arr] (shared.north) -- (basefeat.south);
+\draw[arr] (basefeat.east) -- (decoder.west);
+\draw[arr] (shared.east) -- ++(.37,0) |- (local.west);
+\draw[arr] (pyr.south) -- (1.00,.31) -- node[below] {$P_2,\ P_4$} (7.75,.31) -- (local.south);
+
+\node[box,fill=expertfill,text width=2.45cm,minimum height=1.06cm] (expert) at (12.58,3.40)
+  {Local expert ($B$)\\Box-guided tokens\\Residual logits};
+\node[box,fill=basefill,text width=1.31cm,minimum height=1.06cm] (out) at (15.78,3.40)
+  {Refined\\classes\\and boxes};
+\draw[arr] (decoder.east) -- node[above,font=\sffamily\scriptsize,align=center] {Base boxes,\\queries, logits} (expert.west);
+\draw[arr] (local.east) -| (expert.south);
+\draw[arr] (expert.east) -- (out.west);
+
+% The expert remains in inference; only this target-selection loop is omitted.
+\node[box,draw=featurecolor,fill=featurefill,text width=2.65cm] (select) at (12.58,5.24)
+  {Selective targets\\Pair + edge checks\\Mixed-box IoU gate};
+\draw[train] (expert.north) -- node[right,font=\sffamily\scriptsize,align=left] {Detached} (select.south);
+\draw[train] (select.north) -- (12.58,6.00) -- (5.12,6.00) -- (5.12,2.82) -- (5.95,2.82) -- (decoder.south west);
+\node[fill=white,inner sep=2pt,font=\sffamily\scriptsize,text=featurecolor] at (8.43,6.00)
+  {Selected KL supervision to all six base layers};
+
+\draw[arr] (10.42,.63) -- (11.08,.63);
+\node[anchor=west,font=\sffamily\scriptsize] at (11.20,.63) {Prediction path};
+\draw[train] (13.28,.63) -- (13.94,.63);
+\node[anchor=west,font=\sffamily\scriptsize] at (14.06,.63) {Training only};
+\node[anchor=north west,align=left,text width=16.2cm,font=\sffamily\scriptsize,text=ink] at (.12,-.15)
+  {Both prediction paths receive direct ground-truth supervision. P4 is constructed from the original P3; $F$ is shared only at the indicated P3 inputs.};
+\end{tikzpicture}
+\caption{GCDL is the localization core of the detector: it combines incoming-reference distributional prediction with feasible decoding and training-time quality-weight shrinkage. Shared P3 refinement ($F$) and a local expert ($B$) extend the core. Solid arrows show prediction paths; the expert remains active at inference. The dashed loop transfers only selected expert edge distributions to the base layers during training (Fig.~\ref{fig:selection}). Figures~\ref{fig:lrs} and \ref{fig:expert} detail the core and expert.}
+\label{fig:overview}
+\end{figure*}

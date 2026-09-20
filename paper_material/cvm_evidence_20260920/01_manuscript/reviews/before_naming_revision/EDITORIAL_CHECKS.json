@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "revision": "Literature-informed experiment identity, attribution, accuracy-cost and complete external evaluation presentation",
+  "positioning_zh": "面向无人机航拍监测，提供高精度目标检测与高速批量处理能力。",
+  "independent_agent_count_this_round": 3,
+  "independent_agent_roles": [
+    "Experimental role and source-completeness audit plus pages 7-12 visual QA",
+    "Localization source and originality identity audit plus technical final review",
+    "DETR/CVM primary literature reading plus experimental presentation final review"
+  ],
+  "reviewers_are_agents_not_human_peer_reviewers": true,
+  "literature_scope": "Targeted primary-source comparison; prior six CVM paper readings plus D-FINE, DEIM, version-verified DEIMv2 preprint, RemDet and BDNet experimental sections. Not an exhaustive systematic review.",
+  "research_note_sha256": {
+    "COMPARATIVE_EXPERIMENT_PRACTICES_ZH.md": "193194bab033756f5ed494411da9ef616c13fa20cb37fd139d876df563b1971b",
+    "EXPERIMENT_EDITORIAL_AUDIT_ZH.md": "adf8410c283818014251047bff0fafe251417b72dba5475b7a9312dc1b6a49bb",
+    "EXTERNAL_SENSITIVITY_AUDIT_ZH.md": "e407cc5fe6206e0d1e0e6334a623c111885cebd8167999a5b28fcc5acfff6267",
+    "LOCALIZATION_IDENTITY_ZH.md": "ad7471e8ea512b13ba9377d953a5b802768082f68707e1a05935269dd66ec641"
+  },
+  "current_review_report_sha256": {
+    "LOCALIZATION_FINAL_REVIEW_ZH.md": "6f7c9162642e38f27a2aac84ad138714ad44e2a21adbf297ec8d1e15e5dbc0c3",
+    "EXPERIMENT_PRESENTATION_FINAL_ZH.md": "d2eea1f09a9fce04439fe5b05b1195a49f447cd691c19c32e57ccd8de28f7a92",
+    "VISUAL_PAGES_07_12_ZH.md": "8e54abf2ae7c13050a750de16f645e89cdddb8dd56ce02fb434dac0b11c5bef0",
+    "FINAL_VISUAL_AND_RESOLUTION_ZH.md": "5a59492690d547e56340901bbae0b63a5bd05d11866ba09be06080f03c6957d8"
+  },
+  "prior_review_scope": "Historical reviews and prior_release_summary apply to their stated snapshots, not the current PDF.",
+  "G_is_first_contribution": true,
+  "comparison_reference": "Full FDR/FGL transfer in the author RT-DETR host, not the official complete D-FINE detector",
+  "clean_role": "Author Path redesign within Our localization variants; all four rows and highest AP retained",
+  "publication_name_mapping": "inputs/publication_name_mapping.json",
+  "preliminary_head_and_stock_DN_retained": true,
+  "inherited_distribution_frame_attributed": true,
+  "accuracy_and_cost_merged": true,
+  "all_eight_external_evaluation_choices_reported": true,
+  "external_model_scores_are_not_independent_trials": true,
+  "original_numeric_values_preserved": true,
+  "numeric_cells_checked": 104,
+  "new_archived_external_AP_values_checked": 16,
+  "new_archived_external_differences_checked": 8,
+  "negative_results_retained": {
+    "geometry_vs_path_AP": -0.335,
+    "G_vs_path_AP": -0.076,
+    "GB_vs_G_AP": -0.343
+  },
+  "source_checks": {
+    "original_sources": 22,
+    "new_external_result_jsons": 16,
+    "manifest_and_current_test_source_matches": true
+  },
+  "new_training": false,
+  "new_model_evaluation": false,
+  "server_access": false,
+  "internal_components": "validation only",
+  "efficiency_batch_sizes": [
+    8
+  ],
+  "per_image_prediction_cases": "excluded by user",
+  "UAVDT_added": false,
+  "pages": 12,
+  "tables": 7,
+  "figures": 6,
+  "equations": 11,
+  "references": 19,
+  "main_tex_sha256": "841d2a0102d619307714bb714dd085fc0dfef326d8ef66bec495de4a213f6e6a",
+  "pdf_sha256": "eafe1a514dc92470088edbee89cc73406b36babde5b77fd6b676a948dbe888d1",
+  "remaining_metadata": [
+    "real CVM paper ID"
+  ],
+  "external_submission_performed": false
+}

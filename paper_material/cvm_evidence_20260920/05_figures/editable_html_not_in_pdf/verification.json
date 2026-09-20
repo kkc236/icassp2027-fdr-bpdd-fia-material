@@ -1,0 +1,31 @@
+{
+  "status": "verified",
+  "canvas": [
+    1448,
+    1086
+  ],
+  "native_nodes": 49,
+  "connections_including_legend": 56,
+  "raster_elements": 0,
+  "text_overflows": 0,
+  "browser_checks": [
+    "module_drag",
+    "edge_follows",
+    "reload_persistence",
+    "point_drag",
+    "straighten",
+    "undo",
+    "saved_HTML_reopen",
+    "saved_HTML_further_edit_reload",
+    "SVG_download",
+    "PNG_download"
+  ],
+  "artifacts": {
+    "architecture.html": "1ad59e6357e9d00310accb45fd8318c57e78f2f7e2ff194e5c9832488fcbc045",
+    "architecture.svg": "cf7cb7469f8e119e1425b410e93f9aee8b3b4ac7ca42d003e32c6582b46b5c0a",
+    "architecture-2x.png": "2f608d8c589341e0d0f572783db546eeb90e6da06b84f7972251e467c902665d"
+  },
+  "reference": "../architecture_palette_20260919/architecture_muted_final.png",
+  "pixel_identity_claimed": false,
+  "external_dependencies": false
+}

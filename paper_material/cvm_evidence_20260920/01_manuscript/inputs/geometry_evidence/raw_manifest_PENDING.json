@@ -1,0 +1,18 @@
+[
+  {
+    "path": "raw/F_LRS_GFDR/full-runtime.jsonl",
+    "run_id": "LRS-GFDR base (historical F)",
+    "role": "current G localization base",
+    "source_commit": "c1ac0b25e534f6dc5ba85ade418046a30a51a011",
+    "remote_run": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2",
+    "expected_epochs": 100
+  },
+  {
+    "path": "raw/G_historical_AC_BPDD/full-runtime.jsonl",
+    "run_id": "Legacy AC-BPDD (historical G)",
+    "role": "historical context only; not expert v3",
+    "source_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+    "remote_run": "/root/sj-tmp/runs/visdrone-v2/formal-seed0-lrs_fdr_ac_bpdd-v2",
+    "expected_epochs": 100
+  }
+]

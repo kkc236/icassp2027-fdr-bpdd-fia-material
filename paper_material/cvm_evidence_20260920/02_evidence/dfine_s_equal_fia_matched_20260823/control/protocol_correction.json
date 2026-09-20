@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "authority": "fully merged configuration printed by the completed official D-FINE-S run",
+  "original_manifest_sha256": "33888cd44d369ccaf9797819ea2c5fde85ea7dadaeb0d32e5ea7a749a386b8f5",
+  "original_claim": {
+    "workers": 8
+  },
+  "effective_protocol": {
+    "train_workers": 4,
+    "val_workers": 4
+  },
+  "reason": "configs/dfine/include/dataloader.yml is merged after configs/dataset/visdrone_detection.yml and overrides num_workers from 8 to 4.",
+  "policy": "The original manifest is retained byte-for-byte; this amendment records the effective runtime value instead of silently rewriting historical evidence."
+}

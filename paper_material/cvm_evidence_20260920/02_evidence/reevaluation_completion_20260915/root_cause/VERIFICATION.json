@@ -1,0 +1,21 @@
+{
+  "verified_evaluations": 8,
+  "archive_image_label_audits_passed": true,
+  "actual_gt_audits_passed": true,
+  "cached_ap_reconstruction_passed": true,
+  "precision_error_counts_passed": true,
+  "files": {
+    "diagnostic_bundle.json": "be0665477f4599b555c001fc0ee3912ba08a3734bcfeb0c1062c36e707d854c8",
+    "diagnostic_scripts/analyze_native_predictions.py": "88d4164257d50381a9984904c380ee9501346a3bfe7ff64d7dffc358ee39f5c8",
+    "diagnostic_scripts/analyze_truck_precision.py": "0fe0259fba836aa7fe59b041764e4b177025d6b76b55c8983067d8f8ef595aeb",
+    "diagnostic_scripts/analyze_truck_ranking.py": "0fa53a66bdc57dff6dc5bbdb75ddf11c14667161fc32e16ab2a44b29b9b44bdd",
+    "diagnostic_scripts/audit_actual_targets.py": "779dc4e697e108f1686ce745c55acfce51263577adaca91277bdc51fdab81166",
+    "diagnostic_scripts/audit_module_runtime.py": "9e5e477be0fa89b2acbf8ced572fd41be3d218c1179554513df99221487529c4",
+    "diagnostic_scripts/deploy_original_env_diagnosis.py": "de97b9b1941b08f8a948e22d7aa9935f3a132d42fbfa802e1ee5b0c60857661d",
+    "diagnostic_scripts/root_cause_data_check.py": "8a2d4de4ddcaa2055759cb8872270671056a6e7f19fec5efb55c964872effc00",
+    "diagnostic_scripts/trace_old_test25.py": "ca7f0a5f7da27c5659cbc990a79d71726d49d1c0c8c28a82818e5d2e3b59cfb0",
+    "precision_error_analysis.json": "e9ef522aa444e4285a3bde4f43684bc4353d60a742f665f60b13526439601f1a",
+    "ROOT_CAUSE_AND_OLD_TEST25_ZH.md": "4ff89183b3962cb56bb015184b8b9486856bf9cea22f6160b32e6a3f145f0fed",
+    "truck_ranking.json": "93781beb6b29e9da118c05240130d558755a6ac413fc9f8284b62226e4f36205"
+  }
+}

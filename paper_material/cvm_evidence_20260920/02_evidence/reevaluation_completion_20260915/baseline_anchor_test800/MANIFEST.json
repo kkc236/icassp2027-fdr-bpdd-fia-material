@@ -1,0 +1,55 @@
+{
+  "bundle_sha256": "aa475741979e5e577dd498b72801723955d386271c4d00be54885a9f497dbd55",
+  "files": [
+    {
+      "path": "files\\COMPLETE.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/COMPLETE.json",
+      "sha256": "58fb118d05977ab7427437b8ee47bac392a2fff7020e7b835925fc1fed130d1f"
+    },
+    {
+      "path": "files\\CURRENT.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/CURRENT.json",
+      "sha256": "58fb118d05977ab7427437b8ee47bac392a2fff7020e7b835925fc1fed130d1f"
+    },
+    {
+      "path": "files\\INSTALL_MANIFEST.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/INSTALL_MANIFEST.json",
+      "sha256": "a86e197427020822eab4a4288e59cb67080f56a0df3c0f352a73648fb0096411"
+    },
+    {
+      "path": "files\\evaluation.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/evaluation.log",
+      "sha256": "fbc5b85a449cc7593eb56b8da4a27e76ee00dbd8e6f4b5b963a3c0301e985025"
+    },
+    {
+      "path": "files\\runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/runner.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files\\runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/runner.py",
+      "sha256": "d263deac32b93d39b2830632ed104d2ced5942a2494b8881d3302c8c9236c828"
+    },
+    {
+      "path": "files\\test800\\protocol.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/test800/protocol.json",
+      "sha256": "977c7a6787f100e7b4cf36b024fe8f834f6a628e376b2b166befff43496aa91f"
+    },
+    {
+      "path": "files\\test800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline_anchor_test800_20260915/test800/summary.json",
+      "sha256": "88c138bc95059fcc6c823fda3f7a2b27c73889a2091be85a065621ef01159694"
+    },
+    {
+      "path": "files\\code\\src\\inference_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/src/inference_anchor_scale.py",
+      "sha256": "92aa5f3a6a2c869ccff66cec16391575fab231bef3d870859290ee291ddf358b"
+    },
+    {
+      "path": "files\\code\\scripts\\eval_baseline_anchor_scale.py",
+      "remote_path": "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py",
+      "sha256": "2f8bcf02bee6294489226fcd71ce3d7a44d992def83a8927eb7b91b33c416998"
+    }
+  ]
+}

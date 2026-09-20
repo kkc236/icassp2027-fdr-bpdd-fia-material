@@ -1,0 +1,84 @@
+{
+  "updated": "2026-09-18",
+  "venue": "Computational Visual Media Conference",
+  "acronym": "CVM",
+  "edition": 2027,
+  "edition_basis": "Next announced edition; user explicitly confirmed CVM conference",
+  "track": "regular paper",
+  "author_guidelines_verified": true,
+  "official_submission_url": "https://iccvm.org/2027/submission.htm",
+  "official_cfp_url": "https://iccvm.org/2027/callPaper.htm",
+  "page_limit_including_references": 14,
+  "abstract_deadline": {
+    "utc": "2026-10-23T23:59:00+00:00",
+    "asia_shanghai": "2026-10-24T07:59:00+08:00"
+  },
+  "full_paper_deadline": {
+    "utc": "2026-10-26T23:59:00+00:00",
+    "asia_shanghai": "2026-10-27T07:59:00+08:00"
+  },
+  "conference_dates": [
+    "2027-04-09",
+    "2027-04-11"
+  ],
+  "location": "Singapore",
+  "anonymous_submission": true,
+  "official_template_source": "https://iccvm.org/2027/files/template.zip",
+  "official_template_archive": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/tmp-work/cvm2027_official_template/template.zip",
+  "template_sha256": "e084e209f567c4cb3476fd50d0a806c44618b9620b839f5c803179c2e3be5aca",
+  "revision_plan": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm2027_preparation_20260916/TARGET_AND_REVISION_PLAN_ZH.md",
+  "stage": "UAVDT added; author-confirmed Full identity; provenance and paper ID pending",
+  "constraints": {
+    "new_training": false,
+    "new_model_evaluation": false,
+    "modify_model_or_weights": false,
+    "include_uavdt": false,
+    "existing_evidence_only": true,
+    "internal_component_analysis": "validation only",
+    "efficiency_batch_sizes": [
+      8
+    ],
+    "standalone_main_tex_required": true
+  },
+  "existing_latex_source": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/main.tex",
+  "existing_source_format": "CVM 2027 anonymous review; standalone embedded figures and references",
+  "external_submission_performed": false,
+  "previous_latex_source": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/icip_latex_20260916/main.tex",
+  "manuscript_pdf": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/MANUSCRIPT_CVM.pdf",
+  "project_zip": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/CVM2027_SUBMISSION_READY.zip",
+  "verification": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/verification.json",
+  "pages_including_references": 13,
+  "tables": 6,
+  "figures": 4,
+  "equations": 11,
+  "adversarial_audit": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/ADVERSARIAL_AUDIT_ZH.md",
+  "qualitative_figure_status": "excluded from current revision by explicit user choice; optional future workflow retained",
+  "structure_blueprint": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/STRUCTURE_AND_REVISION_BLUEPRINT_ZH.md",
+  "experiment_design_decisions": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/EXPERIMENT_DESIGN_DECISIONS_ZH.md",
+  "naming_decisions": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/NAMING_DECISIONS_ZH.md",
+  "method_name": "GCDL",
+  "weight_rule_name": "LQS",
+  "evidence_focus_decisions": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/EVIDENCE_FOCUS_DECISIONS_ZH.md",
+  "feedback_application": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/FEEDBACK_APPLICATION_ZH.md",
+  "minimal_followup_experiments": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_results_first_20260917/MINIMAL_FOLLOWUP_EXPERIMENTS_ZH.md",
+  "references": 25,
+  "visual_revision": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/REVISION_NOTES_ZH.md",
+  "layout_review": {
+    "updated": "2026-09-19",
+    "active_revision": "cvm_uavdt_revision_20260919",
+    "base_revision": "cvm_approved_architecture_20260919",
+    "scope": "Added author-confirmed Full UAVDT results with protocol and source-snapshot qualifications; existing VisDrone values unchanged",
+    "scientific_results_changed": true,
+    "new_dataset": "UAVDT",
+    "architecture_vector_source": false
+  },
+  "figure_assets": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/CVM_FIGURES.zip",
+  "uavdt": {
+    "numeric_cells_checked": 18,
+    "raw_text_exports_verified": true,
+    "AP_gain": 2.84,
+    "current_full_identity": "author_confirmed_not_checkpoint_verified",
+    "official_split_mapping": "unverified",
+    "new_training": false
+  }
+}

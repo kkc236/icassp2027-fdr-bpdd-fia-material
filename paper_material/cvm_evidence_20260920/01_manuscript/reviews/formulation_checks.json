@@ -1,0 +1,158 @@
+{
+  "status": "passed",
+  "scope": "Formula arithmetic and source-expression consistency only. No neural model, dataset prediction, training, autograd, or accuracy evaluation was run.",
+  "limitations": [
+    "Finite rational examples supplement the stated algebraic identities; they are not a general proof by enumeration.",
+    "Ideal LRS identities do not imply a measured improvement in AP, gradient variance, convergence, or reliability calibration.",
+    "The AST check verifies expression structure, not execution of the PyTorch decoder or its gradients.",
+    "The existing archived geometric regressions remain distinct evidence; no new detector experiment is claimed."
+  ],
+  "dependencies": "Python standard library only",
+  "checked_sources": [
+    {
+      "path": "inputs/frozen_fdr_math.py",
+      "sha256": "ac60364c008b048d3dfda619354ce3c1c0e5367b3d8a55de54c49ee43ebebb9a"
+    },
+    {
+      "path": "inputs/frozen_fdr_loss.py",
+      "sha256": "ac60523868ebfdeaeaf63e906095225813f6c250a833f2beb1feea84585c2ecb"
+    }
+  ],
+  "checker_sha256": "67ecc30a1f472afbabdd7b874ef0627aa63e56b7e48d25d71b6820f45dea1d27",
+  "check_count": 8,
+  "checks": [
+    {
+      "name": "binary32_evaluation_order_counterexample",
+      "passed": true,
+      "details": {
+        "raw_extent": -1.0,
+        "floor": 0.0002500000118743628,
+        "left_associated_expression": 0.0002499818801879883,
+        "parenthesized_implemented_expression": 0.0002500000118743628,
+        "interpretation": "An algebraically equivalent left-associated expression can fall below the stated forward floor."
+      }
+    },
+    {
+      "name": "frozen_source_preserves_parenthesized_zero_term",
+      "passed": true,
+      "details": {
+        "source": "inputs/frozen_fdr_math.py",
+        "function": "decode_feasible_fdr_boxes",
+        "line": 287,
+        "expression": "bounded.detach() + (raw_extent - raw_extent.detach())",
+        "scope": "AST inspection only; production code is not executed."
+      }
+    },
+    {
+      "name": "exact_lrs_group_identities",
+      "passed": true,
+      "details": {
+        "rational_group_cases": 4650,
+        "group_sizes": [
+          2,
+          3,
+          4
+        ],
+        "input_grid": [
+          "0",
+          "1/4",
+          "1/2",
+          "3/4",
+          "1"
+        ],
+        "layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "properties": [
+          "total weight conservation",
+          "pairwise difference contraction and ordering preservation",
+          "convex-hull bounds",
+          "lower bound alpha times group mean",
+          "variance factor (1-alpha)^2",
+          "unchanged final layer"
+        ],
+        "arithmetic": "Exact rational arithmetic; does not assert bitwise identities after production FP32 residual corrections."
+      }
+    },
+    {
+      "name": "nonzero_group_supplies_zero_quality_match",
+      "passed": true,
+      "details": {
+        "input": [
+          "0",
+          "1/4",
+          "3/4"
+        ],
+        "alpha": "1/4",
+        "output": [
+          "1/12",
+          "13/48",
+          "31/48"
+        ],
+        "total_before_and_after": "1"
+      }
+    },
+    {
+      "name": "all_zero_group_stays_zero",
+      "passed": true,
+      "details": {
+        "interpretation": "LRS redistributes existing quality weight; it does not create weight in an all-zero group."
+      }
+    },
+    {
+      "name": "singleton_and_empty_groups_stay_unchanged",
+      "passed": true,
+      "details": {
+        "singleton": "3/8",
+        "alpha": "1/4"
+      }
+    },
+    {
+      "name": "image_scope_and_ineligible_exclusion",
+      "passed": true,
+      "details": {
+        "input": [
+          "0",
+          "1/2",
+          "1",
+          "1/4",
+          "3/4"
+        ],
+        "image_ids": [
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "eligible": [
+          true,
+          true,
+          false,
+          true,
+          true
+        ],
+        "output": [
+          "1/16",
+          "7/16",
+          "1",
+          "5/16",
+          "11/16"
+        ],
+        "interpretation": "Only eligible objects of the same image are pooled; changing an ineligible quality leaves eligible outputs unchanged."
+      }
+    },
+    {
+      "name": "unrelated_image_cannot_change_first_image",
+      "passed": true,
+      "details": {
+        "interpretation": "Separate image groups cannot exchange their supervision budget."
+      }
+    }
+  ]
+}

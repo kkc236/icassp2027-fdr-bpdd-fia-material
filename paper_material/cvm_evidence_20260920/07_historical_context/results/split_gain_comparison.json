@@ -1,0 +1,423 @@
+{
+  "format_version": 1,
+  "metric_unit": "raw_0_to_1",
+  "delta_unit": "percentage_points",
+  "combination_matrix": [
+    {
+      "method": "RT-DETR-L",
+      "fdr": false,
+      "bpdd": false,
+      "fia": false,
+      "status": "exact_val_and_test"
+    },
+    {
+      "method": "RT-DETR-L+FDR",
+      "fdr": true,
+      "bpdd": false,
+      "fia": false,
+      "status": "exact_val_and_test"
+    },
+    {
+      "method": "RT-DETR-L+BPDD",
+      "fdr": false,
+      "bpdd": true,
+      "fia": false,
+      "status": "invalid_dependency",
+      "reason": "BPDD consumes FDR edge distributions and is not a standalone inference model."
+    },
+    {
+      "method": "RT-DETR-L+FIA",
+      "fdr": false,
+      "bpdd": false,
+      "fia": true,
+      "status": "p3_only_best_checkpoint_exact_val_and_test",
+      "reason": "The fresh best.pt is bound to the corrected P3-only graph and has exact independent VisDrone val and test metrics."
+    },
+    {
+      "method": "RT-DETR-L+FDR+BPDD",
+      "fdr": true,
+      "bpdd": true,
+      "fia": false,
+      "status": "exact_val_and_test"
+    },
+    {
+      "method": "RT-DETR-L+FDR+FIA",
+      "fdr": true,
+      "bpdd": false,
+      "fia": true,
+      "status": "existing_best_evaluated",
+      "reason": "The published best.pt was independently evaluated on VisDrone val. It is a cascading standalone checkpoint, not a revised P3-only run."
+    },
+    {
+      "method": "RT-DETR-L+BPDD+FIA",
+      "fdr": false,
+      "bpdd": true,
+      "fia": true,
+      "status": "invalid_dependency",
+      "reason": "BPDD requires FDR even when FIA is present."
+    },
+    {
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "fdr": true,
+      "bpdd": true,
+      "fia": true,
+      "status": "updated_four_decimal_val_test_available",
+      "reason": "User-supplied four-decimal val and test text reports match the archived terminal screenshot and provide F1, AP75, and ten-class details. The arithmetic deltas remain supplementary rather than strict paired rows."
+    }
+  ],
+  "overall_rows": [
+    {
+      "split": "val",
+      "method": "RT-DETR-L",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.46761,
+        "recall": 0.41731,
+        "f1": 0.43657,
+        "map50": 0.38663,
+        "map75": 0.21302,
+        "map": 0.21911
+      },
+      "f1_definition": "evaluator_reported",
+      "delta_from_previous_pp": null,
+      "evidence_level": "strict",
+      "source_id": "strict_control_val"
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5691126151072722,
+        "recall": 0.49277710639408445,
+        "f1": 0.52484,
+        "map50": 0.48468375790335755,
+        "map75": 0.29252552290080275,
+        "map": 0.289659749097641
+      },
+      "f1_definition": "evaluator_reported",
+      "delta_from_previous_pp": {
+        "precision": 10.15026151072722,
+        "recall": 7.546710639408444,
+        "f1": 8.827,
+        "map50": 9.805375790335757,
+        "map75": 7.950552290080276,
+        "map": 7.054974909764097
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_strict_paired": true,
+      "evidence_level": "strict",
+      "source_id": "fdr_val"
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR+BPDD",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5706336342276676,
+        "recall": 0.494464137092214,
+        "f1": 0.5298252895497555,
+        "map50": 0.4864074913692349,
+        "map75": 0.29809564823246976,
+        "map": 0.29225786956881444
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": 0.152101912039537,
+        "recall": 0.168703069812953,
+        "f1": null,
+        "map50": 0.172373346587734,
+        "map75": 0.557012533166701,
+        "map": 0.259812047117347
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_strict_paired": false,
+      "evidence_level": "cross_authority_exact",
+      "source_id": "bpdd_val"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.4179784854691559,
+        "recall": 0.37301321245245467,
+        "f1": 0.39421778511842925,
+        "map50": 0.3222076270254717,
+        "map75": 0.17550263960372106,
+        "map": 0.1774164316787175
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": null,
+      "evidence_level": "exact_single_arm",
+      "source_id": "strict_control_test_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5034013232722852,
+        "recall": 0.4316771784011883,
+        "f1": 0.4647884909014567,
+        "map50": 0.3983397033621551,
+        "map75": 0.2289027217475196,
+        "map": 0.2280010020468384
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": 8.54228378031293,
+        "recall": 5.86639659487336,
+        "f1": 7.05707057830275,
+        "map50": 7.61320763366834,
+        "map75": 5.34000821437985,
+        "map": 5.05845703681209
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_strict_paired": true,
+      "evidence_level": "exact_single_arm",
+      "source_id": "fdr_test_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR+BPDD",
+      "status": "exact",
+      "metrics": {
+        "precision": 0.5226717397324412,
+        "recall": 0.4261372182455518,
+        "f1": 0.4694936306246628,
+        "map50": 0.40368789074912337,
+        "map75": 0.23264724419839888,
+        "map": 0.23165906438722952
+      },
+      "f1_definition": "derived_harmonic",
+      "delta_from_previous_pp": {
+        "precision": 1.9270416460156,
+        "recall": -0.553996015563651,
+        "f1": 0.47051397232061,
+        "map50": 0.534818738696826,
+        "map75": 0.374452245087927,
+        "map": 0.365806234039112
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_strict_paired": false,
+      "evidence_level": "cross_authority_exact",
+      "source_id": "fdr_bpdd_test_exact"
+    }
+  ],
+  "equal_redesign_observations": {
+    "status": "historical_standalone_gate_pass_superseded_as_current_candidate",
+    "source_id": "equal_formal100_best_exact_20260821",
+    "checkpoint_sha256": "06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca",
+    "strict_paired": false,
+    "rows": [
+      {
+        "split": "val",
+        "method": "RT-DETR-L+EQuAL",
+        "precision": 0.5940546227482266,
+        "recall": 0.48866551561492555,
+        "f1": 0.5362309210717304,
+        "map50": 0.49047659360905327,
+        "map75": 0.3010264455466055,
+        "map": 0.29437802106009,
+        "delta_map_vs_registered_ap_fdr_pp": 0.4718021060090001
+      },
+      {
+        "split": "test",
+        "method": "RT-DETR-L+EQuAL",
+        "precision": 0.5215760478832335,
+        "recall": 0.4288392988126689,
+        "f1": 0.47068328058742026,
+        "map50": 0.40624635226953254,
+        "map75": 0.2353634277327714,
+        "map": 0.23460964111033686,
+        "delta_map_vs_registered_ap_fdr_pp": 0.6608639063498453
+      }
+    ],
+    "old_ap_fdr_combination_relabel_allowed": false
+  },
+  "supplementary_updated_fia_observations": [
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FIA",
+      "status": "p3_only_best_checkpoint_independent_val_exact",
+      "metrics": {
+        "precision": 0.4871962209136635,
+        "recall": 0.42531734343807504,
+        "f1": 0.4509443663180429,
+        "map50": 0.39874518726363956,
+        "map75": 0.2218076018094571,
+        "map": 0.22705639514425527
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_reference_source_id": "strict_control_val",
+      "delta_map_pp": 0.7946395144255269,
+      "delta_strict_paired": false,
+      "evidence_level": "best_checkpoint_independent_val_exact",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "graph_topology": "p3_only_standalone",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FIA",
+      "status": "p3_only_best_checkpoint_independent_test_exact",
+      "metrics": {
+        "precision": 0.4482592209945812,
+        "recall": 0.377636033342981,
+        "f1": 0.3954178960043504,
+        "map50": 0.33664177054432,
+        "map75": 0.18201140298044138,
+        "map": 0.18551746406283812
+      },
+      "delta_reference": "RT-DETR-L",
+      "delta_reference_source_id": "strict_control_test_exact",
+      "delta_map_pp": 0.8101032384120604,
+      "delta_strict_paired": false,
+      "evidence_level": "best_checkpoint_independent_test_exact",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "graph_topology": "p3_only_standalone",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR+FIA",
+      "status": "existing_best_independent_val_exact",
+      "metrics": {
+        "precision": 0.5775238641748943,
+        "recall": 0.4908887926435492,
+        "f1": 0.530693811231827,
+        "map50": 0.486314064615312,
+        "map75": 0.29972392008500426,
+        "map": 0.29494032070762063
+      },
+      "delta_reference": "RT-DETR-L+FDR",
+      "delta_map_pp": 0.5280571609979634,
+      "delta_strict_paired": false,
+      "evidence_level": "best_checkpoint_independent_val_exact",
+      "source_id": "fdr_fia_existing_best_independent_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR+FIA",
+      "status": "existing_best_independent_test_exact",
+      "metrics": {
+        "precision": 0.5189669713045484,
+        "recall": 0.43165506726917735,
+        "f1": 0.46065437704605916,
+        "map50": 0.4074392932750549,
+        "map75": 0.23587873005461435,
+        "map": 0.23464538660213996
+      },
+      "evidence_level": "best_checkpoint_independent_test_exact",
+      "source_id": "fdr_fia_existing_best_independent_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "status": "updated_text_report_val_available",
+      "metrics": {
+        "precision": 0.5693,
+        "recall": 0.4991,
+        "f1": 0.5285,
+        "map50": 0.4898,
+        "map75": 0.3042,
+        "map": 0.2961
+      },
+      "delta_reference": "RT-DETR-L+FDR+BPDD",
+      "delta_map_pp": 0.384213043118556,
+      "delta_strict_paired": false,
+      "evidence_level": "user_supplied_text_report_4dp",
+      "source_id": "fia_updated_three_module_text_val",
+      "formal_delta_allowed": false
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FDR+BPDD+FIA",
+      "status": "updated_text_report_test_available",
+      "metrics": {
+        "precision": 0.5189,
+        "recall": 0.4361,
+        "f1": 0.4634,
+        "map50": 0.4081,
+        "map75": 0.2327,
+        "map": 0.2337
+      },
+      "delta_reference": "RT-DETR-L+FDR+BPDD",
+      "delta_map_pp": 0.20409356127704894,
+      "delta_strict_paired": false,
+      "evidence_level": "user_supplied_text_report_4dp",
+      "source_id": "fia_updated_three_module_text_test",
+      "formal_delta_allowed": false
+    }
+  ],
+  "superseded_fia_observations": [
+    {
+      "split": "val",
+      "method": "RT-DETR-L+FIA",
+      "status": "superseded_cascading_best_checkpoint_independent_val_exact",
+      "metrics": {
+        "precision": 0.4794334980185041,
+        "recall": 0.4141938299458384,
+        "f1": 0.44443223821449405,
+        "map50": 0.38567545133764725,
+        "map75": 0.2096736111592438,
+        "map": 0.21679545343355132
+      },
+      "source_id": "fia_existing_best_independent_val",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact"
+    },
+    {
+      "split": "test",
+      "method": "RT-DETR-L+FIA",
+      "status": "superseded_cascading_best_checkpoint_independent_test_exact",
+      "metrics": {
+        "precision": 0.42405399388824083,
+        "recall": 0.3696529891467626,
+        "f1": 0.38186403219771886,
+        "map50": 0.32511085966127234,
+        "map75": 0.17161307417237592,
+        "map": 0.1771764568469921
+      },
+      "source_id": "fia_existing_best_independent_val",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact"
+    }
+  ],
+  "strict_bpdd_pair_20260819": {
+    "status": "best_checkpoint_exact_val_test_complete",
+    "source_id": "bpdd_strict_pair_20260819",
+    "val": {
+      "fdr_map": 0.2903799751166591,
+      "fdr_bpdd_map": 0.29276972517101574,
+      "delta_map_pp": 0.2389750054356654,
+      "delta_map50_pp": 0.3797055398076066,
+      "delta_map75_pp": 0.07196478018859365,
+      "delta_recall_pp": 1.0847315117255452
+    },
+    "test": {
+      "fdr_map": 0.2311236870257676,
+      "fdr_bpdd_map": 0.23395865945253597,
+      "delta_map_pp": 0.2834972426768362,
+      "delta_map50_pp": 0.2905750995412959,
+      "delta_map75_pp": 0.2758792898446355,
+      "delta_recall_pp": 0.634281274723647
+    }
+  },
+  "latest_training_observation": {
+    "split": "val",
+    "method": "LRS-GFDR+Capacity-BPDD-v3-Safe",
+    "status": "completed_formal100_and_exact_test",
+    "best_epoch": 80,
+    "best_map": 0.29277,
+    "final_epoch": 100,
+    "final_map": 0.28939,
+    "test_map_max_det_300": 0.2411058094663223,
+    "test_map_max_det_100": 0.24078632159711785,
+    "test_evaluator": "pycocotools.COCOeval 2.0.11",
+    "evidence_path": "evidence/visdrone_lrs_gfdr_capacity_v3_safe_joint_20260913/bpdd-current-completion.json",
+    "strict_causal_delta_allowed": false
+  },
+  "claim_boundary": "The current main result is LRS-GFDR + Capacity-BPDD-v3-Safe + FIA Formal100 (best val mAP50-95=0.30109). The newest BPDD-only formal100 record has best E80=0.29277 and an independent common-evaluator test mAP50-95 of 0.2411058095 at maxDet=300; it is not a new strict causal row against the joint model. Baseline, FDR, and FDR+BPDD remain the formal exact core rows. The fresh FIA-only best.pt has exact P3-only val/test supplementary metrics and non-paired arithmetic gains of +0.7946395144255269 pp on val and +0.8101032384120604 pp on protocol-comparable test. The older cascading FIA-only result is retained only as superseded evidence. The corrected P3-only three-module result retains its four-decimal val/test text-report boundary. None of the FIA supplementary arithmetic deltas is a strict paired causal gain."
+}

@@ -1,0 +1,20 @@
+
+\begin{table*}[t]
+\centering
+\caption{Localization design comparison on native validation after 100 epochs. The path redesign changes the reference and extra supervision; all rows retain the attributed FDR/FGL representation. Checkpoints are selected by validation AP. These are historical design variants, not a fully source- and initialization-matched ablation. Bold marks the highest value in each metric.}
+\label{tab:lrsversions}
+\small\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.10}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccrr@{}}
+\toprule
+Localization design & Redesigned path & Feasible decoding & LQS & AP & $\mathrm{AP}_{50}$ \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Transfer reference}}\\[2pt]
+Full FDR/FGL transfer & -- & -- & -- & 29.078 & 48.473 \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Our localization variants}}\\[2pt]
+Path redesign & \checkmark & -- & -- & \textbf{29.696} & 49.320 \\
+Path redesign + geometry & \checkmark & \checkmark & -- & 29.361 & 49.130 \\
+GCDL & \checkmark & \checkmark & \checkmark & 29.620 & \textbf{49.382} \\
+\bottomrule
+\end{tabular*}
+\end{table*}

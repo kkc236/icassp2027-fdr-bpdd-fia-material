@@ -1,0 +1,25 @@
+{
+  "transport_sha256": "aacb54f6dc8bf8aa27a7f9a1570f0a442704cf9a35d5d4b0d8edf233728cedc1",
+  "files": {
+    "inventory.json": {
+      "sha256": "4143e470561bad0e865b4dc56a8217756151850888989d6e22216edbda05c84d",
+      "bytes": 495221
+    },
+    "COMPLETE.json": {
+      "sha256": "04161ee1caaace04b5cac1b358abda345707f57d9d03313af58ccefe33d6b757",
+      "bytes": 50
+    },
+    "deployment.json": {
+      "sha256": "8f3121f70ac0dbdb02a41ca9a52cd3f69934c32755c3da6c3516555fcb464305",
+      "bytes": 234
+    },
+    "trace.py": {
+      "sha256": "cf9b18d52e46ed2b871374589328e53ecb6b8966379d942d874554efd82cbad7",
+      "bytes": 3173
+    },
+    "run.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "pid": 1162783,
+  "command": [
+    "/root/miniconda3/envs/lrs-v2/bin/python",
+    "-B",
+    "-u",
+    "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v3/measure.py",
+    "--code-root",
+    "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code",
+    "--output-dir",
+    "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v3"
+  ],
+  "source_sha256": "57c09032533451df81cbdeaadbb528f39a605955e1166b5e41ddbfc9d0fa5420",
+  "training_started": false,
+  "uavdt_in_scope": false,
+  "output": "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v3"
+}

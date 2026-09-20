@@ -1,0 +1,47 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\small,
+arr/.style={-{Latex[length=2mm]},draw=ink,line width=.7pt}]
+\path[use as bounding box] (0,-.85) rectangle (16.8,4.8);
+\draw[rounded corners=3pt,draw=ink!35,fill=basefill!45] (0,0) rectangle (7.65,4.65);
+\draw[rounded corners=3pt,draw=ink!35,fill=expertfill!40] (8.05,0) rectangle (16.8,4.65);
+\node[anchor=west,font=\sffamily\bfseries\small] at (.3,4.3) {(a) Center-preserving feasible geometry};
+\node[anchor=west,font=\sffamily\bfseries\small] at (8.35,4.3) {(b) Layerwise quality shrinkage};
+\node[align=center] at (3.85,3.65) {Bound the extent when $v<f$\\$\hat v=\operatorname{sg}(\max(v,f))+[v-\operatorname{sg}(v)]$};
+\draw[draw=ink!35,dashed] (3.85,.85) -- (3.85,3.1);
+\node[anchor=east,font=\sffamily\footnotesize] at (1.85,2.65) {Raw extent};
+\draw[draw=ink,line width=1.2pt] (3.62,2.65) -- (4.08,2.65);
+\draw[draw=ink,line width=.8pt] (3.62,2.45) -- (3.62,2.85);
+\draw[draw=ink,line width=.8pt] (4.08,2.45) -- (4.08,2.85);
+\fill[ink] (3.85,2.65) circle[radius=.055];
+\node[anchor=east,font=\sffamily\footnotesize] at (1.85,1.5) {Bounded extent};
+\draw[draw=expertcolor,line width=1.4pt] (2.65,1.5) -- (5.05,1.5);
+\draw[draw=expertcolor,line width=1pt] (2.65,1.3) -- (2.65,1.7);
+\draw[draw=expertcolor,line width=1pt] (5.05,1.3) -- (5.05,1.7);
+\fill[ink] (3.85,1.5) circle[radius=.055];
+\draw[arr] (5.6,2.55) -- node[right,font=\sffamily\footnotesize,align=left] {same\\center} (5.6,1.6);
+\node[align=center,font=\sffamily\footnotesize] at (3.85,.48) {Forward: geometric + precision floor\\Backward: identity surrogate for the extent};
+
+\node[font=\sffamily\footnotesize] at (12.45,3.7) {$q'=(1-\alpha)q+\alpha\bar q$, \quad layer 0: $\alpha=0.25$};
+\draw[arr] (8.85,1.12) -- (15.4,1.12);
+\draw[dashed,draw=featurecolor] (8.85,2.16) -- (15.4,2.16);
+\node[font=\sffamily\scriptsize,text=featurecolor] at (15.25,2.43) {$\bar q=0.4$};
+\fill[ink!40] (9.35,1.12) rectangle (9.68,1.38);
+\fill[expertcolor] (9.78,1.12) rectangle (10.11,1.575);
+\fill[ink!40] (11.35,1.12) rectangle (11.68,2.16);
+\fill[expertcolor] (11.78,1.12) rectangle (12.11,2.16);
+\fill[ink!40] (13.35,1.12) rectangle (13.68,2.94);
+\fill[expertcolor] (13.78,1.12) rectangle (14.11,2.745);
+\node[font=\sffamily\scriptsize] at (9.73,.87) {$0.10\ \to\ 0.175$};
+\node[font=\sffamily\scriptsize] at (11.73,.87) {$0.40\ \to\ 0.400$};
+\node[font=\sffamily\scriptsize] at (13.73,.87) {$0.70\ \to\ 0.625$};
+\fill[ink!40] (9.4,3.17) rectangle (9.65,3.38);
+\node[anchor=west,font=\sffamily\scriptsize] at (9.75,3.28) {Original $q$};
+\fill[expertcolor] (12,3.17) rectangle (12.25,3.38);
+\node[anchor=west,font=\sffamily\scriptsize] at (12.35,3.28) {Shrunk $q'$};
+\node[font=\sffamily\footnotesize] at (12.45,.37) {Same total; preserved ordering; $\alpha_5=0$};
+\node[anchor=north west,align=left,text width=16.4cm,font=\sffamily\footnotesize] at (.15,-.25) {LQS changes only eligible matches within the same image and decoder layer. Ineligible and singleton matches keep their original weights. The final layer uses the original IoU weights.};
+\end{tikzpicture}
+\caption{Geometric decoding and quality-weight allocation in GCDL. (a) A one-dimensional extent illustration; the geometric operation applies independently to width and height. (b) An arithmetic illustration with three eligible weights, not measured training statistics. The sum remains 1.2 and deviations from the mean shrink by a factor of 0.75.}
+\label{fig:lrs}
+\end{figure*}

@@ -1,0 +1,10 @@
+{
+  "best_native_val_ap": 0.2877259732381475,
+  "elapsed_seconds": 60019.87652493734,
+  "epoch_completed": 100,
+  "epoch_zero_based": 99,
+  "max_cuda_allocated_bytes": 14553597952,
+  "max_cuda_reserved_bytes": 15541993472,
+  "native_val_ap": 0.284742003287835,
+  "status": "training"
+}

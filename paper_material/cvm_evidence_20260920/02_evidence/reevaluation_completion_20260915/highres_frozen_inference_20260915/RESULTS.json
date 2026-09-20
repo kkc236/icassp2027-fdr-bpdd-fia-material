@@ -1,0 +1,49 @@
+{
+  "format_version": 1,
+  "kind": "frozen_checkpoint_high_resolution_inference_sensitivity",
+  "selection": {
+    "source_split": "val",
+    "rule": "Choose the candidate with the highest unweighted mean val mAP50-95 across fixed G and Full checkpoints.",
+    "candidates": {
+      "800": 0.30167256474427284,
+      "960": 0.2754725548989866
+    },
+    "selected_imgsz": 800,
+    "test_was_not_read_for_selection": true
+  },
+  "fixed_protocol": {
+    "batch": 8,
+    "workers": 8,
+    "conf": 0.001,
+    "max_det": 300,
+    "nms": false,
+    "half": false,
+    "rect": false,
+    "cache": false,
+    "data_sha256": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63"
+  },
+  "runs": {
+    "G_LRS_GFDR": {
+      "checkpoint_sha256": "DF76A0C8BD5B215D378ACB87EB240D7D1DFB44190167CD8C1E19F86FA18C969D",
+      "val": {
+        "640": {"images": 548, "mAP50_95": 0.29616405122274125, "mAP50": 0.49383381381854347, "mAP75": 0.29912818873299657},
+        "800": {"images": 548, "mAP50_95": 0.30047132862633846, "mAP50": 0.5084561594240401, "mAP75": 0.30531458769711206}
+      },
+      "test": {
+        "640": {"images": 1610, "mAP50_95": 0.23618782909072553, "mAP50": 0.4110079730261288, "mAP75": 0.23644478997824328, "truck_mAP50_95": 0.303878347426349},
+        "800": {"images": 1610, "mAP50_95": 0.24059504210922178, "mAP50": 0.4238713773120077, "mAP75": 0.2415242574935219, "truck_mAP50_95": 0.28931851293231736}
+      }
+    },
+    "FULL_CAPACITY_B_F": {
+      "checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6",
+      "val": {
+        "640": {"images": 548, "mAP50_95": 0.30102406175012464, "mAP50": 0.49866955424768766, "mAP75": 0.30723749336874034},
+        "800": {"images": 548, "mAP50_95": 0.3028738008622073, "mAP50": 0.5092729312769935, "mAP75": 0.31115142917950267}
+      },
+      "test": {
+        "640": {"images": 1610, "mAP50_95": 0.23604003874539384, "mAP50": 0.4124088910885405, "mAP75": 0.235463862958051, "truck_mAP50_95": 0.291936477976564},
+        "800": {"images": 1610, "mAP50_95": 0.24159786358876884, "mAP50": 0.42463364906399476, "mAP75": 0.2421858108043958, "truck_mAP50_95": 0.28449738035517896}
+      }
+    }
+  }
+}

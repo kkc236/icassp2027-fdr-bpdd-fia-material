@@ -1,0 +1,67 @@
+[
+  {
+    "file": "BoxF1_curve.png",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "BoxP_curve.png",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "BoxPR_curve.png",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "BoxR_curve.png",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "confusion_matrix.png",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "confusion_matrix_normalized.png",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "paper_data.txt",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "val_batch0_labels.jpg",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "val_batch0_pred.jpg",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "val_batch1_labels.jpg",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "val_batch1_pred.jpg",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "val_batch2_labels.jpg",
+    "previously_present": true,
+    "identical": true
+  },
+  {
+    "file": "val_batch2_pred.jpg",
+    "previously_present": true,
+    "identical": true
+  }
+]

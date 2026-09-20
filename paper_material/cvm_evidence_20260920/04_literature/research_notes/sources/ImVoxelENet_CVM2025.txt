@@ -1,0 +1,787 @@
+         ImVoxelENet: Image to Voxels Epipolar Transformer for Multi-View
+                        RGB-based 3D Object Detection
+
+                                  Gang Xu, Haoyu Liu, Biao Leng∗ , Zhang Xiong
+                                               Beihang University
+                                  ∗
+                                    Corresponding author: lengbiao@buaa.edu.cn
+
+
+                         Abstract                                          Detection Head                    Detection Head
+   Three-dimensional object detection based on purely
+image data is a significant challenge in the field of com-              3D-Conv                           3D-Conv
+puter vision. The core issue lies in how to accurately per-
+form epipolar geometry matching across multiple views
+to obtain latant geometric priors. Existing methods
+establish correspondences along epipolar line features                   L!"$
+in voxel space through multiple layers of convolution.                                                    Udpated 3D-Volume
+However, this step is often arranged in the later stages
+of the network, which limits the overall performance. To
+                                                                         L!"#
+address this challenge, we introduce a novel framework
+that integrates geometric epipolar constraint, which we
+                                                                                                            Epipolar-Perception
+refer to as ImVoxelENet. We start from the back-
+projection of pixel-wise features and design an attention                L!                       𝑣$
+mechanism that captures the relationship between for-
+ward and backward features along the ray across mul-                                𝑣#
+tiple views. This approach enables the early establish-
+ment of geometric correspondences and structural con-                           3D-Volume                       3D-Volume
+nections between epiploar lines. On the multi-view de-
+tection dataset ScanNetV2, extensive comparative and                            a.baseline                          b.ours
+ablation experiments demonstrate that our proposed                   Figure 1. Difference on utilization of epipolar geometry in multi-
+network achieves a 1.1% improvement in mAP, high-                    view detection. In previous methods, as shown on the left, the rela-
+lighting its effectiveness in enhancing 3D object detec-             tionships between distant voxels on the same epipolar line rely on
+tion performance.                                                    multiple convolutions in voxel space to expand the receptive field.
+                                                                     In contrast, as depicted in the right image, our method establishes
+  Keywords: 3D Object Detection, Multi-view Geometry,                the earlier front-to-back relationships along the same ray, followed
+Transformer, Attention, Deep Learning                                by convolutions. The red and periwinkle colors respectively map
+                                                                     the feature along a single epipolar line. For simplification, we rep-
+1. Introduction                                                      resent the 3D convolution block by a 2D top-down view.
+
+    3D object detection plays a crucial role in indoor scene
+understanding and is fundamental for a wide range of ap-             potential to revolutionize how technology interfaces with
+plications [23, 53, 1], such as robotics, augmented reality,         real-world scenarios. While recent advances have shown
+and autonomous systems. Accurate 3D detection enables                promise in this field, especially with the integration of deep
+machines to perceive and interact with their environment             learning and multi-view approaches, achieving reliable and
+more effectively, which is essential for tasks like naviga-          efficient 3D detection remains an area of active research.
+tion, manipulation, and scene reconstruction. For instance,          To address these issues, there is a growing need for inno-
+in robotics [53], precise 3D detection allows for safe and ef-       vative approaches that can efficiently fuse multi-view data
+ficient movement within dynamic environments. As indoor              and enhance 3D object detection performance in indoor en-
+environments [24] are typically dense with objects and di-           vironments [20, 46].
+verse in structure, a robust 3D detection system offers the              In indoor scenes [11, 33, 56, 45, 16, 50], multi-view 3D
+
+
+                                                                 1
+object detection has emerged as a promising approach to ac-       ray is hindered, which reduces the network’s overall effi-
+curately infer the 3D structure of objects by leveraging mul-     ciency and effectiveness in achieving precise 3D object de-
+tiple 2D images captured from different viewpoints. The           tection. Addressing this shortcoming is key to enhancing
+general strategy [22, 57] involves projecting 2D features         the performance of multi-view 3D detection in complex in-
+from these images into a shared 3D space, allowing for the        door environments.
+reconstruction of object shapes, positions, and orientations.         Through our analysis, we identify that establishing a
+This process typically includes stages such as feature ex-        more precise matching logic for the epipolar relationship
+traction, multi-view aggregation, and 3D bounding box pre-        is the key challenge in this task. To enhance this relation-
+diction. By integrating information from multiple perspec-        ship, we propose the ImVoxelENet method. Traditional
+tives, multi-view 3D detection can potentially overcome           approaches rely on late-stage 3D convolution modules with
+limitations faced by single-view methods [7, 47], such as         larger receptive fields to achieve global feature fusion, fol-
+occlusion, scale variation, and ambiguities in depth percep-      lowed by classification and localization of features within
+tion. Despite its potential, multi-view 3D object detection       voxels, as shown in (a) of Fig. 1. Inspired by the transformer
+presents several challenges. One of the primary difficulties      architecture, we posit that leveraging an attention mecha-
+is the accurate alignment and fusion of multi-view informa-       nism to capture the geometric relationships along the ray
+tion due to inconsistencies in appearance caused by varia-        can facilitate earlier realization of spatial relationships com-
+tions in lighting [2], occlusion [25], and texture [14]. Indoor   pared to existing methods, as illustrated in (b) of Fig. 1. By
+environments are particularly challenging because they of-        establishing epipolar matching relationships through this
+ten feature densely cluttered scenes with complex object ar-      mechanism, the network can more effectively harness ge-
+rangements [3, 49] and overlapping structures, making it          ometric cues, enabling implicit spatial awareness and en-
+harder to establish reliable correspondences between dif-         hancing the understanding of spatial features throughout the
+ferent views. Another challenge is the inherent noise and         network.
+variability introduced by factors such as camera calibra-             Specifically, we design the ImVoxelENet structure based
+tion errors and occlusions, which can affect the precision        on the ImVoxelNet [31] framework. First, we introduce an
+of the back-projection process when mapping 2D image              indexing mechanism for the rays within the original back-
+features to a 3D space. A critical technical aspect of ad-        projection operation. We map the correspondence between
+dressing these challenges is developing effective methods         each pixel in the multi-view image sequence and the voxel
+for handling the epipolar geometry between views to en-           space. We then record the indices of these feature rays and
+sure accurate matching and fusion. Techniques such as             select a few intersecting voxels along each ray. Next, we
+epipolar line sampling and attention-based feature aggre-         proceed to construct the complete 3D voxel feature space.
+gation have shown promise in capturing long-range depen-          All pixels from the entire image sequence are projected into
+dencies and establishing geometric correspondences across         the voxel space according to the camera’s intrinsic and ex-
+multiple views [41]. Additionally, learning-based methods         trinsic parameters. The intersecting points of different rays
+that incorporate geometric priors, attention mechanisms, or       within the voxels are fused using a feature-level numerical
+ray-based sampling approaches have been developed to en-          averaging approach. Subsequently, we develop a epipolar-
+hance the network’s ability to infer 3D spatial relationships     based transformer structure. Using the previously estab-
+from 2D data. However, designing architectures capable            lished indices, we input the nearest and farthest voxel points
+of robustly capturing these multi-view relationships while        along each ray to obtain updated voxel features. These up-
+maintaining computational efficiency remains an open re-          dated features are then added as residuals to the original 3D
+search problem. As such, the development of more ad-              voxel space. Finally, we apply subsequent 3D convolutional
+vanced methods for feature alignment, aggregation, and 3D         neck layers and detection heads to produce the final 3D ob-
+spatial understanding is crucial for pushing the boundaries       ject detection results.
+of multi-view 3D object detection in indoor settings.                 Our contributions can be summarized in the following
+                                                                  three aspects:
+   Current multi-view 3D object detection methods exhibit
+limitations in handling epipolar matching effectively [29].          • We design a novel network framework, ImVoxelENet
+Specifically, they rely on multi-layer 3D convolutions to              , for multi-view 3D object detection using only image
+capture the relationships along the same ray, as shown in              data. This approach does not require any 3D geometric
+(a) of Fig. 1, which often occurs at later stages of the net-          priors or supervision, yet it achieves significant perfor-
+work. This delayed integration means that the network can-             mance improvements.
+not establish the crucial geometric correspondences early
+on, resulting in suboptimal performance in capturing fine-           • We introduce a new ray-based transformer structure
+grained spatial details. As a consequence, the ability to ac-          that implements a long-range attention mechanism
+curately interpret the front-to-back connections along each            along the ray before applying 3D convolutions. This
+     enhances the network’s ability to perceive spatial           autonomous driving scenarios, the computer vision commu-
+     structures, improving its overall understanding of the       nity has developed a wide range of strategies and methods
+     3D environment.                                              for effective object detection.
+   • We conduct extensive experiments, including com-                 Far3D[12] propose a sparse query-based framework for
+     parative studies with existing methods and ablation          efficient long-range 3D object detection from surround-
+     studies on our approach, which convincingly demon-           view images, using 2D priors, perspective-aware aggrega-
+     strate the effectiveness and superiority of the proposed     tion, and range-modulated denoising, achieving state-of-
+     method.                                                      the-art results on the Argoverse 2 dataset. The paper[18] in-
+                                                                  troduce Ray Denoising, a plug-and-play module for multi-
+2. Related Work                                                   view 3D object detection that improves depth estimation ac-
+2.1. Point-based 3d object detection                              curacy by sampling along camera rays to create hard nega-
+                                                                  tive examples. It achieves a 1.9% mAP gain over the state-
+    Point clouds are inherently three-dimensional, making it      of-the-art on the NuScenes dataset, demonstrating strong
+seem intuitive to use a 3D convolutional network for de-          generalization capabilities. [58] introduces Historical Ob-
+tection. Zhang et al. [52] propose Fully Sparse TRans-            ject Prediction (HoP) for multi-view 3D detection, leverag-
+former (FSTR) for efficient LiDAR-based 3D object detec-          ing temporal information by generating pseudo Bird’s-Eye
+tion, combining state-of-the-art sparse backbones and dy-         View (BEV) features from historical timestamps. HoP im-
+namic queries, achieving superior performance on nuScenes         proves BEV feature learning and achieves 68.5% NDS and
+and Argoverse2 benchmarks. Chen et al. [5] introduce Fo-          62.4% mAP on nuScenes, outperforming existing 3D detec-
+calFormer3D, utilizing Hard Instance Probing (HIP) to re-         tors. Wang et al. present StreamPETR[38], a long-sequence
+duce false negatives in 3D detection, improving recall and        modeling framework for multi-view 3D object detection.
+outperforming benchmarks in detection and tracking tasks          Utilizing an object-centric temporal mechanism, it achieves
+across LiDAR and multi-modal datasets. Real-Aug [13]              67.6% NDS and 65.3% AMOTA on nuScenes, compara-
+presents a synthesis-based LiDAR augmentation method              ble to LiDAR-based methods. The lightweight version out-
+addressing unrealistic scan patterns in existing approaches,      performs SOLOFusion by 2.3% mAP and is 1.8× faster in
+achieving state-of-the-art performance on nuScenes by pri-        FPS. VCD[17] is a framework enhancing camera-only 3D
+oritizing realistic LiDAR data generation and employing a         object detection by leveraging an apprentice-friendly multi-
+real-synthesis training strategy.                                 modal expert model (VCD-E) and a fine-grained distilla-
+    However, these approaches demand extensive computa-           tion module. VCD-A achieves state-of-the-art performance
+tional resources, leading to slow inference times, particu-       on nuScenes with a 63.1% NDS score. SparseBEV[19]
+larly for large outdoor scenes. Recent outdoor detection          presents a fully sparse 3D object detector that outperforms
+methods [44, 15] mitigate this issue by projecting the 3D         dense counterparts by enhancing adaptability in BEV and
+point cloud onto the bird’s-eye view (BEV) plane, signif-         image space. It achieves state-of-the-art performance with
+icantly reducing runtime. A common technique in point             67.5 NDS on nuScenes and maintains real-time inference
+cloud processing involves subdividing the point cloud into        at 23.5 FPS. SparseAD[51] takes up with a sparse query-
+voxels. The projection onto the BEV plane implies that all        centric paradigm for end-to-end autonomous driving. It
+voxels within a vertical column are encoded into a fixed-         handles detection, tracking, and online mapping without
+length feature map. This resulting pseudo-image can then          dense BEV representation, achieving state-of-the-art full-
+be processed by a 2D object detection network to generate         task performance on the nuScenes dataset and reducing the
+final predictions.                                                gap with single-task methods. PolarBEVDet[48] is a multi-
+    For indoor object detection, methods typically generate       view 3D object detector using polar BEV representation in-
+object proposals for each point in the point cloud. However,      stead of Cartesian BEV, tailored with a polar-view trans-
+since many indoor objects are not convex, the geometric           former, temporal fusion module, and detection head. It
+center of an object may not lie within the object itself (e.g.,   achieves superior performance on the nuScenes dataset, ef-
+the center of a table or chair may be between its legs). As a     fectively handling view symmetry and image distribution.
+result, proposals based solely on a single center point can be    In VideoBEV[8], Han et al. propose a long-term recurrent
+inaccurate. To address this, indoor detection methods rely        fusion strategy for camera-based BEV 3D perception. It
+on deep Hough voting to generate more reliable proposals          effectively combines rich long-term information with an ef-
+[27, 26, 55].                                                     ficient fusion pipeline, achieving strong results on nuScenes
+                                                                  with 55.4% mAP in object detection, outperforming exist-
+2.2. RGB-based 3d object detection
+                                                                  ing methods. [43] introduces CAPE, a novel method using
+  To address the challenges of 3D object detection in out-        Camera view Position Embedding for multi-view 3D object
+door environments, particularly in BEV (Bird’s Eye View)          detection. CAPE operates under local camera-view coor-
+dinates, enhancing 3D detection. It achieves state-of-the-      21] and compared them with several prominent point cloud-
+art performance (61.0% NDS, 52.5% mAP) on nuScenes              based approaches [48, 15, 44], leading to the formulation of
+among LiDAR-free methods.                                       the research motivation for this paper.
+   For indoor scenarios, ImVoxelNet [31] stands out as one         Specifically, point cloud-based methods inherently in-
+of the most representative and effective methods for 3D ob-     corporate explicit 3D spatial information in their input data.
+ject detection. ImVoxelNet is a prominent method for 3D         This type of data allows these methods to bypass the pro-
+object detection in indoor scenes. It utilizes multi-view       cess of reconstructing the 3D spatial structure from images
+images to project 2D features into a 3D voxel space, en-        or other sources, which also helps avoid errors that might
+abling the network to effectively capture spatial relation-     arise during such reconstruction. As a result, these methods
+ships. By constructing a 3D voxel grid from 2D image fea-       tend to yield more accurate and reliable outcomes. Some
+tures, ImVoxelNet can perform efficient 3D convolutions,        approaches, although not utilizing point cloud data as in-
+leading to accurate 3D object localization and detection.       put, explicitly reconstruct the geometric relationships be-
+This voxel-based approach [39] allows the model to rep-         tween multiple views. They then perform detection based
+resent the 3D structure of indoor environments effectively,     on the reconstructed point cloud. These methods often use
+making it a strong performer in complex indoor detection        3D point cloud data as a supervisory constraint for the net-
+tasks. Total3DUnderstanding[24, 11], takes a comprehen-         work, facilitating the learning of geometric shapes.
+sive approach to indoor scene understanding by simultane-          In contrast, the method proposed in our research directly
+ously tackling 3D object detection, layout estimation, and      uses 2D RGB images as input and conducts 3D object de-
+shape reconstruction. Zhang et al. [50] propose an image-       tection within the 2D image space. While this design in-
+based local structured implicit network to enhance object       creases the complexity of the network’s learning process, it
+shape estimation. Additionally, they refine the 3D object       significantly reduces the constraints on the input data, as it
+pose and scene layout through a novel implicit scene graph      does not rely on point cloud data. This not only makes the
+neural network, which leverages implicit local object fea-      method more flexible in terms of data requirements but also
+tures. Stekovic et al. [32] performs joint selection and op-    allows for easier expansion to larger-scale training datasets.
+timization of proposals from a generated pool, aiming to        Consequently, our approach aims to strike a balance be-
+minimize the objective term. In the initial application in-     tween performance and data accessibility, offering a practi-
+volving floor plan reconstruction from point clouds, this ap-   cal solution for 3D object detection in scenarios where point
+proach selects and refines room proposals represented as 2D     cloud data is unavailable or difficult to obtain.
+polygons, optimizing based on an objective function that           In our proposal, although introducing additional chal-
+combines fitness as predicted by a deep network with reg-       lenges in terms of learning and inference, has the potential
+ularization terms on room shapes. Wang et al. [35] intro-       to scale more effectively with larger datasets, providing a
+duce a novel augmented reality (AR) solution tailored for       promising direction for future research and development in
+tele-meeting applications. This approach integrates neu-        the field of 3D object detection.
+ral networks with simultaneous localization and mapping
+(SLAM) techniques to attain comprehensive scene under-
+                                                                Post-Perception by Convolution. To further improve the
+standing and user localization solely from RGB images.
+                                                                learning performance of our network, we explore related
+3. Motivation                                                   methods that utilize only RGB images. Through this in-
+                                                                vestigation, image-based approaches commonly leverage
+Inputs and goals. Our method takes as input a collection        epipolar geometry as implicit geometric cues, as illustrated
+of images In ∈ RW ×H×3 , each with intrinsic and extrinsic      in (a) of Fig. 2. Specifically, these methods typically map
+camera parameters and arbitrary resolution, where t repre-      each image into a predefined 3D voxel grid using the intrin-
+sents the n-th image in a set of N images. In this paper,       sic and extrinsic parameters of the camera [22, 31]. How-
+we focus on multi-view scenarios where T > 1. The ob-           ever, a frequent challenge with single-view images is the
+jective is to predict multiple 3D object bounding boxes us-     absence of depth information[42, 34]. As a result, multiple
+ing our proposed ImVoxelENet network framework. Each            possible intersection points along the same ray in the voxel
+bounding box is parameterized as (x, y, z, w, h, l, ), where    grid are often assigned identical features from a single pixel.
+(x, y, z) represents the spatial coordinates of the center of       This situation leads to redundancy, as several voxels
+the 3D bounding box, and w, h, l denote its width, height,      along the same ray may correspond to the same feature,
+and length, respectively.                                       which introduces the need for additional validation and the
+                                                                elimination of erroneous points. This objective is usu-
+Advantage of Multi-view 3D Detection We conducted               ally achieved by analyzing the correspondences from other
+an extensive review of existing image-based 3D object de-       viewpoints. In essence, multiple images are used to estab-
+tection methods within scene understanding [22, 31, 12, 24,     lish correspondence for specific points across different per-
+                                                                                                                               Detection Head
+                                                                               b. Post-Volume-Perception by Conv
+
+
+
+
+                                                                                                                                Detection Head
+        View 𝑉!
+
+                                                                𝑉"                  𝑉#
+                                                                                           Epipolar Perception
+                                                                          𝑉!
+                    a. Back-projection & 3D Volume                       c. Earlier-Epipolar-Perception & Updating Volume
+
+Figure 2. Illustration of Our Motivation: (a)The back-projection and construction of 3D feature voxels are general operations in research-
+ings [22, 31], visualizing three possible matching epipolar lines and point features from three different viewpoints. (b)In existing ap-
+proaches, multiple convolution layers are required to connect the features along the epipolar line within a larger receptive field. In contrast,
+our method (c), establishes these connections earlier through a specific architecture.
+
+
+spectives, which helps to disambiguate the 3D location of                  feature relationships along rays with indeterminate lengths
+features along the ray.                                                    and voxel positions in 3D space. By incorporating atten-
+   However, this matching process typically involves long-                 tion mechanisms, we aim to enhance the learning capacity
+range relationships, as the corresponding points along a ray               of the network by an earlier perception as illustrated in (c)
+may be distributed at different depths. As shown in (b) in                 of Fig. 2.
+Fig.2 and Fig. 1, these methods often apply convolution                        Specifically, we designed an attention-based module that
+operations after projecting the images into 3D space, but                  utilizes a cross-attention mechanism to match and learn fea-
+the effectiveness of this approach is constrained by the re-               tures associated with multiple voxel locations correspond-
+ceptive field of the convolutional kernels. Since the recep-               ing to the same pixel across different images. Importantly,
+tive field grows incrementally with the network’s depth, the               rather than relying on the features of a single pixel’s ray
+model can only capture global correspondences at higher                    from a single image, we leverage the voxel features ob-
+layers of the network. This limitation inherently restricts the            tained from the projection of multiple images. This choice
+ability to match long-range correspondences along the ray                  stems from the observation that feature correspondences de-
+early in the process, thus impacting the overall efficiency                rived solely from the front-to-back relationships in a single
+and accuracy of the object detection process.                              image are often meaningless; they do not reveal significant
+   By addressing these challenges and understanding the                    feature variations and offer no basis for selecting the cor-
+limitations imposed by convolutional operations in these                   rect spatial positions. The cross-attention mechanism can
+image-based methods, our research aims to propose im-                      better discern feature differences and establish meaningful
+provements that can enhance the ability of the network to                  correspondences between voxels across different perspec-
+capture and utilize these long-range correspondences more                  tives. This approach enhances the model’s ability to filter
+effectively, potentially leading to more accurate 3D object                out erroneous points and focus on relevant spatial relation-
+detection from RGB images.                                                 ships, ultimately improving the accuracy and robustness of
+                                                                           the 3D object detection process. Furthermore, the residual
+                                                                           path helps maintain gradient flow during training, allowing
+Earlier Perception by Transformer. To improve this                         the model to effectively capture both local and global fea-
+process, we are supposed to develop strategies to address                  ture interactions without being constrained by the limited
+the long-range correspondences along the ray in both for-                  receptive field of standard convolutions.
+ward and backward directions [37, 54]. The logic be-                           In summary, this novel attention-based approach is de-
+hind this approach is straightforward: we propose an ad-                   signed to address the inherent challenges of long-range fea-
+ditional residual path alongside the conventional convolu-                 ture matching in 3D voxel space, providing a more power-
+tion logic used in neighboring spatial regions. As atten-                  ful and flexible method for learning geometric relationships
+tion mechanisms have achieved remarkable success across                    from multiple images. We believe this integration of at-
+various domains, significantly boosting performance, which                 tention mechanisms will significantly enhance the overall
+is well-suited for situations requiring the establishment of               performance of our 3D object detection system.
+     1.Feature Extraction
+
+                                                                          5. Update Features
+
+
+
+
+                                                                                                                                6. 3D Detector Head
+                                                                                                          5. Indices
+                                                                 2. Back Projection
+
+
+                                                                                                Epipolar-Transformer
+                                               ×                      3. Ray Sampling
+
+
+                             View 𝑉!           Ray Sampling Mask 𝑀!                            4. Epipolar Transformer
+
+Figure 3. Pipeline of our ImVoxelENet , beginning by a 2D feature extractor from the input images, which are then projected into a 3D
+voxel space. Following this, we introduce a novel ray sampling and ray-transformer to capture the features along the ray. Then we update
+the original voxel space with the refined features. Finally, we apply a detection head to perform the 3D object detection task.
+
+
+4. Method                                                              are parameters specific to the backbone network, with their
+                                                                       exact values detailed in the implementation section.
+   In this section, we provide a detailed introduction to the
+proposed ImVoxelENet network model and methodology.                       The 2D feature representations Ft for the t-th input are
+The workflow of our network is illustrated in Fig. 3. In the           then transformed into a three-dimensional (3D) voxel space,
+following sections, we will formalize and define the task              denoted as Vt ∈ RNx ×Ny ×Nz ×c1 . The orientation of this
+inputs, outputs, and specific scenarios by mathematical for-           3D volume is defined such that the z-axis is oriented per-
+mulations in Section. 4.1. Starting from feature extraction,           pendicularly to the ground plane, while the x-axis points
+we propose a back-projection method oriented towards ray               forward, and the y-axis is orthogonal to both the x- and
+sampling, which will be elaborated on in Section 4.2. Then,            z-axes. We empirically estimate the spatial boundaries
+in Section. 4.3, we will explain how ray-level sampling and            along all three axes as xmin , xmax , ymin , ymax , zmin , zmax
+indexing are performed and how attention mechanisms are                followed [55, 15, 22]. With a predetermined voxel size
+used to establish long-range spatial-ray connections in Sec-           s, the relationship between the number of voxels and the
+tion. 4.4. Finally we index and update the original voxel              spatial extent can be expressed as Nx s = xmax − xmin ,
+features, leading to the final 3D object detection with corre-         Ny s = ymax − ymin , and Nz s = zmax − zmin .
+sponding losses to train our ImVoxelENet .                                 A pinhole camera model serves as the basis for estab-
+                                                                       lishing the correspondence between 2D coordinates (u, v)
+4.1. Back-projection                                                   within the feature map Ft and 3D coordinates (x, y, z)
+                                                                       within the voxel volume Vt :
+    We follow [31, 22] to set our back-projection steps.
+    Let It ∈ RW ×H×3 represents the t-th image from a se-                                                           
+quence of T images. In this literature, we focus on the situ-
+                                                                                            1                     x
+                                                                                     
+                                                                                             4       0      0
+ation containing more than 5 images to detect 3d objects in                          u                1
+                                                                                                                   y 
+                                                                                        = Π 0        4     0 KRt 
+                                                                                                                   z  ,
+                                                                                                                       
+each scene. In accordance with the methodology proposed                              v
+                                                                                             0       0      1
+by Murez et al. [22], we initiate our process by extracting                                                          1
+two-dimensional (2D) features from each input image by a
+pre-trained 2D backbone. This extraction yields four dis-              where K and Rt denote the intrinsic and extrinsic matri-
+tinct feature maps, which are characterized by their dimen-            ces, respectively, and Π represents the perspective projec-
+sions: W      H        W      H         W      H
+         4 × 4 × c0 , 8 × 8 × 2c0 , 16 × 16 × 4c0 , and                tion. Following the projection of 2D features into 3D space,
+W       H
+ 32 × 32 × 8c0 . These feature maps are subsequently ag-               all voxels lying along a given camera ray inherit the same
+gregated through the utilization of a Feature Pyramid Net-             set of features. Additionally, a binary mask Mt , sharing the
+work (FPN), resulting in a unified tensor Ft with dimen-               same dimensions as Vt , is constructed to indicate whether a
+sions W      H
+        4 × 4 × c1 . It is important to note that c0 and c1            voxel lies within the frustum of the camera. For an individ-
+ual image It , the mask Mt is defined as:
+                                                                                                                    ×L
+                    (
+                      1, if 0 ≤ u < W               H
+                                      4 and 0 ≤ v < 4
+    Mt (x, y, z) =                                                                                                 MLP
+                      0, otherwise.
+
+4.2. 3D Volume Construction
+                                                                                                                  Norm
+   Subsequently, the 2D feature map Ft is projected onto
+the 3D voxel grid Vt for all valid voxels, according to:              a. Ray Sampling Mask
+                                                                         𝑟"
+                     (
+                       Ft (u, v), if Mt (x, y, z) = 1                                      𝑟#
+      Vt (x, y, z) =                                                                                        Cross-A)en,on
+                       0,           otherwise.
+
+  The final step involves aggregating the binary masks
+                                                                                                                  Norm
+M1 , . . . , Mt to form a composite mask M , computed as:
+                  (P                      P
+                       t Mt (x, y, z), if   t Mt (x, y, z) > 0
+M (x, y, z) =
+                    1,                 otherwise.                                 𝑟!
+                                                                      b. Feature Selection                  c. Our Epipolar
+   Ultimately, the 3D voxel volume V is synthesized by av-                 along Ray                         Transformer
+eraging the projected features across the valid voxels in the
+                                                                  Figure 4. Ray sampling strategy of our proposed ImVoxelENet .
+individual volumes V1 , . . . , Vt , following the formula:
+                                                                  In the left figure, we illustrate our ray sampling strategy to se-
+                           1 X                                    lect specific number of rays in one image. In the right figure, we
+                     V =       M t Vt .                           demonstrate the strategy to sample feature along a ray.
+                           M t
+
+4.3. Ray Sampling
+                                                                  in the scene.In our approach, we select rays that intersect
+    The above steps in last section follow the standard pro-      with more than two points within the 3D voxel space.
+cedures established by ImVoxelNet [31] and AtlasNet [22],             In the second module, our objective is to sample voxel
+maintaining a nearly identical structural framework. Next,        features along the already selected rays. After constructing
+we implement an independent ray sampling mechanism,               the 3D voxels, we utilize the ray indices obtained from the
+which is divided into two components, as illustrated in the       first step and choose nr rays that have multiple intersections
+Fig. 4. The first component involves random selection based       with the voxels, specifically selecting those rays that have
+on pixel weights for each image, while the second com-            two or more intersection points. For these selected rays,
+ponent focuses on front-and-back sampling along the pro-          we sample the features along the ray direction by choos-
+jected rays. Below, we will elaborate on the rationale be-        ing the two outermost voxel features as the sampling result.
+hind this design, detailing the mechanisms involved and           As illustrated in (b) of Fig. 4, there are typically three sce-
+outlining the logical framework for the practical implemen-       narios for this process. In the first scenario ri , where the
+tation.                                                           ray intersects with exactly two voxel points, we directly se-
+    In the first module, our design objective is to sample the    lect these two points. In the second scenario rk , if the ray
+number of rays. Since the purpose of extracting rays and          intersects with only one voxel, we disregard this ray. In
+their features is to utilize them in the subsequent Epipolar-     the third scenario rj , where the ray intersects with multi-
+Transformer stage, it is necessary to impose a certain limit      ple voxel points, we select the first and the last voxel points
+on their quantity. This limitation helps conserve GPU mem-        along the ray. It is important to note that the voxel fea-
+ory, allowing the network to train more stably. To achieve        tures we select have already undergone multi-view fusion,
+this, we first utilize the effective mask mentioned in the pre-   meaning they incorporate features from all available views.
+vious chapter to perform element-wise multiplication with         The rationale for this step is that, after fusing multi-view 2D
+the image and its features, identifying points in a single        image features, the sampled pixels and rays can effectively
+photo that can be mapped to the voxel space. We then ex-          capture the corresponding pixel-level feature relationships,
+tract all valid pixels from all images in the current scene.      thereby establishing accurate epipolar geometric correspon-
+From this pool of valid pixels, we randomly select a spec-        dences and achieving implicit 3D representation within the
+ified number nr to serve as the ray samples for the cur-          voxel space. The reason for selecting only the first and the
+rent scene, thereby controlling the overall number of rays        last points along the ray is that features that are spatially
+close to each other on the same ray might be influenced by        establish connections between the sampled ray features, en-
+noise or random variations during the image capture pro-          hancing its capability to understand complex spatial and ge-
+cess, potentially representing similar spatial positions. By      ometric relationships within the 3D space.
+focusing on points that are farther apart, we allow the origi-
+nal 3D convolution in the subsequent stages of the network        5. Experiments
+to establish necessary connections. Additionally, by utiliz-
+                                                                  5.1. Experiment Settings
+ing the transformer structure, we can establish these spatial
+relationships earlier in the process.                             Implement Details Our ImVoxelENet is implemented
+   As a summary of this section, our method effectively           with PyTorch and MMDetection[4] on Linux workstation
+builds connections between geometric features within the          armed with Intel E5-2640v4 cpu and 4 Nvidia GTX1080ti
+3D voxel space through ray sampling and along-ray sam-            graphics cards with 11GB memory. We train our neural
+pling. This approach enhances the network’s ability to per-       network on dataset for 12 epochs using the AdamW opti-
+ceive spatial relationships, ultimately improving its overall     mizer as what have been set in [31]. The initial learning
+performance in 3D object detection tasks.                         rate is set to 10−4 , and it is reduced by a decay factor of 0.1
+                                                                  on the 8th and 11st epoch respectively. We ensure that all
+4.4. Epipolar-Transformer                                         other experimental settings closely align with those estab-
+                                                                  lished for ImVoxelNet baseline. This approach allows for a
+    Next, for the features that have been obtained through
+                                                                  consistent and fair comparison, minimizing variability and
+sampling and indexing, representing potential geometric re-
+                                                                  ensuring that any observed differences in performance are
+lationships, we aim to establish connections between these
+                                                                  attributable to the specific methods being evaluated rather
+features to evaluate the correspondence between the two po-
+                                                                  than discrepancies in experimental configurations.
+sitions along the ray. This involves determining whether
+these two points share meaningful spatial or geometric re-
+lationships that can contribute to a more accurate 3D repre-      Dataset We evaluate the proposed method on the indoor
+sentation.                                                        real scene dataset ScanNet [6]. The dataset is a rich re-
+    To achieve this, we employ an attention-based mecha-          source for 3D semantic understanding, providing dense 3D
+nism, so-called the Epipolar-Transformer structure, which         reconstructions of indoor scenes along with corresponding
+is specifically designed to model these relationships. By         RGB-D video sequences. The validation set of ScanNet
+inputting the features from the two sampled positions (the        serves as a robust benchmark for assessing the performance
+frontmost and rearmost voxel points along the ray), the net-      of 3D detection methods, particularly in complex and clut-
+work learns to capture and reinforce the inherent spatial de-     tered environments. This comprehensive dataset comprises
+pendencies between them. This process allows the network          1513 scans that cover over 700 unique indoor scenes. The
+to identify consistent patterns, structures, and correspon-       dataset is divided into a training split, which includes 1201
+dences, thereby facilitating a more accurate representation       scans, and a validation split, consisting of 312 scans. Over-
+of the 3D space and enhancing the overall detection perfor-       all, ScanNet contains over 2.5 million images, each accom-
+mance.                                                            panied by corresponding depth maps and camera poses. Ad-
+    As shown in (c) of Fig. 4, we employ this specific            ditionally, the dataset provides reconstructed point clouds
+transformer structure, which we refer to as the Epipolar-         with 3D semantic annotations, making it an invaluable re-
+Transformer. After the sampling process, the input to this        source for 3D object detection and semantic understanding.
+module consists of the voxel position’s positional embed-         For the evaluation, we follow the standard protocol estab-
+ding combined with the voxel features at the two positions        lished in VoteNet [27]. Specifically, we estimate 3D bound-
+along the ray. These features are obtained by projecting          ing boxes from the semantic point clouds. The resulting
+the 2D image features from multiple images onto the voxel         object bounding boxes are axis-aligned, meaning that we
+space, where overlapping pixels from different images con-        do not predict the rotation angle for objects in the ScanNet
+tribute to the same voxel feature. The final feature is rep-      dataset. This simplification aligns with the common prac-
+resented as the average of all these overlapping 2D image         tice in indoor 3D detection, where the primary focus is on
+features at each voxel location.                                  the spatial extent and location of objects rather than their
+    Within the Epipolar-Transformer structure, we design an       orientation.
+encoding block centered around a cross-attention mecha-
+nism. This encoding block captures the relationships be-          Metrics We evaluate the comparative methods using the
+tween the sampled features effectively. We stack a total of       Mean Average Precision (mAP) metric, which serves as
+L such blocks in sequence, allowing the transformer to iter-      a comprehensive measure of detection performance. The
+atively refine the representation until the final output is ob-   mAP metric assesses the average precision across various
+tained. This design enables the network to comprehensively        Intersection over Union (IoU) thresholds, typically ranging
+from 0.25 to 0.50 in the context of 3D object detection tasks.     Analysis on number of views. We preprocess the orig-
+This range ensures a balanced evaluation of the model’s            inal ScanNet dataset following the default settings of the
+ability to accurately localize objects at different levels of      ImVoxelNet and MMDetection3D frameworks. For each
+overlap, providing a more robust and reliable assessment           scene, we sample 300 images as multi-view inputs. We train
+of detection performance across varying degrees of spatial         one scene per GPU, and during the training phase, 16 im-
+alignment.                                                         ages from each scene are used to update the network param-
+                                                                   eters. In the testing phase, the default experimental setup in-
+5.2. Comparison and Analyse                                        volves using 50 images from the validation set as the input
+                                                                   for each scene.
+    In Table. 1, we present a comprehensive comparison of             To further verify the effectiveness of our proposed
+our method against other approaches, providing a detailed          framework in establishing robust spatial geometric priors,
+breakdown of the Average Precision (AP) results across             we conducted additional tests using different numbers of
+18 categories within the ScanNetV2 dataset. Additionally,          viewpoints and compared the results with our baseline. The
+we calculate the mean Average Precision (mAP) at an IoU            specific results are presented in Table. 2. As illustrated, our
+threshold of 0.25. It is important to note that the methods in     proposed algorithm consistently achieves superior perfor-
+the first section of Table 1 utilize 3D point clouds as input to   mance across various numbers of viewpoints, demonstrat-
+the network, with the final results annotated directly on the      ing its ability to effectively capture spatial relationships.
+3D point cloud data. In contrast, the second section of the        This finding substantiates the effectiveness of our approach
+table compares methods that exclusively employ RGB im-             in designing and implementing geometric feature connec-
+ages as input, offering a distinct point of comparison against     tions based on the front-to-back relationships of rays.
+our approach.
+    From the results presented in the Table. 1, it can be illus-
+trated that our algorithm outperforms earlier point cloud-         Analysis on number of rays. As described earlier, our
+based methods by more than 10% in terms of mAP. How-               method samples a varying number of rays from each image
+ever, when compared to more advanced point cloud-based             and utilizes the features at the intersection points between
+algorithms, our approach still exhibits certain limitations.       these rays and the voxels as geometric cues to capture front-
+We attribute this to the lack of depth and other three-            to-back relationships. We then design the Ray-Transformer
+dimensional geometric information in pure RGB images.              structure to serve as a feature update module, establishing
+As a result, the network is required to implicitly learn           these relationships before the 3D convolution stage. There-
+the 3D spatial structure and perform epipolar matching to          fore, it is essential to conduct ablation experiments focused
+achieve accurate 3D object detection.                              on this module to validate the effectiveness and contribution
+    Compared to the baseline ImVoxelNet, the performance           of our network’s design.
+improvement of our approach stems from the early intro-               Due to computational constraints, we randomly select
+duction of epipolar-based foreground-background feature            1,000 rays from all the available rays across all images as
+perception modules before the 3D neck CNN module. This             input to the Ray-Transformer in our network design. This
+strategy enables the model to establish long-range spatial         specific number is chosen as a balance between computa-
+relationships earlier in the process, allowing the network to      tional capabilities and performance. Training with a larger
+capture global spatial information more effectively. As a re-      number of rays would require reducing the number of im-
+sult, this early spatial awareness contributes to the enhanced     ages used per scene to maintain feasibility, which, in turn,
+performance of our network.                                        would decrease the amount of data the network can utilize.
+    We also visualize the comparison in Fig. 5 and Fig. 6.         Therefore, in our ablation experiments concerning the num-
+To better illustarte the comparison, we zoom the output of         ber of rays, we fix the number of images per scene and eval-
+prediction and gt in Fig. 5. In Fig. 6, we randomly select         uate the impact of varying ray quantities on performance.
+a scene with multiply images as input, and we illustrate the       As previously discussed in earlier sections, we have already
+outcome.                                                           analyzed the effect of different numbers of viewpoints on
+                                                                   the overall detection performance.
+5.3. Ablation study
+                                                                      As shown in Table. 3, we present the numerical results
+                                                                   of our tests with varying numbers of rays. Intuitively, our
+   To validate the effectiveness of our ImVoxelENet net-           network achieves the best performance when using 1,000
+work structure and the correctness of the integration of its       rays as the sampling quantity, demonstrating that a greater
+various modules, we conduct comprehensive ablation ex-             number of sampled rays leads to improved detection results.
+periments. All experiments are performed on the Scan-              However, we acknowledge that this outcome is currently
+NetV2 [6] dataset, using the ImVoxelNet [31] architecture          limited by the memory capacity of our computational re-
+as the baseline network for comparison.                            sources.
+Table 1. Quantitative result with multi-view RGB inputs is evaluated on the val-set of ScanNet-V2. The first section of the table presents
+methods based on point clouds and RGB-D data, while the remaining sections highlight multi-view RGB-only detection approaches.
+ Methods                cab    bed    chair   sofa   tabl   door   wind   bkshf   pic    cntr   desk   curt   fridg   showr     toil   sink   bath   ofurn    mAP@.25
+ Seg-Cluster [40]       11.8   13.5   18.9    14.6   13.8   11.1   11.5   11.7    0.0    13.7   12.2   12.4   11.2      18.0   19.5    18.9   16.4   12.2       13.4
+ Mask R-CNN [9]         15.7   15.4   16.4    16.2   14.9   12.5   11.6   11.8    19.5   13.7   14.4   14.7   21.6      18.5   25.0    24.5   24.5   16.9       17.1
+ SGPN [40]              20.7   31.5   31.6    40.6   31.9   16.6   15.3   13.6    0.0    17.4   14.1   22.2    0.0       0.0   72.9    52.4   0.0    18.6       22.2
+ 3D-SIS [10]            12.8   63.1   66.0    46.3   26.9    8.0   2.8    2.3     0.0     6.9   33.3   2.5    10.4      12.2   74.5    22.9   58.7   7.1        25.4
+ 3D-SIS (w/ RGB) [10]   19.8   69.7   66.2    71.8   36.1   30.6   10.9   27.3    0.0    10.0   46.9   14.1   53.8      36.0   87.6    43.0   84.3   16.2       40.2
+ VoteNet [28]           36.3   87.9   88.7    89.6   58.8   47.3   38.1   44.6    7.8    56.1   71.7   47.2   45.4      57.1   94.9    54.7   92.1   37.2       58.7
+ FCAF3D [30]            57.2   87.0   95.0    92.3   70.3   61.1   60.2   64.5    29.9   64.3   71.5   60.1   52.4      83.9   99.9    84.7   86.6   65.4       71.5
+ CAGroup3D [36]         60.4   93.0   95.3    92.3   69.9   67.9   63.6   67.3    40.7   77.0   83.9   69.4   65.7      73.0   100.0   79.7   87.0   66.1      75.12
+ ImVoxelNet             28.5   84.4   73.1    70.1   51.9   32.2   15.0   34.2    1.6    29.7   66.1   23.5   57.8      43.2   92.4    54.1   74.0   34.9       48.1
+ ours                   32.8   83.9   73.2    72.0   52.5   33.5   14.3   40.5    1.9    47.8   70.4   20.5   51.8      39.6   92.6    54.2   72.7   32.5       49.2
+
+
+           ImVoxelNet                  Ours                        GT               ImVoxelNet(Zoomed)            Ours (Zoomed)               GT (Zoomed)
+
+
+
+
+           cabinet                                           door                                      desk                                      sink
+           bed                                               window                                    curtain                                   bathtub
+           chair                                             bookshelf                                 refrigerator                              garbagebin
+           sofa                                              picture                                   showercurtrain
+           table                                             counter                                   toilet
+
+Figure 5. Visual comparison: We compare our ImVoxelENet with the current state-of-the-art method, ImVoxelNet [31], on the ScanNet [6]
+dataset and visualize a randomly selected image from multiple scenes.
+            ImVoxelNet                          Ours                            GT
+
+                                                                                                             cabinet
+                                                                                                             bed
+                                                                                                             chair
+                                                                                                             sofa
+                                                                                                             table
+                                                                                                             door
+                                                                                                             window
+                                                                                                             bookshelf
+                                                                                                             picture
+                                                                                                             counter
+                                                                                                             desk
+                                                                                                             curtain
+                                                                                                             refrigerator
+                                                                                                             showercurtrain
+                                                                                                             toilet
+                                                                                                             sink
+                                                                                                             bathtub
+                                                                                                             garbagebin
+
+
+
+
+Figure 6. Additional visual comparisons: We also randomly selected several images from a single scene for visual comparisons, providing
+a comprehensive view of the scene.
+
+
+Analysis on modules. Next, we investigate the impact of               in Table. 4, this finding demonstrates the necessity of ade-
+different module parameters and structures on the network’s           quately capturing spatial attention across the front-to-back
+performance. We start by examining how varying the num-               geometric space, as it significantly enhances the network’s
+ber of attention layers influences the final results. The num-        ability to reflect the actual 3D detection capabilities.
+ber of blocks directly affects the total parameters in our
+ImVoxelENet network, which plays a critical role in updat-               In the final set of ablation experiments, we designed a
+ing the voxel grid features. To evaluate this, we adjusted this       module replacement test. In this experiment, we replaced
+hyperparameter, and the results indicate that a 6-layer atten-        the cross-attention module within the Ray-Transformer
+tion structure provides optimal performance. As illustrated           structure with a Multi-Layer Perceptron (MLP) module.
+                                                                      During this replacement process, we also performed a re-
+Table 2. Ablation results: We compared the detection results using    6. Conclusion
+different numbers of input images. The upper section presents the
+results of the baseline method, while the lower section shows the         In this paper, we introduce a novel deep learning-based
+results of our proposed method.                                       network framework aimed at enhancing 3D object detection
+    id        nums of views    mAP@0.25↑       mAP@0.5 ↑              performance in indoor scenes. We conduct a thorough anal-
+                                                                      ysis of the limitations and challenges of previous methods,
+    1              10             38.9              16.4
+                                                                      identifying that a key issue in current multi-view object de-
+    2              20             41.4              19.2
+                                                                      tection algorithms lies in the inaccurate epipolar matching
+    3              30             44.8              20.9
+                                                                      across different views, which hinders both performance and
+    4              40             47.3              22.3
+                                                                      efficiency.
+    5              50             48.1              23.1
+                                                                          To address this problem, we start from the back-
+    1              10             40.2              17.2              projection stage and redesign the process of establishing
+    2              20             43.0              20.5              connections between voxel and pixel features. Specifi-
+    3              30             46.6              22.9              cally, we develop a ray-based sampling method that cap-
+    4              40             48.9              23.9              tures long-range geometric relationships beyond the origi-
+    5              50             49.2              24.2              nal voxels by considering the foreground-background rela-
+                                                                      tionships along each ray. Building on this foundation, we
+Table 3. Ablation results: We compared the results of our proposed    implement an attention mechanism that leverages these re-
+method under different numbers of rays as input.                      lationships, enabling the network to effectively link features
+     id       nums of rays    mAP@0.25↑        mAP@0.5↑               along the ray and thereby enhance its implicit understand-
+                                                                      ing of 3D spatial geometry.
+     1              0             48.1             23.1                   As a result, the proposed network achieves signifi-
+     2             500            48.3             23.7               cant improvements in detection performance. We further
+     3            1000            49.2             24.2               validate the effectiveness and efficiency of our approach
+                                                                      through comprehensive comparative and ablation studies,
+Table 4. Ablation results: We compared the results of our proposed    demonstrating its superiority over existing methods.
+method using different numbers of layers.
+     id       num of layers    mAP@0.25↑       mAP@0.5↑               Limitation However, we also clearly acknowledge that
+     1              2             48.3              23.6              our proposed network still has certain limitations. While
+     2              4             48.9              24.1              our approach demonstrates performance improvements in
+     3              6             49.2              24.2              multi-view detection tasks within indoor scenes, these envi-
+                                                                      ronments typically benefit from stronger structural and cat-
+                                                                      egorical priors. In contrast, outdoor scenes present greater
+Table 5. Ablation on different blocks in ray-transformer. We test     challenges due to their increased variability and diversity of
+the different block by replacing the cross attention(CA) into other   object types, which our current network is less equipped to
+architecture. MLP represent that we replace the CA block with
+                                                                      handle effectively. Addressing this gap will require more
+mlp layers.
+                                                                      targeted designs and implementations. In future work, we
+         id     block type    mAP@0.25↑      mAP@0.5↑                 aim to develop strategies that better adapt to the complexi-
+          1       CA            49.2              24.2                ties of outdoor scenarios, enhancing the robustness and gen-
+          2       MLP           48.2              22.7                eralizability of our method.
+
+                                                                      Acknowledgement
+shape operation on the corresponding features to ensure                 This work is funded by the National Natural Science
+compatibility with the modified network architecture. The             Foundation of China under Grant 61972014.
+experimental results, as shown in Table. 5, indicate that
+while the MLP module does provide some performance im-                References
+provement, the degree of enhancement is significantly less             [1] G. Baruch, Z. Chen, A. Dehghan, T. Dimry, Y. Feigin,
+than that achieved by the original cross-attention mecha-                  P. Fu, T. Gebauer, B. Joffe, D. Kurz, A. Schwartz, et al.
+nism. This outcome further validates the effectiveness of                  Arkitscenes: A diverse real-world dataset for 3d indoor
+our proposed algorithm and network structure, demonstrat-                  scene understanding using mobile rgb-d data. arXiv preprint
+ing that the cross-attention approach is more adept at cap-                arXiv:2111.08897, 2021. 1
+turing the necessary geometric relationships for optimal 3D            [2] S. Bi, Z. Xu, K. Sunkavalli, M. Hašan, Y. Hold-Geoffroy,
+object detection.                                                          D. Kriegman, and R. Ramamoorthi. Deep reflectance vol-
+     umes: Relightable reconstructions from multi-view photo-         [17] H. Li, C. Sima, J. Dai, W. Wang, L. Lu, H. Wang, J. Zeng,
+     metric images. In Computer Vision–ECCV 2020: 16th Eu-                 Z. Li, J. Yang, H. Deng, H. Tian, E. Xie, J. Xie, L. Chen,
+     ropean Conference, Glasgow, UK, August 23–28, 2020, Pro-              T. Li, Y. Li, Y. Gao, X. Jia, S. Liu, J. Shi, D. Lin, and Y. Qiao.
+     ceedings, Part III 16, pages 294–311. Springer, 2020. 2               Delving into the devils of bird’s-eye-view perception: A re-
+ [3] G. Brazil, A. Kumar, J. Straub, N. Ravi, J. Johnson, and              view, evaluation and recipe. IEEE Transactions on Pattern
+     G. Gkioxari. Omni3d: A large benchmark and model                      Analysis and Machine Intelligence, pages 1–20, 2023. 3
+     for 3d object detection in the wild. In Proceedings of           [18] F. Liu, T. Huang, Q. Zhang, H. Yao, C. Zhang, F. Wan, Q. Ye,
+     the IEEE/CVF conference on computer vision and pattern                and Y. Zhou. Ray denoising: Depth-aware hard negative
+     recognition, pages 13154–13164, 2023. 2                               sampling for multi-view 3d object detection. arXiv preprint
+ [4] K. Chen, J. Wang, J. Pang, Y. Cao, Y. Xiong, X. Li,                   arXiv:2402.03634, 2024. 3
+     S. Sun, W. Feng, Z. Liu, J. Xu, et al. Mmdetection: Open         [19] H. Liu, Y. Teng, T. Lu, H. Wang, and L. Wang. Sparsebev:
+     mmlab detection toolbox and benchmark. arXiv preprint                 High-performance sparse 3d object detection from multi-
+     arXiv:1906.07155, 2019. 8                                             camera videos. In Proceedings of the IEEE/CVF Interna-
+ [5] Y. Chen, Z. Yu, Y. Chen, S. Lan, A. Anandkumar, J. Jia, and           tional Conference on Computer Vision, pages 18580–18590,
+     J. M. Alvarez. Focalformer3d: Focusing on hard instance for           2023. 3
+     3d object detection. 2023. 3                                     [20] J. Mao, M. Niu, H. Bai, X. Liang, H. Xu, and C. Xu. Pyra-
+ [6] A. Dai, A. X. Chang, M. Savva, M. Halber, T. Funkhouser,              mid r-cnn: Towards better performance and adaptability for
+     and M. Nießner. Scannet: Richly-annotated 3d reconstruc-              3d object detection. In Proceedings of the IEEE/CVF Inter-
+     tions of indoor scenes. In Proceedings of the IEEE Con-               national Conference on Computer Vision, pages 2723–2732,
+     ference on Computer Vision and Pattern Recognition, pages             2021. 1
+     5828–5839, 2017. 8, 9, 10                                        [21] J. Mao, S. Shi, X. Wang, and H. Li. 3d object detection for
+ [7] J. M. Fácil, A. Concha, L. Montesano, and J. Civera. Single-         autonomous driving: A comprehensive survey. International
+     view and multi-view depth fusion. IEEE Robotics and Au-               Journal of Computer Vision, 131(8):1909–1963, 2023. 4
+     tomation Letters, 2(4):1994–2001, 2017. 2                        [22] Z. Murez, T. van As, J. Bartolozzi, A. Sinha, V. Badri-
+ [8] C. Han, J. Yang, J. Sun, Z. Ge, R. Dong, H. Zhou, W. Mao,             narayanan, and A. Rabinovich. Atlas: End-to-end 3d scene
+     Y. Peng, and X. Zhang. Exploring recurrent long-term tem-             reconstruction from posed images. In ECCV, 2020. 2, 4, 5,
+     poral fusion for multi-view 3d perception. IEEE Robotics              6, 7
+     and Automation Letters, 2024. 3
+                                                                      [23] M. Naseer, S. Khan, and F. Porikli. Indoor scene understand-
+ [9] K. He, G. Gkioxari, P. Dollár, and R. Girshick. Mask R-
+                                                                           ing in 2.5/3d for autonomous agents: A survey. IEEE access,
+     CNN. In ICCV, 2017. 10
+                                                                           7:1859–1887, 2018. 1
+[10] J. Hou, A. Dai, and M. Nießner. 3D-SIS: 3D Semantic In-
+                                                                      [24] Y. Nie, X. Han, S. Guo, Y. Zheng, J. Chang, and J. J. Zhang.
+     stance Segmentation of RGB-D Scans. In CVPR, 2019. 10
+                                                                           Total3dunderstanding: Joint layout, object pose and mesh re-
+[11] S. Huang, S. Qi, Y. Xiao, Y. Zhu, Y. N. Wu, and S.-C. Zhu.
+                                                                           construction for indoor scenes from a single image. In Pro-
+     Cooperative holistic scene understanding: Unifying 3d ob-
+                                                                           ceedings of the IEEE/CVF Conference on Computer Vision
+     ject, layout, and camera pose estimation. Advances in Neural
+                                                                           and Pattern Recognition, pages 55–64, 2020. 1, 4
+     Information Processing Systems, 31, 2018. 1, 4
+                                                                      [25] J. Ong, B.-T. Vo, B.-N. Vo, D. Y. Kim, and S. Nordholm. A
+[12] X. Jiang, S. Li, Y. Liu, S. Wang, F. Jia, T. Wang, L. Han, and
+                                                                           bayesian filter for multi-view 3d multi-object tracking with
+     X. Zhang. Far3d: Expanding the horizon for surround-view
+                                                                           occlusion handling. IEEE Transactions on Pattern Analysis
+     3d object detection. arXiv preprint arXiv:2308.09616, 2023.
+                                                                           and Machine Intelligence, 44(5):2246–2263, 2020. 2
+     3, 4
+[13] R. L. J. Z. Z. Z. Y. C. Jinglin Zhan, Tiejun Liu. Real-aug:      [26] C. R. Qi, X. Chen, O. Litany, and L. J. Guibas. Imvotenet:
+     Realistic scene synthesis for lidar augmentation in 3d object         Boosting 3d object detection in point clouds with image
+     detection. 2023. 3                                                    votes. In Proceedings of the IEEE/CVF conference on
+[14] M. Kölle, D. Laupheimer, S. Schmohl, N. Haala, F. Rot-               computer vision and pattern recognition, pages 4404–4413,
+     tensteiner, J. D. Wegner, and H. Ledoux. The hessigheim               2020. 3
+     3d (h3d) benchmark on semantic segmentation of high-             [27] C. R. Qi, O. Litany, K. He, and L. J. Guibas. Deep hough vot-
+     resolution 3d point clouds and textured meshes from uav               ing for 3d object detection in point clouds. In Proceedings
+     lidar and multi-view-stereo. ISPRS Open Journal of Pho-               of the IEEE/CVF International Conference on Computer Vi-
+     togrammetry and Remote Sensing, 1:100001, 2021. 2                     sion, pages 9277–9286, 2019. 3, 8
+[15] A. H. Lang, S. Vora, H. Caesar, L. Zhou, J. Yang, and O. Bei-    [28] C. R. Qi, O. Litany, K. He, and L. J. Guibas. Deep hough vot-
+     jbom. Pointpillars: Fast encoders for object detection from           ing for 3d object detection in point clouds. In proceedings
+     point clouds. In Proceedings of the IEEE/CVF Conference               of the IEEE/CVF International Conference on Computer Vi-
+     on Computer Vision and Pattern Recognition, pages 12697–              sion, pages 9277–9286, 2019. 10
+     12705, 2019. 3, 4, 6                                             [29] S. Qi, X. Ning, G. Yang, L. Zhang, P. Long, W. Cai, and
+[16] C.-Y. Lee, V. Badrinarayanan, T. Malisiewicz, and A. Rabi-            W. Li. Review of multi-view 3d object recognition methods
+     novich. Roomnet: End-to-end room layout estimation. In                based on deep learning. Displays, 69:102053, 2021. 2
+     Proceedings of the IEEE international conference on com-         [30] D. Rukhovich, A. Vorontsova, and A. Konushin. Fcaf3d:
+     puter vision, pages 4865–4874, 2017. 1                                Fully convolutional anchor-free 3d object detection. In Eu-
+     ropean Conference on Computer Vision, pages 477–493.            [45] C. Yang, J. Zheng, X. Dai, R. Tang, Y. Ma, and X. Yuan.
+     Springer, 2022. 10                                                   Learning to reconstruct 3d non-cuboid room layout from a
+[31] D. Rukhovich, A. Vorontsova, and A. Konushin. Imvoxel-               single rgb image. In Proceedings of the IEEE/CVF Win-
+     net: Image to voxels projection for monocular and multi-             ter Conference on Applications of Computer Vision, pages
+     view general-purpose 3d object detection. In Proceedings of          2534–2543, 2022. 1
+     the IEEE/CVF Winter Conference on Applications of Com-          [46] T. Yin, X. Zhou, and P. Krahenbuhl. Center-based 3d object
+     puter Vision, pages 2397–2406, 2022. 2, 4, 5, 6, 7, 8, 9,            detection and tracking. In Proceedings of the IEEE/CVF con-
+     10                                                                   ference on computer vision and pattern recognition, pages
+[32] S. Stekovic, M. Rad, A. Moradi, F. Fraundorfer, and V. Lep-          11784–11793, 2021. 1
+     etit. Mcts with refinement for proposals selection games in     [47] A. Yu, V. Ye, M. Tancik, and A. Kanazawa. pixelnerf: Neural
+     scene understanding. IEEE Transactions on Pattern Analysis           radiance fields from one or few images. In Proceedings of
+     and Machine Intelligence, 2022. 4                                    the IEEE/CVF conference on computer vision and pattern
+[33] H. Su, S. Maji, E. Kalogerakis, and E. Learned-Miller. Multi-        recognition, pages 4578–4587, 2021. 2
+     view convolutional neural networks for 3d shape recognition.    [48] Z. Yu, Q. Liu, W. Wang, L. Zhang, and X. Zhao. Polarbevdet:
+     In Proceedings of the IEEE international conference on com-          Exploring polar representation for multi-view 3d object de-
+     puter vision, pages 945–953, 2015. 1                                 tection in bird’s-eye-view. arXiv preprint arXiv:2408.16200,
+[34] R. Tucker and N. Snavely. Single-view view synthesis with            2024. 3, 4
+     multiplane images. In Proceedings of the IEEE/CVF Con-          [49] C. Zhang, Z. Cui, C. Chen, S. Liu, B. Zeng, H. Bao, and
+     ference on Computer Vision and Pattern Recognition, pages            Y. Zhang. Deeppanocontext: Panoramic 3d scene under-
+     551–560, 2020. 4                                                     standing with holistic scene context graph and relation-based
+[35] B.-H. Wang, F. Wijaya, R. Fischer, Y.-H. Tang, S.-J. Wang,           optimization. In Proceedings of the IEEE/CVF International
+     W.-E. Hsu, and L.-C. Fu. A scene understanding and posi-             Conference on Computer Vision, pages 12632–12641, 2021.
+     tioning system from rgb images for tele-meeting application          2
+     in augmented reality. In 2023 9th International Conference
+                                                                     [50] C. Zhang, Z. Cui, Y. Zhang, B. Zeng, M. Pollefeys, and
+     on Virtual Reality (ICVR), pages 106–114. IEEE, 2023. 4
+                                                                          S. Liu. Holistic 3d scene understanding from a single im-
+[36] H. Wang, L. Ding, S. Dong, S. Shi, A. Li, J. Li, Z. Li, and
+                                                                          age with implicit representation. In Proceedings of the
+     L. Wang. CAGroup3d: Class-aware grouping for 3d object
+                                                                          IEEE/CVF Conference on Computer Vision and Pattern
+     detection on point clouds. In A. H. Oh, A. Agarwal, D. Bel-
+                                                                          Recognition, pages 8833–8842, 2021. 1, 4
+     grave, and K. Cho, editors, Advances in Neural Information
+                                                                     [51] D. Zhang, G. Wang, R. Zhu, J. Zhao, X. Chen, S. Zhang,
+     Processing Systems, 2022. 10
+                                                                          J. Gong, Q. Zhou, W. Zhang, N. Wang, et al. Sparsead:
+[37] Q. Wang, Y.-Y. Chang, R. Cai, Z. Li, B. Hariharan, A. Holyn-
+                                                                          Sparse query-centric paradigm for efficient end-to-end au-
+     ski, and N. Snavely. Tracking everything everywhere all at
+                                                                          tonomous driving. arXiv preprint arXiv:2404.06892, 2024.
+     once. In Proceedings of the IEEE/CVF International Con-
+                                                                          3
+     ference on Computer Vision, pages 19795–19806, 2023. 5
+                                                                     [52] D. Zhang, Z. Zheng, H. Niu, X. Wang, and X. Liu. Fully
+[38] S. Wang, Y. Liu, T. Wang, Y. Li, and X. Zhang. Exploring
+                                                                          sparse transformer 3d detector for lidar point cloud. IEEE
+     object-centric temporal modeling for efficient multi-view 3d
+                                                                          Transactions on Geoscience and Remote Sensing, 2023. 3
+     object detection. arXiv preprint arXiv:2303.11926, 2023. 3
+[39] T. Wang, H. Sheng, R. Chen, R. Cong, M. Zhao, and Z. Cui.       [53] Y. Zhang, S. Song, E. Yumer, M. Savva, J.-Y. Lee, H. Jin,
+     Adaptive epi-matching cost for light field disparity estima-         and T. Funkhouser. Physically-based rendering for indoor
+     tion. IEEE Transactions on Instrumentation and Measure-              scene understanding using convolutional neural networks. In
+     ment, 2024. 4                                                        Proceedings of the IEEE conference on computer vision and
+[40] W. Wang, R. Yu, Q. Huang, and U. Neumann. Sgpn: Sim-                 pattern recognition, pages 5287–5295, 2017. 1
+     ilarity group proposal network for 3d point cloud instance      [54] Z. Zhang, F. Cole, R. Tucker, W. T. Freeman, and T. Dekel.
+     segmentation. In CVPR, 2018. 10                                      Consistent depth of moving objects in video. ACM Transac-
+[41] F. Williams, T. Schneider, C. Silva, D. Zorin, J. Bruna, and         tions on Graphics (ToG), 40(4):1–12, 2021. 5
+     D. Panozzo. Deep geometric prior for surface reconstruction.    [55] Z. Zhang, B. Sun, H. Yang, and Q. Huang. H3dnet: 3d object
+     In Proceedings of the IEEE/CVF conference on computer vi-            detection using hybrid geometric primitives. In European
+     sion and pattern recognition, pages 10130–10139, 2019. 2             Conference on Computer Vision, pages 311–329. Springer,
+[42] K. Xian, J. Zhang, O. Wang, L. Mai, Z. Lin, and Z. Cao.              2020. 3, 6
+     Structure-guided ranking loss for single image depth predic-    [56] Q. Zhou, J. Cao, H. Leng, Y. Yin, Y. Kun, and R. Zimmer-
+     tion. In Proceedings of the IEEE/CVF Conference on Com-              mann. Sogdet: Semantic-occupancy guided multi-view 3d
+     puter Vision and Pattern Recognition, pages 611–620, 2020.           object detection. In Proceedings of the AAAI Conference on
+     4                                                                    Artificial Intelligence, volume 38, pages 7668–7676, 2024. 1
+[43] K. Xiong, S. Gong, X. Ye, X. Tan, J. Wan, E. Ding, J. Wang,     [57] Z. Zhu, S. Peng, V. Larsson, W. Xu, H. Bao, Z. Cui, M. R.
+     and X. Bai. Cape: Camera view position embedding for                 Oswald, and M. Pollefeys. Nice-slam: Neural implicit scal-
+     multi-view 3d object detection. 2023. 3                              able encoding for slam. In Proceedings of the IEEE/CVF
+[44] Y. Yan, Y. Mao, and B. Li. Second: Sparsely embedded                 conference on computer vision and pattern recognition,
+     convolutional detection. Sensors, 18(10):3337, 2018. 3, 4            pages 12786–12796, 2022. 2
+[58] Z. Zong, D. Jiang, G. Song, Z. Xue, J. Su, H. Li, and Y. Liu.
+     Temporal enhanced training of multi-view 3d object detector
+     via historical object prediction, 2023. 3
+

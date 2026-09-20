@@ -1,0 +1,21 @@
+{
+  "evidence_level": "secondary-summary-not-recomputed-from-raw",
+  "source": "archived_correctness\\2026-09-09-ac-bpdd-redesign-adversarial-audit.md",
+  "original_source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\diagnostics\\2026-09-09-ac-bpdd-redesign-adversarial-audit.md",
+  "run": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2",
+  "source_commit_reported": "c1ac0b25e534f6dc5ba85ade418046a30a51a011",
+  "historical_name": "F",
+  "current_manuscript_role": "G / LRS-GFDR localization base",
+  "window": [
+    91,
+    100
+  ],
+  "horizontal_below_relative_floor_percent": 0.004483,
+  "vertical_below_relative_floor_percent": 0.005329,
+  "denominator": null,
+  "horizontal_count": null,
+  "vertical_count": null,
+  "full_100_epoch_nonfinite_total": null,
+  "raw_logs_status": "Not found locally; remote retrieval was blocked by a powered-off device. No raw-derived frequency verification claimed.",
+  "scope": "Pooled training-forward observations across decoder layers and all query types; not unique boxes, positive matches, or final detections. Threshold is raw_pair < 1e-3, not raw_pair < 0. Machine floor activations are not all represented."
+}

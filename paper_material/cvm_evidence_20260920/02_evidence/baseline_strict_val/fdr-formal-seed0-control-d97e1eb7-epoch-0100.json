@@ -1,0 +1,12 @@
+{
+  "checkpoint": {
+    "asset_id": 502645412,
+    "asset_name": "fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+    "bytes": 197665100,
+    "sha256": "9c242711f44b7e68b360af904ab7c44f64505c7136b7e7f90481092ae3308af7"
+  },
+  "completed_epoch": 100,
+  "published_at": "2026-08-05T13:22:17.725911+00:00",
+  "release_url": "https://github.com/kkc236/uav-detection-baselines/releases/tag/fdr-formal-control-d97e1eb7-live",
+  "run_name": "fdr-formal-d97e1eb7-seed0-control"
+}

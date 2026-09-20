@@ -1,0 +1,258 @@
+{
+  "G/val": {
+    "4": {
+      "pred": 12633,
+      "tp50": 1648,
+      "tp75": 1309,
+      "fp50": 10985,
+      "duplicate_or_competing_match": 137,
+      "wrong_class_overlap50": 6608,
+      "same_class_localization": 245,
+      "background_or_other": 3995
+    },
+    "5": {
+      "pred": 4617,
+      "tp50": 511,
+      "tp75": 351,
+      "fp50": 4106,
+      "duplicate_or_competing_match": 86,
+      "wrong_class_overlap50": 1863,
+      "same_class_localization": 231,
+      "background_or_other": 1926
+    },
+    "8": {
+      "pred": 804,
+      "tp50": 182,
+      "tp75": 148,
+      "fp50": 622,
+      "duplicate_or_competing_match": 15,
+      "wrong_class_overlap50": 272,
+      "same_class_localization": 17,
+      "background_or_other": 318
+    }
+  },
+  "G/test": {
+    "4": {
+      "pred": 41929,
+      "tp50": 4837,
+      "tp75": 3842,
+      "fp50": 37092,
+      "duplicate_or_competing_match": 354,
+      "wrong_class_overlap50": 18588,
+      "same_class_localization": 717,
+      "background_or_other": 17433
+    },
+    "5": {
+      "pred": 20358,
+      "tp50": 1953,
+      "tp75": 1460,
+      "fp50": 18405,
+      "duplicate_or_competing_match": 598,
+      "wrong_class_overlap50": 6930,
+      "same_class_localization": 940,
+      "background_or_other": 9937
+    },
+    "8": {
+      "pred": 10484,
+      "tp50": 2222,
+      "tp75": 1757,
+      "fp50": 8262,
+      "duplicate_or_competing_match": 224,
+      "wrong_class_overlap50": 3133,
+      "same_class_localization": 482,
+      "background_or_other": 4423
+    }
+  },
+  "GF/val": {
+    "4": {
+      "pred": 12820,
+      "tp50": 1651,
+      "tp75": 1311,
+      "fp50": 11169,
+      "duplicate_or_competing_match": 122,
+      "wrong_class_overlap50": 6694,
+      "same_class_localization": 270,
+      "background_or_other": 4083
+    },
+    "5": {
+      "pred": 4073,
+      "tp50": 493,
+      "tp75": 362,
+      "fp50": 3580,
+      "duplicate_or_competing_match": 86,
+      "wrong_class_overlap50": 1564,
+      "same_class_localization": 228,
+      "background_or_other": 1702
+    },
+    "8": {
+      "pred": 736,
+      "tp50": 187,
+      "tp75": 157,
+      "fp50": 549,
+      "duplicate_or_competing_match": 7,
+      "wrong_class_overlap50": 222,
+      "same_class_localization": 11,
+      "background_or_other": 309
+    }
+  },
+  "GF/test": {
+    "4": {
+      "pred": 40426,
+      "tp50": 4821,
+      "tp75": 3839,
+      "fp50": 35605,
+      "duplicate_or_competing_match": 224,
+      "wrong_class_overlap50": 18349,
+      "same_class_localization": 674,
+      "background_or_other": 16358
+    },
+    "5": {
+      "pred": 19225,
+      "tp50": 1953,
+      "tp75": 1417,
+      "fp50": 17272,
+      "duplicate_or_competing_match": 472,
+      "wrong_class_overlap50": 6720,
+      "same_class_localization": 815,
+      "background_or_other": 9265
+    },
+    "8": {
+      "pred": 10646,
+      "tp50": 2209,
+      "tp75": 1747,
+      "fp50": 8437,
+      "duplicate_or_competing_match": 239,
+      "wrong_class_overlap50": 3078,
+      "same_class_localization": 536,
+      "background_or_other": 4584
+    }
+  },
+  "GB/val": {
+    "4": {
+      "pred": 13227,
+      "tp50": 1635,
+      "tp75": 1302,
+      "fp50": 11592,
+      "duplicate_or_competing_match": 163,
+      "wrong_class_overlap50": 6676,
+      "same_class_localization": 291,
+      "background_or_other": 4462
+    },
+    "5": {
+      "pred": 4065,
+      "tp50": 500,
+      "tp75": 357,
+      "fp50": 3565,
+      "duplicate_or_competing_match": 113,
+      "wrong_class_overlap50": 1493,
+      "same_class_localization": 247,
+      "background_or_other": 1712
+    },
+    "8": {
+      "pred": 868,
+      "tp50": 177,
+      "tp75": 148,
+      "fp50": 691,
+      "duplicate_or_competing_match": 18,
+      "wrong_class_overlap50": 282,
+      "same_class_localization": 17,
+      "background_or_other": 374
+    }
+  },
+  "GB/test": {
+    "4": {
+      "pred": 42167,
+      "tp50": 4804,
+      "tp75": 3811,
+      "fp50": 37363,
+      "duplicate_or_competing_match": 330,
+      "wrong_class_overlap50": 17650,
+      "same_class_localization": 707,
+      "background_or_other": 18676
+    },
+    "5": {
+      "pred": 20783,
+      "tp50": 1965,
+      "tp75": 1450,
+      "fp50": 18818,
+      "duplicate_or_competing_match": 844,
+      "wrong_class_overlap50": 6262,
+      "same_class_localization": 1011,
+      "background_or_other": 10701
+    },
+    "8": {
+      "pred": 11524,
+      "tp50": 2232,
+      "tp75": 1750,
+      "fp50": 9292,
+      "duplicate_or_competing_match": 352,
+      "wrong_class_overlap50": 3144,
+      "same_class_localization": 575,
+      "background_or_other": 5221
+    }
+  },
+  "Full/val": {
+    "4": {
+      "pred": 12074,
+      "tp50": 1608,
+      "tp75": 1254,
+      "fp50": 10466,
+      "duplicate_or_competing_match": 129,
+      "wrong_class_overlap50": 5882,
+      "same_class_localization": 279,
+      "background_or_other": 4176
+    },
+    "5": {
+      "pred": 4287,
+      "tp50": 487,
+      "tp75": 357,
+      "fp50": 3800,
+      "duplicate_or_competing_match": 93,
+      "wrong_class_overlap50": 1639,
+      "same_class_localization": 245,
+      "background_or_other": 1823
+    },
+    "8": {
+      "pred": 752,
+      "tp50": 184,
+      "tp75": 156,
+      "fp50": 568,
+      "duplicate_or_competing_match": 6,
+      "wrong_class_overlap50": 237,
+      "same_class_localization": 11,
+      "background_or_other": 314
+    }
+  },
+  "Full/test": {
+    "4": {
+      "pred": 37965,
+      "tp50": 4727,
+      "tp75": 3734,
+      "fp50": 33238,
+      "duplicate_or_competing_match": 226,
+      "wrong_class_overlap50": 15787,
+      "same_class_localization": 699,
+      "background_or_other": 16526
+    },
+    "5": {
+      "pred": 17860,
+      "tp50": 1928,
+      "tp75": 1453,
+      "fp50": 15932,
+      "duplicate_or_competing_match": 477,
+      "wrong_class_overlap50": 5546,
+      "same_class_localization": 854,
+      "background_or_other": 9055
+    },
+    "8": {
+      "pred": 9565,
+      "tp50": 2200,
+      "tp75": 1752,
+      "fp50": 7365,
+      "duplicate_or_competing_match": 241,
+      "wrong_class_overlap50": 2607,
+      "same_class_localization": 463,
+      "background_or_other": 4054
+    }
+  }
+}

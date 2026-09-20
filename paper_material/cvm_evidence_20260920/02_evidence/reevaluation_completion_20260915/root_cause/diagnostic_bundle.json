@@ -1,0 +1,3240 @@
+{
+  "COMPLETE.json": {
+    "completed": true,
+    "arms": 4,
+    "splits": 2
+  },
+  "actual_target_audit.json": {
+    "val": {
+      "images": 548,
+      "labels": 38759,
+      "actual_target_mismatches": [],
+      "max_abs_input_pixel_error": 6.103515625e-05,
+      "npy_files": 0
+    },
+    "test": {
+      "images": 1610,
+      "labels": 75102,
+      "actual_target_mismatches": [],
+      "max_abs_input_pixel_error": 6.103515625e-05,
+      "npy_files": 0
+    }
+  },
+  "error_analysis.json": {
+    "G/val": {
+      "groups": {
+        "all": {
+          "images": 548,
+          "map": 0.29616405122274125,
+          "per_class": {
+            "pedestrian": 0.2727885125940782,
+            "people": 0.21457530892052595,
+            "bicycle": 0.11510410545402008,
+            "car": 0.6145256065593938,
+            "van": 0.38301933503971375,
+            "truck": 0.27782259410737964,
+            "tricycle": 0.20320109740186004,
+            "awning-tricycle": 0.13549741158515402,
+            "bus": 0.446648611209515,
+            "motor": 0.29845792935577264
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        },
+        "aspect_16_9": {
+          "images": 548,
+          "map": 0.29616405122274125,
+          "per_class": {
+            "pedestrian": 0.2727885125940782,
+            "people": 0.21457530892052595,
+            "bicycle": 0.11510410545402008,
+            "car": 0.6145256065593938,
+            "van": 0.38301933503971375,
+            "truck": 0.27782259410737964,
+            "tricycle": 0.20320109740186004,
+            "awning-tricycle": 0.13549741158515402,
+            "bus": 0.446648611209515,
+            "motor": 0.29845792935577264
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 8844,
+          "same_iou50": 6491,
+          "same_iou75": 3100,
+          "wrong_class_overlap50": 106,
+          "confused_as_motor": 32,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4434,
+          "no_same_class_overlap10": 1149,
+          "localization_10_50": 1098,
+          "confused_as_people": 48,
+          "confused_as_bicycle": 10,
+          "confused_as_car": 13,
+          "confused_as_van": 2,
+          "confused_as_tricycle": 1
+        },
+        "pedestrian_conf0.1": {
+          "gt": 8844,
+          "same_iou50": 6484,
+          "same_iou75": 3090,
+          "wrong_class_overlap50": 103,
+          "confused_as_motor": 32,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4428,
+          "no_same_class_overlap10": 1158,
+          "localization_10_50": 1099,
+          "confused_as_people": 46,
+          "confused_as_car": 13,
+          "confused_as_van": 2,
+          "confused_as_tricycle": 1,
+          "confused_as_bicycle": 9
+        },
+        "people_conf0.001": {
+          "gt": 5125,
+          "same_iou50": 3693,
+          "same_iou75": 1627,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2703,
+          "localization_10_50": 662,
+          "no_same_class_overlap10": 570,
+          "wrong_class_overlap50": 200,
+          "confused_as_motor": 56,
+          "confused_as_pedestrian": 121,
+          "confused_as_truck": 1,
+          "confused_as_bicycle": 18,
+          "confused_as_tricycle": 3,
+          "confused_as_car": 1
+        },
+        "people_conf0.1": {
+          "gt": 5125,
+          "same_iou50": 3685,
+          "same_iou75": 1620,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2699,
+          "localization_10_50": 664,
+          "no_same_class_overlap10": 574,
+          "wrong_class_overlap50": 202,
+          "confused_as_motor": 58,
+          "confused_as_pedestrian": 123,
+          "confused_as_bicycle": 17,
+          "confused_as_tricycle": 3,
+          "confused_as_car": 1
+        },
+        "van_conf0.001": {
+          "gt": 1975,
+          "same_iou50": 1658,
+          "same_iou75": 1316,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 465,
+          "localization_10_50": 64,
+          "no_same_class_overlap10": 86,
+          "wrong_class_overlap50": 167,
+          "confused_as_car": 147,
+          "confused_as_awning-tricycle": 4,
+          "confused_as_tricycle": 6,
+          "confused_as_truck": 8,
+          "confused_as_bus": 2
+        },
+        "van_conf0.1": {
+          "gt": 1975,
+          "same_iou50": 1653,
+          "same_iou75": 1311,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 464,
+          "localization_10_50": 63,
+          "no_same_class_overlap10": 87,
+          "wrong_class_overlap50": 172,
+          "confused_as_car": 151,
+          "confused_as_awning-tricycle": 4,
+          "confused_as_tricycle": 7,
+          "confused_as_truck": 8,
+          "confused_as_bus": 2
+        },
+        "truck_conf0.001": {
+          "gt": 750,
+          "same_iou50": 514,
+          "same_iou75": 352,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 107,
+          "wrong_class_overlap50": 95,
+          "confused_as_car": 62,
+          "localization_10_50": 47,
+          "no_same_class_overlap10": 94,
+          "confused_as_tricycle": 12,
+          "confused_as_awning-tricycle": 5,
+          "confused_as_van": 12,
+          "confused_as_bus": 3,
+          "confused_as_motor": 1
+        },
+        "truck_conf0.1": {
+          "gt": 750,
+          "same_iou50": 512,
+          "same_iou75": 351,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 106,
+          "wrong_class_overlap50": 96,
+          "confused_as_car": 62,
+          "localization_10_50": 45,
+          "no_same_class_overlap10": 97,
+          "confused_as_tricycle": 12,
+          "confused_as_awning-tricycle": 5,
+          "confused_as_van": 13,
+          "confused_as_bus": 3,
+          "confused_as_motor": 1
+        },
+        "motor_conf0.001": {
+          "gt": 4886,
+          "same_iou50": 4070,
+          "same_iou75": 2088,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2513,
+          "localization_10_50": 352,
+          "no_same_class_overlap10": 288,
+          "wrong_class_overlap50": 176,
+          "confused_as_people": 53,
+          "confused_as_pedestrian": 82,
+          "confused_as_car": 11,
+          "confused_as_bicycle": 18,
+          "confused_as_tricycle": 12
+        },
+        "motor_conf0.1": {
+          "gt": 4886,
+          "same_iou50": 4061,
+          "same_iou75": 2082,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2510,
+          "localization_10_50": 350,
+          "no_same_class_overlap10": 295,
+          "wrong_class_overlap50": 180,
+          "confused_as_people": 55,
+          "confused_as_pedestrian": 83,
+          "confused_as_car": 11,
+          "confused_as_bicycle": 18,
+          "confused_as_tricycle": 13
+        }
+      }
+    },
+    "G/test": {
+      "groups": {
+        "all": {
+          "images": 1610,
+          "map": 0.23618782909072553,
+          "per_class": {
+            "pedestrian": 0.15902730890002575,
+            "people": 0.10039918589325163,
+            "bicycle": 0.07676976394025739,
+            "car": 0.511032507897464,
+            "van": 0.30614851672336585,
+            "truck": 0.303878347426349,
+            "tricycle": 0.1548196923166584,
+            "awning-tricycle": 0.1355398265698609,
+            "bus": 0.43531531083349806,
+            "motor": 0.1789478304065243
+          },
+          "gt": {
+            "pedestrian": 21006,
+            "people": 6376,
+            "bicycle": 1302,
+            "car": 28074,
+            "van": 5771,
+            "truck": 2659,
+            "tricycle": 530,
+            "awning-tricycle": 599,
+            "bus": 2940,
+            "motor": 5845
+          }
+        },
+        "aspect_16_9": {
+          "images": 1336,
+          "map": 0.22856206364585868,
+          "per_class": {
+            "pedestrian": 0.14879711007443638,
+            "people": 0.08821049017438079,
+            "bicycle": 0.0708838225570627,
+            "car": 0.500205311676706,
+            "van": 0.2917828768633447,
+            "truck": 0.30963476402632445,
+            "tricycle": 0.17617243551324355,
+            "awning-tricycle": 0.13962316875881636,
+            "bus": 0.4360505767870652,
+            "motor": 0.12426008002720679
+          },
+          "gt": {
+            "pedestrian": 18199,
+            "people": 4222,
+            "bicycle": 898,
+            "car": 23064,
+            "van": 4981,
+            "truck": 2390,
+            "tricycle": 427,
+            "awning-tricycle": 406,
+            "bus": 2721,
+            "motor": 3082
+          }
+        },
+        "aspect_4_3": {
+          "images": 274,
+          "map": 0.25475537644669277,
+          "per_class": {
+            "pedestrian": 0.2246777770521499,
+            "people": 0.12538318731132395,
+            "bicycle": 0.09445565100380231,
+            "car": 0.5583717324691294,
+            "van": 0.39294121651097247,
+            "truck": 0.27436805684261767,
+            "tricycle": 0.06597881817388548,
+            "awning-tricycle": 0.13035449909814584,
+            "bus": 0.43609529277099757,
+            "motor": 0.24492753323390284
+          },
+          "gt": {
+            "pedestrian": 2807,
+            "people": 2154,
+            "bicycle": 404,
+            "car": 5010,
+            "van": 790,
+            "truck": 269,
+            "tricycle": 103,
+            "awning-tricycle": 193,
+            "bus": 219,
+            "motor": 2763
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 21006,
+          "same_iou50": 11465,
+          "same_iou75": 4078,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8835,
+          "localization_10_50": 4759,
+          "no_same_class_overlap10": 4677,
+          "wrong_class_overlap50": 105,
+          "confused_as_people": 39,
+          "confused_as_motor": 35,
+          "confused_as_car": 18,
+          "confused_as_tricycle": 1,
+          "confused_as_bicycle": 10,
+          "confused_as_van": 1,
+          "confused_as_bus": 1
+        },
+        "pedestrian_conf0.1": {
+          "gt": 21006,
+          "same_iou50": 11346,
+          "same_iou75": 4016,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8724,
+          "localization_10_50": 4692,
+          "no_same_class_overlap10": 4857,
+          "wrong_class_overlap50": 111,
+          "confused_as_people": 42,
+          "confused_as_motor": 39,
+          "confused_as_car": 20,
+          "confused_as_tricycle": 1,
+          "confused_as_bicycle": 6,
+          "confused_as_van": 2,
+          "confused_as_bus": 1
+        },
+        "people_conf0.001": {
+          "gt": 6376,
+          "same_iou50": 3000,
+          "same_iou75": 861,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2530,
+          "localization_10_50": 1345,
+          "no_same_class_overlap10": 1767,
+          "wrong_class_overlap50": 264,
+          "confused_as_pedestrian": 193,
+          "confused_as_motor": 62,
+          "confused_as_bicycle": 5,
+          "confused_as_car": 2,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_tricycle": 1
+        },
+        "people_conf0.1": {
+          "gt": 6376,
+          "same_iou50": 2947,
+          "same_iou75": 847,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2484,
+          "localization_10_50": 1295,
+          "no_same_class_overlap10": 1838,
+          "wrong_class_overlap50": 296,
+          "confused_as_pedestrian": 223,
+          "confused_as_motor": 63,
+          "confused_as_bicycle": 6,
+          "confused_as_car": 2,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_tricycle": 1
+        },
+        "van_conf0.001": {
+          "gt": 5771,
+          "same_iou50": 4982,
+          "same_iou75": 3915,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1701,
+          "no_same_class_overlap10": 328,
+          "wrong_class_overlap50": 248,
+          "confused_as_truck": 41,
+          "localization_10_50": 213,
+          "confused_as_car": 168,
+          "confused_as_tricycle": 7,
+          "confused_as_bus": 22,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_pedestrian": 5,
+          "confused_as_motor": 2
+        },
+        "van_conf0.1": {
+          "gt": 5771,
+          "same_iou50": 4839,
+          "same_iou75": 3842,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1631,
+          "no_same_class_overlap10": 377,
+          "wrong_class_overlap50": 372,
+          "confused_as_truck": 49,
+          "localization_10_50": 183,
+          "confused_as_car": 278,
+          "confused_as_tricycle": 7,
+          "confused_as_bus": 26,
+          "confused_as_awning-tricycle": 6,
+          "confused_as_pedestrian": 5,
+          "confused_as_motor": 1
+        },
+        "truck_conf0.001": {
+          "gt": 2659,
+          "same_iou50": 2034,
+          "same_iou75": 1493,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 308,
+          "localization_10_50": 251,
+          "no_same_class_overlap10": 221,
+          "wrong_class_overlap50": 153,
+          "confused_as_van": 31,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_tricycle": 9,
+          "confused_as_car": 105,
+          "confused_as_motor": 3,
+          "confused_as_bus": 1,
+          "confused_as_bicycle": 1
+        },
+        "truck_conf0.1": {
+          "gt": 2659,
+          "same_iou50": 1963,
+          "same_iou75": 1460,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 279,
+          "localization_10_50": 239,
+          "no_same_class_overlap10": 271,
+          "wrong_class_overlap50": 186,
+          "confused_as_van": 36,
+          "confused_as_awning-tricycle": 4,
+          "confused_as_tricycle": 10,
+          "confused_as_car": 129,
+          "confused_as_motor": 3,
+          "confused_as_bus": 3,
+          "confused_as_bicycle": 1
+        },
+        "motor_conf0.001": {
+          "gt": 5845,
+          "same_iou50": 4064,
+          "same_iou75": 1597,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 3019,
+          "localization_10_50": 729,
+          "no_same_class_overlap10": 830,
+          "wrong_class_overlap50": 222,
+          "confused_as_bicycle": 25,
+          "confused_as_car": 28,
+          "confused_as_pedestrian": 92,
+          "confused_as_people": 66,
+          "confused_as_tricycle": 6,
+          "confused_as_van": 1,
+          "confused_as_bus": 1,
+          "confused_as_truck": 2,
+          "confused_as_awning-tricycle": 1
+        },
+        "motor_conf0.1": {
+          "gt": 5845,
+          "same_iou50": 4011,
+          "same_iou75": 1578,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 2981,
+          "localization_10_50": 701,
+          "no_same_class_overlap10": 901,
+          "wrong_class_overlap50": 232,
+          "confused_as_bicycle": 22,
+          "confused_as_car": 29,
+          "confused_as_pedestrian": 100,
+          "confused_as_people": 69,
+          "confused_as_tricycle": 8,
+          "confused_as_bus": 1,
+          "confused_as_truck": 2,
+          "confused_as_awning-tricycle": 1
+        }
+      }
+    },
+    "GF/val": {
+      "groups": {
+        "all": {
+          "images": 548,
+          "map": 0.2975515947904881,
+          "per_class": {
+            "pedestrian": 0.278687915255499,
+            "people": 0.21524094370593364,
+            "bicycle": 0.11626393349604161,
+            "car": 0.6149290611423706,
+            "van": 0.38214314414586414,
+            "truck": 0.2803087434049695,
+            "tricycle": 0.2092582717000334,
+            "awning-tricycle": 0.12411953655531638,
+            "bus": 0.45870966110399536,
+            "motor": 0.29585473739485724
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        },
+        "aspect_16_9": {
+          "images": 548,
+          "map": 0.2975515947904881,
+          "per_class": {
+            "pedestrian": 0.278687915255499,
+            "people": 0.21524094370593364,
+            "bicycle": 0.11626393349604161,
+            "car": 0.6149290611423706,
+            "van": 0.38214314414586414,
+            "truck": 0.2803087434049695,
+            "tricycle": 0.2092582717000334,
+            "awning-tricycle": 0.12411953655531638,
+            "bus": 0.45870966110399536,
+            "motor": 0.29585473739485724
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 8844,
+          "same_iou50": 6486,
+          "same_iou75": 3159,
+          "no_same_class_overlap10": 1181,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4418,
+          "localization_10_50": 1063,
+          "wrong_class_overlap50": 114,
+          "confused_as_people": 50,
+          "confused_as_motor": 38,
+          "confused_as_car": 13,
+          "confused_as_van": 2,
+          "confused_as_tricycle": 4,
+          "confused_as_bicycle": 7
+        },
+        "pedestrian_conf0.1": {
+          "gt": 8844,
+          "same_iou50": 6478,
+          "same_iou75": 3147,
+          "no_same_class_overlap10": 1185,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4415,
+          "localization_10_50": 1061,
+          "wrong_class_overlap50": 120,
+          "confused_as_people": 53,
+          "confused_as_motor": 41,
+          "confused_as_car": 13,
+          "confused_as_van": 2,
+          "confused_as_tricycle": 4,
+          "confused_as_bicycle": 7
+        },
+        "people_conf0.001": {
+          "gt": 5125,
+          "same_iou50": 3764,
+          "same_iou75": 1589,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2762,
+          "no_same_class_overlap10": 529,
+          "localization_10_50": 640,
+          "wrong_class_overlap50": 192,
+          "confused_as_motor": 50,
+          "confused_as_pedestrian": 125,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_bicycle": 12,
+          "confused_as_car": 1,
+          "confused_as_tricycle": 3
+        },
+        "people_conf0.1": {
+          "gt": 5125,
+          "same_iou50": 3755,
+          "same_iou75": 1581,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2758,
+          "no_same_class_overlap10": 534,
+          "localization_10_50": 641,
+          "wrong_class_overlap50": 195,
+          "confused_as_motor": 51,
+          "confused_as_pedestrian": 127,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_bicycle": 12,
+          "confused_as_car": 1,
+          "confused_as_tricycle": 3
+        },
+        "van_conf0.001": {
+          "gt": 1975,
+          "same_iou50": 1665,
+          "same_iou75": 1316,
+          "wrong_class_overlap50": 171,
+          "confused_as_car": 153,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 465,
+          "localization_10_50": 65,
+          "no_same_class_overlap10": 74,
+          "confused_as_tricycle": 6,
+          "confused_as_truck": 5,
+          "confused_as_awning-tricycle": 4,
+          "confused_as_bus": 2,
+          "confused_as_motor": 1
+        },
+        "van_conf0.1": {
+          "gt": 1975,
+          "same_iou50": 1657,
+          "same_iou75": 1312,
+          "wrong_class_overlap50": 176,
+          "confused_as_car": 156,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 461,
+          "localization_10_50": 64,
+          "no_same_class_overlap10": 78,
+          "confused_as_tricycle": 6,
+          "confused_as_truck": 7,
+          "confused_as_awning-tricycle": 4,
+          "confused_as_bus": 2,
+          "confused_as_motor": 1
+        },
+        "truck_conf0.001": {
+          "gt": 750,
+          "same_iou50": 502,
+          "same_iou75": 366,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 99,
+          "wrong_class_overlap50": 120,
+          "confused_as_tricycle": 12,
+          "confused_as_car": 88,
+          "localization_10_50": 39,
+          "no_same_class_overlap10": 89,
+          "confused_as_awning-tricycle": 8,
+          "confused_as_van": 11,
+          "confused_as_bus": 1
+        },
+        "truck_conf0.1": {
+          "gt": 750,
+          "same_iou50": 496,
+          "same_iou75": 362,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 97,
+          "wrong_class_overlap50": 125,
+          "confused_as_tricycle": 12,
+          "confused_as_car": 93,
+          "localization_10_50": 39,
+          "no_same_class_overlap10": 90,
+          "confused_as_awning-tricycle": 8,
+          "confused_as_van": 11,
+          "confused_as_bus": 1
+        },
+        "motor_conf0.001": {
+          "gt": 4886,
+          "same_iou50": 4047,
+          "same_iou75": 2083,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2502,
+          "localization_10_50": 389,
+          "no_same_class_overlap10": 264,
+          "wrong_class_overlap50": 186,
+          "confused_as_people": 61,
+          "confused_as_pedestrian": 78,
+          "confused_as_car": 15,
+          "confused_as_bicycle": 22,
+          "confused_as_tricycle": 10
+        },
+        "motor_conf0.1": {
+          "gt": 4886,
+          "same_iou50": 4038,
+          "same_iou75": 2078,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2497,
+          "localization_10_50": 386,
+          "no_same_class_overlap10": 270,
+          "wrong_class_overlap50": 192,
+          "confused_as_people": 64,
+          "confused_as_pedestrian": 82,
+          "confused_as_car": 15,
+          "confused_as_tricycle": 10,
+          "confused_as_bicycle": 21
+        }
+      }
+    },
+    "GF/test": {
+      "groups": {
+        "all": {
+          "images": 1610,
+          "map": 0.2322347126075014,
+          "per_class": {
+            "pedestrian": 0.15862575247024382,
+            "people": 0.1026231940801254,
+            "bicycle": 0.08064115382461254,
+            "car": 0.509684347161055,
+            "van": 0.28988340720960065,
+            "truck": 0.29214660672804393,
+            "tricycle": 0.14892685905246927,
+            "awning-tricycle": 0.13181127268758192,
+            "bus": 0.4286445324152294,
+            "motor": 0.179360000446052
+          },
+          "gt": {
+            "pedestrian": 21006,
+            "people": 6376,
+            "bicycle": 1302,
+            "car": 28074,
+            "van": 5771,
+            "truck": 2659,
+            "tricycle": 530,
+            "awning-tricycle": 599,
+            "bus": 2940,
+            "motor": 5845
+          }
+        },
+        "aspect_16_9": {
+          "images": 1336,
+          "map": 0.22380849894865842,
+          "per_class": {
+            "pedestrian": 0.14883137391939222,
+            "people": 0.08957571301082629,
+            "bicycle": 0.07128872887820611,
+            "car": 0.4973829369954775,
+            "van": 0.27423023045160083,
+            "truck": 0.2959578073612049,
+            "tricycle": 0.1723531013600445,
+            "awning-tricycle": 0.1346870698845734,
+            "bus": 0.4286246500312628,
+            "motor": 0.1251533775939963
+          },
+          "gt": {
+            "pedestrian": 18199,
+            "people": 4222,
+            "bicycle": 898,
+            "car": 23064,
+            "van": 4981,
+            "truck": 2390,
+            "tricycle": 427,
+            "awning-tricycle": 406,
+            "bus": 2721,
+            "motor": 3082
+          }
+        },
+        "aspect_4_3": {
+          "images": 274,
+          "map": 0.2555390274932853,
+          "per_class": {
+            "pedestrian": 0.2242730368573572,
+            "people": 0.12731658783424096,
+            "bicycle": 0.10695971189687906,
+            "car": 0.5618461839843407,
+            "van": 0.38689914555387134,
+            "truck": 0.2791655842090618,
+            "tricycle": 0.05333592999626465,
+            "awning-tricycle": 0.12757202134860718,
+            "bus": 0.4440614998663198,
+            "motor": 0.24396057338590996
+          },
+          "gt": {
+            "pedestrian": 2807,
+            "people": 2154,
+            "bicycle": 404,
+            "car": 5010,
+            "van": 790,
+            "truck": 269,
+            "tricycle": 103,
+            "awning-tricycle": 193,
+            "bus": 219,
+            "motor": 2763
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 21006,
+          "same_iou50": 11612,
+          "same_iou75": 4116,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8981,
+          "localization_10_50": 4792,
+          "no_same_class_overlap10": 4481,
+          "wrong_class_overlap50": 121,
+          "confused_as_people": 47,
+          "confused_as_motor": 42,
+          "confused_as_car": 16,
+          "confused_as_bicycle": 13,
+          "confused_as_van": 2,
+          "confused_as_bus": 1
+        },
+        "pedestrian_conf0.1": {
+          "gt": 21006,
+          "same_iou50": 11493,
+          "same_iou75": 4060,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8877,
+          "localization_10_50": 4709,
+          "no_same_class_overlap10": 4668,
+          "wrong_class_overlap50": 136,
+          "confused_as_people": 57,
+          "confused_as_motor": 42,
+          "confused_as_car": 17,
+          "confused_as_bicycle": 17,
+          "confused_as_van": 2,
+          "confused_as_bus": 1
+        },
+        "people_conf0.001": {
+          "gt": 6376,
+          "same_iou50": 3000,
+          "same_iou75": 865,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2530,
+          "localization_10_50": 1342,
+          "no_same_class_overlap10": 1757,
+          "wrong_class_overlap50": 277,
+          "confused_as_pedestrian": 197,
+          "confused_as_bicycle": 16,
+          "confused_as_motor": 57,
+          "confused_as_car": 2,
+          "confused_as_tricycle": 2,
+          "confused_as_awning-tricycle": 3
+        },
+        "people_conf0.1": {
+          "gt": 6376,
+          "same_iou50": 2939,
+          "same_iou75": 847,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2473,
+          "localization_10_50": 1241,
+          "no_same_class_overlap10": 1873,
+          "wrong_class_overlap50": 323,
+          "confused_as_pedestrian": 244,
+          "confused_as_bicycle": 16,
+          "confused_as_motor": 56,
+          "confused_as_car": 2,
+          "confused_as_tricycle": 2,
+          "confused_as_awning-tricycle": 3
+        },
+        "van_conf0.001": {
+          "gt": 5771,
+          "same_iou50": 4996,
+          "same_iou75": 3928,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1709,
+          "no_same_class_overlap10": 310,
+          "wrong_class_overlap50": 256,
+          "confused_as_truck": 43,
+          "confused_as_awning-tricycle": 10,
+          "confused_as_car": 177,
+          "localization_10_50": 209,
+          "confused_as_tricycle": 4,
+          "confused_as_bus": 17,
+          "confused_as_pedestrian": 3,
+          "confused_as_people": 1,
+          "confused_as_motor": 1
+        },
+        "van_conf0.1": {
+          "gt": 5771,
+          "same_iou50": 4821,
+          "same_iou75": 3839,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1627,
+          "no_same_class_overlap10": 366,
+          "wrong_class_overlap50": 398,
+          "confused_as_truck": 48,
+          "confused_as_awning-tricycle": 10,
+          "confused_as_car": 310,
+          "localization_10_50": 186,
+          "confused_as_tricycle": 4,
+          "confused_as_bus": 23,
+          "confused_as_pedestrian": 2,
+          "confused_as_motor": 1
+        },
+        "truck_conf0.001": {
+          "gt": 2659,
+          "same_iou50": 2053,
+          "same_iou75": 1472,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 309,
+          "localization_10_50": 222,
+          "no_same_class_overlap10": 235,
+          "wrong_class_overlap50": 149,
+          "confused_as_bus": 6,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_tricycle": 4,
+          "confused_as_motor": 6,
+          "confused_as_van": 30,
+          "confused_as_car": 100
+        },
+        "truck_conf0.1": {
+          "gt": 2659,
+          "same_iou50": 1968,
+          "same_iou75": 1417,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 274,
+          "localization_10_50": 214,
+          "no_same_class_overlap10": 288,
+          "wrong_class_overlap50": 189,
+          "confused_as_bus": 15,
+          "confused_as_van": 38,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_tricycle": 5,
+          "confused_as_motor": 6,
+          "confused_as_car": 122
+        },
+        "motor_conf0.001": {
+          "gt": 5845,
+          "same_iou50": 4016,
+          "same_iou75": 1599,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 2972,
+          "localization_10_50": 734,
+          "no_same_class_overlap10": 826,
+          "wrong_class_overlap50": 269,
+          "confused_as_people": 69,
+          "confused_as_awning-tricycle": 8,
+          "confused_as_bicycle": 31,
+          "confused_as_car": 25,
+          "confused_as_pedestrian": 121,
+          "confused_as_tricycle": 9,
+          "confused_as_van": 4,
+          "confused_as_truck": 2
+        },
+        "motor_conf0.1": {
+          "gt": 5845,
+          "same_iou50": 3964,
+          "same_iou75": 1578,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 2934,
+          "localization_10_50": 701,
+          "no_same_class_overlap10": 921,
+          "wrong_class_overlap50": 259,
+          "confused_as_awning-tricycle": 8,
+          "confused_as_bicycle": 31,
+          "confused_as_car": 24,
+          "confused_as_pedestrian": 119,
+          "confused_as_tricycle": 9,
+          "confused_as_people": 63,
+          "confused_as_van": 3,
+          "confused_as_truck": 2
+        }
+      }
+    },
+    "GB/val": {
+      "groups": {
+        "all": {
+          "images": 548,
+          "map": 0.2926746642810018,
+          "per_class": {
+            "pedestrian": 0.2689517939721976,
+            "people": 0.20844790743606656,
+            "bicycle": 0.11286900028813374,
+            "car": 0.6139368028034798,
+            "van": 0.37862941403021166,
+            "truck": 0.2789912955746609,
+            "tricycle": 0.196547027269201,
+            "awning-tricycle": 0.1282678390089034,
+            "bus": 0.4438633308194305,
+            "motor": 0.2962422316077333
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        },
+        "aspect_16_9": {
+          "images": 548,
+          "map": 0.2926746642810018,
+          "per_class": {
+            "pedestrian": 0.2689517939721976,
+            "people": 0.20844790743606656,
+            "bicycle": 0.11286900028813374,
+            "car": 0.6139368028034798,
+            "van": 0.37862941403021166,
+            "truck": 0.2789912955746609,
+            "tricycle": 0.196547027269201,
+            "awning-tricycle": 0.1282678390089034,
+            "bus": 0.4438633308194305,
+            "motor": 0.2962422316077333
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 8844,
+          "same_iou50": 6331,
+          "same_iou75": 3117,
+          "no_same_class_overlap10": 1365,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4299,
+          "localization_10_50": 1052,
+          "wrong_class_overlap50": 96,
+          "confused_as_people": 39,
+          "confused_as_motor": 31,
+          "confused_as_bicycle": 8,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_car": 14,
+          "confused_as_van": 1,
+          "confused_as_tricycle": 2
+        },
+        "pedestrian_conf0.1": {
+          "gt": 8844,
+          "same_iou50": 6324,
+          "same_iou75": 3107,
+          "no_same_class_overlap10": 1372,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4294,
+          "localization_10_50": 1049,
+          "wrong_class_overlap50": 99,
+          "confused_as_people": 43,
+          "confused_as_motor": 32,
+          "confused_as_car": 14,
+          "confused_as_van": 1,
+          "confused_as_bicycle": 7,
+          "confused_as_tricycle": 2
+        },
+        "people_conf0.001": {
+          "gt": 5125,
+          "same_iou50": 3680,
+          "same_iou75": 1584,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2681,
+          "no_same_class_overlap10": 601,
+          "localization_10_50": 627,
+          "wrong_class_overlap50": 217,
+          "confused_as_motor": 71,
+          "confused_as_pedestrian": 126,
+          "confused_as_bicycle": 16,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_tricycle": 2,
+          "confused_as_car": 1
+        },
+        "people_conf0.1": {
+          "gt": 5125,
+          "same_iou50": 3668,
+          "same_iou75": 1579,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2675,
+          "no_same_class_overlap10": 607,
+          "localization_10_50": 633,
+          "wrong_class_overlap50": 217,
+          "confused_as_motor": 71,
+          "confused_as_pedestrian": 125,
+          "confused_as_bicycle": 17,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_tricycle": 2,
+          "confused_as_car": 1
+        },
+        "van_conf0.001": {
+          "gt": 1975,
+          "same_iou50": 1645,
+          "same_iou75": 1307,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 440,
+          "wrong_class_overlap50": 174,
+          "confused_as_car": 158,
+          "localization_10_50": 69,
+          "no_same_class_overlap10": 87,
+          "confused_as_tricycle": 4,
+          "confused_as_truck": 8,
+          "confused_as_awning-tricycle": 2,
+          "confused_as_bus": 2
+        },
+        "van_conf0.1": {
+          "gt": 1975,
+          "same_iou50": 1639,
+          "same_iou75": 1303,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 437,
+          "wrong_class_overlap50": 180,
+          "confused_as_car": 164,
+          "localization_10_50": 67,
+          "no_same_class_overlap10": 89,
+          "confused_as_tricycle": 4,
+          "confused_as_truck": 8,
+          "confused_as_awning-tricycle": 2,
+          "confused_as_bus": 2
+        },
+        "truck_conf0.001": {
+          "gt": 750,
+          "same_iou50": 508,
+          "same_iou75": 360,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 104,
+          "wrong_class_overlap50": 113,
+          "confused_as_car": 71,
+          "no_same_class_overlap10": 86,
+          "localization_10_50": 43,
+          "confused_as_awning-tricycle": 6,
+          "confused_as_tricycle": 17,
+          "confused_as_van": 18,
+          "confused_as_bus": 1
+        },
+        "truck_conf0.1": {
+          "gt": 750,
+          "same_iou50": 501,
+          "same_iou75": 357,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 101,
+          "localization_10_50": 44,
+          "wrong_class_overlap50": 118,
+          "confused_as_car": 75,
+          "no_same_class_overlap10": 87,
+          "confused_as_awning-tricycle": 6,
+          "confused_as_tricycle": 17,
+          "confused_as_van": 19,
+          "confused_as_bus": 1
+        },
+        "motor_conf0.001": {
+          "gt": 4886,
+          "same_iou50": 4041,
+          "same_iou75": 2081,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2482,
+          "localization_10_50": 350,
+          "no_same_class_overlap10": 319,
+          "wrong_class_overlap50": 176,
+          "confused_as_people": 53,
+          "confused_as_pedestrian": 86,
+          "confused_as_car": 11,
+          "confused_as_tricycle": 9,
+          "confused_as_bicycle": 17
+        },
+        "motor_conf0.1": {
+          "gt": 4886,
+          "same_iou50": 4035,
+          "same_iou75": 2078,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2478,
+          "localization_10_50": 348,
+          "no_same_class_overlap10": 326,
+          "wrong_class_overlap50": 177,
+          "confused_as_people": 52,
+          "confused_as_pedestrian": 89,
+          "confused_as_car": 10,
+          "confused_as_tricycle": 9,
+          "confused_as_bicycle": 17
+        }
+      }
+    },
+    "GB/test": {
+      "groups": {
+        "all": {
+          "images": 1610,
+          "map": 0.236150399921782,
+          "per_class": {
+            "pedestrian": 0.15533074892830584,
+            "people": 0.10060538799251477,
+            "bicycle": 0.07844689345760199,
+            "car": 0.5131240943963818,
+            "van": 0.30345875997694793,
+            "truck": 0.30366490958546233,
+            "tricycle": 0.15378113533462479,
+            "awning-tricycle": 0.1451008716135386,
+            "bus": 0.4297056717828488,
+            "motor": 0.17828552614959312
+          },
+          "gt": {
+            "pedestrian": 21006,
+            "people": 6376,
+            "bicycle": 1302,
+            "car": 28074,
+            "van": 5771,
+            "truck": 2659,
+            "tricycle": 530,
+            "awning-tricycle": 599,
+            "bus": 2940,
+            "motor": 5845
+          }
+        },
+        "aspect_16_9": {
+          "images": 1336,
+          "map": 0.22786347647436053,
+          "per_class": {
+            "pedestrian": 0.14512571456203135,
+            "people": 0.08911505818215301,
+            "bicycle": 0.07357626806827326,
+            "car": 0.5015724032552786,
+            "van": 0.28800513241207837,
+            "truck": 0.31160189870474897,
+            "tricycle": 0.1737859138842501,
+            "awning-tricycle": 0.14075771627631986,
+            "bus": 0.4287763559061877,
+            "motor": 0.12631830349228432
+          },
+          "gt": {
+            "pedestrian": 18199,
+            "people": 4222,
+            "bicycle": 898,
+            "car": 23064,
+            "van": 4981,
+            "truck": 2390,
+            "tricycle": 427,
+            "awning-tricycle": 406,
+            "bus": 2721,
+            "motor": 3082
+          }
+        },
+        "aspect_4_3": {
+          "images": 274,
+          "map": 0.2588763712879523,
+          "per_class": {
+            "pedestrian": 0.22353804181164008,
+            "people": 0.12296240006510759,
+            "bicycle": 0.09475405873093944,
+            "car": 0.5626640123963302,
+            "van": 0.3964383393554112,
+            "truck": 0.25991993381058054,
+            "tricycle": 0.0734300442353509,
+            "awning-tricycle": 0.15973565594936784,
+            "bus": 0.4554479423733178,
+            "motor": 0.23987328415147768
+          },
+          "gt": {
+            "pedestrian": 2807,
+            "people": 2154,
+            "bicycle": 404,
+            "car": 5010,
+            "van": 790,
+            "truck": 269,
+            "tricycle": 103,
+            "awning-tricycle": 193,
+            "bus": 219,
+            "motor": 2763
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 21006,
+          "same_iou50": 11193,
+          "same_iou75": 4048,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8553,
+          "localization_10_50": 4636,
+          "wrong_class_overlap50": 105,
+          "confused_as_bicycle": 13,
+          "no_same_class_overlap10": 5072,
+          "confused_as_people": 39,
+          "confused_as_car": 18,
+          "confused_as_motor": 33,
+          "confused_as_van": 1,
+          "confused_as_bus": 1
+        },
+        "pedestrian_conf0.1": {
+          "gt": 21006,
+          "same_iou50": 11103,
+          "same_iou75": 4009,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8468,
+          "localization_10_50": 4590,
+          "wrong_class_overlap50": 114,
+          "confused_as_bicycle": 14,
+          "no_same_class_overlap10": 5199,
+          "confused_as_people": 41,
+          "confused_as_car": 20,
+          "confused_as_motor": 37,
+          "confused_as_van": 1,
+          "confused_as_bus": 1
+        },
+        "people_conf0.001": {
+          "gt": 6376,
+          "same_iou50": 2979,
+          "same_iou75": 865,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2494,
+          "no_same_class_overlap10": 1801,
+          "localization_10_50": 1366,
+          "wrong_class_overlap50": 230,
+          "confused_as_pedestrian": 160,
+          "confused_as_bicycle": 8,
+          "confused_as_motor": 58,
+          "confused_as_car": 1,
+          "confused_as_awning-tricycle": 3
+        },
+        "people_conf0.1": {
+          "gt": 6376,
+          "same_iou50": 2925,
+          "same_iou75": 854,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2445,
+          "no_same_class_overlap10": 1872,
+          "localization_10_50": 1319,
+          "wrong_class_overlap50": 260,
+          "confused_as_pedestrian": 188,
+          "confused_as_bicycle": 8,
+          "confused_as_motor": 60,
+          "confused_as_car": 1,
+          "confused_as_awning-tricycle": 3
+        },
+        "van_conf0.001": {
+          "gt": 5771,
+          "same_iou50": 4947,
+          "same_iou75": 3892,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1697,
+          "wrong_class_overlap50": 290,
+          "confused_as_truck": 30,
+          "no_same_class_overlap10": 310,
+          "confused_as_car": 224,
+          "localization_10_50": 224,
+          "confused_as_tricycle": 3,
+          "confused_as_bus": 19,
+          "confused_as_awning-tricycle": 7,
+          "confused_as_pedestrian": 5,
+          "confused_as_motor": 2
+        },
+        "van_conf0.1": {
+          "gt": 5771,
+          "same_iou50": 4806,
+          "same_iou75": 3811,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1629,
+          "wrong_class_overlap50": 409,
+          "confused_as_truck": 36,
+          "no_same_class_overlap10": 356,
+          "confused_as_car": 335,
+          "localization_10_50": 200,
+          "confused_as_tricycle": 3,
+          "confused_as_bus": 22,
+          "confused_as_awning-tricycle": 7,
+          "confused_as_pedestrian": 5,
+          "confused_as_motor": 1
+        },
+        "truck_conf0.001": {
+          "gt": 2659,
+          "same_iou50": 2059,
+          "same_iou75": 1489,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 293,
+          "localization_10_50": 220,
+          "no_same_class_overlap10": 203,
+          "wrong_class_overlap50": 177,
+          "confused_as_car": 118,
+          "confused_as_tricycle": 9,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_van": 35,
+          "confused_as_motor": 4,
+          "confused_as_bus": 7,
+          "confused_as_bicycle": 1
+        },
+        "truck_conf0.1": {
+          "gt": 2659,
+          "same_iou50": 1988,
+          "same_iou75": 1450,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 269,
+          "localization_10_50": 212,
+          "no_same_class_overlap10": 238,
+          "wrong_class_overlap50": 221,
+          "confused_as_car": 143,
+          "confused_as_tricycle": 10,
+          "confused_as_awning-tricycle": 6,
+          "confused_as_van": 45,
+          "confused_as_motor": 4,
+          "confused_as_bus": 12,
+          "confused_as_bicycle": 1
+        },
+        "motor_conf0.001": {
+          "gt": 5845,
+          "same_iou50": 4051,
+          "same_iou75": 1619,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 3020,
+          "localization_10_50": 744,
+          "no_same_class_overlap10": 839,
+          "wrong_class_overlap50": 211,
+          "confused_as_car": 29,
+          "confused_as_pedestrian": 97,
+          "confused_as_bicycle": 17,
+          "confused_as_tricycle": 10,
+          "confused_as_people": 55,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_truck": 2
+        },
+        "motor_conf0.1": {
+          "gt": 5845,
+          "same_iou50": 3994,
+          "same_iou75": 1605,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 2972,
+          "localization_10_50": 705,
+          "wrong_class_overlap50": 233,
+          "confused_as_tricycle": 11,
+          "no_same_class_overlap10": 913,
+          "confused_as_car": 33,
+          "confused_as_pedestrian": 104,
+          "confused_as_bicycle": 20,
+          "confused_as_people": 60,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_truck": 2
+        }
+      }
+    },
+    "Full/val": {
+      "groups": {
+        "all": {
+          "images": 548,
+          "map": 0.30102406175012464,
+          "per_class": {
+            "pedestrian": 0.27546956152275814,
+            "people": 0.21040467410416047,
+            "bicycle": 0.12018245582811515,
+            "car": 0.6117613735906846,
+            "van": 0.3743373340452529,
+            "truck": 0.2868935655269231,
+            "tricycle": 0.22367851862066526,
+            "awning-tricycle": 0.1284998051525629,
+            "bus": 0.4767896680762974,
+            "motor": 0.3022236610338263
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        },
+        "aspect_16_9": {
+          "images": 548,
+          "map": 0.30102406175012464,
+          "per_class": {
+            "pedestrian": 0.27546956152275814,
+            "people": 0.21040467410416047,
+            "bicycle": 0.12018245582811515,
+            "car": 0.6117613735906846,
+            "van": 0.3743373340452529,
+            "truck": 0.2868935655269231,
+            "tricycle": 0.22367851862066526,
+            "awning-tricycle": 0.1284998051525629,
+            "bus": 0.4767896680762974,
+            "motor": 0.3022236610338263
+          },
+          "gt": {
+            "pedestrian": 8844,
+            "people": 5125,
+            "bicycle": 1287,
+            "car": 14064,
+            "van": 1975,
+            "truck": 750,
+            "tricycle": 1045,
+            "awning-tricycle": 532,
+            "bus": 251,
+            "motor": 4886
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 8844,
+          "same_iou50": 6435,
+          "same_iou75": 3146,
+          "no_same_class_overlap10": 1190,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4396,
+          "localization_10_50": 1109,
+          "wrong_class_overlap50": 110,
+          "confused_as_bicycle": 13,
+          "confused_as_people": 48,
+          "confused_as_motor": 32,
+          "confused_as_car": 13,
+          "confused_as_tricycle": 3,
+          "confused_as_van": 1
+        },
+        "pedestrian_conf0.1": {
+          "gt": 8844,
+          "same_iou50": 6420,
+          "same_iou75": 3131,
+          "no_same_class_overlap10": 1201,
+          "tiny_gt": 6542,
+          "tiny_same_iou50": 4387,
+          "localization_10_50": 1107,
+          "wrong_class_overlap50": 116,
+          "confused_as_bicycle": 14,
+          "confused_as_people": 54,
+          "confused_as_motor": 31,
+          "confused_as_car": 13,
+          "confused_as_tricycle": 3,
+          "confused_as_van": 1
+        },
+        "people_conf0.001": {
+          "gt": 5125,
+          "same_iou50": 3752,
+          "same_iou75": 1587,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2752,
+          "no_same_class_overlap10": 535,
+          "localization_10_50": 650,
+          "wrong_class_overlap50": 188,
+          "confused_as_pedestrian": 105,
+          "confused_as_motor": 66,
+          "confused_as_tricycle": 3,
+          "confused_as_bicycle": 12,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_car": 1
+        },
+        "people_conf0.1": {
+          "gt": 5125,
+          "same_iou50": 3740,
+          "same_iou75": 1577,
+          "tiny_gt": 3873,
+          "tiny_same_iou50": 2746,
+          "no_same_class_overlap10": 541,
+          "localization_10_50": 657,
+          "wrong_class_overlap50": 187,
+          "confused_as_pedestrian": 105,
+          "confused_as_motor": 66,
+          "confused_as_tricycle": 3,
+          "confused_as_bicycle": 11,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_car": 1
+        },
+        "van_conf0.001": {
+          "gt": 1975,
+          "same_iou50": 1621,
+          "same_iou75": 1262,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 456,
+          "wrong_class_overlap50": 210,
+          "confused_as_truck": 13,
+          "confused_as_car": 187,
+          "confused_as_tricycle": 6,
+          "no_same_class_overlap10": 77,
+          "localization_10_50": 67,
+          "confused_as_bus": 2,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_pedestrian": 1
+        },
+        "van_conf0.1": {
+          "gt": 1975,
+          "same_iou50": 1612,
+          "same_iou75": 1255,
+          "tiny_gt": 636,
+          "tiny_same_iou50": 453,
+          "wrong_class_overlap50": 219,
+          "confused_as_truck": 13,
+          "confused_as_car": 196,
+          "confused_as_tricycle": 6,
+          "no_same_class_overlap10": 79,
+          "localization_10_50": 65,
+          "confused_as_bus": 2,
+          "confused_as_awning-tricycle": 1,
+          "confused_as_pedestrian": 1
+        },
+        "truck_conf0.001": {
+          "gt": 750,
+          "same_iou50": 495,
+          "same_iou75": 361,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 94,
+          "wrong_class_overlap50": 118,
+          "confused_as_awning-tricycle": 7,
+          "confused_as_van": 20,
+          "localization_10_50": 57,
+          "confused_as_car": 75,
+          "no_same_class_overlap10": 80,
+          "confused_as_tricycle": 15,
+          "confused_as_motor": 1
+        },
+        "truck_conf0.1": {
+          "gt": 750,
+          "same_iou50": 488,
+          "same_iou75": 357,
+          "tiny_gt": 189,
+          "tiny_same_iou50": 92,
+          "wrong_class_overlap50": 123,
+          "confused_as_awning-tricycle": 7,
+          "localization_10_50": 58,
+          "confused_as_van": 20,
+          "confused_as_car": 80,
+          "no_same_class_overlap10": 81,
+          "confused_as_tricycle": 15,
+          "confused_as_motor": 1
+        },
+        "motor_conf0.001": {
+          "gt": 4886,
+          "same_iou50": 4062,
+          "same_iou75": 2097,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2517,
+          "localization_10_50": 339,
+          "no_same_class_overlap10": 283,
+          "wrong_class_overlap50": 202,
+          "confused_as_people": 66,
+          "confused_as_pedestrian": 92,
+          "confused_as_van": 1,
+          "confused_as_tricycle": 12,
+          "confused_as_bicycle": 24,
+          "confused_as_car": 7
+        },
+        "motor_conf0.1": {
+          "gt": 4886,
+          "same_iou50": 4055,
+          "same_iou75": 2096,
+          "tiny_gt": 3175,
+          "tiny_same_iou50": 2515,
+          "localization_10_50": 341,
+          "no_same_class_overlap10": 287,
+          "wrong_class_overlap50": 203,
+          "confused_as_people": 69,
+          "confused_as_pedestrian": 93,
+          "confused_as_van": 1,
+          "confused_as_tricycle": 12,
+          "confused_as_bicycle": 21,
+          "confused_as_car": 7
+        }
+      }
+    },
+    "Full/test": {
+      "groups": {
+        "all": {
+          "images": 1610,
+          "map": 0.23604003874539384,
+          "per_class": {
+            "pedestrian": 0.16123335347427203,
+            "people": 0.1001942356881574,
+            "bicycle": 0.08377233626797374,
+            "car": 0.5118564072823493,
+            "van": 0.30299512852655,
+            "truck": 0.291936477976564,
+            "tricycle": 0.16009383849691222,
+            "awning-tricycle": 0.13263837196107414,
+            "bus": 0.4347237263867771,
+            "motor": 0.18095651139330926
+          },
+          "gt": {
+            "pedestrian": 21006,
+            "people": 6376,
+            "bicycle": 1302,
+            "car": 28074,
+            "van": 5771,
+            "truck": 2659,
+            "tricycle": 530,
+            "awning-tricycle": 599,
+            "bus": 2940,
+            "motor": 5845
+          }
+        },
+        "aspect_16_9": {
+          "images": 1336,
+          "map": 0.22733474235156023,
+          "per_class": {
+            "pedestrian": 0.15034604143204294,
+            "people": 0.08992991158865737,
+            "bicycle": 0.0729275659558963,
+            "car": 0.5002288532601564,
+            "van": 0.2868441322137086,
+            "truck": 0.2983147441232461,
+            "tricycle": 0.18379319630589738,
+            "awning-tricycle": 0.13240088850759582,
+            "bus": 0.4338463662226367,
+            "motor": 0.12471572390576469
+          },
+          "gt": {
+            "pedestrian": 18199,
+            "people": 4222,
+            "bicycle": 898,
+            "car": 23064,
+            "van": 4981,
+            "truck": 2390,
+            "tricycle": 427,
+            "awning-tricycle": 406,
+            "bus": 2721,
+            "motor": 3082
+          }
+        },
+        "aspect_4_3": {
+          "images": 274,
+          "map": 0.25778743676671895,
+          "per_class": {
+            "pedestrian": 0.23227528318682972,
+            "people": 0.1221775758327703,
+            "bicycle": 0.11131547299410025,
+            "car": 0.5640176591363883,
+            "van": 0.3925393314129903,
+            "truck": 0.25551988397189496,
+            "tricycle": 0.06682612453254941,
+            "awning-tricycle": 0.13470217879388116,
+            "bus": 0.4511373482224289,
+            "motor": 0.2473635095833558
+          },
+          "gt": {
+            "pedestrian": 2807,
+            "people": 2154,
+            "bicycle": 404,
+            "car": 5010,
+            "van": 790,
+            "truck": 269,
+            "tricycle": 103,
+            "awning-tricycle": 193,
+            "bus": 219,
+            "motor": 2763
+          }
+        }
+      },
+      "errors": {
+        "pedestrian_conf0.001": {
+          "gt": 21006,
+          "same_iou50": 11609,
+          "same_iou75": 4033,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8958,
+          "localization_10_50": 4803,
+          "no_same_class_overlap10": 4473,
+          "wrong_class_overlap50": 121,
+          "confused_as_people": 38,
+          "confused_as_motor": 51,
+          "confused_as_bicycle": 10,
+          "confused_as_car": 17,
+          "confused_as_van": 2,
+          "confused_as_bus": 1,
+          "confused_as_tricycle": 1,
+          "confused_as_truck": 1
+        },
+        "pedestrian_conf0.1": {
+          "gt": 21006,
+          "same_iou50": 11456,
+          "same_iou75": 3977,
+          "tiny_gt": 18124,
+          "tiny_same_iou50": 8816,
+          "localization_10_50": 4691,
+          "no_same_class_overlap10": 4720,
+          "wrong_class_overlap50": 139,
+          "confused_as_people": 48,
+          "confused_as_motor": 59,
+          "confused_as_bicycle": 10,
+          "confused_as_car": 17,
+          "confused_as_van": 2,
+          "confused_as_bus": 1,
+          "confused_as_tricycle": 1,
+          "confused_as_truck": 1
+        },
+        "people_conf0.001": {
+          "gt": 6376,
+          "same_iou50": 3032,
+          "same_iou75": 905,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2547,
+          "localization_10_50": 1368,
+          "no_same_class_overlap10": 1721,
+          "wrong_class_overlap50": 255,
+          "confused_as_pedestrian": 195,
+          "confused_as_motor": 52,
+          "confused_as_car": 2,
+          "confused_as_bicycle": 5,
+          "confused_as_tricycle": 1
+        },
+        "people_conf0.1": {
+          "gt": 6376,
+          "same_iou50": 2972,
+          "same_iou75": 887,
+          "tiny_gt": 5769,
+          "tiny_same_iou50": 2491,
+          "localization_10_50": 1264,
+          "no_same_class_overlap10": 1854,
+          "wrong_class_overlap50": 286,
+          "confused_as_pedestrian": 226,
+          "confused_as_motor": 53,
+          "confused_as_car": 2,
+          "confused_as_bicycle": 4,
+          "confused_as_tricycle": 1
+        },
+        "van_conf0.001": {
+          "gt": 5771,
+          "same_iou50": 4944,
+          "same_iou75": 3875,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1696,
+          "no_same_class_overlap10": 282,
+          "wrong_class_overlap50": 308,
+          "confused_as_truck": 36,
+          "confused_as_tricycle": 4,
+          "confused_as_car": 237,
+          "localization_10_50": 237,
+          "confused_as_bus": 20,
+          "confused_as_awning-tricycle": 5,
+          "confused_as_pedestrian": 5,
+          "confused_as_motor": 1
+        },
+        "van_conf0.1": {
+          "gt": 5771,
+          "same_iou50": 4728,
+          "same_iou75": 3734,
+          "tiny_gt": 2234,
+          "tiny_same_iou50": 1608,
+          "no_same_class_overlap10": 339,
+          "wrong_class_overlap50": 489,
+          "confused_as_truck": 42,
+          "confused_as_tricycle": 4,
+          "confused_as_car": 403,
+          "localization_10_50": 215,
+          "confused_as_bus": 32,
+          "confused_as_awning-tricycle": 5,
+          "confused_as_pedestrian": 3
+        },
+        "truck_conf0.001": {
+          "gt": 2659,
+          "same_iou50": 2027,
+          "same_iou75": 1490,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 311,
+          "localization_10_50": 243,
+          "no_same_class_overlap10": 221,
+          "wrong_class_overlap50": 168,
+          "confused_as_tricycle": 8,
+          "confused_as_awning-tricycle": 8,
+          "confused_as_car": 108,
+          "confused_as_van": 31,
+          "confused_as_pedestrian": 1,
+          "confused_as_motor": 5,
+          "confused_as_bus": 7
+        },
+        "truck_conf0.1": {
+          "gt": 2659,
+          "same_iou50": 1941,
+          "same_iou75": 1453,
+          "tiny_gt": 600,
+          "tiny_same_iou50": 276,
+          "localization_10_50": 235,
+          "no_same_class_overlap10": 273,
+          "wrong_class_overlap50": 210,
+          "confused_as_tricycle": 10,
+          "confused_as_awning-tricycle": 9,
+          "confused_as_car": 134,
+          "confused_as_van": 40,
+          "confused_as_pedestrian": 1,
+          "confused_as_motor": 5,
+          "confused_as_bus": 11
+        },
+        "motor_conf0.001": {
+          "gt": 5845,
+          "same_iou50": 4010,
+          "same_iou75": 1601,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 2973,
+          "localization_10_50": 761,
+          "wrong_class_overlap50": 260,
+          "confused_as_people": 63,
+          "no_same_class_overlap10": 814,
+          "confused_as_pedestrian": 125,
+          "confused_as_bicycle": 31,
+          "confused_as_tricycle": 7,
+          "confused_as_car": 27,
+          "confused_as_awning-tricycle": 3,
+          "confused_as_van": 2,
+          "confused_as_truck": 2
+        },
+        "motor_conf0.1": {
+          "gt": 5845,
+          "same_iou50": 3949,
+          "same_iou75": 1587,
+          "tiny_gt": 4626,
+          "tiny_same_iou50": 2924,
+          "localization_10_50": 723,
+          "no_same_class_overlap10": 894,
+          "wrong_class_overlap50": 279,
+          "confused_as_people": 68,
+          "confused_as_pedestrian": 136,
+          "confused_as_bicycle": 33,
+          "confused_as_tricycle": 8,
+          "confused_as_car": 30,
+          "confused_as_awning-tricycle": 2,
+          "confused_as_truck": 2
+        }
+      }
+    }
+  },
+  "original_archive_audit.json": {
+    "val": {
+      "images": 548,
+      "image_byte_mismatches": [],
+      "label_semantic_mismatches": [],
+      "class_counts": {
+        "3": 14064,
+        "9": 4886,
+        "1": 5125,
+        "0": 8844,
+        "7": 532,
+        "6": 1045,
+        "2": 1287,
+        "5": 750,
+        "4": 1975,
+        "8": 251
+      },
+      "ignored_counts": {
+        "-1": 1378,
+        "10": 32
+      },
+      "dimensions": [
+        [
+          [
+            1360,
+            765
+          ],
+          408
+        ],
+        [
+          [
+            960,
+            540
+          ],
+          121
+        ],
+        [
+          [
+            1920,
+            1080
+          ],
+          19
+        ]
+      ],
+      "median_target_side_at640": {
+        "0": 11.206632846739923,
+        "1": 11.278735591510687,
+        "2": 13.398686433921645,
+        "3": 20.810194763014277,
+        "4": 21.773242158072694,
+        "5": 25.724326710001716,
+        "6": 19.77652929892177,
+        "7": 19.114097206874124,
+        "8": 22.553349967826108,
+        "9": 13.2292147435866
+      }
+    },
+    "test": {
+      "images": 1610,
+      "image_byte_mismatches": [],
+      "label_semantic_mismatches": [],
+      "class_counts": {
+        "3": 28074,
+        "0": 21006,
+        "5": 2659,
+        "9": 5845,
+        "4": 5771,
+        "7": 599,
+        "1": 6376,
+        "2": 1302,
+        "6": 530,
+        "8": 2940
+      },
+      "ignored_counts": {
+        "10": 265,
+        "-1": 2180
+      },
+      "dimensions": [
+        [
+          [
+            1400,
+            788
+          ],
+          933
+        ],
+        [
+          [
+            1400,
+            1050
+          ],
+          274
+        ],
+        [
+          [
+            1360,
+            765
+          ],
+          167
+        ],
+        [
+          [
+            1916,
+            1078
+          ],
+          151
+        ],
+        [
+          [
+            960,
+            540
+          ],
+          49
+        ],
+        [
+          [
+            1920,
+            1080
+          ],
+          36
+        ]
+      ],
+      "median_target_side_at640": {
+        "0": 7.105952524207234,
+        "1": 6.839716798839326,
+        "2": 11.528431358851506,
+        "3": 17.448567328377077,
+        "4": 18.76697700707539,
+        "5": 29.161286371444078,
+        "6": 18.25271539180254,
+        "7": 19.595917942265423,
+        "8": 32.48365461672813,
+        "9": 10.849641704025464
+      }
+    }
+  },
+  "module_runtime.json": {
+    "G": {
+      "type": "<class 'src.rtdetr_lrs_system.LRSFDRDetectionModel'>",
+      "scalar_parameters": {},
+      "runtime_flags": {
+        "model.28.decoder.feasible_geometry": true,
+        "model.28.decoder.eval_idx": 5
+      }
+    },
+    "GF": {
+      "type": "<class 'src.rtdetr_lrs_system.LRSGFDRFIADetectionModel'>",
+      "scalar_parameters": {
+        "model.22.residual_scale": 0.38623046875,
+        "model.22.refine.2.spatial_attention.0.bias": 0.0079498291015625
+      },
+      "runtime_flags": {
+        "model.29.decoder.feasible_geometry": true,
+        "model.29.decoder.eval_idx": 5
+      }
+    },
+    "GB": {
+      "type": "<class 'src.rtdetr_bpdd_capacity.CapacityBPDDDetectionModel'>",
+      "scalar_parameters": {},
+      "runtime_flags": {
+        "model.28.decoder.feasible_geometry": true,
+        "model.28.decoder.local_expert_preserve_base": true,
+        "model.28.decoder.eval_idx": 5
+      }
+    },
+    "Full": {
+      "type": "<class 'src.rtdetr_bpdd_capacity_fia.CapacityBPDDFIASafeDetectionModel'>",
+      "scalar_parameters": {
+        "model.22.residual_scale": 0.364013671875,
+        "model.22.refine.2.spatial_attention.0.bias": 0.005035400390625
+      },
+      "runtime_flags": {
+        "model.29.decoder.feasible_geometry": true,
+        "model.29.decoder.local_expert_preserve_base": true,
+        "model.29.decoder.eval_idx": 5
+      }
+    }
+  },
+  "Full/val/summary.json": {
+    "arm": "Full",
+    "split": "val",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "val",
+      "quantize": null
+    },
+    "checkpoint_sha256": "39f006df9548b4d5da968b9302fc14678fabaf2009802bc09a68fb23dd146bc6",
+    "processed": 548,
+    "metrics": {
+      "precision": 0.6038414568750002,
+      "recall": 0.49803422903720157,
+      "f1": 0.5458577919095748,
+      "map50": 0.49866955424768766,
+      "map75": 0.30723749336874034,
+      "map": 0.30102406175012464
+    },
+    "classes": {
+      "pedestrian": 0.27546956152275814,
+      "people": 0.21040467410416047,
+      "bicycle": 0.12018245582811515,
+      "car": 0.6117613735906846,
+      "van": 0.3743373340452529,
+      "truck": 0.2868935655269231,
+      "tricycle": 0.22367851862066526,
+      "awning-tricycle": 0.1284998051525629,
+      "bus": 0.4767896680762974,
+      "motor": 0.3022236610338263
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.5656299460528684,
+        "map75": 0.23046480269069117,
+        "map": 0.27546956152275814
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.5036551671673978,
+        "map75": 0.13582410211518997,
+        "map": 0.21040467410416047
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.25635674216507853,
+        "map75": 0.08832453472274138,
+        "map": 0.12018245582811515
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.8587861672299577,
+        "map75": 0.6881050128550257,
+        "map": 0.6117613735906846
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.5255682357205285,
+        "map75": 0.4224229143563486,
+        "map": 0.3743373340452529
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.4184441475939277,
+        "map75": 0.320233047034964,
+        "map": 0.2868935655269231
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.390347275160268,
+        "map75": 0.23151027493007728,
+        "map": 0.22367851862066526
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.20915619712114952,
+        "map75": 0.14273097159717016,
+        "map": 0.1284998051525629
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6402270716268187,
+        "map75": 0.557404774461465,
+        "map": 0.4767896680762974
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.6185245926388818,
+        "map75": 0.25535449892372986,
+        "map": 0.3022236610338263
+      }
+    },
+    "class_precision": [
+      0.698138057067082,
+      0.6421424246656326,
+      0.4371351144195974,
+      0.8099812780297062,
+      0.5762933799168801,
+      0.5844791284942054,
+      0.47353652265131846,
+      0.4332044933131687,
+      0.7342279972061894,
+      0.6492761729862222
+    ],
+    "class_recall": [
+      0.5211442786069652,
+      0.5010731707317073,
+      0.28438228438228436,
+      0.8480421542968596,
+      0.526144053971902,
+      0.412,
+      0.43157894736842106,
+      0.22986745527902652,
+      0.6053567734057463,
+      0.6207531723291035
+    ]
+  },
+  "Full/test/summary.json": {
+    "arm": "Full",
+    "split": "test",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "test",
+      "quantize": null
+    },
+    "checkpoint_sha256": "39f006df9548b4d5da968b9302fc14678fabaf2009802bc09a68fb23dd146bc6",
+    "processed": 1610,
+    "metrics": {
+      "precision": 0.5383930673689157,
+      "recall": 0.43633591598180416,
+      "f1": 0.4820216413409793,
+      "map50": 0.4124088910885405,
+      "map75": 0.235463862958051,
+      "map": 0.23604003874539384
+    },
+    "classes": {
+      "pedestrian": 0.16123335347427203,
+      "people": 0.1001942356881574,
+      "bicycle": 0.08377233626797374,
+      "car": 0.5118564072823493,
+      "van": 0.30299512852655,
+      "truck": 0.291936477976564,
+      "tricycle": 0.16009383849691222,
+      "awning-tricycle": 0.13263837196107414,
+      "bus": 0.4347237263867771,
+      "motor": 0.18095651139330926
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.3984048029529298,
+        "map75": 0.10031671691396757,
+        "map": 0.16123335347427203
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.2816394456030476,
+        "map75": 0.041803549648858546,
+        "map": 0.1001942356881574
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.19631966142705948,
+        "map75": 0.054599541384539554,
+        "map": 0.08377233626797374
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.7935373488528177,
+        "map75": 0.5689529162334963,
+        "map": 0.5118564072823493
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.4449738943783049,
+        "map75": 0.3524183667270349,
+        "map": 0.30299512852655
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.4464337946730525,
+        "map75": 0.3332972826179181,
+        "map": 0.291936477976564
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.29305733181125077,
+        "map75": 0.15555259436717422,
+        "map": 0.16009383849691222
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.22412827070813748,
+        "map75": 0.14107543357826213,
+        "map": 0.13263837196107414
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6189250742994281,
+        "map75": 0.4875638732846608,
+        "map": 0.4347237263867771
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.42666928617937666,
+        "map75": 0.11905835482459821,
+        "map": 0.18095651139330926
+      }
+    },
+    "class_precision": [
+      0.6119871685651522,
+      0.5906764904154141,
+      0.38530211926178615,
+      0.7664825040087515,
+      0.46049908546709034,
+      0.5004318537379886,
+      0.36599418901217,
+      0.40921468382732135,
+      0.7332505274414892,
+      0.560092051951993
+    ],
+    "class_recall": [
+      0.38817480719794345,
+      0.277475837462891,
+      0.217357910906298,
+      0.7902685759065328,
+      0.5018194420377751,
+      0.49116209101165853,
+      0.39245283018867927,
+      0.25440121922252085,
+      0.5802721088435374,
+      0.4699743370402053
+    ]
+  },
+  "GB/val/summary.json": {
+    "arm": "GB",
+    "split": "val",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "val",
+      "quantize": null
+    },
+    "checkpoint_sha256": "661a27e0be7bd7e7685e7a8ac889d558e0051306ff0bb72acc8f154c023a377a",
+    "processed": 548,
+    "metrics": {
+      "precision": 0.5967473080097705,
+      "recall": 0.4871087192231327,
+      "f1": 0.5363827106199761,
+      "map50": 0.4875746060409131,
+      "map75": 0.29617429009386426,
+      "map": 0.2926746642810018
+    },
+    "classes": {
+      "pedestrian": 0.2689517939721976,
+      "people": 0.20844790743606656,
+      "bicycle": 0.11286900028813374,
+      "car": 0.6139368028034798,
+      "van": 0.37862941403021166,
+      "truck": 0.2789912955746609,
+      "tricycle": 0.196547027269201,
+      "awning-tricycle": 0.1282678390089034,
+      "bus": 0.4438633308194305,
+      "motor": 0.2962422316077333
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.5533898974809457,
+        "map75": 0.2273678314412942,
+        "map": 0.2689517939721976
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.4943533079168906,
+        "map75": 0.1373862096857863,
+        "map": 0.20844790743606656
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.24635723586640426,
+        "map75": 0.08088952843000755,
+        "map": 0.11286900028813374
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.8522111727922224,
+        "map75": 0.6955737481993034,
+        "map": 0.6139368028034798
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.5294371010691077,
+        "map75": 0.42871126864650533,
+        "map": 0.37862941403021166
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.4265542904489179,
+        "map75": 0.3024005746969265,
+        "map": 0.2789912955746609
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.3509144204830295,
+        "map75": 0.1978366564607002,
+        "map": 0.196547027269201
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.2075542467472502,
+        "map75": 0.13583619867787394,
+        "map": 0.1282678390089034
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6042043112784471,
+        "map75": 0.5043515023774785,
+        "map": 0.4438633308194305
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.6107700763259163,
+        "map75": 0.251389382322767,
+        "map": 0.2962422316077333
+      }
+    },
+    "class_precision": [
+      0.6756555433682004,
+      0.6535624202090627,
+      0.4326138995631554,
+      0.799574993293149,
+      0.567426926829622,
+      0.5884198435996975,
+      0.48310204862748013,
+      0.39345748148824466,
+      0.7481003366278721,
+      0.6255595864912215
+    ],
+    "class_recall": [
+      0.5188828584350973,
+      0.4881032979188813,
+      0.2533022533022533,
+      0.8447810011376564,
+      0.5311392405063291,
+      0.404,
+      0.3923444976076555,
+      0.22436003938016094,
+      0.5936254980079682,
+      0.6205485059353254
+    ]
+  },
+  "GB/test/summary.json": {
+    "arm": "GB",
+    "split": "test",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "test",
+      "quantize": null
+    },
+    "checkpoint_sha256": "661a27e0be7bd7e7685e7a8ac889d558e0051306ff0bb72acc8f154c023a377a",
+    "processed": 1610,
+    "metrics": {
+      "precision": 0.5322773090400384,
+      "recall": 0.4377488723030768,
+      "f1": 0.4804072225394412,
+      "map50": 0.41082749149248965,
+      "map75": 0.23692783154374758,
+      "map": 0.236150399921782
+    },
+    "classes": {
+      "pedestrian": 0.15533074892830584,
+      "people": 0.10060538799251477,
+      "bicycle": 0.07844689345760199,
+      "car": 0.5131240943963818,
+      "van": 0.30345875997694793,
+      "truck": 0.30366490958546233,
+      "tricycle": 0.15378113533462479,
+      "awning-tricycle": 0.1451008716135386,
+      "bus": 0.4297056717828488,
+      "motor": 0.17828552614959312
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.38175181384131274,
+        "map75": 0.09918860726266789,
+        "map": 0.15533074892830584
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.2779994607337919,
+        "map75": 0.0408070686963519,
+        "map": 0.10060538799251477
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.1833478543079213,
+        "map75": 0.05289423374611833,
+        "map": 0.07844689345760199
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.792033114296705,
+        "map75": 0.5712828274899916,
+        "map": 0.5131240943963818
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.44273510207885103,
+        "map75": 0.35462599277577167,
+        "map": 0.30345875997694793
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.46748861727558816,
+        "map75": 0.33434523097984004,
+        "map": 0.30366490958546233
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.283125376396757,
+        "map75": 0.15910600179966683,
+        "map": 0.15378113533462479
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.24419225934167768,
+        "map75": 0.1574937847162599,
+        "map": 0.1451008716135386
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6146209418386608,
+        "map75": 0.48321650427420526,
+        "map": 0.4297056717828488
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.42098037481363065,
+        "map75": 0.11631806369660225,
+        "map": 0.17828552614959312
+      }
+    },
+    "class_precision": [
+      0.6064990465582646,
+      0.5910008144050561,
+      0.38518834304642924,
+      0.7568217152605696,
+      0.45713916377320685,
+      0.5115392282514616,
+      0.3418049900732651,
+      0.43503764509546944,
+      0.7076611462593175,
+      0.5300809976773448
+    ],
+    "class_recall": [
+      0.374654860516043,
+      0.270702634880803,
+      0.1966205837173579,
+      0.793184349436993,
+      0.5129093744584994,
+      0.5137269650244453,
+      0.38113207547169814,
+      0.27879799666110183,
+      0.5845879410332022,
+      0.47117194183062444
+    ]
+  },
+  "GF/val/summary.json": {
+    "arm": "GF",
+    "split": "val",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-fia-20260909/formal-seed0-lrs_gfdr_fia-v1/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "val",
+      "quantize": null
+    },
+    "checkpoint_sha256": "c7e6e6b72a0c14a60ef27a91f70f7d80b0d9c53b6fe0021a21787546d5466d63",
+    "processed": 548,
+    "metrics": {
+      "precision": 0.5943600652705748,
+      "recall": 0.49970217805847783,
+      "f1": 0.5429362378194382,
+      "map50": 0.49525900485033053,
+      "map75": 0.3036949203638362,
+      "map": 0.2975515947904881
+    },
+    "classes": {
+      "pedestrian": 0.278687915255499,
+      "people": 0.21524094370593364,
+      "bicycle": 0.11626393349604161,
+      "car": 0.6149290611423706,
+      "van": 0.38214314414586414,
+      "truck": 0.2803087434049695,
+      "tricycle": 0.2092582717000334,
+      "awning-tricycle": 0.12411953655531638,
+      "bus": 0.45870966110399536,
+      "motor": 0.29585473739485724
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.5731852009422893,
+        "map75": 0.23364529719276178,
+        "map": 0.278687915255499
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.5099157400762455,
+        "map75": 0.14005865830294115,
+        "map": 0.21524094370593364
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.2575866980465274,
+        "map75": 0.07744402589264615,
+        "map": 0.11626393349604161
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.8609349827847584,
+        "map75": 0.69806669655698,
+        "map": 0.6149290611423706
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.5343378393098499,
+        "map75": 0.43788724838113213,
+        "map": 0.38214314414586414
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.4113901079210527,
+        "map75": 0.315908878549535,
+        "map": 0.2803087434049695
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.3661894630483377,
+        "map75": 0.21372531270316952,
+        "map": 0.2092582717000334
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.20069588395475782,
+        "map75": 0.13169007063019272,
+        "map": 0.12411953655531638
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6266495401379569,
+        "map75": 0.5407110221349158,
+        "map": 0.45870966110399536
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.6117045922815287,
+        "map75": 0.24781199329408726,
+        "map": 0.29585473739485724
+      }
+    },
+    "class_precision": [
+      0.6821120858607908,
+      0.6439244269258727,
+      0.4014837684321879,
+      0.8088400232066036,
+      0.550171732334776,
+      0.580095793237858,
+      0.4712180594776825,
+      0.4286394291492031,
+      0.7501537204955627,
+      0.6269616135852095
+    ],
+    "class_recall": [
+      0.5342571080849885,
+      0.5014634146341463,
+      0.2766122766122766,
+      0.8482650739476678,
+      0.5346835443037975,
+      0.4015550622570833,
+      0.4229665071770335,
+      0.2575187969924812,
+      0.5936254980079682,
+      0.6260744985673352
+    ]
+  },
+  "GF/test/summary.json": {
+    "arm": "GF",
+    "split": "test",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-fia-20260909/formal-seed0-lrs_gfdr_fia-v1/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "test",
+      "quantize": null
+    },
+    "checkpoint_sha256": "c7e6e6b72a0c14a60ef27a91f70f7d80b0d9c53b6fe0021a21787546d5466d63",
+    "processed": 1610,
+    "metrics": {
+      "precision": 0.527071627511998,
+      "recall": 0.432810845522854,
+      "f1": 0.47531301625567196,
+      "map50": 0.4062605355228401,
+      "map75": 0.2312906627645833,
+      "map": 0.2322347126075014
+    },
+    "classes": {
+      "pedestrian": 0.15862575247024382,
+      "people": 0.1026231940801254,
+      "bicycle": 0.08064115382461254,
+      "car": 0.509684347161055,
+      "van": 0.28988340720960065,
+      "truck": 0.29214660672804393,
+      "tricycle": 0.14892685905246927,
+      "awning-tricycle": 0.13181127268758192,
+      "bus": 0.4286445324152294,
+      "motor": 0.179360000446052
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.3926385425011107,
+        "map75": 0.10009182912243055,
+        "map": 0.15862575247024382
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.28437726502910243,
+        "map75": 0.04282516889334,
+        "map": 0.1026231940801254
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.18749714267244239,
+        "map75": 0.055586647192283414,
+        "map": 0.08064115382461254
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.7917102231902567,
+        "map75": 0.5631841931746959,
+        "map": 0.509684347161055
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.42450647140895437,
+        "map75": 0.34151029420186774,
+        "map": 0.28988340720960065
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.4505930417972659,
+        "map75": 0.32902321550770663,
+        "map": 0.29214660672804393
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.2746910785985407,
+        "map75": 0.14669517535235743,
+        "map": 0.14892685905246927
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.2228327165936133,
+        "map75": 0.1425380760808609,
+        "map": 0.13181127268758192
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6097989244951147,
+        "map75": 0.4795748615893655,
+        "map": 0.4286445324152294
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.4239599489419994,
+        "map75": 0.11187716653092498,
+        "map": 0.179360000446052
+      }
+    },
+    "class_precision": [
+      0.6080399399422867,
+      0.5957589044584656,
+      0.3862398079803469,
+      0.7693867491337343,
+      0.42385411261347256,
+      0.5008423107061154,
+      0.32772322491016453,
+      0.41670373298144897,
+      0.7093162656005709,
+      0.5328512267933726
+    ],
+    "class_recall": [
+      0.3792166342301519,
+      0.2728983688833124,
+      0.20967741935483872,
+      0.7825496982116441,
+      0.5080575290244325,
+      0.48678215342510794,
+      0.37735849056603776,
+      0.27212020033388984,
+      0.5660518961862924,
+      0.4733960650128315
+    ]
+  },
+  "G/val/summary.json": {
+    "arm": "G",
+    "split": "val",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "val",
+      "quantize": null
+    },
+    "checkpoint_sha256": "df76a0c8bd5b215d378acb87eb240d7d1dfb44190167cd8c1e19f86fa18c969d",
+    "processed": 548,
+    "metrics": {
+      "precision": 0.5944945565803327,
+      "recall": 0.4942285820920752,
+      "f1": 0.5397445710916645,
+      "map50": 0.49383381381854347,
+      "map75": 0.29912818873299657,
+      "map": 0.29616405122274125
+    },
+    "classes": {
+      "pedestrian": 0.2727885125940782,
+      "people": 0.21457530892052595,
+      "bicycle": 0.11510410545402008,
+      "car": 0.6145256065593938,
+      "van": 0.38301933503971375,
+      "truck": 0.27782259410737964,
+      "tricycle": 0.20320109740186004,
+      "awning-tricycle": 0.13549741158515402,
+      "bus": 0.446648611209515,
+      "motor": 0.29845792935577264
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.5672254793804509,
+        "map75": 0.22615454549869823,
+        "map": 0.2727885125940782
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.5021962478642307,
+        "map75": 0.14198677093670795,
+        "map": 0.21457530892052595
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.25148921374736005,
+        "map75": 0.08249772368736458,
+        "map": 0.11510410545402008
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.8607230338226495,
+        "map75": 0.6961046611332427,
+        "map": 0.6145256065593938
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.5355499644753976,
+        "map75": 0.43521589528193216,
+        "map": 0.38301933503971375
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.4138232302758112,
+        "map75": 0.29793535445904934,
+        "map": 0.27782259410737964
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.36135687681849793,
+        "map75": 0.208267144924836,
+        "map": 0.20320109740186004
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.2169347100843084,
+        "map75": 0.14097661484929205,
+        "map": 0.13549741158515402
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6165293771444269,
+        "map75": 0.5140832819080924,
+        "map": 0.446648611209515
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.612510004572302,
+        "map75": 0.2480598946507509,
+        "map": 0.29845792935577264
+      }
+    },
+    "class_precision": [
+      0.6852831345227877,
+      0.6543728690010505,
+      0.41013662575727106,
+      0.8089202161626481,
+      0.5820904464748576,
+      0.571574036944735,
+      0.49070640814249933,
+      0.4051668379498727,
+      0.6881159163735165,
+      0.6485790744740882
+    ],
+    "class_recall": [
+      0.52146750410386,
+      0.496390243902439,
+      0.27117327117327117,
+      0.8468430034129693,
+      0.5326582278481012,
+      0.42,
+      0.40574162679425835,
+      0.2387218045112782,
+      0.5856573705179283,
+      0.6236327686566464
+    ]
+  },
+  "G/test/summary.json": {
+    "arm": "G",
+    "split": "test",
+    "environment": {
+      "python": "3.10.21",
+      "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "package": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py",
+      "validator_sha256": "52c70c97bbe3f224b2dcce9dd862b98a50d4b4649b0519871237e20d58d672cb",
+      "cuda": "12.1"
+    },
+    "protocol": {
+      "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+      "model": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+      "task": "detect",
+      "mode": "val",
+      "imgsz": 640,
+      "batch": 8,
+      "workers": 8,
+      "conf": 0.001,
+      "max_det": 300,
+      "nms": false,
+      "device": "0",
+      "cache": false,
+      "rect": false,
+      "plots": false,
+      "save_json": false,
+      "save_txt": false,
+      "verbose": true,
+      "split": "test",
+      "quantize": null
+    },
+    "checkpoint_sha256": "df76a0c8bd5b215d378acb87eb240d7d1dfb44190167cd8c1e19f86fa18c969d",
+    "processed": 1610,
+    "metrics": {
+      "precision": 0.5260880850310177,
+      "recall": 0.4377668199783441,
+      "f1": 0.4778808652953597,
+      "map50": 0.4110079730261288,
+      "map75": 0.23644478997824328,
+      "map": 0.23618782909072553
+    },
+    "classes": {
+      "pedestrian": 0.15902730890002575,
+      "people": 0.10039918589325163,
+      "bicycle": 0.07676976394025739,
+      "car": 0.511032507897464,
+      "van": 0.30614851672336585,
+      "truck": 0.303878347426349,
+      "tricycle": 0.1548196923166584,
+      "awning-tricycle": 0.1355398265698609,
+      "bus": 0.43531531083349806,
+      "motor": 0.1789478304065243
+    },
+    "class_details": {
+      "pedestrian": {
+        "id": 0,
+        "map50": 0.3915589824742832,
+        "map75": 0.10029176680013786,
+        "map": 0.15902730890002575
+      },
+      "people": {
+        "id": 1,
+        "map50": 0.2871273654540038,
+        "map75": 0.04018986499535611,
+        "map": 0.10039918589325163
+      },
+      "bicycle": {
+        "id": 2,
+        "map50": 0.17743271452017284,
+        "map75": 0.051350452920970686,
+        "map": 0.07676976394025739
+      },
+      "car": {
+        "id": 3,
+        "map50": 0.7926835525326651,
+        "map75": 0.5672205627954963,
+        "map": 0.511032507897464
+      },
+      "van": {
+        "id": 4,
+        "map50": 0.44707541130932127,
+        "map75": 0.35770171789780375,
+        "map": 0.30614851672336585
+      },
+      "truck": {
+        "id": 5,
+        "map50": 0.46207095397857434,
+        "map75": 0.3411528012020392,
+        "map": 0.303878347426349
+      },
+      "tricycle": {
+        "id": 6,
+        "map50": 0.2831307345239834,
+        "map75": 0.14480603325171912,
+        "map": 0.1548196923166584
+      },
+      "awning-tricycle": {
+        "id": 7,
+        "map50": 0.23022639135364753,
+        "map75": 0.15204697112243254,
+        "map": 0.1355398265698609
+      },
+      "bus": {
+        "id": 8,
+        "map50": 0.6146811954213727,
+        "map75": 0.493796785224933,
+        "map": 0.43531531083349806
+      },
+      "motor": {
+        "id": 9,
+        "map50": 0.4240924286932639,
+        "map75": 0.11589094357154385,
+        "map": 0.1789478304065243
+      }
+    },
+    "class_precision": [
+      0.605957976854397,
+      0.6005015108781272,
+      0.34559618987139834,
+      0.759788680081362,
+      0.4466791648970483,
+      0.49323638301465766,
+      0.3444486978137489,
+      0.4275082155150459,
+      0.7018201655204434,
+      0.5353438658639469
+    ],
+    "class_recall": [
+      0.37846329620108543,
+      0.2807775829322693,
+      0.1827956989247312,
+      0.7895205528246776,
+      0.5120429734881303,
+      0.4990597969161339,
+      0.39556300296445096,
+      0.2854757929883139,
+      0.573209374752894,
+      0.4807601277907549
+    ]
+  }
+}

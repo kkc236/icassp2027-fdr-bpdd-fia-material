@@ -1,0 +1,128 @@
+{
+  "kind": "frozen_baseline_anchor_calibrated_test800",
+  "status": "verified",
+  "processed_images": 1610,
+  "instances": 75102,
+  "checkpoint_unchanged": true,
+  "fixed_anchor_scale": 0.8,
+  "test_parameter_search": false,
+  "rows": [
+    {
+      "arm": "Baseline anchor-calibrated",
+      "imgsz": 800,
+      "metrics": {
+        "precision": 0.40505898160345294,
+        "recall": 0.3522001373580541,
+        "f1": 0.37678471050832313,
+        "map50": 0.2996699409138242,
+        "map75": 0.14442455445158697,
+        "map": 0.15484704235870173
+      },
+      "current": true
+    },
+    {
+      "arm": "Baseline native",
+      "imgsz": 800,
+      "metrics": {
+        "f1": 0.3578691003143428,
+        "map": 0.12824051706085107,
+        "map50": 0.2788541721799859,
+        "map75": 0.10370774969374638,
+        "precision": 0.37888909698512885,
+        "recall": 0.33905880713392067
+      },
+      "current": false
+    },
+    {
+      "arm": "LRS-GFDR native",
+      "imgsz": 800,
+      "metrics": {
+        "f1": 0.48879701895561084,
+        "map": 0.24059504210922178,
+        "map50": 0.4238713773120077,
+        "map75": 0.2415242574935219,
+        "precision": 0.5391444920279976,
+        "recall": 0.44704972432447904
+      },
+      "current": false
+    },
+    {
+      "arm": "LRS-GFDR + Capacity-BPDD + FIA native",
+      "imgsz": 800,
+      "metrics": {
+        "f1": 0.4883642379565979,
+        "map": 0.24159786358876884,
+        "map50": 0.42463364906399476,
+        "map75": 0.2421858108043958,
+        "precision": 0.5459016287534417,
+        "recall": 0.44179912847552283
+      },
+      "current": false
+    },
+    {
+      "arm": "Baseline native",
+      "imgsz": 640,
+      "metrics": {
+        "f1": 0.39469128821446137,
+        "map": 0.1774255119033785,
+        "map50": 0.32253902272226276,
+        "map75": 0.17565032033246722,
+        "precision": 0.41975870360701223,
+        "recall": 0.3724491354925286
+      },
+      "current": false
+    },
+    {
+      "arm": "LRS-GFDR native",
+      "imgsz": 640,
+      "metrics": {
+        "f1": 0.4778808652953597,
+        "map": 0.23618782909072553,
+        "map50": 0.4110079730261288,
+        "map75": 0.23644478997824328,
+        "precision": 0.5260880850310177,
+        "recall": 0.4377668199783441
+      },
+      "current": false
+    },
+    {
+      "arm": "LRS-GFDR + Capacity-BPDD + FIA native",
+      "imgsz": 640,
+      "metrics": {
+        "f1": 0.4820216413409793,
+        "map": 0.23604003874539384,
+        "map50": 0.4124088910885405,
+        "map75": 0.235463862958051,
+        "precision": 0.5383930673689157,
+        "recall": 0.43633591598180416
+      },
+      "current": false
+    }
+  ],
+  "deltas": {
+    "corrected_minus_native800_pp": {
+      "precision": 2.616988461832409,
+      "recall": 1.314133022413344,
+      "f1": 1.8915610193980303,
+      "map50": 2.081576873383828,
+      "map75": 4.071680475784059,
+      "map": 2.6606525297850654
+    },
+    "corrected800_minus_native640_pp": {
+      "precision": -1.469972200355929,
+      "recall": -2.0248998134474503,
+      "f1": -1.7906577706138238,
+      "map50": -2.286908180843855,
+      "map75": -3.1225765880880245,
+      "map": -2.2578469544676767
+    },
+    "G800_minus_corrected_baseline_pp": 8.574799975052006,
+    "Full800_minus_corrected_baseline_pp": 8.67508212300671
+  },
+  "comparison_source": {
+    "path": "paper_material\\evidence\\reevaluation_completion_20260915\\baseline_best_800_20260915\\RESULTS.json",
+    "sha256": "db59b55385f8ce04703c76d33c466b4e25500b7cbe61b2eaa69413460b07fa04"
+  },
+  "scope": "Project converted VisDrone test-dev labels and native RTDETRValidator; not the full official challenge evaluator.",
+  "comparability": "All 800 rows share the listed dataset/size/evaluator settings; baseline alone uses anchor scaling. Cross-model gaps are not newly established strict causal module gains."
+}

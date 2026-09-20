@@ -1,0 +1,86 @@
+{
+  "scope": "Five VisDrone efficiency checkpoint identities and explicitly examined local candidates; no exhaustive scan of all drives",
+  "checkpoints": [
+    {
+      "arm": "Baseline",
+      "source": "02_evidence/batch8_efficiency_20260916/v1/Baseline.json",
+      "server_path": "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+      "sha256": "9c242711f44b7e68b360af904ab7c44f64505c7136b7e7f90481092ae3308af7",
+      "unchanged_after_measurement": true,
+      "matching_local_files": [
+        "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/tmp-work/baseline-800-inputs/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt"
+      ],
+      "binary_in_git_bundle": false,
+      "release_url": "https://github.com/kkc236/uav-detection-baselines/releases/tag/fdr-formal-control-d97e1eb7-live",
+      "asset_name": "fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+      "local_file_sha256_verified": true,
+      "metadata_path": "02_evidence/baseline_strict_val/fdr-formal-seed0-control-d97e1eb7-epoch-0100.json"
+    },
+    {
+      "arm": "G",
+      "source": "02_evidence/batch8_efficiency_20260916/v1/G.json",
+      "server_path": "/root/sj-tmp/runs/visdrone-v2-existing-state-20260907/formal-seed0-lrs_fdr_feasible-v2/weights/best.pt",
+      "sha256": "df76a0c8bd5b215d378acb87eb240d7d1dfb44190167cd8c1e19f86fa18c969d",
+      "unchanged_after_measurement": true,
+      "matching_local_files": [],
+      "binary_in_git_bundle": false
+    },
+    {
+      "arm": "G_F",
+      "source": "02_evidence/batch8_efficiency_20260916/v1/G_F.json",
+      "server_path": "/root/sj-tmp/runs/visdrone-v2-lrs-gfdr-fia-20260909/formal-seed0-lrs_gfdr_fia-v1/weights/best.pt",
+      "sha256": "c7e6e6b72a0c14a60ef27a91f70f7d80b0d9c53b6fe0021a21787546d5466d63",
+      "unchanged_after_measurement": true,
+      "matching_local_files": [],
+      "binary_in_git_bundle": false
+    },
+    {
+      "arm": "G_B",
+      "source": "02_evidence/batch8_efficiency_20260916/v1/G_B.json",
+      "server_path": "/root/sj-tmp/runs/formal-safe-capacity-bpdd-20260913-lrsv2/formal-seed0-capacity-v3-safe-bpdd/weights/best.pt",
+      "sha256": "661a27e0be7bd7e7685e7a8ac889d558e0051306ff0bb72acc8f154c023a377a",
+      "unchanged_after_measurement": true,
+      "matching_local_files": [],
+      "binary_in_git_bundle": false
+    },
+    {
+      "arm": "Full",
+      "source": "02_evidence/batch8_efficiency_20260916/v1/Full.json",
+      "server_path": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+      "sha256": "39f006df9548b4d5da968b9302fc14678fabaf2009802bc09a68fb23dd146bc6",
+      "unchanged_after_measurement": true,
+      "matching_local_files": [],
+      "binary_in_git_bundle": false
+    }
+  ],
+  "local_candidates_checked": [
+    {
+      "path": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/artifacts/g-formal100-best.pt",
+      "sha256": "5005074edb0dda28c76a25763d14a3efa65c27bccc8bfa17fc05d84fe07dc674",
+      "bytes": 67291409
+    },
+    {
+      "path": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/artifacts/matched-baseline-4090/matched-baseline-best-epoch-0100.pt",
+      "sha256": "54ce60289dd34c6750b8ba5f7516eefcf3afef6c174c6e4f3b1ef810c883099b",
+      "bytes": 66262262
+    },
+    {
+      "path": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/tmp-work/baseline-800-inputs/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+      "sha256": "9c242711f44b7e68b360af904ab7c44f64505c7136b7e7f90481092ae3308af7",
+      "bytes": 197665100
+    }
+  ],
+  "uavdt": {
+    "identity": "author-confirmed Full",
+    "checkpoint_in_supplied_zip": false,
+    "checkpoint_sha256": null,
+    "actual_configuration_parity_verified": false
+  },
+  "raw_prediction_availability": {
+    "dfine_final_val.jsonl": "9f2892072bfc5b60991f8d0543664ffca177e492a3c01304a4ee5de3a8dbf51c",
+    "joint_final_val.jsonl": "d946fc4fff304873707ea558f9b702644873f1a7c7b00496fb9512ca74783d72"
+  },
+  "full_datasets_in_bundle": false,
+  "gt_subset_in_bundle": "01_manuscript/qualitative/gt_reconstructed/instances_val.json.gz",
+  "large_binary_policy": "Record identities and locations; do not add model weights or full image datasets to Git"
+}

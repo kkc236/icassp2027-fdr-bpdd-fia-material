@@ -1,0 +1,11 @@
+{
+  "status": "author_confirmed_full",
+  "date": "2026-09-19",
+  "source": "Direct user message in current task",
+  "user_statement": "这就是full",
+  "ap_baseline": 14.12,
+  "ap_full": 16.96,
+  "checkpoint_verified": false,
+  "bundled_source_matches_current_full": false,
+  "interpretation": "Full is the author-confirmed run identity; bundled source is an earlier implementation. Confirmation does not establish exact source parity, official split mapping or matched realized training recipes."
+}

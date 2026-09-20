@@ -1,0 +1,69 @@
+{
+  "collection_date": "2026-09-17",
+  "official_programs": [
+    "https://iccvm.org/2026/program.htm",
+    "https://iccvm.org/2025/program.htm"
+  ],
+  "papers": [
+    {
+      "file": "01_LME-DETR_CVM2026.pdf",
+      "short_title": "LME-DETR",
+      "year": 2026,
+      "url": "https://iccvm.org/2026/files/papers/265.pdf",
+      "obtained_via": "existing_official_pdf",
+      "pages": 14,
+      "bytes": 8867786,
+      "sha256": "3c39348271fe29dc4fd8fa77bac238dd246d1bf834d88bd40a95913d09944186"
+    },
+    {
+      "file": "02_SD-Net_CVM2026.pdf",
+      "short_title": "SD-Net",
+      "year": 2026,
+      "url": "https://iccvm.org/2026/files/papers/691.pdf",
+      "obtained_via": "existing_official_pdf",
+      "pages": 14,
+      "bytes": 15596401,
+      "sha256": "636f2f2a0d762a320f8661ca745e55fec0b3002bafaf5772a81704f1770aa3e3"
+    },
+    {
+      "file": "03_FGHDet_CVM2025.pdf",
+      "short_title": "FGHDet",
+      "year": 2025,
+      "url": "https://iccvm.org/2025/papers/s8p2-368-jcst.pdf",
+      "obtained_via": "existing_official_pdf",
+      "pages": 14,
+      "bytes": 5140222,
+      "sha256": "7b3a78a7a55db9b280042dcbcd7f4997e64fcbdf2e79dca1960b50fcc47317f0"
+    },
+    {
+      "file": "04_DASSF_CVM2025.pdf",
+      "short_title": "DASSF",
+      "year": 2025,
+      "url": "https://iccvm.org/2025/papers/lncs/813.pdf",
+      "obtained_via": "existing_official_pdf",
+      "pages": 11,
+      "bytes": 1962698,
+      "sha256": "d1e3ec596e988b713c1c7f5063bcb1383a0a17c268c13f91428ebc7304efe00c"
+    },
+    {
+      "file": "05_BiCoR-Seg_CVM2026.pdf",
+      "short_title": "BiCoR-Seg",
+      "year": 2026,
+      "url": "https://iccvm.org/2026/files/papers/301.pdf",
+      "obtained_via": "downloaded_from_official_url",
+      "pages": 14,
+      "bytes": 5796365,
+      "sha256": "a9673f49066a81293e1289f771141c65f9e84e0c8780785eb85743f9376eca68"
+    },
+    {
+      "file": "06_TexHOI_CVM2025.pdf",
+      "short_title": "TexHOI",
+      "year": 2025,
+      "url": "https://iccvm.org/2025/papers/s1p4-592-tvcg.pdf",
+      "obtained_via": "downloaded_from_official_url",
+      "pages": 15,
+      "bytes": 4545408,
+      "sha256": "bb2dab7b5bfcf0fb24bc2ea2c6c6764ed294b6f8bd343ad954e79c7e61e2288c"
+    }
+  ]
+}

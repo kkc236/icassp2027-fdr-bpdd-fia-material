@@ -1,0 +1,157 @@
+{
+  "status": "complete",
+  "kind": "frozen-baseline-native-validator-anchor-scale-v1",
+  "protocol": {
+    "model": "/root/sj-tmp/checkpoints/fdr-formal-d97e1eb7/fdr-formal-seed0-control-d97e1eb7-epoch-0100.pt",
+    "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "task": "detect",
+    "mode": "val",
+    "split": "val",
+    "imgsz": 800,
+    "batch": 8,
+    "workers": 8,
+    "device": "0",
+    "conf": 0.001,
+    "max_det": 300,
+    "nms": false,
+    "half": false,
+    "rect": false,
+    "cache": false,
+    "plots": false,
+    "save_json": false,
+    "save_txt": false,
+    "verbose": true
+  },
+  "anchor_correction": {
+    "protocol": "reference-anchor-wh-scale-v1",
+    "requested": true,
+    "applied": true,
+    "reference_imgsz": 640,
+    "inference_imgsz": 800,
+    "scale": 0.8,
+    "training_changed": false,
+    "weights_changed": false
+  },
+  "hashes_before": {
+    "checkpoint": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+    "data_yaml": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63"
+  },
+  "hashes_after": {
+    "checkpoint": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+    "data_yaml": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63"
+  },
+  "loaded_ema": true,
+  "processed_images": 548,
+  "actual_input_shapes": [
+    [
+      4,
+      3,
+      800,
+      800
+    ],
+    [
+      8,
+      3,
+      800,
+      800
+    ]
+  ],
+  "actual_input_dtypes": [
+    "torch.float32"
+  ],
+  "wall_seconds": 7.687878074590117,
+  "parameter_count": 32004290,
+  "environment": {
+    "python": "3.10.21",
+    "torch": "2.5.1+cu121",
+    "ultralytics": "8.4.90",
+    "cuda": "12.1"
+  },
+  "implementation_sha256": {
+    "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py": "2F8BCF02BEE6294489226FCD71CE3D7A44D992DEF83A8927EB7B91B33C416998",
+    "/root/sj-tmp/lrs-v2/code/src/inference_anchor_scale.py": "92AA5F3A6A2C869CCFF66CEC16391575FAB231BEF3D870859290EE291DDF358B"
+  },
+  "native_anchor_generator_sha256": "126ae61aa633285a3263c32a49a903b1ff92da6b084ee7ea279c37f91b6e7bb3",
+  "metrics": {
+    "precision": 0.4518127286096451,
+    "recall": 0.4073314588688285,
+    "f1": 0.4284206086994775,
+    "map50": 0.36315881991274324,
+    "map75": 0.18236104842409095,
+    "map": 0.1910801258687437
+  },
+  "classes": {
+    "pedestrian": 0.14228584640692699,
+    "people": 0.09117927833153272,
+    "bicycle": 0.04283971619736891,
+    "car": 0.4863919225316023,
+    "van": 0.2807593794086719,
+    "truck": 0.18883694646855081,
+    "tricycle": 0.11117179149223991,
+    "awning-tricycle": 0.0762511681312076,
+    "bus": 0.3301629109147313,
+    "motor": 0.16092229880460468
+  },
+  "class_details": {
+    "pedestrian": {
+      "id": 0,
+      "map50": 0.35532478366668,
+      "map75": 0.086636135258409,
+      "map": 0.14228584640692699
+    },
+    "people": {
+      "id": 1,
+      "map50": 0.2612857647013124,
+      "map75": 0.03825257941767625,
+      "map": 0.09117927833153272
+    },
+    "bicycle": {
+      "id": 2,
+      "map50": 0.11931993020702317,
+      "map75": 0.021586746898080933,
+      "map": 0.04283971619736891
+    },
+    "car": {
+      "id": 3,
+      "map50": 0.7828403936402752,
+      "map75": 0.5259316819580764,
+      "map": 0.4863919225316023
+    },
+    "van": {
+      "id": 4,
+      "map50": 0.4591473181867723,
+      "map75": 0.30552975384109493,
+      "map": 0.2807593794086719
+    },
+    "truck": {
+      "id": 5,
+      "map50": 0.3088763709782572,
+      "map75": 0.21068505675373767,
+      "map": 0.18883694646855081
+    },
+    "tricycle": {
+      "id": 6,
+      "map50": 0.23353728905525972,
+      "map75": 0.09336500869282016,
+      "map": 0.11117179149223991
+    },
+    "awning-tricycle": {
+      "id": 7,
+      "map50": 0.14091533628968095,
+      "map75": 0.073663806518205,
+      "map": 0.0762511681312076
+    },
+    "bus": {
+      "id": 8,
+      "map50": 0.5511826492975326,
+      "map75": 0.3819325922814872,
+      "map": 0.3301629109147313
+    },
+    "motor": {
+      "id": 9,
+      "map50": 0.41915836310463916,
+      "map75": 0.08602712262132234,
+      "map": 0.16092229880460468
+    }
+  }
+}

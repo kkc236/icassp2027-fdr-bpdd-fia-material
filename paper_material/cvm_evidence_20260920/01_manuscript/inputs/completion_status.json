@@ -1,0 +1,22 @@
+{
+  "manuscript_text_and_existing_evidence": "completed",
+  "saved_prediction_qualitative_figure": "excluded_from_current_revision_by_explicit_user_choice",
+  "server_state": "powered_off_per_user",
+  "raw_predictions_found_locally": false,
+  "workspace_archives_listed": 62,
+  "additional_local_files_enumerated": 59216,
+  "external_system_class_profile": "completed and numerically verified",
+  "remote_directory": "/root/sj-tmp/eval/visdrone_dfine_bs4_results_20260914/",
+  "local_target_directory": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_submission_revision_20260916\\qualitative\\raw",
+  "new_training": false,
+  "new_model_inference": false,
+  "user_scope_decision_zh": "本版先不包含逐图预测案例",
+  "missing_raw_predictions_block_current_revision": false,
+  "future_optional_data_files": {
+    "dfine_final_val.jsonl": "9f2892072bfc5b60991f8d0543664ffca177e492a3c01304a4ee5de3a8dbf51c",
+    "joint_final_val.jsonl": "d946fc4fff304873707ea558f9b702644873f1a7c7b00496fb9512ca74783d72"
+  },
+  "optional_qualitative_tooling": "14 synthetic-only QA checks passed; excluded from paper evidence",
+  "requested_scope_complete": true,
+  "completion_note": "Text, mechanism evidence, complete-system class profile, standalone source and author tooling complete; final release integrity checks follow."
+}

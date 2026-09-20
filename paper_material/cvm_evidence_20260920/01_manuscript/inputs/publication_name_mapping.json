@@ -1,0 +1,38 @@
+{
+  "purpose": "Publication display names; frozen experiment identifiers and evidence are unchanged",
+  "rows": [
+    {
+      "display": "Full FDR/FGL transfer reference",
+      "legacy_alias": "Original FDR",
+      "role": "transfer reference in author RT-DETR host",
+      "metrics_csv": "historical_fdr_results.csv"
+    },
+    {
+      "display": "Path redesign",
+      "legacy_alias": "Clean-FDR",
+      "role": "author reference and supervision path variant",
+      "metrics_csv": "clean_fdr_results.csv"
+    },
+    {
+      "display": "Path redesign + geometry",
+      "legacy_alias": "Clean-FDR + geometry",
+      "role": "author path and feasible-decoding variant",
+      "metrics_csv": "geometry_fdr_results.csv"
+    },
+    {
+      "display": "GCDL",
+      "legacy_alias": "LRS-GFDR",
+      "role": "author localization core",
+      "metrics_csv": "lrs_gfdr_results.csv"
+    }
+  ],
+  "inherited": "D-FINE discrete edge logits, nonuniform support, integral, cumulative refinement, fixed distribution frame, adjacent-bin FGL",
+  "path_redesign": "Incoming reference shared by decoding and FGL targets; extra preliminary-box and DN-FDR supervision disabled; stock DN and preliminary head retained",
+  "causal_scope": "Historical design comparison, not fully source/initialization-matched single-factor ablation",
+  "higher_intermediate_AP_preserved": true,
+  "publication_revision": "2026-09-17 terminology revision: LRS-GFDR to GCDL; LRS to LQS",
+  "current_core_name": "Geometry-Constrained Distributional Localization (GCDL)",
+  "current_weight_rule": "Layerwise Quality Shrinkage (LQS)",
+  "legacy_weight_rule": "Layerwise Reliability Shrinkage (LRS)",
+  "legacy_source_and_run_identifiers_unchanged": true
+}

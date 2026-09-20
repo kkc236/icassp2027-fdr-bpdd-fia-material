@@ -1,0 +1,190 @@
+{
+  "dataset": "UAVDT according to bundled validation scripts",
+  "split": "val (local converted dataset; standard split mapping unverified)",
+  "reported_metrics": {
+    "baseline-exp": {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\uavdt_result_review_20260919\\extracted\\服务器fdr-bdpp-fia-material\\runs\\detect\\runs\\val\\baseline-exp\\paper_data.txt",
+      "rows": {
+        "car": {
+          "precision": 0.6931,
+          "recall": 0.5624,
+          "f1": 0.6209,
+          "AP50": 0.5476,
+          "AP75": 0.3037,
+          "AP": 0.3038
+        },
+        "truck": {
+          "precision": 0.1434,
+          "recall": 0.0777,
+          "f1": 0.1008,
+          "AP50": 0.0428,
+          "AP75": 0.0302,
+          "AP": 0.0258
+        },
+        "bus": {
+          "precision": 0.3099,
+          "recall": 0.2369,
+          "f1": 0.2685,
+          "AP50": 0.1359,
+          "AP75": 0.115,
+          "AP": 0.094
+        },
+        "all(平均数据)": {
+          "precision": 0.3821,
+          "recall": 0.2923,
+          "f1": 0.3301,
+          "AP50": 0.2421,
+          "AP75": 0.1497,
+          "AP": 0.1412
+        }
+      },
+      "raw_efficiency_line": "GFLOPs: 103.4  Parameters: 31,989,905  前处理: 0.000212s/图  推理: 0.004824s/图  后处理: 0.000090s/图  FPS(全程): 195.10  FPS(推理): 207.31  权重大小: 63.2MB"
+    },
+    "exp": {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\uavdt_result_review_20260919\\extracted\\服务器fdr-bdpp-fia-material\\runs\\detect\\runs\\val\\exp\\paper_data.txt",
+      "rows": {
+        "car": {
+          "precision": 0.7504,
+          "recall": 0.5912,
+          "f1": 0.6613,
+          "AP50": 0.6432,
+          "AP75": 0.3275,
+          "AP": 0.3465
+        },
+        "truck": {
+          "precision": 0.1677,
+          "recall": 0.1264,
+          "f1": 0.1442,
+          "AP50": 0.0648,
+          "AP75": 0.0457,
+          "AP": 0.0406
+        },
+        "bus": {
+          "precision": 0.3326,
+          "recall": 0.2755,
+          "f1": 0.3014,
+          "AP50": 0.1667,
+          "AP75": 0.1518,
+          "AP": 0.1219
+        },
+        "all(平均数据)": {
+          "precision": 0.4169,
+          "recall": 0.331,
+          "f1": 0.369,
+          "AP50": 0.2916,
+          "AP75": 0.175,
+          "AP": 0.1696
+        }
+      },
+      "raw_efficiency_line": "GFLOPs: 107.1  Parameters: 32,621,369  前处理: 0.000235s/图  推理: 0.005463s/图  后处理: 0.000099s/图  FPS(全程): 172.48  FPS(推理): 183.03  权重大小: 193.4MB"
+    }
+  },
+  "difference_percentage_points": {
+    "car": {
+      "precision": 5.73,
+      "recall": 2.88,
+      "f1": 4.04,
+      "AP50": 9.56,
+      "AP75": 2.38,
+      "AP": 4.27
+    },
+    "truck": {
+      "precision": 2.43,
+      "recall": 4.87,
+      "f1": 4.34,
+      "AP50": 2.2,
+      "AP75": 1.55,
+      "AP": 1.48
+    },
+    "bus": {
+      "precision": 2.27,
+      "recall": 3.86,
+      "f1": 3.29,
+      "AP50": 3.08,
+      "AP75": 3.68,
+      "AP": 2.79
+    },
+    "all(平均数据)": {
+      "precision": 3.48,
+      "recall": 3.87,
+      "f1": 3.89,
+      "AP50": 4.95,
+      "AP75": 2.53,
+      "AP": 2.84
+    }
+  },
+  "confusion_matrix_counts": {
+    "source": "Manually transcribed from two supplied confusion_matrix.png; rows predicted / columns true",
+    "matrices": {
+      "baseline-exp": [
+        [
+          237171,
+          3357,
+          1395,
+          361341
+        ],
+        [
+          1226,
+          680,
+          1223,
+          5003
+        ],
+        [
+          2178,
+          405,
+          1831,
+          4441
+        ],
+        [
+          120479,
+          3153,
+          2785,
+          0
+        ]
+      ],
+      "exp": [
+        [
+          237572,
+          3393,
+          2057,
+          120494
+        ],
+        [
+          2489,
+          944,
+          923,
+          10097
+        ],
+        [
+          2481,
+          198,
+          1837,
+          5754
+        ],
+        [
+          118512,
+          3060,
+          2417,
+          0
+        ]
+      ]
+    },
+    "ground_truth_class_totals": {
+      "baseline-exp": [
+        361054,
+        7595,
+        7234
+      ],
+      "exp": [
+        361054,
+        7595,
+        7234
+      ]
+    },
+    "ground_truth_instance_totals": {
+      "baseline-exp": 375883,
+      "exp": 375883
+    }
+  },
+  "status": "Model identity pending; source differs from current manuscript Full. No checkpoints executed."
+}

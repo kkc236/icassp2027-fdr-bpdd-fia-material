@@ -1,0 +1,18 @@
+
+\begin{table}[t]
+\centering
+\caption{Batch-eight inference efficiency on RTX 4090 at $640\times640$ in FP32. GFLOPs are per image; batch times are medians of 300 synchronized predict calls after 100 warmup batches.}
+\label{tab:efficiency}
+\small\setlength{\tabcolsep}{2.5pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Variant & Params (M) & GFLOPs & Batch (ms) & Images/s \\
+\midrule
+Baseline & 32.827 & 105.597 & 59.559 & 134.321 \\
+$G$ & 33.157 & 105.804 & 66.200 & 120.846 \\
+$G+F$ & 33.458 & 109.280 & 69.044 & 115.868 \\
+$G+B$ & 34.942 & 130.575 & 104.897 & 76.266 \\
+Full & 35.244 & 134.051 & 107.920 & 74.129 \\
+\bottomrule
+\end{tabular*}
+\end{table}

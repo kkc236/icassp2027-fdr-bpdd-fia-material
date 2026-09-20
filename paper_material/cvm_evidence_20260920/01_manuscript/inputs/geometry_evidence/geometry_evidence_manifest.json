@@ -1,0 +1,73 @@
+{
+  "archived_files": [
+    {
+      "original_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\lrs-system-visdrone-rebuild\\local-validation\\red.xml",
+      "archived_path": "archived_correctness\\red.xml",
+      "sha256": "4626dd9324232dd72f81a550d9f0dbf6a7f425740ce09b028610078d77cf51b8"
+    },
+    {
+      "original_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\lrs-system-visdrone-rebuild\\local-validation\\numerical.xml",
+      "archived_path": "archived_correctness\\numerical.xml",
+      "sha256": "9b612bac7d65069f463c283bd241281783173c4272d58b2b18a5a3c3cb491478"
+    },
+    {
+      "original_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\lrs-system-visdrone-rebuild\\local-validation\\regression-final.xml",
+      "archived_path": "archived_correctness\\regression-final.xml",
+      "sha256": "cd5a57823f06f856a16a3ad5dfdd638d5c74c910ea2460b041867f5b558fc937"
+    },
+    {
+      "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+      "git_path": "src/fdr_math.py",
+      "archived_path": "source_f56b210\\src\\fdr_math.py",
+      "sha256": "ac60364c008b048d3dfda619354ce3c1c0e5367b3d8a55de54c49ee43ebebb9a",
+      "current_worktree_same_after_lf_normalization": true
+    },
+    {
+      "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+      "git_path": "src/fdr_head.py",
+      "archived_path": "source_f56b210\\src\\fdr_head.py",
+      "sha256": "fd7d21a7c1196e2922ab90ad3840ce9ad12d4c96c9fcfc17b06e190abdaa56d6",
+      "current_worktree_same_after_lf_normalization": false
+    },
+    {
+      "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+      "git_path": "src/lrs_runtime_evidence.py",
+      "archived_path": "source_f56b210\\src\\lrs_runtime_evidence.py",
+      "sha256": "8c92da0b1a6bb4817b4b7962e272d4a3d92a24c758ae37874aeb221e775d611e",
+      "current_worktree_same_after_lf_normalization": true
+    },
+    {
+      "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+      "git_path": "tests/test_no_server_correctness.py",
+      "archived_path": "source_f56b210\\tests\\test_no_server_correctness.py",
+      "sha256": "7c96bf7f2622bd3eaa2df4790d9f6b809f27408eb4eca229c90e2a3aa6636616",
+      "current_worktree_same_after_lf_normalization": true
+    },
+    {
+      "git_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+      "git_path": "tests/test_fdr_feasible_geometry.py",
+      "archived_path": "source_f56b210\\tests\\test_fdr_feasible_geometry.py",
+      "sha256": "ba43903df144f5cb3c6d8836ed798815f086d9fa0fb8deb248b0577a6b6bf28e",
+      "current_worktree_same_after_lf_normalization": true
+    },
+    {
+      "original_path": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\diagnostics\\2026-09-09-ac-bpdd-redesign-adversarial-audit.md",
+      "archived_path": "archived_correctness\\2026-09-09-ac-bpdd-redesign-adversarial-audit.md",
+      "sha256": "c6931c7da349df79982b97f3e3b66bac775d9a6998daeec24eb81a9b9fc83c4b",
+      "evidence_level": "secondary-summary"
+    }
+  ],
+  "frozen_implementation_commit": "f56b210798acab96d628308a5127a2e1399d00dc",
+  "caveats": [
+    "JUnit records are original archived local test outputs; this preparation only parses and hashes them.",
+    "The red and green reports identify the same BF16 regression test; they do not archive identical initial tensors, and no paired numerical effect size is claimed.",
+    "Committed source f56b210 was created after the recorded reports. Current test source matches that commit exactly, but the red report does not contain a full pre-fix source manifest.",
+    "The eight nominal-positive-reference cases use literal sizes 0.1 and 1e-8 across float16, bfloat16, float32, float64. Casting 1e-8 to float16 underflows to zero; call these nominal-size cases, not eight strictly positive represented inputs.",
+    "The separate literal-zero-reference cases are robustness stress tests, outside the manuscript assumption of positive reference sizes.",
+    "PASS supports checked predicates only. The reports do not record exact post-fix width/height values; none are inferred.",
+    "The BF16 test uses the actual six-layer decoder wrapper with mocked Integral output (-4 for each edge), identity decoder layers, and synthetic features; it is a controlled numerical test, not a full trained-network evaluation or a VisDrone failure frequency.",
+    "Historical G in the September 9 audit is legacy AC-BPDD, not the current expert v3 bundle; exclude it from the main geometry evidence table."
+  ],
+  "new_training": false,
+  "new_model_inference": false
+}

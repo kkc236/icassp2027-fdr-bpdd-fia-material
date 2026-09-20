@@ -1,0 +1,15 @@
+
+LOG_TAIL Traceback (most recent call last):
+  File "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v1/measure.py", line 194, in <module>
+    main()
+  File "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v1/measure.py", line 97, in main
+    importlib.import_module(name)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1004, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'src.rtdetr_fdr_bpdd_fia'
+
+CODEX_DONE_9b11be752c174a4db931b3e1d21b02570
+(base) root@dee31ea771a8:/# 

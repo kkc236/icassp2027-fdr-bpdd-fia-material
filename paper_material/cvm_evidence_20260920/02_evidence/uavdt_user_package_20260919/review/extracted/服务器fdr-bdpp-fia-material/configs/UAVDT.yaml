@@ -1,0 +1,7 @@
+path: /data/SAM/ltk/YOLO/dataset/UAVDT
+train: images/train
+val: images/val
+names:
+  0: car
+  1: truck
+  2: bus

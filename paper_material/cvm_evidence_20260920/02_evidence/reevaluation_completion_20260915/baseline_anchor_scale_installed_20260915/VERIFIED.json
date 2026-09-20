@@ -1,0 +1,11 @@
+{
+  "status": "verified",
+  "server_tests": 25,
+  "local_tests": 46,
+  "validation_640_map": 0.21917411394055758,
+  "validation_800_map": 0.1910801258687437,
+  "validation_800_gain_pp": 3.5149625227212407,
+  "original_weights_unchanged": true,
+  "test_not_rerun": true,
+  "github_pushed": false
+}

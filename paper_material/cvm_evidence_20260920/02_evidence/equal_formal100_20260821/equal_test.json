@@ -1,0 +1,168 @@
+{
+  "best_epoch": 91,
+  "checkpoint": {
+    "bytes": 67288254,
+    "model_type": "src.rtdetr_fdr.FDRRTDETRDetectionModel",
+    "path": "/data/uav/runs/ace-fdr-formal100-20260821/formal-seed0-ace-fdr-v1/weights/best.pt",
+    "sha256": "06c5809af89c9a6b944f8615ac4a92c28322b36db6eb872c73407a58e54c3bca"
+  },
+  "class_details": {
+    "awning-tricycle": {
+      "id": 7,
+      "map": 0.14685378173870153,
+      "map50": 0.24161381583985966,
+      "map75": 0.16213003272263204
+    },
+    "bicycle": {
+      "id": 2,
+      "map": 0.07568851442062674,
+      "map50": 0.17505572782630233,
+      "map75": 0.04699740331818367
+    },
+    "bus": {
+      "id": 8,
+      "map": 0.4319845082339742,
+      "map50": 0.6138094365329372,
+      "map75": 0.4880649639207352
+    },
+    "car": {
+      "id": 3,
+      "map": 0.5129854271219524,
+      "map50": 0.79306763975946,
+      "map75": 0.5716588997333446
+    },
+    "motor": {
+      "id": 9,
+      "map": 0.1767831513773629,
+      "map50": 0.41619216797181063,
+      "map75": 0.11417293252762362
+    },
+    "pedestrian": {
+      "id": 0,
+      "map": 0.1561875752565162,
+      "map50": 0.38477106229339664,
+      "map75": 0.09510861174425098
+    },
+    "people": {
+      "id": 1,
+      "map": 0.10149585922116607,
+      "map50": 0.28454543455416514,
+      "map75": 0.04685234598962853
+    },
+    "tricycle": {
+      "id": 6,
+      "map": 0.15518643385207503,
+      "map50": 0.2754066367576584,
+      "map75": 0.15226849026724684
+    },
+    "truck": {
+      "id": 5,
+      "map": 0.2863959126464973,
+      "map50": 0.4392451969692383,
+      "map75": 0.32153808785040816
+    },
+    "van": {
+      "id": 4,
+      "map": 0.3025352472344966,
+      "map50": 0.4387564041904967,
+      "map75": 0.3548425092536607
+    }
+  },
+  "classes": {
+    "awning-tricycle": 0.14685378173870153,
+    "bicycle": 0.07568851442062674,
+    "bus": 0.4319845082339742,
+    "car": 0.5129854271219524,
+    "motor": 0.1767831513773629,
+    "pedestrian": 0.1561875752565162,
+    "people": 0.10149585922116607,
+    "tricycle": 0.15518643385207503,
+    "truck": 0.2863959126464973,
+    "van": 0.3025352472344966
+  },
+  "dataset": {
+    "data_yaml": "/data/uav/evidence/strict-control-test-d97e1eb7/test-data.yaml",
+    "images": 1610,
+    "instances": 75102
+  },
+  "elapsed_seconds": 17.146013021469116,
+  "environment": {
+    "cuda": "12.1",
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "ultralytics": "8.4.90"
+  },
+  "evaluation_protocol": {
+    "batch": 8,
+    "cache": false,
+    "conf": 0.001,
+    "device": "0",
+    "half": false,
+    "imgsz": 640,
+    "max_det": 300,
+    "nms": false,
+    "plots": false,
+    "rect": false,
+    "save_json": false,
+    "save_txt": false,
+    "split": "test",
+    "verbose": true,
+    "workers": 8
+  },
+  "experiment_id": "equal_formal100_seed0_best_exact_evaluation_20260821",
+  "format_version": 1,
+  "metrics": {
+    "f1": 0.47068328058742026,
+    "map": 0.23460964111033686,
+    "map50": 0.40624635226953254,
+    "map75": 0.2353634277327714,
+    "precision": 0.5215760478832335,
+    "recall": 0.4288392988126689
+  },
+  "paper_method": "equal",
+  "prediction_passes": 1,
+  "processed_images": 1610,
+  "raw_runtime_method": "ace_fdr",
+  "scale_definition": {
+    "coordinate_space": "network-input-pixels",
+    "large": "sqrt(area) >= 96",
+    "medium": "32 <= sqrt(area) < 96",
+    "small": "16 <= sqrt(area) < 32",
+    "tiny": "sqrt(area) < 16"
+  },
+  "scale_details": {
+    "large": {
+      "gt": 306,
+      "map": 0.4492773939902766,
+      "map50": 0.545199892139664,
+      "map75": 0.47946508970795765
+    },
+    "medium": {
+      "gt": 9148,
+      "map": 0.33647964528329377,
+      "map50": 0.48314542746834394,
+      "map75": 0.38373107703551534
+    },
+    "small": {
+      "gt": 19878,
+      "map": 0.2563567088761031,
+      "map50": 0.42708659228808366,
+      "map75": 0.2720912674248567
+    },
+    "tiny": {
+      "gt": 45770,
+      "map": 0.10715431508505537,
+      "map50": 0.23693283161416828,
+      "map75": 0.08233797366218285
+    }
+  },
+  "scales": {
+    "large": 0.4492773939902766,
+    "medium": 0.33647964528329377,
+    "small": 0.2563567088761031,
+    "tiny": 0.10715431508505537
+  },
+  "source_commit": "fca7763679b6e10ed68f98971a362a054ecd4853",
+  "split": "test"
+}

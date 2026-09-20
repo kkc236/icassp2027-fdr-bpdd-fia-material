@@ -1,0 +1,1231 @@
+PAGE 1
+BDNet:Bio-Inspired Dual-Backbone Small Object Detection Network
+Wenchao Guan1 , Chuan Lin1∗ , Sihan Huang1 , Xiongzhen Wang1 , Xintao Pang2∗
+1School of Automation, Guangxi University of Science and Technology
+2Faculty of Applied Sciences, Macao Polytechnic University
+Abstract
+In remote sensing images, small objects often exhibit low
+color contrast and blurred edges, leading to suboptimal
+feature extraction. Physiological studies indicate that the
+LGN/V1–V2–V4 pathway provides color-opponent sensitiv-
+ity and hierarchical enhancement for color information ex-
+traction, whereas the V1–V4 pathway exhibits strong ori-
+entation selectivity for edge extraction. Integrating these
+complementary visual signals in the V4 region can substan-
+tially improve target discrimination. Motivated by these
+findings, we propose a dual-backbone network (BDNet) to
+enhance feature extraction for small objects. BDNet adopts
+a parallel architecture to capture fine-grained features from
+color and edge cues. Specifically, the color-extraction back-
+bone simulates the color-opponent mechanism in LGN/V1
+via a Color Antagonism Module (CAM) to amplify color
+differences, and further mimics the chromatic processing
+hierarchy in V2 using a Visual Cortex Hue Enhancement
+Module (VCHM) to enrich hue representations. Together,
+these two modules alleviate low color contrast. The edge-
+extraction backbone simulates the orientation selectivity of
+receptive fields in V1 through an Orientation Selective Mod-
+ule (OrSM) to select and enhance salient edges, thereby
+reducing edge blurring from fragmented edge responses.
+Finally, the two feature types are fused via a Feature Fu-
+sion Module (FFM) that emulates integration in V4, yield-
+ing a comprehensive feature representation. Experiments
+demonstrate that BDNet outperforms state-of-the-art meth-
+ods on the VisDrone2019, NWPU VHR-10, and AI-TODv2
+datasets, providing a bio-inspired solution for small-object
+detection in remote sensing images.
+1. Introduction
+Remote Sensing Object Detection (RSOD) aims to local-
+ize and recognize targets in high-resolution remote sensing
+imagery. However, small objects in remote sensing im-
+ages often exhibit limited visual cues, such as low color
+∗Corresponding authors. Chuan Lin (chuanlin@gxust.edu.cn)
+Xintao Pang (p2424471@mpu.edu.mo)
+contrast and blurred edges, and their features are further
+degraded by downsampling in feature-extraction networks,
+which severely limits detection accuracy [4].
+To enhance the representation of fine-grained cues like
+color and edges, existing feature-enhancement methods
+have achieved notable gains [23]. However, they are of-
+ten limited because they focus on a single type of fea-
+ture. For example, COSE [22] improves color consis-
+tency in low-contrast regions through color-shift correction,
+DCFL [49] enhances edge textures by combining super-
+resolution and detail compensation, and SET [42] strength-
+ens high-frequency details via spectral enhancement. Multi-
+backbone networks typically aim to complement differ-
+ent characteristics within the same feature space. For in-
+stance, TransFuse [53] combines parallel CNN and Trans-
+former backbones to integrate local and global cues, while
+DSOD++ [41] employs dual paths to enhance information
+from different receptive fields, and DCAL [55] introduces
+bidirectional guidance to improve cross-attention comple-
+mentarity. However, research on multi-branch networks
+that explicitly target multi-dimensional low-level cues (e.g.,
+color and edges) remains scarce. In contrast, studies of bi-
+ological vision provide a well-established theoretical basis
+for understanding low-level visual processing.
+Physiological studies suggest the visual system inte-
+grates multiple features through hierarchical processing.
+The Lateral Geniculate Nucleus (LGN), Primary Visual
+Cortex (V1), and Secondary Visual Cortex (V2) process
+color and luminance [39, 40], while orientation-selective
+neurons in V1 extract edges [18]. These two streams
+converge in visual area V4, improving object representa-
+tion [14, 36]. Motivated by these observations, we propose
+a bio-inspired dual-backbone detection network, termed
+BDNet. BDNet simulates the LGN/V1–V2–V4 and V1–
+V4 pathways to enhance and complement color and edge
+cues, resulting in a dual-backbone architecture with a color-
+enhancement branch and an edge-reinforcement branch.
+This design enables multi-dimensional enhancement and hi-
+erarchical fusion of small-object features, improving the de-
+tectability of weak targets in remote sensing imagery. Our
+main contributions are:
+This CVPR paper is the Open Access version, provided by the Computer Vision Foundation.
+Except for this watermark, it is identical to the accepted version;
+the final published version of the proceedings is available on IEEE Xplore.
+32724
+
+PAGE 2
+• We propose a “color enhancement–edge reinforcement–
+hierarchical fusion” detection framework that leverages
+the biological color-processing pathway (LGN/V1–V2–
+V4) and edge-processing pathway (V1–V4) to achieve
+complementary enhancement across a color-extraction
+backbone and an edge-extraction backbone for remote-
+sensing small-object detection.
+• In the color-extraction backbone, we design a Color An-
+tagonism Module (CAM) and a Visual Cortex Hue En-
+hancement Module (VCHM) to synergistically enhance
+color cues and improve hue representation. In the edge-
+extraction backbone, we introduce an Orientation Selec-
+tive Module (OrSM) to strengthen edge and contour de-
+tails. Finally, a Feature Fusion Module (FFM) integrates
+these features to yield a more comprehensive representa-
+tion, thereby addressing insufficient feature extraction.
+• Extensive experiments on the VisDrone2019, NWPU
+VHR-10, and AI-TODv2 remote-sensing small-object
+datasets show that BDNet achieves state-of-the-art perfor-
+mance, demonstrating the effectiveness of the proposed
+bio-inspired design.
+2. Related Work
+2.1. Remote Sensing Image Small Object Detection
+The core challenge in detecting small objects in remote
+sensing images lies in their small pixel footprint, which
+can cause feature attenuation and information loss dur-
+ing downsampling in deep networks. In recent years, re-
+search has gradually shifted from adapting general detec-
+tion frameworks to designing architectures that explicitly
+account for small-object characteristics. For instance, Xu
+et al. [49] addressed scale mismatch in tiny-object detec-
+tion through multi-stage feature refinement. Wu et al. [48]
+improved localization accuracy across multiple remote-
+sensing categories by integrating spatial- and frequency-
+domain features. Liu et al. [24] proposed a progressive
+context-reasoning framework with multi-branch structures,
+and Hou et al. [15] employed multi-path designs to cope
+with the complexity of remote-sensing imagery. Although
+these methods demonstrate notable performance, most op-
+timize features in a holistic manner without explicitly de-
+coupling and enhancing the low-level cues that are critical
+for small objects. Consequently, fine-grained information
+can gradually diminish as features propagate through deep
+networks. Furthermore, many architectures are not explic-
+itly grounded in visual information-processing mechanisms
+and therefore struggle to establish structured, prior-guided
+pathways akin to those in biological vision.
+2.2. Bio-Inspired Small Object Detection Models
+Bio-inspired models provide valuable insights for small-
+object detection in aerial imagery. Several representative
+approaches address these challenges. ClusterNet [20] im-
+proves localization for low-pixel targets by simulating a
+two-stage strategy that combines wide-field perception with
+foveal focus. Brstd [17], inspired by visual modulation, in-
+troduces antagonistic receptive fields and feedback inhibi-
+tion to strengthen small-object features while suppressing
+background interference. Magno-VTOD [44] draws on the
+retinal magnocellular pathway to improve detection of tiny
+moving targets in infrared scenes. VSTDet [32] mimics
+hierarchical processing in the ventral pathway to preserve
+fine details with lightweight computation, and EVMNet [3]
+emulates dual foveal and tectal pathways to progressively
+extract semantics and enhance contextual modeling. Nev-
+ertheless, these works primarily emphasize single percep-
+tual mechanisms or functional separation. Building upon
+these studies, we systematically simulate the LGN/V1–V2–
+V4 pathway to support collaborative processing of color and
+edge cues, and construct a dual-backbone network that more
+directly addresses feature degradation in small objects.
+3. Methods
+3.1. Network Architecture
+As shown in Fig. 1, BDNet simulates the hierarchical pro-
+cessing mechanism of the biological visual system for color
+and edge information, constructing a “dual-path feature ex-
+traction - hierarchical fusion” detection framework to ad-
+dress the core issue of ineffective feature extraction for
+small objects in remote sensing images. The network
+consists of three components: the Color Information Path
+(CIP), the Edge Information Path (EIP), and the Feature Fu-
+sion Module (FFM).
+The CIP focuses on enhancing color contrast. It first em-
+ploys the Color Antagonism Module (CAM) and then the
+Visual Cortex Hue-enhancement Module (VCHM). CAM
+mimics the color antagonism mechanism of the LGN/V1
+areas to enhance color representation, while VCHM simu-
+lates the hierarchical chromatic processing structure of the
+V2 area to adjust hue levels.
+The EIP focuses on preserving edge direction informa-
+tion for small targets. It consists of the Enhanced Learnable
+Laplacian Operator Module (ELLOM) and the Orientation
+Selection Module (OrSM). ELLOM first extracts edge in-
+formation from the RGB image, which is then passed to
+OrSM. OrSM simulates the orientation selectivity of neu-
+rons in V1/V2 areas to reinforce the contour integrity of
+small targets.
+Features from the CIP and EIP paths undergo hierarchi-
+cal fusion across different dimensions via the Feature Fu-
+sion Module (FFM), which simulates the information inte-
+gration mechanism of the V4 area. A feature pyramid net-
+work then aggregates multi-scale features, and the detection
+head predicts target categories and locations.
+32725
+
+PAGE 3
+ELLOM
+: Upsampling Process
+Bbox.
+Cls.
+4*reg_max
+nc
+Prediction result
+(B)
+RGBEdge
+C : Concat
+: Information Flow Direction
+ShapeColor
+V1 area V2 areaLGN
+4B
+4C Form Domains
+Color Domains
+V4 area
+(A)
+Color Information
+ Pathway
+C
+Edge Information
+ Pathway
+FFM
+FFM
+C
+C
+CAM VCHM VCHM
+OrSM OrSM
+P1 P2 P3 P4
+P1 P2 P3 P4
+Color opposition
+640×640×3
+640×640×3
+P3
+P2
+P3
+Visual feature separation
+Directional selectivity
+Color contrast and filling
+Complex visual feature integration
+Only two FFM are used: 
+the first FFM two P2;
+the second FFM the concatenated result of P3 and upsampled P4.
+Figure 1. (A) Schematic diagram of biological visual information processing: Color information is processed via the LGN/V1→V2→
+V4 pathway, while form (edge, shape) information is processed via the LGN/V1→V4 pathway. Color and form information interact and
+integrate in the V4 area. (B) Block diagram of the proposed BDNet architecture: After the RGB image is input to the network, the Color
+Information Path (CIP, comprising CAM + VCHM) and the Edge Information Path (EIP, comprising ELLOM + OrSM) extract color and
+edge information, respectively. FFM then interactively fuses the dual-path features.
+3.2. Color Information Pathway
+Color Antagonism Module. The LGN and V1 areas
+of the biological visual system contain three types of
+cone cells—L (long-wave sensitive), M (medium-wave
+sensitive), and S (short-wave sensitive)—which perform
+preliminary processing of color information through an
+“excitation-inhibition” antagonistic mechanism [6, 8, 35],
+as illustrated in Fig. 2(A1). Based on this mechanism, CAM
+implements the following specific steps:
+The R, G, and B channels of the input RGB image are
+mapped to channels simulating the L, M, and S cone cells,
+respectively, forming the six “excitation-inhibition” antag-
+onistic pairs shown in Fig. 2(A2). Inspired by opponent
+color theory [21], which reveals that the visual system en-
+hances color contrast via antagonistic effects of comple-
+mentary color pairs (e.g., red-green, blue-yellow), an Adap-
+tive Selection Enhancement (ASE) mechanism is designed.
+Specifically, ASE introduces a learnable weight vector to
+weight the RGB channels and modulate their contributions
+in opponent color combinations. Based on these antagonis-
+tic pairs, ASE processes the R, G, and B channels and gen-
+erates six types of “excitation channel-inhibition channel”
+feature pairs. Finally, features of the same type of excitation
+channel are aggregated, and feature fusion is achieved via
+convolution, thereby completing the bio-inspired enhance-
+ment of color features.
+Visual Cortex Hue Enhancement Module. After CAM
+processing, while remote sensing image hue is enhanced
+via color differences, hue features still deviate from hu-
+man perception. Physiological studies show the cortical hue
+map’s matching degree with the perceptual color space im-
+proves significantly with increasing cortical hierarchy [30],
+as shown in Fig. 2(B1).
+Based on this, VCHM leverages the hierarchical char-
+acteristics of cortical hue processing and optimizes color
+feature representation via a three-step operation:grouped
+convolution – channel coupling – feature embedding, as il-
+lustrated in Fig. 2(B2). Specifically, given the input fea-
+tureX= (x 0, x1,· · ·, x c−1), grouped convolution with
+Cgroups is applied to obtain the intermediate feature
+X ′ = (x ′
+0, x′
+1,· · ·, x ′
+c−1). To generate new hue features,
+X ′ undergoes pairwise channel coupling via Eq.(1). Sub-
+sequently, Eq.(2) embeds the newly generated hue features
+into the original channel sequence based on their generation
+order, further optimizing the color features.
+Y=Conv
+
+
+
+
+[1,1,0,· · ·,0,0]
+[0,1,1,· · ·,0,0]
+...
+[0,0,0,· · ·,1,1]
+
+ ·W,
+
+
+x′
+0
+x′
+1
+...
+x′
+c−1
+
+
+
+ (1)
+E(X, Y) = (x 0, w0 ·x ′
+0 +w 1 ·x ′
+1, x1,· · ·, x c−1)(2)
+32726
+
+PAGE 4
+L+
+M-
+L+
+M-
+L+
+S-
+L+
+S-
+M+
+L-
+M+
+L-
+M+
+S-
+M+
+S-
+S+
+L-
+S+
+L-
+S+
+M-
+S+
+M-
+(α1)
+(α2)
+(β1)
+(β2)
+(γ1)
+(γ2)
+δδ+ δ+ δ+ δ+ δ+ δ+δ- δ- δ- δ- δ- δ-δ δ δ δ δ
+The matching degree between the visual cortex tone map and 
+the cognitive color space significantly improves with the 
+increase of cortex grade.
+(B1)
+(A1) (A2)
+(B2)
+V1
+300 600 900
+Cell Density(×10³/mm²)
+2
+4
+6
+Wavelength(µm)
+300 600 900
+Cell Density(×10³/mm²)
+2
+4
+6
+Wavelength(µm)
+V2
+The triple (δ⁺, δ⁻, δ), representing the maximum, minimum, and median of the 
+learnable parameters [α, β, γ], admits 3! (i.e., 6) possible permutations.
+(α1) (α2) (β1) (β2) (γ1) (γ2)
++
++
++
+Adaptive selection enhancement
+(ASE)
+ASE
+Conv
+Conv
+Conv
+Take (α1) as an example
+Group(0)   Conv
+Group(1)   Conv
+Group(c-2)   Conv…
+…
+…
+…
+…
+…
+…
+Weighted multiplication operation of the 
+standard Jordan matrix
+Conv 1×1
+weight(C , C-1, 1, 1)
+(I)Brightness adjustment (II) Gamut Expansion
+Group(c-1)   Conv
+…
+Y2Y1
+Y2
+Y2
+Y3
+Y3
+Y4
+Y1-Y2 of channels:C Y3 of channels:C-1
+Y4 of channels:2C-1
+Figure 2. Architecture design of CIP. (A1) illustrates the color-opponent receptive fields in the LGN/V1 region, where three types of
+cone cells (L, M, S) respond to spectral stimuli through different excitation (+)/inhibition (-) patterns. (A2) presents the designed color
+channel combination scheme demonstrating antagonistic receptive fields. (B1) reflects hue differences in the visual cortex. (B2) displays
+the proposed method for enhancing hue representation.
+whereWrepresents the original convolution kernel weights
+of the1×1convolution, which are multiplied by the Jordan-
+form kernel to form the new convolution kernel;E(X, Y)
+embeds all channels ofXandYinto the odd and even po-
+sitions of the new feature, respectively, following the speci-
+fied sequence.
+3.3. Edge Information Pathway
+The edge contours of small targets serve as the core carriers
+of their shape features. To enhance the model’s learnability,
+the ELLOM adaptive method is employed to generate edge
+images. The traditional Laplacian operator [7] is composed
+of the first two second-order differential operators in Eq.(3),
+while ELLOM consists of the latter two. Using learnable
+weights(w 1, w2,· · ·, w 9), it achieves adaptivity, whereΣ
+represents the sum of the surrounding weights.
+
+
+1 0 1
+0−4 0
+1 0 1
+
+
+
+
+0 1 0
+1−4 1
+0 1 0
+
+
+
+
+w1 0w 3
+0−Σ 0
+w7 0w 9
+
+
+
+
+0w 2 0
+w4 −Σw 6
+0w 8 0
+
+ (3)
+Neurons in biological V1/V2 areas respond selectively to
+specific orientation stimuli—activating those aligned with
+the target direction while suppressing responses to other
+orientations [1, 2, 34], as illustrated in Fig. 3(A). To sim-
+ulate this mechanism, OrSM implements the Enhancement-
+Suppression Convolution Kernel (ESCK) and an adaptive
+orientation selection method.
+The construction of ESCK adopts a design concept
+that shifts from pixel-based differences to weight-based
+differences in differential convolution. Detailed design
+specifications are provided in the Supplementary Material
+(see Sec. A), and the corresponding ESCK are shown in
+Fig. 3(B).
+To address kernel interference from direct superposi-
+tion in existing multi-directional feature fusion methods,
+this paper proposes an adaptive directional kernel selection
+method (illustrated Fig. 3(C)). After ESCK generates eight
+distinct directional salient featuresX 1, X2, . . . , X8 from
+the input featureX, a sub-network encodes the input feature
+map to produce a directional index map with values ranging
+from 0 to 7. This index map is then converted into eight bi-
+nary mask maps{M k}7
+k=0 (whereM k is 1 only at indexk),
+which eliminate feature interference from non-salient direc-
+tions. Finally, the filtered features are multiplied and fused
+with the original eight salient features, achieving adaptive
+selection of the most salient convolution kernel in the spa-
+tial domain. This approach fundamentally avoids mutual
+interference from direct superposition of multiple convolu-
+tion kernels and enhances feature discriminability.
+3.4. Feature Fusion Module
+Color and edge information exhibit complementarity in
+small object detection: color distinguishes surface at-
+tributes, while edges localize spatial boundaries. Physiolog-
+32727
+
+PAGE 5
+Sensitivity
+Azimuth
+angle
+(A) (B)
+(0) (1) (2) (3) (4) (5) (6) (7)
+-
+ -
++
+ +
+-
+ -
+-
+ -
++
+ +
+-
+ -
++
+ -
+ -
+-
+ +
+-
++
+ -
+ -
+-
+ +
+-
+-
+ +
+ -
+-
+ +
+ -
+-
+ +
+ -
+-
+ +
+ -
+-
+ -
+ +
++
+ -
+-
+-
+ -
+ +
++
+ -
+-
+-
+-
+ +
++
+ -
+ -
+-
+-
+ +
++
+ -
+ -
+-
+ +
+ -
+-
+ +
+ -
+-
+ +
+ -
+-
+ +
+ -
+-
++
+ -
+-
+ -
+ +
+-
++
+ -
+-
+ -
+ +
+-
+ -
++
+ +
+-
+ -
+-
+ -
++
+ +
+-
+ -
+(C)
+C×H×W
+C×H×W
+1× 1 Conv
+1×H×W
+3× 3 Conv
+Same
+convolution stride
+Eight types of 
+ESCK
+kernel size
+3×3
+(0) (1) (7)
+(2)
+ (3)
+ (4)
+ (5)
+ (6)
+Suppose the 
+spatial 
+positions 
+include 7 
+and 4.
+Mask maps
+S7R: Sigmoid→multiplied by 7→rounded off
+×
+× : Sum of corresponding products OutputInput
+Eight types of ESCK
+Figure 3. Design of OrSM in EIP. (A) Sensitivity variation of V1/V2 neurons under different stimulus angles. The horizontal axis denotes
+stimulus angle (0°–180°), and the vertical axis denotes neuronal response strength, illustrating response characteristics to grating stimuli
+of different orientations. (C) Specific implementation of OrSM.
+ical studies have shown that the visual cortex area V4 simul-
+taneously contains neuronal populations sensitive to color
+and those sensitive to form (edges, orientations, etc.) [37],
+demonstrating functional partitioning and feature interac-
+tions at the cortical level [43], as shown in Fig. 4(A). To
+simulate the interactive characteristics of the V4 area, FFM
+employs an information injection strategy to achieve hierar-
+chical integration of dual-path features, with design details
+illustrated in Fig. 4(B).
+Specifically, taking a single sample as an example, for
+featuresZ 1 ∈R C×H×W andZ 2 ∈R C×H×W from the
+color and edge extraction backbones, global average pool-
+ing and1×1convolution are first applied to learn the im-
+portance scores of each channel. Assume that each channel
+of featureZ 1 is represented as{p 1, p2, . . . , pc}, while each
+channel of featureZ 2 is represented as{q 1, q2, . . . , qc}.
+Then, after dimension adjustment, an outer product oper-
+ation is performed to obtain the matrixR∈R 1×C×C , re-
+ferring to Eq.(4).
+R[1, C, C] =
+
+
+p1q1 p1q2 · · ·p 1qc
+p2q1 p2q2 · · ·p 2qc
+... ... ... ...
+pcq1 pcq2 · · ·p cqc
+
+ (4)
+Each element of the matrixRquantifies the semantic as-
+sociation strength between channelα i of featureZ 1 and
+channelα j of featureZ 2. To reconstructZ 2 by injecting
+information fromZ 1, we find that using the matrixRas a
+1×1convolution kernel and convolving it withZ 2 can clev-
+erly align with the semantic structure of featureZ 2. The
+modified1×1convolution kernelK[C, C,1,1]is defined
+referring to Eq.(5).
+If each channel of featureZ 2 is represented asZ 2 =
+[Q1, Q2,· · ·, Q c]T , whereQ c ∈R H×W is the spatial fea-
+ture of thec-th channel, and it is convolved withK, then the
+k-th output channel is computed using thek-th row of the
+convolution kernel, as shown in Eq.(6). It can be observed
+that this convolution result onZ 2 incorporates information
+from every channel ofZ 1.
+K[C, C,1,1] =
+
+
+[p1q1, p1q2,· · ·, p 1qc]
+[p2q1, p2q2,· · ·, p 2qc]
+...
+[pcq1, pcq2,· · ·, p cqc]
+
+ (5)
+Outputk =
+
+pkq1, pkq2, . . . , pkqc
+
+·
+
+Q1, Q2, . . . , Qc
+T
+=
+cX
+i=1
+ 
+pkqi ·Q i
+
+(6)
+It is worth noting that the matrix R, obtained from the
+outer product of two one-dimensional channel weight vec-
+tors, is mathematically a rank-1 matrix. This rank-1 prop-
+erty endows the matrix with a strong regularization effect,
+32728
+
+PAGE 6
+V4
+Input Output
+H
+W
+C
+AvgPool
+1x1 Conv
+reshape
+1
+1
+1
+1
+p1
+p2
+pc
+q1 q2 qc
+Z1
+H
+W
+C
+Z2
+...
+...
+...
+...
+...
+...
+The obtained 1x1 convolution 
+kernel
+(B)
+...
+Take each row
+H
+W
+Z2 injected with the attention 
+of the 1-th channel of Z1
+H
+W
+Z2 injected with the attention 
+of the i-th channel of Z1
+H
+W
+Z2 injected with the attention 
+of the c-th channel of Z1
+...H
+W
+C
+The restructured Z2
+...
+...
+kernel
+(A)
+(a) Construction of fusion coefficient
+(b) Inject Z1 information into Z2
+Cx1
+AvgPool
+1x1 Conv
+reshape
+1xC
+Cx1
+1xC
+CxC
+W
+CH
+Convolution
+Z2
+Figure 4. Design of the Color and Edge Feature Fusion Module (FFM). (A) Visual representation of the interaction between the color
+domain and form domain in the V4 area. (B) Illustrates the specific construction of FFM.
+which is particularly beneficial for small objects with high
+noise levels. To mitigate the feature expression limitations
+imposed by the rank-1 structure, we preserve the diversity
+of channel features through the residual and concatenation
+operations of Eq.(7), thereby enhancing the model’s detec-
+tion robustness in complex remote sensing scenarios.
+Output=Z 1∥(Output 1∥Output2∥. . .∥Output c +Z 2)(7)
+where∥represents the channel-wise concatenation oper-
+ation.
+4. Experiments
+4.1. Experimental Key Support
+This study employs an optimized YOLO12 as the baseline
+model, without loading any pre-trained weights, to validate
+the model’s generalization capability on three remote sens-
+ing small object datasets: VisDrone2019 [4], NWPU VHR-
+10 [5], and AI-TODv2 [9]. Systematic ablation experiments
+are primarily conducted on the VisDrone2019 dataset. Per-
+formance is evaluated using standard object detection met-
+rics, including mAP 50 and mAP50-95 in YOLO format, AP,
+AP50, and AP 75 under COCO standard, as well as AP vt,
+APt, AP s, and AP m for different target scales. The num-
+ber of parameters (Params/M) and computational complex-
+ity (GFLOPs) are also reported to assess model efficiency
+(see Supplementary Material Sec. B for details).
+4.2. Comparative Experiments and Analysis
+We conducted comprehensive comparisons between BDNet
+and various current SOTA methods. All comparative exper-
+imental results with citations are sourced from the relevant
+literature. To ensure a fair comparison, we retrained high-
+performance detectors YOLO11, YOLO12, and YOLO26
+under the same experimental conditions as BDNet.
+Evaluation results on NWPU VHR-10.As shown in
+Tab. 1, although the proposed method achieves optimal
+performance in only some categories (BD, TC, BC, HA),
+its performance distribution across all categories is more
+balanced with the smallest variance, ultimately achieving
+the highest mean average precision (mAP50) of 94.1%.This
+demonstrates that the color extraction backbone effectively
+enhances the recognition capability for targets with low
+color contrast (such as TC and BC, which have similar tones
+to the background), the edge extraction backbone accurately
+captures structured targets (such as the problem of blurred
+edges and contours in BD and HA), resolving the issue of
+edge blurring.
+Evaluation results on VisDrone2019.In Tab. 2, the
+proposed method achieves the best results on the valida-
+tion set for both mAP 50 (50.5%) and mAP 50-95 (31.2%),
+while requiring significantly fewer parameters and lower
+computational cost. This demonstrates that BDNet main-
+tains advantages in both accuracy and efficiency, validating
+the superiority of its dual-backbone architecture. For object
+detection in complex UA V imagery, the model efficiently
+extracts and integrates key color and edge features with a
+32729
+
+PAGE 7
+Table 1. Performance comparison across categories on NWPU VHR-10 test set. Abbreviations represent: airplane (AI), ship (SH), storage
+tank (ST), baseball diamond (BD), tennis court (TC), basketball court (BC), ground track field (GT), harbor (HA), bridge (BR), vehicle
+(VE).boldindicates the best performance.
+Method AI SH ST BD TC BC GT HA BR VE mAP 50
+DINO(4scale)[50] 98.9 93.4 97.9 97.9 94.1 95.4 95.8 91.6 71.2 92.5 92.7
+MaskFormer[45]10093.4 92.6 96.9 94.6 95.610079.594.191.3 93.8
+YOLOv8[29] 99.5 90.7 97.9 96.696.990.3 99.5 85.8 77.8 91.4 92.6
+RS-YOLO[12] 99.994.196.6 97.8 93.8 92.7 97.6 89.5 84.7 92.3 93.9
+YOLO-RDNet[29] 99.0 88.2 97.7 97.2 94.2 93.4 99.5 90.0 83.393.593.6
+HW ANet[19] 99.4 92.399.098.9 95.4 78.2 96.2 97.3 84.9 89.7 93.1
+Ours99.5 86.0 97.699.5 96.9 99.599.599.076.2 87.694.1
+Table 2. Performance comparison on VisDrone2019 validation set.
+“-” indicates the metric was not adopted,boldindicates the best
+performance.
+Method mAP 50 mAP50-95 Params GFLOPs
+Dab-DETR[28] 41.1 21.8 43.45 101
+RTMDet-L[31] 46.8 29.3 52.26 79.97
+EMAattention[33] 49.7 30.4 91.2 315.0
+RT-DETR[54] 47.5 29.2 19.88 57.0
+VMC-DETR[11] 45.9 27.9 - 70.5
+UA V-DETR[51] 50.0 30.9 21.26 72.5
+AOD-YOLO-S[46] 44.9 26.5 10.7 124.0
+YOLOv8s-FSD [13] 46.7 28.5 13.0 43.2
+RT-DETR-R50[52] 49.8 30.8 41.9 129.6
+LUFE-Net[52] 50.2 30.9 9.733.1
+YOLO11-I 46.1 28.7 25.3 87.28
+YOLO12-I 47.3 29.3 29.2 89.4
+YOLO26-I 45.2 27.7 26.3 93.8
+Ours 50.5 31.2 2.5952.44
+Table 3. Performance comparison on the AI-TODv2 test set under
+the COCO evaluation standard.Boldindicates the best perfor-
+mance in the current comparison. LTDNet* is a high-precision
+variant of LTDNet.
+Method AP AP 50 AP75 APvt APt APs APm
+DetectoRS[38] 16.1 35.5 12.5 0.1 12.6 28.3 40.0
+ESANet[47] 17.6 45.0 10.5 5.4 15.8 22.9 33.8
+ORFENet[25] 18.9 44.4 12.7 6.9 18.4 23.4 30.3
+DNTR[27] 23.1 51.9 16.8 9.7 22.7 27.2 36.1
+DCENet[16] 23.5 53.9 16.8 8.524.128.1 37.1
+LTDNet*[26] 23.0 54.6 15.5 8.9 23.6 27.2 33.1
+Ours 24.7 54.9 18.2 10.223.531.7 41.8
+streamlined parameter count.
+AI-TODv2 Evaluation Results.Tab. 3 demonstrates
+that the proposed method achieves optimal performance
+across all metrics, including AP, AP50, AP75, APvt, APs, and
+APm, fully showcasing its superior detection performance.
+This comprehensive result demonstrates the unique value
+of the dual-backbone architecture in handling tiny objects:
+the color extraction pathway enhances recognition capabil-
+ity for low-contrast small targets, while the edge extrac-
+tion pathway improves precision in capturing blurred con-
+tours. Ultimately, through the feature fusion mechanism,
+the model achieves accurate detection of targets of various
+sizes, particularly ultra-small objects in UA V imagery.
+4.3. Ablation Experiments and Analysis
+To evaluate the contributions of each module in BDNet, we
+conducted ablation experiments on the VisDrone2019 vali-
+dation set and performed feature visualization analysis. We
+further provide additional supplemental analysis and verifi-
+cation (see Supplementary Material Sec. C for details). to
+validate the effectiveness of the model design.
+CIP Internal Components.As illustrated in Table 4,
+CAM elevates mAP 50 from the baseline 47.8% to 48.0%,
+capturing finer color contrasts in low-illumination scenar-
+ios. Subsequently, VCHM further enriches feature discrim-
+inability through hierarchical hue processing, pushing per-
+formance to 48.3%. When integrated, these two modules
+achieve a combined mAP 50 of 48.8%, underscoring their
+complementary functionality.
+EIP Internal Components.According to Table 4, EL-
+LOM component raises mAP 50 to 48.1% by emphasizing
+semantically salient contours, while OrSM further improves
+it to 48.3% through biologically-inspired directional filter-
+ing. Together, they attain 48.8%, demonstrating a clear syn-
+ergistic interaction. OrSM proves particularly critical by
+modeling precise edge orientation and spatial relationships,
+effectively mitigating motion-induced blurring artifacts and
+reinforcing structural coherence in small object detection.
+Complete Model.As shown in Table 5, staged integra-
+tion of CIP, EIP, and FFM systematically elevates mAP 50
+from 47.8% to 50.5%, with a manageable increase in pa-
+rameters and computational load. This structured enhance-
+ment confirms each module’s indispensability and illus-
+trates their cumulative effect—color and edge pathways re-
+solve key challenges in low-contrast and blurred-boundary
+conditions, while FFM enables cross-dimensional feature
+32730
+
+PAGE 8
+(a) (b) (c)
+Pedestrian People Bicycle Car Van Truck Awning tricycle Tricycle Bus Motor
+Figure 5. Visualization. (a) displays the input image containing ten categories of small objects with blurred edges and low contrast,
+intuitively illustrating the complexity of the detection task; (b) presents a four-column layout showing heatmaps of features from different
+layers for the ten categories of small objects (starting from the baseline model, sequentially adding CIP, EIP, and FFM), where higher
+brightness indicates stronger feature response and target discriminability; (c) shows the output image and detection results.
+consolidation, culminating in a balanced, powerful detec-
+tion network.
+Table 4. Ablation Study on CIP and EIP Internal Components
+CAM VCHM mAP 50 Params GFLOPs
+× ×47.8 1.98 45.98
+✓×48.0 1.98 46.39
+×✓48.3 2.04 47.15
+✓ ✓48.8 2.04 47.56
+ELLOM OrSM mAP 50 Params GFLOPs
+× ×47.8 1.98 45.98
+✓×48.1 1.98 46.38
+×✓48.3 2.04 47.13
+✓ ✓48.8 2.04 47.52
+Table 5. Ablation Study on the Entire Model
+CIP EIP FFM mAP 50 Params GFLOPs
+× × ×47.8 1.98 45.98
+✓× ×48.8 2.04 47.56
+×✓×48.8 2.04 47.52
+× ×✓49.4 2.48 49.20
+✓ ✓×49.8 2.52 52.31
+×✓ ✓50.3 2.53 50.78
+✓×✓49.7 2.53 50.75
+✓ ✓ ✓50.5 2.59 52.44
+Visualization Analysis.To qualitatively assess our
+approach, we selected a challenging scene from Vis-
+Drone2019 containing ten distinct object categories and
+compared the feature heatmaps and final detection outputs
+generated by the baseline and BDNet (Fig. 5). The base-
+line model yields indistinct heatmaps, exhibiting weak ac-
+tivation for both low-contrast targets (e.g., People, Bicycle)
+and objects with blurred contours (e.g., Pedestrian), caus-
+ing foreground-background ambiguity. Incorporating CIP
+noticeably intensifies the feature responses; however, cer-
+tain edge details remain blurred, and the discriminability
+between adjacent instances is still limited. The subsequent
+integration of the EIP branch effectively suppresses back-
+ground noise and further sharpens the feature representa-
+tions. Ultimately, FFM integration achieves target repre-
+sentation through color-edge feature fusion, yielding strong
+and accurate feature responses.
+These visualization results systematically validate that
+the proposed BDNet effectively addresses the feature ex-
+traction challenges arising from low color contrast and
+blurred edges in remote sensing small targets, demonstrat-
+ing robust generalization.
+5. Conclusion
+This paper proposes a biologically-inspired dual-backbone
+network for small object detection (BDNet), designed to
+address poor feature extraction in remote sensing images
+caused by small objects’ low color contrast and blurred
+edges. BDNet simulates the processing mechanism of bi-
+ological vision systems by constructing a color information
+pathway (CIP), an edge information pathway (EIP), and a
+feature fusion module, strengthening color and edge feature
+extraction. Extensive experiments on three datasets validate
+its effectiveness. This research provides a biologically plau-
+sible solution for small object detection in complex remote
+sensing scenarios.
+32731
+
+PAGE 9
+6. Acknowledgment
+This work is supported by the National Natural Sci-
+ence Foundation of China (Grant No. 62266006) and
+the Guangxi Natural Science Foundation (Grant Nos.
+2025GXNSFAA069690 and 2020GXNSFDA297006).
+References
+[1] Matteo Carandini and David J Heeger. Normalization as a
+canonical neural computation.Nature reviews neuroscience,
+13(1):51–62, 2012. 4
+[2] James R Cavanaugh, Wyeth Bair, and J Anthony Movshon.
+Nature and interaction of signals from the receptive field cen-
+ter and surround in macaque v1 neurons.Journal of neuro-
+physiology, 88(5):2530–2546, 2002. 4
+[3] Xi Chen and Chuan Lin. Evmnet: Eagle visual mechanism-
+inspired lightweight network for small object detection in
+uav aerial images.Digital Signal Processing, 158:104957,
+2025. 2
+[4] Gong Cheng and Junwei Han. A survey on object detec-
+tion in optical remote sensing images.ISPRS journal of pho-
+togrammetry and remote sensing, 117:11–28, 2016. 1
+[5] Gong Cheng, Junwei Han, Peicheng Zhou, and Lei Guo.
+Multi-class geospatial object detection and geographic im-
+age classification based on collection of part detectors.IS-
+PRS Journal of Photogrammetry and Remote Sensing, 98:
+119–132, 2014. 6
+[6] Dennis M Dacey. Circuitry for color coding in the primate
+retina.Proceedings of the National Academy of Sciences, 93
+(2):582–588, 1996. 3
+[7] Pierre Simon de Laplace.Th ´eorie analytique des proba-
+bilit´es. Courcier, 1820. 4
+[8] Andrew Derrington. The lateral geniculate nucleus.Current
+Biology, 11(16):R635–R637, 2001. 3
+[9] Dawei Du, Yuankai Qi, Hongyang Yu, Yifan Yang, Kaiwen
+Duan, Guorong Li, Weigang Zhang, Qingming Huang, and
+Qi Tian. The unmanned aerial vehicle benchmark: Object
+detection and tracking. InProceedings of the European con-
+ference on computer vision (ECCV), pages 370–386, 2018.
+6
+[4] Dawei Du, Pengfei Zhu, Longyin Wen, Xiao Bian, Haibin
+Lin, Qinghua Hu, Tao Peng, Jiayu Zheng, Xinyao Wang, Yue
+Zhang, et al. Visdrone-det2019: The vision meets drone ob-
+ject detection in image challenge results. InProceedings of
+the IEEE/CVF international conference on computer vision
+workshops, pages 0–0, 2019. 6, 2
+[11] Xin Ge, Liping Qi, Qingsen Yan, Jinqiu Sun, Yu Zhu, and
+Yanning Zhang. Enhancing real-time aerial image object
+detection with high-frequency feature learning and context-
+aware fusion.Remote Sensing, 17(12):1994, 2025. 7
+[12] Dongen Guo, Zhuoke Zhou, Fengshuo Guo, Chaoxin Jia, Xi-
+aohong Huang, Jiangfan Feng, and Zhen Shen. A remote
+sensing target detection model based on lightweight feature
+enhancement and feature refinement extraction.IEEE Jour-
+nal of Selected Topics in Applied Earth Observations and
+Remote Sensing, 17:9569–9581, 2024. 7
+[13] Zihan Guo, Xingyu Mu, Chao Chang, Weijie Cheng, and
+Xincheng Tian. An enhanced framework for small object
+detection with middle-order interaction and adaptive cross-
+scale aggregation.Engineering Applications of Artificial In-
+telligence, 159:111730, 2025. 7
+[14] CA Heywood, A Gadotti, and A Cowey. Cortical area v4 and
+its role in the perception of color.Journal of Neuroscience,
+12(10):4056–4065, 1992. 1
+[15] Liping Hou, Ke Lu, and Jian Xue. Refined one-stage oriented
+object detection method for remote sensing images.IEEE
+Transactions on Image Processing, 31:1545–1558, 2022. 2
+[16] Xinkai Hu, Zhida Ren, Uzair Aslam Bhatti, Mengxing
+Huang, and Yirong Wu. Dcedet: Tiny object detection in re-
+mote sensing images based on dual-contrast feature enhance-
+ment and dynamic distance measurement.Remote Sensing,
+17(16):2876, 2025. 7
+[17] Sihan Huang, Chuan Lin, Xintong Jiang, and Zhenshen
+Qu. Brstd: Bio-inspired remote sensing tiny object detec-
+tion.IEEE Transactions on Geoscience and Remote Sensing,
+2024. 2
+[18] David H Hubel and Torsten N Wiesel. Receptive fields and
+functional architecture of monkey striate cortex.The Journal
+of physiology, 195(1):215–243, 1968. 1
+[19] Baohua Jin, Fukang Yin, Wenpeng Cai, Hongchan Li,
+Haodong Zhu, Wei Huang, Qinggang Wu, Hui Chen, and
+Zhongchuan Sun. Hwanet: A haar wavelet-based attention
+network for remote sensing object detection.PLoS One, 20
+(9):e0330759, 2025. 7
+[20] Rodney LaLonde, Dong Zhang, and Mubarak Shah. Cluster-
+net: Detecting small objects in large scenes by exploiting
+spatio-temporal information. InProceedings of the IEEE
+Conference on Computer Vision and Pattern Recognition,
+pages 4003–4012, 2018. 2
+[21] Peichao Li, Anupam K Garg, Li A Zhang, Mohammad S
+Rashid, and Edward M Callaway. Cone opponent func-
+tional domains in primary visual cortex combine signals for
+color appearance mechanisms.Nature communications, 13
+(1):6344, 2022. 3
+[22] Yiyu Li, Ke Xu, Gerhard Petrus Hancke, and Rynson WH
+Lau. Color shift estimation-and-correction for image en-
+hancement. InProceedings of the IEEE/CVF Conference
+on Computer Vision and Pattern Recognition, pages 25389–
+25398, 2024. 1
+[23] Yanfeng Li, Kahou Chan, Yue Sun, Chantong Lam, Tong
+Tong, Zitong Yu, Keren Fu, Xiaohong Liu, and Tao Tan.
+Moedit: On learning quantity perception for multi-object im-
+age editing. InProceedings of the Computer Vision and Pat-
+tern Recognition Conference, pages 2683–2693, 2025. 1
+[24] Binhui Liu, Chunyan Xu, Zhen Cui, and Jian Yang. Pro-
+gressive context-dependent inference for object detection in
+remote sensing imagery.IEEE Transactions on Image Pro-
+cessing, 32:580–590, 2022. 2
+[25] Dongyang Liu, Junping Zhang, Yunxiao Qi, Yinhu Wu, and
+Ye Zhang. Tiny object detection in remote sensing images
+based on object reconstruction and multiple receptive field
+adaptive feature enhancement.IEEE Transactions on Geo-
+science and Remote Sensing, 62:1–13, 2024. 7
+32732
+
+PAGE 10
+[26] Dongyang Liu, Junping Zhang, Yunxiao Qi, Yunqiao Xi, and
+Jing Jin. Exploring lightweight structures for tiny object
+detection in remote sensing images.IEEE Transactions on
+Geoscience and Remote Sensing, 2025. 7
+[27] Hou-I Liu, Yu-Wen Tseng, Kai-Cheng Chang, Pin-Jyun
+Wang, Hong-Han Shuai, and Wen-Huang Cheng. A de-
+noising fpn with transformer r-cnn for tiny object detection.
+IEEE transactions on geoscience and remote sensing, 62:1–
+15, 2024. 7
+[28] Shilong Liu, Feng Li, Hao Zhang, Xiao Yang, Xianbiao Qi,
+Hang Su, Jun Zhu, and Lei Zhang. Dab-detr: Dynamic
+anchor boxes are better queries for detr.arXiv preprint
+arXiv:2201.12329, 2022. 7
+[29] XiaoDong Liu, Hao Zhang, Wenyin Gong, and Xiang Li.
+Yolo-pdnet: Small target recognition improvement for re-
+mote sensing image based on yolov8. In2024 International
+Joint Conference on Neural Networks (IJCNN), pages 1–9.
+IEEE, 2024. 7
+[30] Ye Liu, Ming Li, Xian Zhang, Yiliang Lu, Hongliang Gong,
+Jiapeng Yin, Zheyuan Chen, Liling Qian, Yupeng Yang,
+Ian Max Andolina, et al. Hierarchical representation for
+chromatic processing across macaque v1, v2, and v4.Neu-
+ron, 108(3):538–550, 2020. 3
+[31] Chengqi Lyu, Wenwei Zhang, Haian Huang, Yue Zhou,
+Yudong Wang, Yanyi Liu, Shilong Zhang, and Kai Chen.
+Rtmdet: An empirical study of designing real-time object
+detectors.arXiv preprint arXiv:2212.07784, 2022. 7
+[32] Yansong Niu, Chuan Lin, Xintong Jiang, and Zhenshen Qu.
+Vstdet: A lightweight small object detection network in-
+spired by the ventral visual pathway.Applied Soft Comput-
+ing, 171:112775, 2025. 2
+[33] Daliang Ouyang, Su He, Guozhong Zhang, Mingzhu Luo,
+Huaiyong Guo, Jian Zhan, and Zhijie Huang. Efficient
+multi-scale attention module with cross-spatial learning. In
+ICASSP 2023-2023 IEEE international conference on acous-
+tics, speech and signal processing (ICASSP), pages 1–5.
+IEEE, 2023. 7
+[34] Xintao Pang, Chuan Lin, Fuzhang Li, and Yongcai Pan. Bio-
+inspired xyw parallel pathway edge detection network.Ex-
+pert Systems with Applications, 237:121649, 2024. 4
+[35] Xintao Pang, Fengjuan Yao, Yanming Zhang, Yue Sun, Ed-
+mundo Patricio Lopes Lao, Chuan Lin, Patrick Cheong-Iao
+Pang, Wei Wang, Wei Li, Zhifan Gao, et al. Blenet: a bio-
+inspired lightweight and efficient network for left ventricle
+segmentation in echocardiography.IEEE Transactions on
+Circuits and Systems for Video Technology, 2025. 3
+[36] Anitha Pasupathy and Charles E Connor. Shape representa-
+tion in area v4: position-specific tuning for boundary con-
+formation.Journal of neurophysiology, 86(5):2505–2519,
+2001. 1
+[37] Anitha Pasupathy, Dina V Popovkina, and Taekjun Kim. Vi-
+sual functions of primate area v4.Annual review of vision
+science, 6(1):363–385, 2020. 5
+[38] Siyuan Qiao, Liang-Chieh Chen, and Alan Yuille. Detectors:
+Detecting objects with recursive feature pyramid and switch-
+able atrous convolution. InProceedings of the IEEE/CVF
+conference on computer vision and pattern recognition,
+pages 10213–10224, 2021. 7
+[39] Anna W Roe, Leonardo Chelazzi, Charles E Connor, Bevil R
+Conway, Ichiro Fujita, Jack L Gallant, Haidong Lu, and Wim
+Vanduffel. Toward a unified theory of visual area v4.Neuron,
+74(1):12–29, 2012. 1
+[40] Robert Shapley and Michael J Hawken. Color in the cor-
+tex: single-and double-opponent cells.Vision research, 51
+(7):701–717, 2011. 1
+[41] Zhiqiang Shen, Zhuang Liu, Jianguo Li, Yu-Gang Jiang,
+Yurong Chen, and Xiangyang Xue. Dsod: Learning deeply
+supervised object detectors from scratch. InProceedings of
+the IEEE international conference on computer vision, pages
+1919–1927, 2017. 1
+[42] Huixin Sun, Runqi Wang, Yanjing Li, Linlin Yang, Shao-
+hui Lin, Xianbin Cao, and Baochang Zhang. Set: Spectral
+enhancement for tiny object detection. InProceedings of the
+Computer Vision and Pattern Recognition Conference, pages
+4713–4723, 2025. 1
+[43] Hisashi Tanigawa, Haidong D Lu, and Anna W Roe. Func-
+tional organization for color and orientation in macaque v4.
+Nature neuroscience, 13(12):1542–1548, 2010. 5
+[44] Gang Wang, Xin Yang, Liang Li, Kai Gao, Jin Gao, Jia-yi
+Zhang, Da-jun Xing, and Yi-zheng Wang. Tiny drone object
+detection in videos guided by the bio-inspired magnocellular
+computation model.Applied Soft Computing, 163:111892,
+2024. 2
+[45] Keyan Wang, Feiyu Bai, Jiaojiao Li, Yajing Liu, and Yun-
+song Li. Mashformer: A novel multiscale aware hybrid de-
+tector for remote sensing object detection.IEEE Journal of
+Selected Topics in Applied Earth Observations and Remote
+Sensing, 16:2753–2763, 2023. 7
+[46] Yingqing Wang, Weili Zeng, Ziyu Zhao, Baogeng Li, and
+Zhibin Quan. Aod-yolo: A self-modulating multi-scale fea-
+ture aggregation mechanism for small object detection in air-
+port surface scenes.Applied Soft Computing, page 113849,
+2025. 7
+[47] Jixiang Wu, Zongxu Pan, Bin Lei, and Yuxin Hu. Fsanet:
+Feature-and-spatial-aligned network for tiny object detection
+in remote sensing images.IEEE Transactions on Geoscience
+and Remote Sensing, 60:1–17, 2022. 7
+[48] Xin Wu, Danfeng Hong, Jiaojiao Tian, Jocelyn Chanussot,
+Wei Li, and Ran Tao. Orsim detector: A novel object de-
+tection framework in optical remote sensing imagery using
+spatial-frequency channel features.IEEE Transactions on
+Geoscience and Remote Sensing, 57(7):5146–5158, 2019. 2
+[49] Chang Xu, Jian Ding, Jinwang Wang, Wen Yang, Huai Yu,
+Lei Yu, and Gui-Song Xia. Dynamic coarse-to-fine learn-
+ing for oriented tiny object detection. InProceedings of
+the IEEE/CVF conference on computer vision and pattern
+recognition, pages 7318–7328, 2023. 1, 2
+[50] Hao Zhang, Feng Li, Shilong Liu, Lei Zhang, Hang Su, Jun
+Zhu, Lionel M Ni, and Heung-Yeung Shum. Dino: Detr
+with improved denoising anchor boxes for end-to-end object
+detection.arXiv preprint arXiv:2203.03605, 2022. 7
+[51] Huaxiang Zhang, Kai Liu, Zhongxue Gan, and Guo-
+Niu Zhu. Uav-detr: efficient end-to-end object detec-
+tion for unmanned aerial vehicle imagery.arXiv preprint
+arXiv:2501.01855, 2025. 7
+32733
+
+PAGE 11
+[52] Xi Zhang, Huicheng Lai, Tingting Yuan, Guxue Gao, and Di
+Jiang. Lufe-net: A lightweight uav aerial object feature en-
+hancement network for complex scenarios.Optics & Laser
+Technology, 195:114543, 2026. 7
+[53] Yundong Zhang, Huiye Liu, and Qiang Hu. Transfuse: Fus-
+ing transformers and cnns for medical image segmentation.
+InInternational conference on medical image computing
+and computer-assisted intervention, pages 14–24. Springer,
+2021. 1
+[54] Yian Zhao, Wenyu Lv, Shangliang Xu, Jinman Wei,
+Guanzhong Wang, Qingqing Dang, Yi Liu, and Jie Chen.
+Detrs beat yolos on real-time object detection. InProceed-
+ings of the IEEE/CVF conference on computer vision and
+pattern recognition, pages 16965–16974, 2024. 7
+[55] Haowei Zhu, Wenjing Ke, Dong Li, Ji Liu, Lu Tian, and Yi
+Shan. Dual cross-attention learning for fine-grained visual
+categorization and object re-identification. InProceedings
+of the IEEE/CVF conference on computer vision and pattern
+recognition, pages 4692–4702, 2022. 1
+32734

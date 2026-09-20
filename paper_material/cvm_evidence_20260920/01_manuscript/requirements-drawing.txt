@@ -1,0 +1,5 @@
+Pillow
+matplotlib==3.11.2
+svglib==2.2.0
+reportlab==5.0.1
+pypdf

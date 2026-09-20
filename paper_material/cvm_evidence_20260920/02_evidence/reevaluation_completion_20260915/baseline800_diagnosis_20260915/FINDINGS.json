@@ -1,0 +1,11 @@
+{
+  "validation_drop_pp": 6.324361329902628,
+  "anchor_probe_recovery_pp": 3.5149625227212393,
+  "fraction_of_observed_drop_recovered": 0.5557814203470498,
+  "remaining_gap_pp": 2.8093988071813882,
+  "fresh640_delta_pp": 0.014597791894050971,
+  "fp16anchors800_delta_pp": 0.007468392195596252,
+  "nofuse800_delta_pp": 0.005728691556532439,
+  "diagnostic_only": true,
+  "test_not_used_for_interventions": true
+}

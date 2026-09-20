@@ -1,0 +1,34 @@
+[
+  {
+    "name": "B_native640",
+    "status": "complete"
+  },
+  {
+    "name": "B_native800",
+    "status": "complete"
+  },
+  {
+    "name": "B_fresh800",
+    "status": "complete"
+  },
+  {
+    "name": "B_nofuse800",
+    "status": "complete"
+  },
+  {
+    "name": "B_anchor800",
+    "status": "complete"
+  },
+  {
+    "name": "B_boxwh800",
+    "status": "complete"
+  },
+  {
+    "name": "G_native640",
+    "status": "complete"
+  },
+  {
+    "name": "G_native800",
+    "status": "complete"
+  }
+]

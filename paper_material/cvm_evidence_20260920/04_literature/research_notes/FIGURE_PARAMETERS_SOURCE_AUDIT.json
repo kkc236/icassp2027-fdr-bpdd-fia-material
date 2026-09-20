@@ -1,0 +1,429 @@
+{
+  "status": "passed",
+  "reviewed_at_utc": "2026-09-18T11:59:56.016314+00:00",
+  "reviewer": "structure_semantics_audit",
+  "scope": "Fresh complete diagram-source and rendered-PNG review of hierarchical detector layout against previously verified Full v3-safe implementation, including host/G separation and shared feature interfaces.",
+  "full_configuration": {
+    "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+    "authority_cross_check": "output/cvm_hierarchical_architecture_20260918/inputs/current_joint_method.md:9,30",
+    "warning": "Do not substitute the older v2 configuration or dataclass defaults: v3-safe disables classification KD."
+  },
+  "parameter_groups": [
+    {
+      "id": "G_capacity",
+      "values": {
+        "decoder_layers": 6,
+        "ordinary_queries": 300,
+        "hidden_dim": 256
+      },
+      "sources": [
+        {
+          "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "lines": "39"
+        },
+        {
+          "file": "src/fdr_head.py",
+          "lines": "83-86, 140-156"
+        }
+      ],
+      "suggestion": "Show 6 layers, 300 queries, d=256 at G or its repeat bracket."
+    },
+    {
+      "id": "edge_distribution",
+      "values": {
+        "edges": 4,
+        "bins_per_edge": 33,
+        "edge_logits": 132,
+        "reg_max": 32,
+        "reg_scale": 4.0,
+        "up": 0.5
+      },
+      "sources": [
+        {
+          "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "lines": "40"
+        },
+        {
+          "file": "src/bpdd_capacity.py",
+          "lines": "75, 116"
+        },
+        {
+          "file": "src/fdr_head.py",
+          "lines": "503-515"
+        }
+      ],
+      "suggestion": "Show 4 edges x 33 bins. reg_max=32 is not a 32-bin count."
+    },
+    {
+      "id": "G_reference_and_accumulation",
+      "values": {
+        "fixed_incoming_reference": true,
+        "preliminary_box_reference": false,
+        "distribution_feedback": false,
+        "cumulative_logits": true,
+        "previous_query_detached": true,
+        "previous_logits_detached": false
+      },
+      "sources": [
+        {
+          "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "lines": "40-42"
+        },
+        {
+          "file": "src/fdr_head.py",
+          "lines": "481-505, 608-609"
+        }
+      ],
+      "suggestion": "Show fixed r0, query plus detached previous query, and z_l=z_(l-1)+delta_z_l."
+    },
+    {
+      "id": "geometry",
+      "values": {
+        "delta": 0.001,
+        "reference_extent": "u=(w,h)/4",
+        "precision_floor": "8*eps*max(abs(detached center),1)",
+        "forward_extent": "max(raw_extent, floor)",
+        "surrogate_extent_gradient": 1,
+        "minimum_decoding_precision": "FP32"
+      },
+      "sources": [
+        {
+          "file": "src/fdr_math.py",
+          "lines": "253, 270-288"
+        }
+      ],
+      "suggestion": "Show delta=10^-3 near the floor and preserve the center bypass. Do not describe delta as an absolute image-space width floor."
+    },
+    {
+      "id": "LQS",
+      "values": {
+        "alpha0": 0.25,
+        "alpha_l": "0.25*(1-l/5), l=0,...,5",
+        "final_alpha": 0,
+        "quality": "detached matched IoU",
+        "group": "eligible matches in the same image and layer",
+        "sum_preserved": true
+      },
+      "sources": [
+        {
+          "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "lines": "52"
+        },
+        {
+          "file": "src/fdr_loss.py",
+          "lines": "90-115"
+        }
+      ],
+      "suggestion": "Show shrinkage equation, alpha 0.25 to 0, and conserved group sum; leave detailed eligibility in the method."
+    },
+    {
+      "id": "F",
+      "values": {
+        "residual_blocks": 2,
+        "internal_residuals_per_block": 2,
+        "pointwise_kernel": "1x1",
+        "depthwise_kernel": "3x3",
+        "spatial_gate_kernel": "7x7",
+        "channel_gate_reduction": 4,
+        "gamma_init": 0,
+        "blend": "P3*=P3+gamma*(R(P3)-P3)",
+        "parallel_gates": true
+      },
+      "sources": [
+        {
+          "file": "src/fia.py",
+          "lines": "47-61, 73-94, 109-119"
+        }
+      ],
+      "suggestion": "Show repeat x2, key kernels, parallel gates, and zero-initialized blend."
+    },
+    {
+      "id": "B_sampling",
+      "values": {
+        "points_per_scale": 41,
+        "scales": 3,
+        "local_tokens": 123,
+        "current_query_tokens": 1,
+        "KV_tokens_per_block": 124,
+        "sample_radii": [
+          0.4,
+          0.6
+        ],
+        "sample_coordinate_gradient": "stopped",
+        "invalid_samples": "masked"
+      },
+      "sources": [
+        {
+          "file": "src/bpdd_capacity.py",
+          "lines": "14-24, 47-53, 126-135"
+        }
+      ],
+      "suggestion": "Label 41 points x 3 scales = 123 local tokens. The current query is additional, yielding 124 K/V tokens, not 123 total."
+    },
+    {
+      "id": "B_attention_and_heads",
+      "values": {
+        "blocks": 2,
+        "heads": 8,
+        "hidden_dim": 256,
+        "FFN_width": 1024,
+        "distribution_descriptor_dim": 8,
+        "descriptor": "four means plus four entropies, detached",
+        "final_norm_after_repeat": true,
+        "residual_heads_zero_init": true
+      },
+      "sources": [
+        {
+          "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "lines": "43-44"
+        },
+        {
+          "file": "src/bpdd_capacity.py",
+          "lines": "69-76, 99-105, 116-120, 142-143"
+        }
+      ],
+      "suggestion": "Show repeat x2, 8 heads and FFN 1024; keep final norm outside the repeat and transfer from combined edge logits."
+    },
+    {
+      "id": "selective_transfer",
+      "values": {
+        "edge_margin": 0.02,
+        "edge_tau": 0.1,
+        "mixed_box_IoU_margin": 0.0,
+        "mixed_box_acceptance": "strictly greater IoU",
+        "peak_localization_KD_weight": 0.15,
+        "classification_KD_weight": 0.0,
+        "warmup_completed_epochs": [
+          10,
+          20
+        ],
+        "decay_completed_epochs": [
+          80,
+          100
+        ]
+      },
+      "sources": [
+        {
+          "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+          "lines": "55-64"
+        },
+        {
+          "file": "src/bpdd_capacity_loss.py",
+          "lines": "278-335"
+        }
+      ],
+      "suggestion": "Show m=0.02, tau=0.10, and delta IoU > 0. If showing lambda_loc=0.15, identify it as peak weight; the scheduled multiplier remains in the text. No classification KD branch."
+    }
+  ],
+  "feature_topology": {
+    "finding": "F is on the hybrid encoder/neck P3 output branch, not before the hybrid encoder.",
+    "P3_source_layer": 21,
+    "F_output_layer": 22,
+    "P4_downsampling_source_layer": 21,
+    "decoder_inputs": [
+      1,
+      22,
+      25,
+      28
+    ],
+    "decoder_input_roles": [
+      "backbone P2",
+      "enhanced P3",
+      "neck P4",
+      "neck P5"
+    ],
+    "decoder_input_channels": [
+      128,
+      256,
+      256,
+      256
+    ],
+    "sources": [
+      {
+        "file": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+        "lines": "18-38"
+      }
+    ]
+  },
+  "panel_mapping": {
+    "a": "complete detector overview",
+    "b": "shared P3 refinement F",
+    "c": "GCDL localization path G",
+    "G.1": "distribution accumulation within G",
+    "G.2": "feasible geometry within G",
+    "G.3": "LQS-weighted FGL within G",
+    "d": "box-conditioned local expert B"
+  },
+  "connector_semantics": {
+    "thin_dashed_without_arrow": "parent-to-detail expansion, not tensor flow",
+    "solid_arrow": "prediction/feature flow",
+    "orange_dashed_arrow": "training-only path"
+  },
+  "source_fingerprints": [
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+      "sha256": "53c1ab74bb73becb848da3a713afe32bb2aab068997979eb84880eb79bf82061"
+    },
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/src/fia.py",
+      "sha256": "2686c028429ccb2260ea46c6031e1c55dc2e4d43a09d211be5ca4134585457a1"
+    },
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/src/fdr_head.py",
+      "sha256": "faf52c3ffa49f5a1cc94be49d773cb849817917c65debeb09f4c47d376ac23fc"
+    },
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/src/fdr_math.py",
+      "sha256": "ac60364c008b048d3dfda619354ce3c1c0e5367b3d8a55de54c49ee43ebebb9a"
+    },
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/src/fdr_loss.py",
+      "sha256": "ac60523868ebfdeaeaf63e906095225813f6c250a833f2beb1feea84585c2ecb"
+    },
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/src/bpdd_capacity.py",
+      "sha256": "38df591604ac891219a66ad9e4ff48240880c9711d4b81e1672c80c8ef3b8db9"
+    },
+    {
+      "file": "tmp-work/icassp2027-fdr-bpdd-fia-material/paper_material/evidence/audit_remediation_20260915/source-a43056a/src/bpdd_capacity_loss.py",
+      "sha256": "dee01d47ab6bacbe120b21f7f6cd0f82d4131890caf1e2c7966bf10882e4eef2"
+    },
+    {
+      "file": "output/cvm_hierarchical_architecture_20260918/inputs/current_joint_method.md",
+      "sha256": "318af264851e5b27213f8c8c8a2f3399d096b5e35623f1d45698d5d89c609ce3"
+    }
+  ],
+  "new_model_execution": false,
+  "limitations": [
+    "Architecture constants and diagram semantics were checked; numerical performance was not re-evaluated.",
+    "Some host internals and direct losses are intentionally omitted and identified in the figure caption."
+  ],
+  "final_figure_review": {
+    "reviewed_at_utc": "2026-09-18T11:59:56.016314+00:00",
+    "method": "Actual inspection of rendered architecture_dense.png and the complete generated drawing source, including newly assembled F and B fragments and rewritten overview/G area.",
+    "figure_result": "passed",
+    "overall_status": "passed",
+    "findings": [],
+    "checks": [
+      {
+        "id": "host_and_G_hierarchy",
+        "result": "pass",
+        "finding": "Overview retains gray RT-DETR attention/FFN and class head while G is the distinct localization branch inside the six-layer decoder; B is after its final layer. G.1/G.2/G.3 are nested in the G parent rather than peer modules.",
+        "source": "src/fdr_head.py:450-517, 538-576"
+      },
+      {
+        "id": "feature_interfaces",
+        "result": "pass",
+        "finding": "F refines hybrid-encoder P3 only. P4 and P5 have distinct decoder input paths, and only P4 is tapped for B. Backbone P2 bypasses the hybrid encoder. B local feature inputs are P2/P3*/P4.",
+        "source": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml:18-38"
+      },
+      {
+        "id": "F_transform_and_gates",
+        "result": "pass",
+        "finding": "Two repeated blocks each contain x+DWConv(GELU(Conv(x))) and u+Conv(GELU(u)); the second sum supplies v. Both channel/spatial gates and the direct multiplication input share v. Original P3 takes an independent path into the gamma-initial-zero blend.",
+        "source": "src/fia.py:47-61, 73-94, 109-119"
+      },
+      {
+        "id": "G_distribution_accumulation",
+        "result": "pass",
+        "finding": "G.1 adds detached previous query before the edge head and adds non-detached previous logits afterwards; four edges times33 bins and the cumulative-logit equation are correct.",
+        "source": "src/fdr_head.py:491-505; src/bpdd_capacity.py:116"
+      },
+      {
+        "id": "fixed_and_dynamic_reference_separation",
+        "result": "pass",
+        "finding": "Fixed r0=sg(incoming reference) is an explicit upper bus feeding geometry and target encoding. The decoded-box feedback is a distinct lower route identified as the next decoder attention reference. The feedback does not overwrite r0.",
+        "source": "src/fdr_head.py:481-517, 608-609"
+      },
+      {
+        "id": "G_geometry",
+        "result": "pass",
+        "finding": "G.2 combines fixed reference and offsets, preserves the center through a bypass, and supplies raw extent plus reference/precision information to the floor. Box assembly combines preserved center and bounded extent. Delta=10^-3 and epsilon annotations are correct.",
+        "source": "src/fdr_math.py:253, 270-288"
+      },
+      {
+        "id": "G_LQS_and_targets",
+        "result": "pass",
+        "finding": "G.3 separately supplies detached matched IoU and eligible-group mean to shrinkage, shows alpha0.25 to0 and conserved total, then weights FGL. GT and fixed r0 feed target encoding, which joins edge logits and weights at FGL loss.",
+        "source": "src/fdr_loss.py:90-115, 308-350"
+      },
+      {
+        "id": "B_attention",
+        "result": "pass",
+        "finding": "B uses41 samples/scale,123 local tokens,d256 and query augmentation with stopped mean/entropy. Each repeated block concatenates current query with local tokens for K/V. Two blocks use8 heads and FFN1024; final LN is outside the repeat. Q/token crossing is visibly separated.",
+        "source": "src/bpdd_capacity.py:14-24, 47-53, 69-76, 116-143"
+      },
+      {
+        "id": "B_outputs_and_transfer",
+        "result": "pass",
+        "finding": "Final q, base class logits, base edge logits, base box and shared r0 are represented at the B interface. Class/edge residual additions remain distinct. Teacher tap is from combined edge logits before decode. Assignment/support/better-edge/mixed-IoU filters and peak localization-KD weight are correct.",
+        "source": "configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml:55-64; src/bpdd_capacity.py:142-143; src/bpdd_capacity_loss.py:278-335"
+      },
+      {
+        "id": "diagram_and_caption_panel_names",
+        "result": "pass",
+        "finding": "Figure source and caption use a overview, b F, c G with G.1/G.2/G.3, d B. Expansion guides have no arrows and connect detail panels to their actual overview modules."
+      },
+      {
+        "id": "body_panel_references",
+        "result": "pass",
+        "finding": "No obsolete c--e or f references remain."
+      }
+    ],
+    "figure_fingerprints": [
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/source/build_dense_architecture.py",
+        "sha256": "f779a471968842276349940805bb6cd129a46040d82f17aafb6cff2ff11a2019"
+      },
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/assets/architecture_dense.png",
+        "sha256": "e7debc43ba158b4dbda17258e66d05dac4060f6f76f5b7e37dc59e9a0d60242b"
+      },
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/source/figure_overview.tex",
+        "sha256": "61f3bc288e51ad204a43f7b9903cc59bd7bcba684d400392573c73d22662525b"
+      },
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/source/body.tex",
+        "sha256": "fb28a11165e7df90fdfed07a79c044fc5fc7291c6274b3da664c9abfaa1560e7"
+      }
+    ]
+  },
+  "final_reference_and_presentation_followup": {
+    "recorded_at_utc": "2026-09-18T12:00:15.837090+00:00",
+    "changes": [
+      "Obsolete body c--e and f panel references corrected to c and d.",
+      "Geometry and LQS dependencies refer to G.2 and G.3.",
+      "G expansion guide moved to the right of its label; no semantic change."
+    ],
+    "remaining_findings": [],
+    "compiled_main_and_PDF_fingerprints": "recorded in final_compilation_followup"
+  },
+  "final_compilation_followup": {
+    "recorded_at_utc": "2026-09-18T12:01:55.376266+00:00",
+    "presentation_only_change": "G.3 lower boundary moved from y1135 to y1143 to increase space below the conserved-weight label.",
+    "semantic_change": false,
+    "page_count_reported_by_root": 12,
+    "main_and_PDF_hashes_match_root": true,
+    "fingerprints": [
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/source/build_dense_architecture.py",
+        "sha256": "f779a471968842276349940805bb6cd129a46040d82f17aafb6cff2ff11a2019"
+      },
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/assets/architecture_dense.png",
+        "sha256": "e7debc43ba158b4dbda17258e66d05dac4060f6f76f5b7e37dc59e9a0d60242b"
+      },
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/main.tex",
+        "sha256": "5696503d658bfd0fb808620acbac1fe8685fccfe5a7378457a4c28cc999d9eac"
+      },
+      {
+        "path": "output/cvm_hierarchical_architecture_20260918/MANUSCRIPT_CVM.pdf",
+        "sha256": "14b96eaf3e190918e72dc821e27876426853cd8cf474fd81ac4dbbeb2c71680d"
+      }
+    ],
+    "audit_scope_expanded": false,
+    "new_model_execution": false
+  }
+}

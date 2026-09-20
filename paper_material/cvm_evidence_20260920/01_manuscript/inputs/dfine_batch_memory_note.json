@@ -1,0 +1,15 @@
+{
+  "status": "author_confirmed_training_constraint",
+  "source": "Direct author clarification in the current conversation",
+  "author_statement_zh": "d-fine-l在4090 24条件下batch=8会爆显存无奈调4",
+  "model": "D-FINE-L reproduction",
+  "hardware": "RTX 4090, 24 GB GPU memory",
+  "attempted_physical_batch_size": 8,
+  "reported_outcome": "out-of-memory error under the author's training setup",
+  "used_physical_batch_size": 4,
+  "scope": "Explains the physical training batch reduction only. Does not explain all recipe differences or establish a universal memory limit for D-FINE-L.",
+  "source_type": "author statement; no OOM log or new reproduction was obtained in this revision",
+  "new_training": false,
+  "new_model_evaluation": false,
+  "server_access": false
+}

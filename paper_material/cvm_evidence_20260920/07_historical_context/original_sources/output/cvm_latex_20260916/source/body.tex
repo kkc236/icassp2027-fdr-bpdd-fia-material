@@ -1,0 +1,237 @@
+\begin{abstract}
+Small aerial objects are sensitive to boundary errors, motivating local visual refinement after initial detection. We introduce a box-conditioned expert in a distributional RT-DETR detector. Using the boundary representation of D-FINE, the expert samples multiscale features around predicted boxes and produces residual class and edge-logit updates. Its directly supervised predictions also supply localization targets, selected through object-correspondence, boundary-support, and quality checks. Shared P3 refinement supplies both prediction paths. On converted-label VisDrone, the complete system improves native test AP over stock RT-DETR-L by 5.861 points. Under a separate common evaluator, final-checkpoint AP exceeds D-FINE-L by 1.579 points with different training recipes. A matched validation comparison supports a 0.832-point benefit from shared P3 refinement within the expert-equipped configuration. The system processes 74.129 images/s in a fixed-input benchmark on RTX 4090 at $640\times640$, FP32, and batch eight.
+\end{abstract}
+\par
+\keywords{UAV imagery; object detection; boundary distributions; local visual refinement; localization distillation}
+
+\section{Introduction}
+Accurately locating a small object requires more than identifying its presence. In UAV imagery, moving a boundary by only a few pixels can substantially change a box's overlap with its target. VisDrone~\cite{zhu2018visdrone} combines this sensitivity with crowded objects, occlusion, and extensive background. A useful localization representation must therefore be paired with visual evidence that helps distinguish nearby boundary positions.
+
+Existing aerial detectors obtain additional evidence at different stages. Slicing Aided Hyper Inference (SAHI)~\cite{akyon2022sahi} operates on resized image patches. LASOD-YOLO~\cite{wang2026lasod} combines context modeling with detail-preserving feature fusion, while weather-aware drone-view detection~\cite{kim2024weather} uses environmental context. These approaches motivate a complementary question: after a detector has estimated an object's location, how can that estimate guide a focused revisit to the surrounding visual features?
+
+DETR~\cite{carion2020detr} formulates detection as set prediction, and RT-DETR~\cite{zhao2024rtdetr} combines efficient feature encoding with query-based decoding. D-FINE~\cite{peng2025dfine} represents localization through discrete edge distributions refined across decoder layers. This representation describes alternative boundary positions, but the distribution alone does not supply new visual evidence. We connect the representation to a local visual expert after base decoding. The predicted box determines where the expert samples features; the resulting evidence determines residual updates to its class and edge logits.
+
+The expert's refined prediction serves two purposes. At inference, it provides the final detection. During training, it also offers a potential localization target for the base decoder. The second role needs a stricter criterion than simply running another prediction head. The same query may match different objects at different decoder layers, an edge target may lie outside the representable support, and individually promising edge changes may form a worse box when combined. Our supervision therefore checks object correspondence, support, edge quality, and the geometry of the proposed edge combination before transferring localization information.
+
+Both paths read a shared refinement of P3. This gives the base decoder and local expert access to the same enhanced feature level, while preserving the original branch that constructs P4. The design connects feature refinement, prediction refinement, and supervision through a single localization process, illustrated in Fig.~\ref{fig:overview}.
+
+The contributions are as follows:
+\begin{itemize}
+\item We develop a box-conditioned local expert that gathers multiscale evidence and produces residual class and boundary-logit updates. A shared P3 branch supplies both the base and expert prediction paths.
+\item We formulate selective localization supervision from the directly trained expert. Selection checks matched-object identity, representable support, edge loss, and the IoU of the actual mixed-edge box used to decide transfer.
+\item We evaluate the complete system under explicit native and common test protocols, analyze components on validation data, and report batch-eight inference cost. The most directly matched component comparison supports shared P3 refinement within the expert-equipped detector.
+\end{itemize}
+
+\section{Related Work}
+\subsection{Visual evidence for aerial object detection}
+Small-object detection depends on the preservation and use of spatial detail. SAHI~\cite{akyon2022sahi} changes the image scale seen by the detector through slicing. LASOD-YOLO~\cite{wang2026lasod} and weather-aware detection~\cite{kim2024weather} incorporate feature and environmental context. RemDet~\cite{li2025remdet} revisits efficient feature and downsampling design, while NRQO~\cite{fang2025nrqo} addresses feature-fusion noise and query quality. These methods place useful emphasis on the evidence available before or during detection.
+
+Our expert operates after the base decoder has produced a localization hypothesis. It samples the existing feature pyramid around that hypothesis, including P2 for finer spatial evidence. This makes the predicted box a guide for feature access. Shared P3 refinement complements this operation by supplying a common feature improvement to both prediction paths.
+
+\subsection{Object-local refinement and distributional localization}
+BorderDet~\cite{qiu2020borderdet} uses border features for localization, and Cascade-DETR~\cite{ye2023cascadedetr} restricts attention using previously predicted boxes. We build on the general principle that a provisional box can guide a subsequent feature operation. The present expert uses a fixed, box-relative sampling pattern across three feature scales and outputs residual updates to the class and edge logits.
+
+D-FINE~\cite{peng2025dfine} provides the adopted fine-grained distributional boundary representation. We use this representation as the foundation for local refinement, rather than claiming the representation itself as a contribution. SO-DETR~\cite{zhang2025sodetr} and Dome-DETR~\cite{hu2025domedetr} further motivate feature and query adaptation for small or tiny objects. Our focus is on connecting a local visual revisit to distributional prediction and supervision within one detector.
+
+\subsection{Localization knowledge transfer}
+Localization distillation~\cite{zheng2022ld} transfers distributional localization information, and DETRDistill~\cite{chang2023detrdistill} explicitly handles prediction correspondence through Hungarian matching. Correspondence is also essential when the teacher is an internal expert: a shared query index alone does not guarantee a shared target object at every layer.
+
+We select same-query pairs only when their ground-truth assignments agree, then assess the proposed localization transfer at both edge and box levels. The expert is directly supervised and remains in the inference graph. This connects target selection to the proposed local correction while ground-truth losses directly train the source of that correction.
+
+\section{Method}
+\subsection{Overview and distributional reference}
+Our system contains a distributional base detector, a shared P3 refinement branch, and a box-conditioned expert. The base predicts object queries and edge distributions. The expert reads local features around the final base boxes and predicts residual updates. Ground-truth losses train both prediction paths; selected expert distributions additionally supervise all six base decoder layers during training.
+
+We use Ultralytics RT-DETR-L with six decoder layers and 300 ordinary queries. Each edge has 33 bins, yielding 132 boundary logits per query. For one edge at layer $l$, the logits accumulate as in D-FINE~\cite{peng2025dfine}:
+\begin{equation}
+\begin{aligned}
+z_l&=\sum_{t=0}^{l}\Delta z_t,\qquad
+p_{l,k}=\operatorname{softmax}(z_l)_k,\\
+d_l&=\sum_{k=0}^{32}p_{l,k}W_k .
+\end{aligned}
+\label{eq:distribution}
+\end{equation}
+The fixed support uses $\texttt{reg\_max}=32$, $\texttt{reg\_scale}=4$, and $\texttt{up}=0.5$. Let $a=3^{1/15}$. The support entries are
+\[
+[-4,\,1-a^{15},\ldots,1-a,\,0,\,a-1,\ldots,a^{15}-1,\,4].
+\]
+We use incoming reference boxes, without additional preliminary-box predictions, and disable distribution feedback. P3, P4, and P5 supply the base detector; P2 is used only by the expert.
+
+% FIGURE_OVERVIEW
+
+\paragraph{Geometric decoding.}
+Let the reference center and size be $c$ and $(w,h)$, with $u=(w,h)/4$. Let $d^{-}$ contain left/top distances and $d^{+}$ right/bottom distances. The decoded center and raw size are $\hat c=c+(d^{+}-d^{-})\odot u/2$ and $v=(4+d^{-}+d^{+})\odot u$. To maintain positive extents, we use
+\begin{equation}
+\begin{aligned}
+f&=\max\!\left\{\delta\operatorname{sg}(u),\,
+8\epsilon\max(|\operatorname{sg}(\hat c)|,1)\right\},\\
+\hat v&=\operatorname{sg}(\max(v,f))+v-\operatorname{sg}(v),
+\end{aligned}
+\label{eq:geometry}
+\end{equation}
+where $\operatorname{sg}$ stops gradients, $\delta=10^{-3}$, and $\epsilon$ is machine precision. Operations on vectors are componentwise. The forward size is lower-bounded, while the backward path uses an identity surrogate gradient. Decoding uses at least FP32 with finite inputs and positive reference sizes. The base, expert, and mixed-edge checks below use this same geometric decoder.
+
+\paragraph{Reference localization loss.}
+Base fine-grained localization (FGL) uses detached matching IoU as a quality weight. For eligible matches in an image and layer, we shrink this weight toward the group mean: $q'_i=(1-\alpha_l)q_i+\alpha_l\bar q$, where $\alpha_l=0.25(1-l/5)$ and $l\in\{0,\ldots,5\}$. Eligibility requires all four left interpolation-bin indices to be strictly between 0 and 31. Singleton groups and ineligible matches retain their weights. We sum the four edge losses, normalize by the matched-object count in each layer, and sum over layers with weight 0.15.
+
+Standard detection, auxiliary-layer, and original RT-DETR denoising losses are retained. We add no preliminary-box or denoising-FDR supervision. The distributional representation, geometric rule, and base FGL configuration together define the reference variant $G$ used in the experiments. This definition separates the adopted reference from the proposed shared feature and expert branches.
+
+\subsection{Shared P3 refinement}
+The shared branch transforms P3 using two local residual blocks followed by channel and spatial gates. Each block contains pointwise projections, GELU, and a depthwise $3\times3$ convolution. The channel gate uses pooled features; the spatial gate uses a $7\times7$ convolution over channel-mean and channel-maximum maps. Denoting this transform by $R$, the output is
+\begin{equation}
+\widetilde P_3=P_3+\gamma\bigl(R(P_3)-P_3\bigr),\qquad
+\gamma_{\mathrm{init}}=0.
+\label{eq:shared}
+\end{equation}
+The zero-initialized scalar makes the branch initially preserve P3. Both the base decoder and the local expert read $\widetilde P_3$. The downsampling branch that constructs P4 reads the original P3, so refinement is confined to the P3 output. This topology avoids propagating the same change through all pyramid levels and defines a precise location at which shared visual evidence enters the two prediction paths.
+
+\subsection{Box-conditioned local visual expert}
+% FIGURE_EXPERT
+
+\paragraph{Sampling the box neighborhood.}
+The expert revisits the final base box using features already computed by the backbone. Let the box center and size for query $i$ be $\hat c_i$ and $\hat v_i$. Define $T=\{-0.5,-0.25,0,0.25,0.5\}$. For each radius $r\in\{0.4,0.6\}$, we take the offsets $(-r,t)$, $(r,t)$, $(t,-r)$, and $(t,r)$ for $t\in T$. These two 20-point patterns and one center point form the 41-element set $\Omega$. Sample coordinates are
+\begin{equation}
+s_{i,k}=\operatorname{sg}(\hat c_i)+
+\omega_k\odot\operatorname{sg}(\hat v_i),\quad\omega_k\in\Omega.
+\label{eq:sampling}
+\end{equation}
+The two patterns cover nearby interior and exterior locations relative to the predicted box; they are fixed offsets scaled by the predicted width and height. Figure~\ref{fig:expert} shows their exact geometry. Sampling coordinates are detached, so the sampling operation does not move the base box through coordinate gradients.
+
+Bilinear sampling from P2, $\widetilde P_3$, and P4 produces 123 local tokens for each query. Invalid coordinates are masked. Each scale is projected to 256 channels and receives a position embedding derived from the sample coordinates and scale index.
+
+\paragraph{Distribution-aware query update.}
+The query is augmented with eight detached distribution statistics: the mean and entropy of each of its four edges. Means are computed in normalized, equally spaced bin-index coordinates. They serve as descriptors for the expert; actual geometric distances still use the nonuniform support in Eq.~\eqref{eq:distribution}. The augmented query interacts with local tokens through two attention blocks, each using eight heads and a feed-forward width of 1024. A query token remains in the attention input even when all local samples are invalid.
+
+Let $h_i$ denote the resulting expert feature and let $c_i^{\mathrm{base}}$ and $z_i^{\mathrm{base}}$ denote the final base class and boundary logits. Two zero-initialized heads predict residuals:
+\begin{equation}
+\begin{aligned}
+c_i^{\mathrm{expert}}&=c_i^{\mathrm{base}}+H_{\mathrm{cls}}(h_i),\\
+z_i^{\mathrm{expert}}&=z_i^{\mathrm{base}}+H_{\mathrm{edge}}(h_i),\\
+p_i^{\mathrm{expert}}&=\operatorname{softmax}(z_i^{\mathrm{expert}}).
+\end{aligned}
+\label{eq:residual}
+\end{equation}
+Softmax is applied separately to each edge. The addition occurs in logit space, with 132 boundary residuals, and the same geometric decoder produces the refined box. Zero-initialized heads initially preserve the base outputs.
+
+\paragraph{Direct supervision and inference.}
+The expert reuses the final base layer's query-to-ground-truth assignment. Its predictions receive classification, L1, generalized-IoU, and FGL losses. These losses train the expert directly; teacher distributions are detached only when supplying localization targets to the base decoder. At inference, the refined expert prediction is the system output. The expert therefore contributes to both accuracy and computational cost.
+
+\subsection{Selective localization supervision}
+The expert can supply a candidate target for each base layer, but local refinement does not guarantee an improvement for every query or edge. We select targets in three stages, summarized in Fig.~\ref{fig:selection}.
+
+% FIGURE_SELECTION
+
+\paragraph{Object correspondence and boundary support.}
+We first retain pairs with the same image, query index, and matched ground-truth object. This check applies to all six base layers, including the last layer. It prevents a same-index prediction assigned to another object from receiving that expert target. For each eligible edge, the untruncated ground-truth distance must also lie within the representable support $[W_0,W_{32}]$.
+
+\paragraph{Edge quality.}
+Let $\ell^S_e$ and $\ell^T_e$ be student and expert edge losses computed by interpolating the target distance between its two neighboring bins. With margin $m=0.02$ and scale $\tau=0.10$, define
+\begin{equation}
+\begin{aligned}
+a_e&=\max\bigl(\operatorname{sg}(\ell^S_e-\ell^T_e)-m,0\bigr),\\
+r_e&=\mathbf{1}_{\mathrm{support}}\frac{a_e}{a_e+\tau}.
+\end{aligned}
+\label{eq:edgeweight}
+\end{equation}
+An expert edge receives a positive weight only when its loss improves on the student's by more than the margin. The factor $a_e/(a_e+\tau)$ gives a bounded weight; this is a detached selection calculation.
+
+\paragraph{Joint box geometry.}
+The final check evaluates the combination of edges proposed for transfer. For a correspondence-eligible pair, define the mixed distributions and gate
+\begin{equation}
+\begin{aligned}
+p^{\mathrm{mix}}_e&=\begin{cases}
+p^T_e,&r_e>0,\\
+p^S_e,&r_e=0,
+\end{cases}\\
+g&=\mathbf{1}\!\left[
+\operatorname{IoU}(D(p^{\mathrm{mix}}),b^*)>
+\operatorname{IoU}(D(p^S),b^*)\right],\\
+w_e&=g\,r_e ,
+\end{aligned}
+\label{eq:mixed}
+\end{equation}
+where $D$ is the geometric decoder and $b^*$ the matched ground-truth box. Unselected edges stay at their student values. Consequently, the IoU check evaluates the actual edge combination being proposed, rather than assuming that a better complete expert box implies a better partial replacement. Rejected or correspondence-ineligible pairs have zero weights.
+
+Let $A_l$ be the set of positive-weight edges in layer $l$, and $\Lambda$ the set of layers with nonempty $A_l$. The localization loss is
+\begin{equation}
+L_{\mathrm{KD}}=\frac{1}{|\Lambda|}\sum_{l\in\Lambda}
+\frac{1}{|A_l|}\sum_{(i,e)\in A_l}
+w_{l,i,e}D_{\mathrm{KL}}\!\left(p^T_{i,e}\Vert p^S_{l,i,e}\right).
+\label{eq:kd}
+\end{equation}
+An empty active set gives zero loss. Normalization uses the number of active edges, not the sum of their weights, followed by the number of active layers. Teacher distributions and all selection calculations are detached; gradients flow through the student distributions in the KL loss. We apply no classification distillation.
+
+\subsection{Training objective and inference}
+Let $L_{\mathrm{det}}$ contain the retained base detection losses, $L_{\mathrm{FGL}}$ the additional base localization loss, and $L_{\mathrm{expert}}$ direct expert supervision. The complete objective is
+\begin{equation}
+L=L_{\mathrm{det}}+L_{\mathrm{FGL}}+L_{\mathrm{expert}}
++0.15\eta(t)L_{\mathrm{KD}}.
+\label{eq:objective}
+\end{equation}
+For completed epoch $t$, $\eta(t)$ is zero through epoch 10, increases linearly to one at epoch 20, stays one through epoch 80, and decreases linearly to zero at epoch 100. This schedule weights the expert-to-base localization term. The expert's own single-layer FGL has weight 0.15 and remains active throughout training.
+
+Inference retains the feature pyramid, shared P3 refinement, distributional base decoder, local sampling, and expert heads. Matching, quality checks, and the distillation loss are training-only operations. The architecture thus uses local evidence to produce the final prediction and, during training, to provide selected localization targets to the base.
+
+\section{Experiments}
+\subsection{Dataset, training, and evaluation protocols}
+\paragraph{Dataset and metrics.}
+VisDrone has 6,471 training, 548 validation, and 1,610 test images covering ten classes. Labels were converted through YOLO format and lack the complete original ignore-region information. The results therefore describe this converted-label protocol. AP averages IoU thresholds from 0.50 to 0.95 in steps of 0.05; $\mathrm{AP}_{50}$ and $\mathrm{AP}_{75}$ use the indicated individual thresholds, and $\mathrm{AP}_{s}$ denotes small-object AP~\cite{lin2014coco}. Values are percentages; reported gains are percentage points.
+
+\paragraph{Native training and evaluation.}
+RT-DETR-L and Full share a nominal recipe: scratch training for 100 epochs at $640\times640$, MuSGD with initial learning rate 0.01, AMP, physical batch eight, nominal batch 64, and seed zero. Baseline resumed its own run, and source revisions differ. Their comparison evaluates complete systems, including the adopted distributional reference. Internal component analysis uses native validation-selected results.
+
+The native test comparison uses validation-selected checkpoints and shared converted annotations. Baseline's selected epoch is also its final epoch. The evaluator is \texttt{RTDETRValidator}, with $640\times640$ input, FP32, batch eight, confidence 0.001, and at most 300 detections, without test-time augmentation or extra NMS. These test evaluations were available during earlier development; test is not an untouched blind set.
+
+\paragraph{Common external evaluation.}
+For D-FINE-L and Full, the common pipeline uses PIL bilinear stretching to $640\times640$, RGB/255, FP32, batch one, confidence 0.001, and at most 300 predictions, without test-time augmentation or extra NMS. Predictions mapped to original image coordinates are evaluated by COCOeval 2.0.11 with $\texttt{maxDet}=300$. Native and common results are reported separately.
+
+D-FINE-L has 31.146M parameters and uses 100-epoch scratch training with AdamW at learning rate 0.00025, FP32, batch four without accumulation, multiscale augmentation from 480 to 800, and stage-best checkpoint restoration. The common evaluator controls the evaluation pipeline, while these training recipes differ. Final checkpoints are the primary comparison; each model's native validation-selected best checkpoint is a secondary endpoint.
+
+\subsection{Complete-system test comparisons}
+\paragraph{Native comparison with RT-DETR-L.}
+Table~\ref{tab:native} evaluates the complete system against stock RT-DETR-L under their shared native evaluator. Full improves AP from 17.743 to 23.604, a gain of 5.861 points. The corresponding gains are 8.987 points in $\mathrm{AP}_{50}$ and 5.981 points in $\mathrm{AP}_{75}$. The stricter-overlap result is consistent with improved localization at the system level. Attribution to internal components is examined separately on validation data.
+
+% TABLE_NATIVE
+
+\paragraph{Common comparison with D-FINE-L.}
+Under the common pipeline in Table~\ref{tab:external}, Full reaches 24.133 AP at the final checkpoint, exceeding D-FINE-L by 1.579 points. Small-object AP increases from 13.338 to 14.575, a gain of 1.237 points. The difference persists at the native validation-selected endpoint: Full reaches 24.229 AP compared with 22.679 for D-FINE-L, a 1.550-point difference. Reporting both endpoints makes the comparison's dependence on checkpoint selection visible.
+
+% TABLE_EXTERNAL
+
+These results support the complete detector under the stated recipes. The native and common protocols have different preprocessing and evaluation pipelines, so their absolute AP values should be read within their respective tables. In particular, the common-pipeline comparison is a system comparison with D-FINE-L, not a matched-training estimate of a single module's effect.
+
+\subsection{Published validation context}
+Table~\ref{tab:literature} places the native validation result alongside published aerial-detection results. RemDet-L~\cite{li2025remdet} offers a similar parameter count, whereas BDNet~\cite{guan2026bdnet} reports higher AP with fewer parameters. All listed results use 640 input without pretraining. Training duration, preprocessing, annotation handling, and model selection differ, so the table supplies context rather than a controlled ranking.
+
+% TABLE_LITERATURE
+
+Full obtains 30.109 native validation AP after 100 epochs with 35.244M parameters. Its parameter scale is close to RemDet-L's reported 35.3M. BDNet's published result illustrates the remaining headroom in accuracy and model efficiency. This context positions the present work around local distributional refinement and its supervision mechanism, without claiming the best accuracy or smallest model across aerial detectors.
+
+\subsection{Validation component analysis}
+We denote the distributional reference of Sec.~3.1 by $G$, the expert with direct supervision and selective localization distillation by $B$, and shared P3 refinement by $F$. Full contains all three. The expert and its supervision are evaluated jointly as $B$. Table~\ref{tab:components} reports validation results only; checkmarks make each configuration explicit.
+
+% TABLE_COMPONENTS
+
+Full has the highest validation AP among the recorded configurations, reaching 30.109 AP and 49.890 $\mathrm{AP}_{50}$. Relative to $G$, the AP difference is 0.489 points. The largest change from stock RT-DETR-L occurs when moving to the distributional reference, which includes the representation and supporting localization rules. That change is not attributed to the expert.
+
+The most directly matched pair is $G+B$ versus Full: recorded training settings, shared source files, and shared initialization tensors agree, with additional state in the zero-initialized $F$ branch. Adding shared P3 refinement raises AP from 29.277 to 30.109, a gain of 0.832 points. This is the clearest component evidence for the shared feature design within the expert-equipped configuration.
+
+The other rows help delimit this result. $G+F$ reaches 29.773 AP, while $G+B$ reaches 29.277 AP and falls below $G$ by 0.343 points. The recorded configurations therefore do not establish an independent gain from $B$. Their historical provenance is less tightly controlled than the $G+B$--Full pair. We interpret the table as support for the full configuration and for shared P3 refinement in the matched pair, rather than as an additive decomposition of gains from every mechanism.
+
+\subsection{Batch-eight inference efficiency}
+Table~\ref{tab:efficiency} reports model size, computation, and batch-eight timing separately from accuracy. Measurements use RTX 4090, PyTorch 2.5.1+cu121, and Ultralytics 8.4.90 at $640\times640$ in FP32. Eight CPU threads are used; TF32 and cuDNN benchmarking are disabled. Each variant receives fixed random inputs, 100 warmup batches, and 300 CUDA-synchronized timed predict calls.
+
+Timing includes preprocessing, model execution, postprocessing, and the lightweight expert-checking hook, but excludes disk I/O. We report the median batch time and the corresponding throughput, computed as 8000 divided by batch milliseconds. GFLOPs are per image with two operations per multiply--accumulate; parameter counts cover the complete unfused model.
+
+% TABLE_EFFICIENCY
+
+Full uses 35.244M parameters and 134.051 GFLOPs per image. Its median batch time is 107.920 ms, corresponding to 74.129 images/s. Dividing by eight gives 13.490 ms amortized per image; this is not single-request response latency. The benchmark characterizes fixed-input batching throughput.
+
+Relative to $G$, Full adds 2.087M parameters and 28.247 GFLOPs, a 26.70\% increase in computation, while batch time rises from 66.200 to 107.920 ms. The expert bundle adds 24.771 GFLOPs when moving from $G$ to $G+B$; shared P3 refinement adds 3.476 GFLOPs from $G+B$ to Full. The expert is therefore the main source of additional computation. The measured trade-off favors better complete-system accuracy at increased inference cost; these desktop-GPU measurements do not establish onboard UAV deployment performance.
+
+\section{Discussion and Conclusion}
+This work connects two uses of local visual evidence: refining the final prediction and supplying selected localization targets to the base decoder. The box-conditioned expert revisits multiscale features, updates logits through residual heads, and provides directly supervised distributions. Object correspondence, support, edge quality, and mixed-box geometry define when those distributions can guide the base. Shared P3 refinement connects the visual inputs used by both prediction paths.
+
+The evidence is strongest at two levels. Complete-system test comparisons show gains over stock RT-DETR-L under native evaluation and over D-FINE-L under the common evaluator with different training recipes. The matched validation comparison isolates shared P3 refinement within the expert-equipped configuration, with a 0.832-point AP gain. The study uses one dataset and one seed; the expert and distillation are evaluated together, and individual selection rules are not isolated. Further work can test these mechanisms across datasets and separate their contributions.
+
+Full processes 74.129 images/s in the fixed-input FP32 benchmark at batch eight. Because the local expert remains active at inference and accounts for most added computation, reducing its token or attention cost is a practical direction for future work. The present results support local distributional refinement as a concrete route to improving UAV detection, with its accuracy evidence and computational cost stated under explicit protocols.

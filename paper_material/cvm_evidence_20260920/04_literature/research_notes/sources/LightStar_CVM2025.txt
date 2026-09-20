@@ -1,0 +1,775 @@
+    LightStar-Net: A Pseudo-Raw Space Enhancement for Efficient Low-Light
+                              Object Detection
+
+                                     Xin Feng1 , Jie Wang2 , Siping Wang3
+                             Chongqing University of Technology, Chongqing, China
+                                                 xfeng@cqut.edu.cn
+
+
+                                                   Jiehui Zhang*
+                             Xi’an University of Science and Technology, Xi’an, China
+                                             jiehui zhang@hotmail.com
+
+
+                                                                                                     79
+                           Abstract                                                                78.5       *
+                                                                                                          LightStar-Net
+
+
+
+
+                                                                                                                          EN
+                                                                                                                               T
+                                                                                                                               I
+                                                                                                                               A.
+                                                                                                                           .
+                                                                                                     78
+
+   In low-light conditions, detectors trained on normal-
+
+
+
+
+                                                                                                                          D
+
+                                                                                                                              t
+                                                                                                                              eZ
+                                                                                                                                        ． ．＾
+                                                                                                 令 77.5
+
+
+
+
+                                                                                             i
+
+
+
+
+                                                                                                                                C
+                                                                                                                                OD
+                                                                                                                                E
+                                                                                                  今                                       Retinexformer
+
+
+
+
+                                                                                                                                r
+                                                                                                                                e
+                                                                                                                                 .
+light data often experience significant performance                Dark Scene     MBLLEN     I       77                                                    MBLLEN
+
+
+degradation.      To address this issue, low-light im-                                             76.5
+
+
+
+
+                                                                                                                                ．
+                                                                                                                                     PairLIE
+                                                                                                                                                      KinD
+age enhancement methods are commonly employed                                                        76
+
+                                                                                                   75.5                       FourLLE
+to improve detection performance. However, existing
+                                                                                                     75
+human vision-oriented enhancement techniques have                    KinD         Zero-DCE
+                                                                                                                     10        100
+                                                                                                                               Parameters (K)
+                                                                                                                                               1000       10000     100000
+
+
+shown limited effectiveness, while most machine vision-
+                                                                 Figure 1. The left part: the results of enhancing night-time im-
+oriented methods rely on standard RGB image pro-
+                                                                 ages using three different methods: MBLLEN [18], Kind [36],
+cessing or RAW space conversion, often neglecting the            and Zero-DCE [10]. The right part: the results of our method
+preservation of key object features and incurring high           compared to other methods on the ExDark [16] dataset.
+computational costs. To overcome these limitations, we
+propose an efficient low-light object detection method
+                                                                 algorithms [6, 9, 15, 22, 23, 25], real-world applications in
+based on Pseudo-RAW space enhancement—LightStar-
+                                                                 low-light environments continue to face various challenges.
+Net. This method combines a Pseudo-RAW space En-
+                                                                 Recently, many works have been proposed to enhance low-
+hancement module (PRE) with a lightweight network,
+                                                                 light image visual perception for downstream tasks such as
+enhancing detection capabilities for machine vision in
+                                                                 object detection, semantic segmentation, and depth estima-
+low-light environments. Using inverse mapping to con-
+                                                                 tion.
+vert RGB images into Pseudo-RAW feature space, the
+                                                                    Low-light object detection typically employs two main
+model dynamically adjusts image enhancement param-
+                                                                 frameworks: a two-stage framework oriented towards hu-
+eters to optimize detection performance. On benchmark
+                                                                 man vision and a single-stage framework oriented towards
+datasets such as ExDark and DARK FACE, LightStar-
+                                                                 machine vision. In the human vision-oriented framework,
+Net achieves outstanding accuracy and inference speed.
+                                                                 the enhancement network [10, 18, 36] and the detector op-
+With a simple structure requiring only 3K parameters,
+                                                                 erate as independent modules. The enhancement network
+it significantly improves detector performance in low-
+                                                                 is pre-trained on paired low-light and standard-light image
+light environments.
+                                                                 datasets [2, 29], transforming images into well-lit versions
+   Keywords: Low-Light Detection, Pseudo-RAW, Ma-                before training the detector. However, while this processing
+chine Vision, LightStar-Net                                      improves image brightness, it can reduce color saturation
+                                                                 and increase noise (as shown in Figure 1 left part), nega-
+1. Introduction                                                  tively impacting detection performance.
+                                                                    In contrast, the machine vision-oriented framework fo-
+   Object detection is a fundamental task in computer vi-
+                                                                 cuses on enhancing image attributes critical for detection
+sion, aiming to recognize and locate objects within an im-
+                                                                 tasks, such as contrast and target clarity, by end-to-end con-
+age. Despite significant advancements in object detection
+                                                                 necting the enhancement network [4, 5, 21, 34] and the de-
+  * Corresponding author                                         tector, optimizing them together. This approach directly
+
+
+                                                             1
+boosts detection performance, reduces false positives, and     resource-constrained environments, making it particularly
+enhances the algorithm’s generalization ability under vary-    well-suited for low-light image processing tasks.
+ing lighting conditions.                                           Building on this foundation, we introduce an auxiliary
+   However, machine vision enhancement methods pre-            training strategy to expedite the extraction and learning
+dominantly rely on standard RGB image processing, which        of latent features from the PRE. To achieve this, we de-
+can overlook the preservation and enhancement of critical      signed the feature stimulation network (FS-Net), which ef-
+target features during processing. Recently, some stud-        fectively integrates deep features from the PRE, optimiz-
+ies have proposed inverse mapping networks that restore        ing the lightweight network’s training process and reduc-
+RGB images to corresponding RAW space through pro-             ing computational burdens. This collaborative mechanism
+cesses such as decolorization, inverse transformation, and     ensures the lightweight enhancement network can quickly
+denoising, allowing the retrieval of more feature informa-     adapt to low-light environments, improving inference effi-
+tion [13, 35]. Nonetheless, in low-light environments, RAW     ciency while maintaining high detection accuracy and re-
+images may not fully utilize this information due to fixed     sponsiveness in practical applications. During the inference
+processing workflows, potentially leading to detail loss or    stage, the PRE module and FS-Net are omitted. In this way,
+increased noise in certain cases.                              LightStar-Net not only addresses detail loss but also signifi-
+   Additionally, some enhancement methods overlook in-         cantly enhances the overall performance and practicality of
+ference speed, causing the detection model to wait for en-     low-light object detection.
+hancement during application. Typically, most enhance-             We combined the proposed LightStar-Net with the clas-
+ment methods [33, 37] employ a down-sampling followed          sic detector YOLOv3 [22] to create an end-to-end efficient
+by an up-sampling approach to enhance images, such as the      low-light object detection algorithm framework, named
+Laplacian pyramid structure to boost low-frequency infor-      LightStar-YOLO. Extensive experiments were conducted
+mation and restore high-frequency details. However, this       on two low-light detection datasets, EXDark [16] and Dark-
+makes the enhancement model overly complex.                    Face [32]. The results demonstrate that LightStar-YOLO
+   To address these issues, this paper proposes an efficient   achieves state-of-the-art performance in low-light detec-
+low-light object detection network enhanced in the Pseudo-     tion tasks. Notably, our model has only 3K parameters
+RAW space—LightStar-Net. This network is based on the          (as shown in Figure 1 right part), significantly fewer than
+concept of Pseudo-RAW space enhancement and dynami-            previous state-of-the-art low-light detection models. Ad-
+cally generates optimized parameters according to the fea-     ditionally, the average inference speed is 0.0004s per im-
+tures and scenes of input images. This mechanism en-           age, which is ten times faster than current leading methods
+ables adaptive adjustment of image processing under var-       [4, 5, 21]. Our contributions can be summarized as follows:
+ious lighting conditions and environments, optimizing en-         • We propose a novel enhancement network, LightStar-
+hancement effects while avoiding detail loss caused by fixed        Net, for efficient low-light object detection. This net-
+workflows in traditional RAW image processing methods.              work dynamically generates optimized parameters and
+   Specifically, LightStar-Net consists of two main compo-          adaptively adjusts based on the features and scenes of
+nents: the Pseudo-RAW space Enhancement module (PRE)                input images, ensuring optimal image processing re-
+and a Lightweight Enhancement Network. In the PRE,                  sults under varying lighting conditions. By avoiding
+we introduce an inverse mapping network (IMRGB) and                 detail loss caused by fixed workflows in traditional
+a pseudo-image signal processing (DOISP) enhancement                techniques when processing RAW images, this ap-
+network. The IMRGB module inversely maps RGB im-                    proach significantly enhances overall object detection
+ages to the Pseudo-RAW image feature space, enabling in-            performance.
+depth analysis of image features. Subsequently, the DOISP
+                                                                  • To accelerate the inference speed of LightStar-Net, we
+network directly operates in this Pseudo-RAW image fea-
+                                                                    design FS-Net as an auxiliary training strategy that ef-
+ture space to generate adaptive optimization parameters.
+                                                                    fectively integrates deep features from the PRE. This
+This design effectively avoids reduced contrast between ob-
+                                                                    collaborative mechanism optimizes the lightweight en-
+jects and the background caused by excessive enhancement,
+                                                                    hancement network’s training process while reducing
+thereby minimizing interference with the subsequent detec-
+                                                                    computational burdens, enabling rapid adaptation to
+tion process.
+                                                                    low-light environments. During the inference stage,
+   Meanwhile, the lightweight enhancement network accel-
+                                                                    omitting the PRE and FS-Net further improves infer-
+erates inference speed by reducing model parameters and
+                                                                    ence efficiency, enhancing both the performance and
+computational complexity. It employs fewer convolutional
+                                                                    practicality of low-light object detection.
+layers or smaller convolutional kernels and utilizes struc-
+tures like depthwise separable convolutions to significantly      • Extensive experimental results on two low-light detec-
+lower computational loads. This enables rapid inference in          tion datasets demonstrate that LightStar-YOLO out-
+Figure 2. The overall structure of LightStar-YOLO. Includes a Pseudo-RAW space enhancement module (PRE), a lightweight machine
+vision enhancement network, a feature stimulation network (FS-Net), and the YOLO detector. During the training phase, FS-Net is used to
+extract image features enhanced by PRE and the lightweight network. In the inference phase, the PRE module and FS-Net are discarded.
+
+     performs current leading methods. Notably, LightStar-            light images to well-lit scenes, the enhanced images often
+     Net has only 3K parameters and achieves a processing             suffer from reduced color saturation and noise due to in-
+     time of just 0.0004s per image.                                  creased brightness.
+                                                                          The superior imaging quality of RAW images has
+2. Related work                                                       prompted researchers to explore their use in low-light en-
+    Object Detection. Mainstream object detectors are gen-            hancement. Chen et al. [2] developed the first low-light
+erally categorized into two types: single-stage and two-              enhancement network based on RAW images, demonstrat-
+stage detectors. Single-stage detectors, such as SSD [15],            ing significant improvements in noise suppression and color
+YOLO [22], and FCOS [25], directly predict object bound-              saturation over traditional RGB methods. Xing et al. [31]
+ing boxes and class labels in one step. In contrast, two-             introduced an inverse mapping network that restores RGB
+stage detectors, like RCNN [9], Faster R-CNN [23], and                images to RAW space, enabling feature extraction. Zamir
+R-FCN [6], first generate candidate regions and then clas-            et al. [35] proposed the CycleISP network, which cycli-
+sify these regions while performing bounding box regres-              cally maps RGB images to RAW, adds noise, and then con-
+sion for refinement. The rapid advancement of object detec-           verts them back to RGB, facilitating the synthesis of real-
+tion technologies has been largely driven by the availability         istic noise datasets for denoising RAW images. Although
+of large-scale datasets, such as COCO [14] and Open Im-               RAW images retain more details in low-light environments,
+ages [12], which provide extensive annotated examples for             they also introduce challenges such as increased noise, color
+training and evaluation.                                              distortion, and higher computational costs, which can affect
+    Low-Light Image Enhancement. The progress of deep                 model adaptability.
+learning has spurred significant advancements in low-light               Low-light Object Detection. In the field of low-light
+image enhancement techniques. Lore et al. [17] pioneered              object detection, a common approach is to enhance images
+the use of deep autoencoders for dark-light image enhance-            before detection to produce brighter images [8, 19, 30],
+ment networks, establishing this field. Guo et al. [10]               known as the human vision-oriented two-stage enhance-
+introduced Zero-DCE, which estimates light enhancement                ment detection framework. Another method combines
+curves for no-reference images. Wei et al. [29] utilized              image enhancement with detection in a machine vision-
+the Retinex decomposition model for simultaneous light en-            oriented single-stage approach. Related research [11, 24]
+hancement and denoising, further improving image qual-                proposes image restoration training pipelines to improve
+ity. Cai et al. [1] incorporated a Transformer structure to           detection robustness. Cui et al. [4] introduced the Il-
+model both reflectance and illumination damage, achieving             lumination Adaptive Transformer (IAT), which dynami-
+remarkable results. While these methods aim to restore low-           cally adjusts image brightness by converting sRGB im-
+                                                                                                                 Parameter α
+ages to RAW-RGB space using inverse mapping. Du et
+
+
+
+
+                                                                                                        Conv-3
+
+
+
+
+                                                                                                                          Tanh
+al. [7] presented DAI-Net, which enhances low-light ob-
+
+
+
+
+                                                                                Conv-3
+ject detection through day-night domain adaptation, inte-              Input                AEB                                                     Output
+
+
+
+
+                                                                                                        Conv-3
+
+
+
+
+                                                                                                                          Tanh
+grating Retinex theory and incorporating an interchange-
+redecomposition-coherence procedure to improve image                                                             Parameter β
+decomposition. These methods primarily rely on RGB im-
+                                                                     AEB : Adaptive Enhancement Block                                                  Multiply
+
+ages and face challenges in effectively capturing complex                                                                             Parameter Q      Add
+
+
+
+
+                                                                                                                          LeakyReLU
+lighting variations, often resulting in suboptimal perfor-
+
+
+
+
+                                                                                                                  BN
+                                                                       Input                                                              ⊗     ⊕    Output
+                                                                                            ×2
+mance in specific scenarios.
+
+3. Method
+                                                                                Figure 3. IMRGB Network Structure
+    In this section, we first introduce the PRE, the core com-
+ponent of LightStar-Net, providing a detailed description of     the IMRGB module uses stacked Adaptive Enhancement
+its structure and composition. Next, we discuss the overall      Blocks (AEB) to process low-light images and extract map-
+architecture of the efficient low-light detection framework,     ping information. Initially, the module generates two inde-
+LightStar-YOLO, and explain the concept of auxiliary train-      pendent feature maps and adjusts their channel numbers us-
+ing, focusing on how FS-Net enhances the lightweight en-         ing convolution operations and a Tanh activation function.
+hancement network’s ability to extract and learn potential
+features from the PRE during pre-training.
+                                                                                           [K1 , K2 ] = fAEB (X)                                                  (1)
+3.1. Pseudo-RAW Space Enhancement
+                                                                 Here, K1 and K2 represent two independent feature maps,
+    The PRE is responsible for enhancing discriminative fea-     and X denotes the RGB image matrix under low-light con-
+tures and contrast in dark regions for machine vision while      ditions, and Xi signifies the Pseudo-RAW image feature
+adjusting the image color balance to suit machine vision         space. The parameters α and β are adjustable and learned
+requirements. As shown in Figure 2, the PRE comprises            during training.
+the Inverse Mapping Network (IMRGB) and the Pseudo-                  The AEB module primarily consists of depthwise sep-
+image Signal Processing (DOISP) Enhancement Network.             arable convolution and the Efficient Channel Attention
+The IMRGB module maps RGB image space to a feature               (ECA) mechanism [28]. Depthwise separable convolu-
+space referred to as the Pseudo-RAW image feature space,         tion effectively extracts image features while reducing both
+which does not contain actual RAW data. This feature space       parameters and computational costs. The ECA mecha-
+is not designed to restore the RGB image to its correspond-      nism uses one-dimensional convolution to adaptively adjust
+ing RAW image but rather provides a simulated imaging            channel weights, enabling the extraction of key structural
+approach optimized for machine vision during end-to-end          information from low-light images.
+training.                                                            The ECA attention mechanism begins by compressing
+    The DOISP module processes the Pseudo-RAW image              each channel of the feature map from a two-dimensional
+feature space further. Unlike the encoder-decoder struc-         feature to a single value through a global average pooling
+tures typically used in two-stage enhancement detection al-      layer (GAP), forming the basis for subsequent steps:
+gorithms, the DOISP module directly acts on the Pseudo-
+RAW image feature space to perform feature optimization,                                     1   XH X W
+similar to Image Signal Processing (ISP). This approach                             zc =                 Fc (i, j)                                                (2)
+                                                                                           H × W i=1 j=1
+avoids the loss of image detail and texture caused by upsam-
+pling and downsampling in encoder-decoder structures. It
+                                                                 where Fc represents the feature map of the cth channel.
+also mitigates the problem of reduced contrast between the
+                                                                    Next, the kernel size of the adaptive one-dimensional
+target and background caused by excessive enhancement,
+                                                                 convolution is determined and applied to the feature map
+which can interfere with subsequent detection. Addition-
+                                                                 to generate the weight vector for each channel:
+ally, the DOISP module employs an adaptive parameter op-
+timization approach. The enhanced features are ultimately                                w = σ(Conv1D(z))                                                         (3)
+transmitted to the detector. By leveraging the strengths of
+ISP-based enhancement methods, the DOISP module adap-            where Conv1D represents the one-dimensional convolution
+tively optimizes the Pseudo-RAW image feature space un-          operation, z represents the global average pooling values of
+der the constraints of the object detection loss function, en-   all channels, and σ represents the Sigmoid function.
+abling end-to-end low-light object detection.                        Then, the output of the one-dimensional convolution is
+    Inverse Mapping Network. As shown in Figure 3,               converted into the attention weights of the channels using
+                                                                                    In Eq. 6, Xi represents the simulated RAW image,
+          DW-Conv k=5      DW-Conv k=3    DW-Conv k=3   DW-Conv k=1
+                                                                               ti , i ∈ (1, 3) represents the gain value of each color chan-
+          PW-Conv k=1      PW-Conv k=1    PW-Conv k=1   PW-Conv k=1
+                                                                               nel optimized, and W1 represents the generated optimiza-
+ Input       CBAM            CBAM            ECA           ECA        Output
+                                                                               tion parameters. Eq. 7 represents the simulated RAW image
+           LeakyReLU       LeakyReLU      LeakyReLU     LeakyReLU              enhanced by the generated optimization parameters, where
+          PixelUnshuffle   Conv k=1,s=2     MaxPool       MaxPool              ⊗ represents matrix multiplication, and Xe represents the
+                                                                               image enhanced by DO-AWB.
+             Figure 4. DO-AWB Network Structure                                     The DO-CCMA module simulates the process of the
+                                                                               color correction matrix and gamma adjustment by learn-
+                                                                               ing the color correction matrix and gamma values through
+the Sigmoid function:
+                                                                               a multi-layer perceptron (MLP):
+                              w = σ(w)                                 (4)                                              
+                                                                                                                            t1 t2 t3
+                                                                                                                                        
+
+                                                                                   W2 = fMLP1 (fDO−CCM A (Xe )) =  t4 t5 t6 
+   Finally, these learned channel weights are applied to
+                                                                                                                            t5 t8 t9
+each channel of the original feature map to achieve adap-
+                                                                                                                                         (8)
+tive feature attention:
+                                                                                        W3 = fMLP2 (fDO−CCM A (Xe )) = (t10 )                                                           (9)
+                            F′c = wc · Fc                              (5)                                    Xt = (W2 ⊗ Xe )                        W3
+                                                                                                                                                                                       (10)
+where F′c represents the cth channel feature map after pro-                    where Eq. 8 W2 represents the generated color correc-
+cessing by the ECA attention mechanism, and wc repre-                          tion matrix parameter values, ti , i ∈ (1, 9) represents the
+sents the attention weight of the cth channel.                                 color correction values for each channel. In DO-CCMA,
+   Pseudo-image Signal Processing. RGB images are                              the Gamma coefficient W3 is responsible for adjusting the
+converted into corresponding Pseudo-RAW image feature                          global brightness of the image under machine vision. The
+space through the IMRGB module. In the real RAW imag-                          entire optimization process of DO-CCMA is shown in Eq
+ing and ISP algorithm enhancement mechanism, RAW im-                           10, and Xe represents the final enhanced image.
+ages undergo ISP processing, including image compres-
+sion, white balance correction, black level correction, color                  3.2. Overall Structure of LightStar-YOLO
+correction, sharpening, and other steps, which finally con-                       As shown in Figure 2, the efficient low-light detection al-
+vert the images to RGB images. Based on this enhance-                          gorithm framework for auxiliary training consists of a PRE
+ment idea, we designed a pseudo-ISP enhancement network                        module, a lightweight enhancement network, the YOLO
+called DOISP, which directly estimates various ISP correc-                     [22] detector, and the feature stimulation network (FS-Net).
+tion parameters from Pseudo-RAW images for enhancing                           This detection algorithm framework is mainly divided into
+the Pseudo-RAW image feature space.                                            two stages: the training stage and the inference stage.
+   In DOISP, we propose two enhancement sub-modules:                              In the training stage, we first combine the lightweight
+DO-AWB (Detection-Optimized Auto White Balance, As                             machine vision enhancement network with the YOLO de-
+shown in Figure 4) and DO-CCMA (Detection-Optimized                            tector to form the end-to-end joint detection framework
+Color Correction Matrix and Gamma) to simulate the en-                         LightStar-YOLO. Next, we freeze the pre-trained weights
+hancement process in ISP.                                                      of PRE and use FS-Net to extract the image features
+   In ISP processing, the purpose of auto white balance pro-                   enhanced by PRE and the lightweight enhancement net-
+cessing is to compensate for color deviations caused by the                    work. By further enhancing the learning capability of
+color temperature environment and inherent color channel                       the lightweight network through the feature excitation loss
+gain deviations of the shooting instrument by changing the                     function, we aim to better capture the potential features of
+gain of color channels in the image, thus allowing the ob-                     PRE, thus improving the overall detection performance of
+tained image to correctly reflect the true colors of objects.                  the network. In the inference stage, to maintain efficient in-
+Inspired by AWB, DO-AWB uses neural networks to dy-                            ference speed, we discard the PRE and feature stimulation
+namically simulate the gain values of the three color chan-
+nels:
+                                                    
+                                        t1 0 0
+                                                                                                               DWConv
+
+                                                                                                                        DWConv
+
+
+
+
+                                                                                                                                         DWConv
+
+                                                                                                                                                  DWConv
+
+
+
+
+                                                                                                                                                                   Conv
+                                                                                         Conv
+
+
+
+
+                                                                                                                                                                               Leaky
+                                                                                                      Leaky
+
+
+
+
+                                                                                                                                 Leaky
+
+
+
+
+                                                                                                                                                           Leaky
+
+
+
+
+                                                                                                                                                                          BN
+                                                                                                BN
+
+
+
+
+   W1 = fMLP (fDO−AW B (Xi ) =  0 t2 0  (6)
+                                        0 0 t3
+                                                                                                CBL            DWConv Block              DWConv Block                 CBL*2
+                           Xe = W1 ⊗ Xi                                (7)
+                                                                                          Figure 5. Lightweight Network Structure
+                                                                3.3. Loss Function
+
+                                                                    Tung et al. [26] suggested that in knowledge distilla-
+                                                                tion, preserving knowledge by computing feature map sim-
+                                                                ilarity enables the teacher and student networks to produce
+                                                                similar activations for the same samples, thereby improving
+                                                                the distillation effect. Based on this idea, we propose the
+                                                                Channel Similarity Matrix Loss Function. This loss func-
+                                                                tion measures the difference in high-level feature represen-
+                                                                tations by comparing the inner products of corresponding
+        Figure 6. Feature Stimulation Network Structure         channels in two feature maps, thereby enhancing LightStar-
+                                                                Net’s performance in machine vision imaging. The formula
+                                                                for defining the Channel Similarity Matrix Loss Function is
+modules, retaining only the detection network LightStar-
+                                                                as follows:
+YOLO, composed of the lightweight network and YOLO.
+This design reduces network complexity while still ensuring
+the efficiency and accuracy of the detection task. Through                             h
+                                                                                     w X
+                                                                                     X
+this structural design, the entire detection algorithm frame-                 Dc =              Ab,c,i,j · Bb,c,i,j     (11)
+work achieves superior performance and rapid response in                                i   j
+                                                                                                                  !2
+practical applications.                                                               c     N
+                                                                                  1 X             Di,j  D̂ij
+                                                                            LCS =                   2 −                 (12)
+    Lightweight Enhancement Network. Figure 5 illus-                              Nc c            W     W2
+trates that the design of the lightweight enhancement net-
+work mainly consists of CBL convolution blocks and depth-       Where Dc denotes the inner product of corresponding fea-
+wise separable convolution blocks, which draws on the de-       ture map tensors A and B for each channel C. b represents
+sign principles of residual networks. In visual enhancement     the batch size, Nc represents the number of channels, and
+tasks, downsampling feature maps can lead to a loss of spa-     w and h denote the width and height of the feature maps,
+tial resolution, which diminishes the model’s ability to cap-   respectively. i and j represent indices for width and height,
+ture fine structural information in images, making it prone     respectively. W 2 denotes the square of the width. The over-
+to losing detail during the subsequent image reconstruction     all definition of the Feature Stimulation Loss Function is
+phase. To preserve as many original input features as pos-      expressed as follows:
+sible throughout the enhancement process, the size of the
+feature maps is kept consistent with the input size, allow-
+                                                                                 Lk = LsmoothL1 + LCS                   (13)
+ing for more accurate depiction and enhancement of details
+in the image, thus improving image quality and processing          In the overall algorithm framework for training the ma-
+results.                                                        chine vision enhancement module, we define the total loss
+                                                                function as the sum of the detector loss function and the
+   Feature Stimulation Network. Based on the idea of
+                                                                feature excitation loss function. The specific formula for
+auxiliary training, we propose a feature simulation network
+                                                                definition is as follows:
+(FS-Net, as shown in Figure 6). The primary goal of this
+network is to motivate the lightweight enhancement net-                  Lk = λ1 LsmoothL1 + λ2 LCS + λ3 Ldec           (14)
+work to better extract and learn the potential features from
+the pre-trained PRE network, thereby addressing the is-         where λ1 , λ2 , and λ3 are balancing coefficients. Based on
+sue of poor machine vision enhancement results due to the       empirical observations, we set λ1 = 0.5, λ2 = 0.3, λ3 =
+simple structure and weak feature extraction capability of      1.0.
+the lightweight network when processing low-light images.
+The input data for FS-Net comes from the results of im-         4. Experiments
+age enhancement processed by the PRE module and the
+                                                                4.1. Training Details
+lightweight network. In the construction of FS-Net, we pri-
+marily rely on a series of stacked Down modules. Whenever          We implemented our work using the open-source object
+an enhanced image passes through a Down module, the size        detection toolbox MMDetection [3]. During the training
+of the feature map is pooled to half the size of the previous   process, we employed data augmentation strategies such as
+feature map. To strengthen the excitation effect, FS-Net in-    random cropping and random flipping to enhance the train-
+troduces an EMA [20] attention mechanism at the ends of         ing of the algorithm framework for machine vision enhance-
+the upper and lower parallel branches.                          ment. To ensure uniform data size, we resized images to
+         Method            Bicycle   Boat   Bottle   Bus    Car    Cat    Chair   Cup    Dog    Motorbike   People   Table   mAP50(%)↑
+   YOLO [22] Baseline       80.7     73.9    77.5    92.1   83.1   66.5    71.5   78.6   76.4     76.7       81.5     57.0     76.3
+  MBLLEN [18] -YOLO         82.2     76.7    76.5    92.5   83.1   72.4    71.5   77.3   78.5     74.5       80.8     55.6     76.8
+     KinD [36] -YOLO        80.8     77.2    74.7    92.0   84.5   67.2    70.7   78.9   77.7     74.7       80.0     54.0     76.0
+  ZeroDCE [10] -YOLO        79.1     79.1    76.5    91.5   85.2   68.8    71.7   76.7   78.9     77.1       82.0     57.2     77.0
+ Retinexformer [1] -YOLO    82.0     80.5    80.9    91.3   83.1   70.8    70.3   76.9   75.8     75.4       80.8     57.8     77.1
+    PairLIE [8] -YOLO       82.5     76.7    76.4    91.6   82.9   71.0    70.0   76.9   78.9     72.6       79.9     55.3     76.2
+  FourLLE [27] -YOLO        81.8     78.1    74.2    91.3   82.6   67.7    69.1   73.0   76.1     74.8       79.5     55.3     75.3
+        MAET [5]            83.1     78.5    75.6    92.9   83.1   73.4    71.3   79.0   79.8     77.2       81.1     57.0     77.7
+      IAT-YOLO [4]          79.8     76.9    78.6    92.5   83.8   73.6    72.4   78.6   79.0     79.0       81.1     57.7     77.8
+        DENet [21]          80.4     79.7    77.9    91.2   82.7   72.8    69.9   80.1   77.2     76.7       82.0     57.2     77.3
+      PE-YOLO [34]          84.7     79.2    79.3    92.5   83.9   71.5    71.7   79.7   79.7     77.3       81.8     55.3     78.0
+        DAI-Net [7]         83.8     75.8    75.1    94.2   84.1   74.9    73.1   79.2   82.2     76.4       80.7     59.8     78.3
+ LightStar-YOLO (ours)      83.6     80.5    77.0    91.4   84.8   73.9    73.9   80.6   78.1     78.6       82.1     58.4     78.6
+
+Table 1. Comparison of detection accuracy of different methods on ExDark. Red indicates the best result, and blue indicates the second
+best result.
+
+
+
+
+                  Figure 7. Visualization of detection results in nighttime street environments using different methods
+
+608 × 608 pixels before applying augmentation. For opti-                  Intel Core i7-12700F processor, 128GB of memory, and an
+mization strategies, we utilized stochastic gradient descent              NVIDIA RTX 3090 graphics card.
+(SGD) as the optimizer to fine-tune the enhanced detection
+model. The initial learning rate was set to 0.001, and we                 4.2. Object Detection in Darkness
+employed a step-based learning rate decay mechanism. The
+entire training process lasted for 25 epochs. To ensure sta-                 ExDark [16] and DARK FACE [32] are two well-known
+ble training and smooth convergence, we used a learning                   low-light detection datasets. We independently trained the
+rate warm-up strategy at the beginning of training. All ex-               model using these two datasets and validated its perfor-
+periments were conducted on hardware equipped with an                     mance with their respective test sets, and then compared
+                                                                          it with several leading low-light scene enhancement detec-
+tion models. Among them, MBLLEN [18], KinD [36],                            Method                   Face     mAP50(%)↑
+ZeroDCE [10], FourLLE [27], PairLIE [8], and Retinex-                 YOLO [22] Baseline             54.0       54.0
+former [1] emphasize low-light image enhancement meth-               MBLLEN [18] -YOLO               51.6       51.6
+ods, where images are preprocessed before applying the                  KinD [36] -YOLO              51.6       51.6
+YOLO detector. On the other hand, MAET [5], IAT [4],                 ZeroDCE [10] -YOLO              54.2       54.2
+DENet [21], PE-YOLO [34] and DAI-Net [7] are single-                Retinexformer [1] -YOLO          57.8       57.8
+stage low-light detection models aimed at machine vision.              PairLIE [8] -YOLO             56.8       56.8
+In the evaluation, we primarily focused on the mean Aver-            FourLLE [27] -YOLO              51.2       51.2
+age Precision (mAP) at an IOU threshold of 0.5 and per-                    MAET [5]                  55.8       55.8
+formed a visual analysis of the results on the ExDark [16]               IAT-YOLO [4]                53.1       53.1
+dataset.                                                                   DENet [21]                51.2       51.2
+    The detection accuracy performance on the ExDark [16]                PE-YOLO [34]                51.1       51.1
+dataset is shown in Table 1. The analysis results indicate                 DAI-Net [7]               57.0       57.0
+that: 1) In low-light image enhancement models based on             LightStar-YOLO (ours)            58.5       58.5
+human visual recovery, simply adding the YOLO detector
+did not significantly improve detection performance in low-     Table 2. Comparison of detection accuracy of different methods
+                                                                on DarkFace. Red indicates the best result, and blue indicates the
+light scenes. In fact, this approach may even lead to a de-
+                                                                second best result.
+cline in the original method’s detection performance. For
+example, the detection performance of KinD-YOLO and             the-art algorithm, with a mAP50 (%) detection accuracy
+PairLIE-YOLO slightly decreased compared to the YOLO            of 58.5%. Additionally, LightStar-YOLO’s detection ac-
+baseline model. ZeroDCE-YOLO’s mAP50 (%) accuracy               curacy also surpasses traditional two-stage enhancement
+improved by only 0.7% over the YOLO baseline model,             detection framework methods, such as MBLLEN-YOLO,
+showing no significant enhancement in detection perfor-         Retinexformer-YOLO, and FourLIE-YOLO. This further
+mance. 2) In integrated enhancement methods and domain          validates the effectiveness of the detection algorithm that
+generalization, the YOLO detector’s detection performance       combines Pseudo-RAW image enhancement methods with
+in low-light scenes showed improvement. For example, PE-        auxiliary training strategies in maintaining detection accu-
+YOLO’s mAP50 (%) accuracy improved by 1.7% over the             racy and demonstrates its strong generalization capability
+YOLO baseline model, demonstrating some competitive-            across various datasets.
+ness. Our proposed LightStar-Net does not require pretrain-
+ing on other dark datasets. LightStar-YOLO’s mAP50 (%)          4.3. Inference Efficiency Analysis
+accuracy improved by 2.3% over the YOLO baseline model.             Table 3 lists the performance of different models in
+Compared to the state-of-the-art DAI-Net, the mAP50 (%)         terms of the number of parameters, runtime, and frames
+accuracy metric improved by 0.3%.                               per second (FPS). The MAET [5] method is excluded be-
+    Figure 7 shows the detection performance of LightStar-      cause it does not require additional parameters and com-
+YOLO in a nighttime street scene, where it outperforms          putations. Since all methods are based on the unmodified
+DENet-YOLO and IAT-YOLO in detection results. Table             YOLO model, we only compare the image enhancement
+1 and Figure 7 show that the FS-Net Feature Stimulation         network parts of each model to analyze and compare their
+function enables LightStar-YOLO to learn latent features        inference efficiency. The image size used in this experi-
+from the PRE module, enhancing its machine vision capa-         ment is 256 × 256. Notably, LightStar-Net performs best
+bility in low-light environments. Furthermore, it outper-       in terms of model parameters and FLOPs (floating-point
+forms other models used for low-light scene enhancement         operations), with the shortest inference time and the high-
+detection. These results demonstrate the effectiveness of       est FPS. This result demonstrates the significant advantage
+the proposed detection algorithm framework, particularly        of our proposed detection algorithm that combines Pseudo-
+in improving detection accuracy through the auxiliary train-    RAW image enhancement methods with auxiliary training
+ing strategy based on the Pseudo-RAW image enhancement          strategies in inference speed. Combining the data from Ta-
+method.                                                         ble 1 and Table 3, it can be observed that LightStar-Net
+    Similar comparative experiments were conducted on the       exhibits excellent inference speed while maintaining detec-
+DARK FACE [32] dataset to verify the generalization ca-         tion accuracy, with an inference speed that is three times
+pability and detection accuracy of the detection algorithm      that of DENet [21]. Therefore, LightStar-Net has a notable
+that combines Pseudo-RAW space Enhancement methods              efficiency advantage without significantly sacrificing ma-
+with auxiliary training strategies across different datasets.   chine vision enhancement capability. This lightweight and
+As shown in Table 2, the detection accuracy of LightStar-       fast model is suitable for applications requiring strict real-
+YOLO is 1.5% higher than that of the current state-of-          time performance, such as smart driving, intelligent surveil-
+       Method           FLOPs(G)↓   Parameters(K)↓   Times(s)↓    FPS↑          Method            IMRGB      DOISP      mAP50(%)↑
+    MBLLEN [18]           19.95         20470         1.98121      0.50
+      KinD [36]           356.72         8160         0.03802     26.30       YOLO [22]             ×          ×          76.3
+    ZeroDCE [10]           2.53            80         0.00201     497.51    LightStar-YOLO          ✓          ×          78.1
+  Retinexformer [1]       17.01          1605         0.01301     76.83
+     PairLIE [8]          22.34           341         0.00370     270.15    LightStar-YOLO          ×          ✓          77.5
+    FourLLE [27]           2.54           119         0.00475     210.49    LightStar-YOLO          ✓          ✓          78.6
+       IAT [4]             1.44            90         0.00332     300.64
+     DENet [21]            0.31            24         0.00123     811.93
+ LightStar-Net (ours)      0.17            3          0.00037    2702.70   Table 4. Comparison of ablation experiments for IMRGB module
+                                                                           and DOISP module.
+Table 3. Comparison of inference efficiency of different models.
+Red indicates the best result, and blue indicates the second best                            IMRGB        DOISP            mAP50(%)↑
+                                                                                                     DO-AWB DO-CCMA
+result.
+                                                                            LightStar-YOLO    ✓        ×        ×              78.1
+                                                                            LightStar-YOLO    ✓        ✓        ×              78.3
+                                                                            LightStar-YOLO    ✓        ×        ✓              78.5
+lance, and edge computing devices with limited memory re-                   LightStar-YOLO    ✓        ✓        ✓              78.6
+sources.
+                                                                           Table 5. Comparison of lesion experiments using DO-CCMA and
+4.4. Ablation Study                                                        DO-AWB modules.
+    To evaluate the impact of each component on overall per-
+formance, a series of ablation experiments were conducted                  the IMRGB module. Similarly, LightStar-YOLO with the
+on the ExDark [16] dataset. These experiments involved re-                 DO-CCMA enhancement sub-module improved detection
+moving or modifying specific parts of the model one by one                 accuracy by 0.4% compared to the version using only the
+to observe the effects on performance.                                     IMRGB module. This indicates that both DO-CCMA and
+    IMRGB and DOISP. The PRE consists of the IMRGB                         DO-AWB have a positive impact on enhancing the feature
+and DOISP modules. We conducted ablation experiments                       space of Pseudo-RAW images. The DO-CCMA module in-
+to evaluate their impact. Table 4 shows that adding only the               troduces a Color Correction Matrix (CCM) capable of cor-
+IMRGB module increased the mAP50 (%) detection accu-                       recting color parameters and includes gamma parameters.
+racy of LightStar-YOLO to 78.1%, an improvement of 1.8%                    Through gamma brightness adjustment, this module effec-
+over the base YOLO detector, indicating its positive impact.               tively enhances the global brightness of the image in ma-
+The accuracy achieved by adding only the DOISP module                      chine vision. Therefore, compared to the DO-AWB mod-
+was 77.5%. Although DOISP improved performance, its                        ule, the DO-CCMA module has a more significant effect on
+impact was relatively weaker. However, when both IM-                       enhancing the feature space of Pseudo-RAW images.
+RGB and DOISP modules were used together, the detec-                           Feature Stimulation Loss. Similarly, we validated the
+tion accuracy increased to 78.6%. This demonstrates their                  effectiveness of the Channel Similarity Matrix Loss. As
+combined effect on model performance, effectively opti-                    shown in Table 6, we first added the smoothL1 loss function
+mizing the detection results. The IMRGB module primar-                     independently. The results indicated that this feature exci-
+ily adapts low-light RGB images to a Pseudo-RAW feature                    tation module significantly enhanced overall performance,
+space. Even without the optimization of DOISP, the de-                     increasing mAP50 (%) detection accuracy by 1.6% percent-
+tector’s loss function can still optimize the Pseudo-RAW                   age points compared to the YOLO baseline, thereby demon-
+feature space, enhancing the alignment of images with its                  strating the effectiveness of the smoothL1 loss function as a
+perspective, thus improving detection performance to some                  feature excitation mechanism. This loss function combines
+extent. The DOISP module further enhances the Pseudo-                      the characteristics of both L1 and L2 , allowing LightStar-
+RAW feature space for machine vision. Directly enhanc-                     Net to converge quickly while remaining robust during opti-
+ing RGB images provides limited improvement to the de-                     mization. Next, we independently added the Channel Sim-
+tector. Therefore, PRE first maps the RGB image to the                     ilarity Matrix loss function, which showed that LightStar-
+machine vision feature space and then enhances the features                YOLO’s detection accuracy improved by 1.3% percentage
+to achieve optimal performance.                                            points compared to the YOLO baseline. Although its con-
+    DO-CCMA and DO-AWB. The DOISP module con-                              tribution to LightStar-Net was lower, when combined with
+sists of two enhancement sub-modules: DO-CCMA and                          the smoothL1 loss function, LightStar-YOLO’s detection
+DO-AWB. To investigate the effects of these two modules                    accuracy reached 78.6%, achieving the best results. This
+on enhancing the feature space of Pseudo-RAW images,                       indicates a synergistic effect between the two loss func-
+we conducted a series of ablation experiments. The com-                    tions. The Channel Similarity Matrix loss function, un-
+parison results in Table 5 show that LightStar-YOLO with                   like smoothL1 , measures differences between two feature
+the DO-AWB enhancement sub-module improved detec-                          maps. This enables the network to capture low-light vi-
+tion accuracy by 0.2%compared to the version using only                    sual information more accurately, enhancing machine vi-
+     Method            LCS      smoothL1      mAP50(%)↑            References
+      YOLO              ×          ×            76.3                [1] Y. Cai, H. Bian, J. Lin, H. Wang, R. Timofte, and
+ LightStar-YOLO         ✓          ×            77.6                    Y. Zhang. Retinexformer: One-stage retinex-based trans-
+ LightStar-YOLO         ×          ✓            77.9                    former for low-light image enhancement. In Proceedings
+ LightStar-YOLO         ✓          ✓            78.6                    of the IEEE/CVF International Conference on Computer Vi-
+                                                                        sion, pages 12504–12513, 2023. 3, 7, 8, 9
+Table 6. Comparison of ablation experiments for feature stimula-    [2] C. Chen, Q. Chen, J. Xu, and V. Koltun. Learning to see in
+tion loss functions.                                                    the dark. In Proceedings of the IEEE conference on computer
+                                                                        vision and pattern recognition, pages 3291–3300, 2018. 1, 3
+             Method           EMA       mAP50(%)↑                   [3] K. Chen, J. Wang, J. Pang, Y. Cao, Y. Xiong, X. Li,
+         LightStar-YOLO        ×          78.1                          S. Sun, W. Feng, Z. Liu, J. Xu, et al. Mmdetection: Open
+         LightStar-YOLO        ✓          78.6                          mmlab detection toolbox and benchmark. arXiv preprint
+                                                                        arXiv:1906.07155, 2019. 6
+    Table 7. EMA attention ablation experiment comparison.          [4] Z. Cui, K. Li, L. Gu, S. Su, P. Gao, Z. Jiang, Y. Qiao, and
+                                                                        T. Harada. You only need 90k parameters to adapt light: a
+                                                                        light weight transformer for image enhancement and expo-
+sion performance in complex environments.                               sure correction. arXiv preprint arXiv:2205.14871, 2022. 1,
+   Additionally, we conducted modular ablation experi-                  2, 3, 7, 8, 9
+ments on FS-Net using the ExDark [16] dataset to validate           [5] Z. Cui, G.-J. Qi, L. Gu, S. You, Z. Zhang, and T. Harada.
+the effectiveness of the EMA [20] attention mechanism. As               Multitask aet with orthogonal tangent regularity for dark ob-
+shown in Table 7, the EMA attention mechanism effectively               ject detection. In Proceedings of the IEEE/CVF international
+                                                                        conference on computer vision, pages 2553–2562, 2021. 1,
+aligns the high-level features of the two enhancement net-
+                                                                        2, 7, 8
+works. After adding this mechanism, the detection accu-
+                                                                    [6] J. Dai, Y. Li, K. He, and J. Sun. R-fcn: Object detection
+racy of LightStar-YOLO increased by 0.5%, indicating that
+                                                                        via region-based fully convolutional networks. Advances in
+the EMA attention mechanism effectively guides FS-Net in                neural information processing systems, 29, 2016. 1, 3
+extracting key feature information. Through a cross-space
+                                                                    [7] Z. Du, M. Shi, and J. Deng. Boosting object detection with
+learning strategy, the EMA attention mechanism success-                 zero-shot day-night domain adaptation. In Proceedings of
+fully integrates the feature maps output by the two parallel            the IEEE/CVF Conference on Computer Vision and Pattern
+sub-networks, enhancing the attention network’s ability to              Recognition, pages 12666–12676, 2024. 4, 7, 8
+extract features.                                                   [8] Z. Fu, Y. Yang, X. Tu, Y. Huang, X. Ding, and K.-K. Ma.
+                                                                        Learning a simple low-light image enhancer from paired
+                                                                        low-light instances. In Proceedings of the IEEE/CVF con-
+5. Conclusion                                                           ference on computer vision and pattern recognition, pages
+                                                                        22252–22261, 2023. 3, 7, 8, 9
+    In this paper, we propose an efficient low-light object de-
+                                                                    [9] R. Girshick, J. Donahue, T. Darrell, and J. Malik. Rich fea-
+tection network enhanced in the Pseudo-RAW space, named
+                                                                        ture hierarchies for accurate object detection and semantic
+LightStar-Net. To enhance the efficiency of machine vision-
+                                                                        segmentation. In Proceedings of the IEEE conference on
+oriented low-light object detection, we introduce FS-Net                computer vision and pattern recognition, pages 580–587,
+with an auxiliary training strategy, enabling the lightweight           2014. 1, 3
+network in LightStar-Net to rapidly extract deep latent fea-       [10] C. Guo, C. Li, J. Guo, C. C. Loy, J. Hou, S. Kwong, and
+tures from the PRE module. LightStar-Net is embedded                    R. Cong. Zero-reference deep curve estimation for low-light
+within an end-to-end object detection framework and op-                 image enhancement. In Proceedings of the IEEE/CVF con-
+timized for performance. Extensive experiments on low-                  ference on computer vision and pattern recognition, pages
+light object and face detection tasks demonstrate that the              1780–1789, 2020. 1, 3, 7, 8, 9
+proposed LightStar-YOLO surpasses existing state-of-the-           [11] K. A. Hashmi, G. Kallempudi, D. Stricker, and M. Z. Afzal.
+art methods in both detection accuracy and model complex-               Featenhancer: Enhancing hierarchical features for object de-
+ity.                                                                    tection and beyond under low-light vision. In Proceedings
+                                                                        of the IEEE/CVF International Conference on Computer Vi-
+                                                                        sion, pages 6725–6735, 2023. 3
+6. Acknowledgement                                                 [12] A. Kuznetsova, H. Rom, N. Alldrin, J. Uijlings,
+                                                                        I. Krasin, J. Pont-Tuset, S. Kamali, S. Popov, M. Mal-
+   This work was supported by the Natural Science Foun-                 loci, A. Kolesnikov, et al. The open images dataset v4:
+dation of Chongqing (Grant No.       CSTB2022NSCQ-                      Unified image classification, object detection, and visual
+MSX0493), National Natural Science Foundation of China                  relationship detection at scale. International journal of
+(Grant No. 62102309)                                                    computer vision, 128(7):1956–1981, 2020. 3
+[13] Z. Li, S. Yi, and Z. Ma. Rendering nighttime image via cas-     [28] Q. Wang, B. Wu, P. Zhu, P. Li, W. Zuo, and Q. Hu. Eca-net:
+     caded color and brightness compensation. In Proceedings of           Efficient channel attention for deep convolutional neural net-
+     the IEEE/CVF Conference on Computer Vision and Pattern               works. In Proceedings of the IEEE/CVF conference on com-
+     Recognition, pages 897–905, 2022. 2                                  puter vision and pattern recognition, pages 11534–11542,
+[14] T.-Y. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ra-         2020. 4
+     manan, P. Dollár, and C. L. Zitnick. Microsoft coco: Com-      [29] C. Wei, W. Wang, W. Yang, and J. Liu. Deep retinex
+     mon objects in context. In Computer Vision–ECCV 2014:                decomposition for low-light enhancement. arXiv preprint
+     13th European Conference, Zurich, Switzerland, Septem-               arXiv:1808.04560, 2018. 1, 3
+     ber 6-12, 2014, Proceedings, Part V 13, pages 740–755.          [30] Y. Wu, C. Pan, G. Wang, Y. Yang, J. Wei, C. Li, and
+     Springer, 2014. 3                                                    H. T. Shen. Learning semantic-aware knowledge guid-
+[15] W. Liu, D. Anguelov, D. Erhan, C. Szegedy, S. Reed, C.-Y.            ance for low-light image enhancement. In Proceedings of
+     Fu, and A. C. Berg. Ssd: Single shot multibox detector. In           the IEEE/CVF Conference on Computer Vision and Pattern
+     Computer Vision–ECCV 2016: 14th European Conference,                 Recognition, pages 1662–1671, 2023. 3
+     Amsterdam, The Netherlands, October 11–14, 2016, Pro-           [31] Y. Xing, Z. Qian, and Q. Chen. Invertible image signal
+     ceedings, Part I 14, pages 21–37. Springer, 2016. 1, 3               processing. In Proceedings of the IEEE/CVF Conference
+[16] Y. P. Loh and C. S. Chan. Getting to know low-light im-              on Computer Vision and Pattern Recognition, pages 6287–
+     ages with the exclusively dark dataset. Computer Vision and          6296, 2021. 3
+     Image Understanding, 178:30–42, 2019. 1, 2, 7, 8, 9, 10         [32] W. Yang, Y. Yuan, W. Ren, J. Liu, W. J. Scheirer, Z. Wang,
+[17] K. G. Lore, A. Akintayo, and S. Sarkar. Llnet: A deep au-            T. Zhang, Q. Zhong, D. Xie, S. Pu, et al. Advancing image
+     toencoder approach to natural low-light image enhancement.           understanding in poor visibility environments: A collective
+     Pattern Recognition, 61:650–662, 2017. 3                             benchmark study. IEEE Transactions on Image Processing,
+[18] F. Lv, F. Lu, J. Wu, and C. Lim. Mbllen: Low-light im-               29:5737–5752, 2020. 2, 7, 8
+     age/video enhancement using cnns. In BMVC, volume 220,          [33] X. Yi, H. Xu, H. Zhang, L. Tang, and J. Ma. Diff-retinex:
+     page 4. Northumbria University, 2018. 1, 7, 8, 9                     Rethinking low-light image enhancement with a generative
+[19] L. Ma, T. Ma, R. Liu, X. Fan, and Z. Luo. Toward fast,               diffusion model. In Proceedings of the IEEE/CVF Interna-
+     flexible, and robust low-light image enhancement. In Pro-            tional Conference on Computer Vision, pages 12302–12311,
+     ceedings of the IEEE/CVF conference on computer vision               2023. 2
+     and pattern recognition, pages 5637–5646, 2022. 3               [34] X. Yin, Z. Yu, Z. Fei, W. Lv, and X. Gao. Pe-yolo: Pyra-
+[20] D. Ouyang, S. He, G. Zhang, M. Luo, H. Guo, J. Zhan,                 mid enhancement network for dark object detection. In In-
+     and Z. Huang. Efficient multi-scale attention module with            ternational Conference on Artificial Neural Networks, pages
+     cross-spatial learning. In ICASSP 2023-2023 IEEE Interna-            163–174. Springer, 2023. 1, 7, 8
+     tional Conference on Acoustics, Speech and Signal Process-
+                                                                     [35] S. W. Zamir, A. Arora, S. Khan, M. Hayat, F. S. Khan, M.-H.
+     ing (ICASSP), pages 1–5. IEEE, 2023. 6, 10
+                                                                          Yang, and L. Shao. Cycleisp: Real image restoration via im-
+[21] Q. Qin, K. Chang, M. Huang, and G. Li. Denet: detection-             proved data synthesis. In Proceedings of the IEEE/CVF con-
+     driven enhancement network for object detection under ad-            ference on computer vision and pattern recognition, pages
+     verse weather conditions. In Proceedings of the Asian Con-           2696–2705, 2020. 2, 3
+     ference on Computer Vision, pages 2813–2829, 2022. 1, 2,
+                                                                     [36] Y. Zhang, J. Zhang, and X. Guo. Kindling the darkness:
+     7, 8, 9
+                                                                          A practical low-light image enhancer. In Proceedings of
+[22] J. Redmon and A. Farhadi. Yolov3: An incremental improve-
+                                                                          the 27th ACM international conference on multimedia, pages
+     ment. arXiv preprint arXiv:1804.02767, 2018. 1, 2, 3, 5, 7,
+                                                                          1632–1640, 2019. 1, 7, 8, 9
+     8, 9
+                                                                     [37] D. Zhou, Z. Yang, and Y. Yang.            Pyramid diffusion
+[23] S. Ren, K. He, R. Girshick, and J. Sun. Faster r-cnn: To-
+                                                                          models for low-light image enhancement. arXiv preprint
+     wards real-time object detection with region proposal net-
+                                                                          arXiv:2305.10028, 2023. 2
+     works. Advances in neural information processing systems,
+     28, 2015. 1, 3
+[24] S. Sun, W. Ren, T. Wang, and X. Cao. Rethinking image
+     restoration for object detection. Advances in Neural Infor-
+     mation Processing Systems, 35:4461–4474, 2022. 3
+[25] Z. Tian, C. Shen, H. Chen, and T. He. Fcos: Fully convolu-
+     tional one-stage object detection. arxiv 2019. arXiv preprint
+     arXiv:1904.01355, 1904. 1, 3
+[26] F. Tung and G. Mori. Similarity-preserving knowledge dis-
+     tillation. In Proceedings of the IEEE/CVF international con-
+     ference on computer vision, pages 1365–1374, 2019. 6
+[27] C. Wang, H. Wu, and Z. Jin. Fourllie: Boosting low-light
+     image enhancement by fourier frequency information. In
+     Proceedings of the 31st ACM International Conference on
+     Multimedia, pages 7459–7469, 2023. 7, 8, 9
+

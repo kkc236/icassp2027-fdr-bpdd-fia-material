@@ -1,0 +1,130 @@
+{
+  "status": "passed",
+  "revision": "literature-informed structure with author-confirmed D-FINE training-memory clarification",
+  "positioning_zh": "面向无人机航拍监测，提供高精度目标检测与高速批量处理能力。",
+  "independent_agent_count_this_round": 3,
+  "independent_agent_roles": [
+    "CVM aerial-paper reading and motivation figure construction",
+    "CVM geometry/structure-paper reading, publication metadata and page inspection",
+    "Manuscript argument mapping, independent GT verification and structural review"
+  ],
+  "reviewers_are_agents_not_human_peer_reviewers": true,
+  "full_papers_read": [
+    "FGHDet (official CVM 2025 manuscript)",
+    "DASSF (official CVM 2025 manuscript)",
+    "LME-DETR (CVM 2026)",
+    "SD-Net (CVM 2026)",
+    "Sphere-CenterNet (CVM 2026)",
+    "CADSpotting (CVM 2026)"
+  ],
+  "research_note_sha256": {
+    "AERIAL_2026_ZH.md": "afe19d071133b358c77e310136050aa358562abcf175a6a2daf30da1394c9b31",
+    "GEOMETRY_TASK_2026_ZH.md": "e3d59df63c775a670f15baffc0aa62bccd8f69ea8ffe49acb78dc2bba4b12992",
+    "CURRENT_ARGUMENT_MAP_ZH.md": "1a547814e7b870769b1b256b21c6e16a30522971f0b9f9f1525204c32d028551",
+    "REFERENCE_REPLACEMENT_ZH.md": "8d40911ff9a207372e7785e3b6db331e54daf11ab71e3335ce03153c364a1dac"
+  },
+  "current_review_report_sha256": {
+    "MOTIVATION_INDEPENDENT_CHECK_ZH.md": "b7dc4576cb210c60c4f85e37a848aa2c991dda72ffc027bd583bd3e3ea987f9c",
+    "STRUCTURE_FINAL_REVIEW_ZH.md": "605649aa0fc08519fd379368556491b442e4418970f0d8ebaed88d4fa1a1427e",
+    "VISUAL_PAGES_07_12_ZH.md": "c336b8240291f1f8d5ae12a4692b615437da5dd10e5b8c19242f3b7678481c93",
+    "FINAL_VISUAL_AND_RESOLUTION_ZH.md": "f537f9370e853f638cd6d9737b6195aa3f3d8b1f44b5d0add202d33e7fe1f2e3",
+    "BATCH_MEMORY_CLARIFICATION_ZH.md": "08fb2432181e439b0c1bd4e0d76fa00df12e5e22e55429d5736a8d4b9671f91a"
+  },
+  "prior_review_scope": "cvm_multireviewer_revision_20260917; retained as historical records, not new reviews",
+  "G_is_first_contribution": true,
+  "comparison_reference": "Complete FDR/FGL transfer (Original FDR), not entire D-FINE detector",
+  "clean_role": "intermediate configuration, all rows retained",
+  "method_subsections": [
+    "Framework and distributional representation",
+    "Geometry-feasible decoding",
+    "Layerwise supervision allocation",
+    "Local visual extension",
+    "Training and inference"
+  ],
+  "core_and_framework_whitespace_tokens": 931,
+  "all_method_whitespace_tokens": 1961,
+  "motivation_statistics": {
+    "all_converted_val_annotations": true,
+    "method": "independent Decimal area thresholds and rectangle intersection/union",
+    "input_area_bins": [
+      6856,
+      14011,
+      12414,
+      4580,
+      898
+    ],
+    "input_below_32_count": 33281,
+    "original_area_below_32_count": 26586,
+    "analytic_curve_samples_checked": 243,
+    "model_execution": false
+  },
+  "motivation_is_not_model_error_or_causal_module_evidence": true,
+  "numeric_tables_unchanged": true,
+  "numeric_cells_checked": 72,
+  "negative_results_retained": {
+    "geometry_vs_clean_AP": -0.335,
+    "G_vs_clean_AP": -0.076,
+    "GB_vs_G_AP": -0.343
+  },
+  "new_training": false,
+  "new_model_evaluation": false,
+  "server_access": false,
+  "internal_components": "validation only",
+  "efficiency_batch_sizes": [
+    8
+  ],
+  "per_image_prediction_cases": "excluded by user",
+  "UAVDT_added": false,
+  "pages": 12,
+  "tables": 7,
+  "figures": 6,
+  "equations": 11,
+  "references": 19,
+  "visual_review": "passed_all_12_pages",
+  "visual_review_method": "After adding the author-confirmed training-memory explanation, root visually inspected all four changed page renders (8-11). The other eight PNGs are byte-identical to the previously verified twelve-page release.",
+  "rendered_pages_sha256": {
+    "page-01.png": "cedfd6afd0e08de80fd80fc2167e9977aa65d7d5f148b08ea19a4d78befd5634",
+    "page-02.png": "894195b3118223b6750795b8cdbab7ee08042fa9042581729f8ac07a24dd2ea4",
+    "page-03.png": "708695c96bd23da3fc0b52016c7264b352a5836bf52b655d0eb4933cbf6c724c",
+    "page-04.png": "adf33fcfac10f675955da6afb4d981e586268009adf693d663fd85f97b21f851",
+    "page-05.png": "f964b0c65eb7337dcc67fd2fc4294e3a7a98b40ba4f653a36b3e5f8f59dfd997",
+    "page-06.png": "2d918250e910ade3f0e45b11c9878a32680939cc415173ea7c2eff315be0cac8",
+    "page-07.png": "03f7b16e162b884a78f5273a23d213de4291004fb6988bb179255e6a84a46fc5",
+    "page-08.png": "aa8a3a631e1889860cef3745e26987fcc9f52d2f30ff3bc14b13876cd532c93b",
+    "page-09.png": "75a338eef9355f2c10ce550f7a016a97713951bf91d625166fc73d77217dea63",
+    "page-10.png": "3933a84c63c5b4b887d4584ffe4129363e98b521008f672a8e596afe7fee122e",
+    "page-11.png": "34c676793e362be80be04500603c34ebd30fd1cdd444ac0ec56b42ef4c7f6a56",
+    "page-12.png": "63303fedf914d84bf05dae46dbd135aaa722758869a04eabd697880c3d9fe353"
+  },
+  "main_tex_sha256": "aac0aa055ffcbad68ba7a4af028bf663538c6ee73a80402e7c34923afbeccef6",
+  "pdf_sha256": "34ce92ef651a6a8c6e226d3c285011a9119dff7a6f1f711450c9f081f32edb54",
+  "agreed_scope_complete": true,
+  "external_submission_performed": false,
+  "acceptance_probability_estimated": false,
+  "remaining_evidence_limits": [
+    "one dataset and one seed",
+    "historical configurations not all source/initialization matched",
+    "different D-FINE and Full training recipes",
+    "converted labels and prior test access",
+    "expert/direct-supervision/KD bundle not isolated",
+    "desktop fixed-input throughput only"
+  ],
+  "pending_metadata": [
+    "real submission-system paper ID"
+  ],
+  "base_revision": "2026-09-17 literature-informed argument and structure revision",
+  "author_batch_clarification": {
+    "source": "direct author clarification",
+    "physical_batch": {
+      "attempted": 8,
+      "used": 4
+    },
+    "hardware": "RTX 4090, 24 GB",
+    "reason": "out-of-memory under this training setup",
+    "new_memory_test": false,
+    "other_recipe_differences_retained": true,
+    "independent_wording_review_agents": 1,
+    "location": "Experiments 4.1; D-FINE-L training paragraph",
+    "report": "reviews/BATCH_MEMORY_CLARIFICATION_ZH.md"
+  }
+}

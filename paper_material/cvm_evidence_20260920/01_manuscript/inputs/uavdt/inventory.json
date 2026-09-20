@@ -1,0 +1,955 @@
+{
+  "zip": "C:\\Users\\16946\\Documents\\xwechat_files\\wxid_1xfzyj10od6w12_86cf\\msg\\file\\2026-09\\服务器fdr-bdpp-fia-material.zip",
+  "zip_sha256": "b027e6da994d78baf13649cd79a50262bbc2f72ef1a902357c1d818dbda47650",
+  "files": [
+    {
+      "path": "服务器fdr-bdpp-fia-material/configs/rtdetr-l-fdr-bpdd-fia.yaml",
+      "size": 1700,
+      "sha256": "0275a0119c7a9e885f306c131c506b45b052a328412be3525827f783907ec0ce",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        23,
+        1,
+        0
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/configs/UAVDT.yaml",
+      "size": 111,
+      "sha256": "5a3787279905912663bc411382d300fa41033c754dc2675743cdd638c6497575",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        23,
+        1,
+        0
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/configs/VisDrone.yaml",
+      "size": 216,
+      "sha256": "026f60ce5a83c520b326111cc08da63ff40448cdd7cb1a221d8239678ad50679",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/BoxF1_curve.png",
+      "size": 149375,
+      "sha256": "ba32000a8add472ff74fc99a4253662485850bde16dfa7a266963c71400b042b",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/BoxPR_curve.png",
+      "size": 152110,
+      "sha256": "f6a89f2b533b6dec5cb1ab20791fd16fe26433261e4c58f47dcfe6f30d36b39a",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/BoxP_curve.png",
+      "size": 188038,
+      "sha256": "9ca2ea2c6118e5f0c6052446a9429090b8b30e687f6b68dd78bd27c1a9e2e6fc",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/BoxR_curve.png",
+      "size": 157294,
+      "sha256": "415f2676c560f72e084ee0b1dc52351d820f9523c4ec9dbd31435ea92140529a",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/confusion_matrix.png",
+      "size": 152996,
+      "sha256": "b30885f30d00c3a0305658a110588ddda1a0f77fbfc5571916e9ed3edebd8b42",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/confusion_matrix_normalized.png",
+      "size": 130243,
+      "sha256": "a06da592fe84ea7c9634f1646327433420836804101d1388c2c9b1da7c8f3396",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/paper_data.txt",
+      "size": 514,
+      "sha256": "52e4016a597ed248e220cbbf1b6640acaa83f6a512b81543b591337100cf10b9",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        8,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/val_batch0_labels.jpg",
+      "size": 158465,
+      "sha256": "3483c721a23a1007d7ddba260ab5d7ebd3fc72f3406926ba6b9e8ccb776970fb",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        6,
+        44
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/val_batch0_pred.jpg",
+      "size": 172322,
+      "sha256": "7303ac326c4b145a7732afd92cc3b12ddddf3c2f6536c2b392140796f57ff9fb",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        6,
+        44
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/val_batch1_labels.jpg",
+      "size": 161920,
+      "sha256": "1434a664760ac0a015b94f20d1deded30d12f2808e556c5c72fddafe0aeab1ec",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        6,
+        44
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/val_batch1_pred.jpg",
+      "size": 177977,
+      "sha256": "8e3076ddd18742937e778295d364cd26748bd111a0515710ecd3ee47a2acee8f",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        6,
+        44
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/val_batch2_labels.jpg",
+      "size": 162725,
+      "sha256": "cde544f0275519244ff4441416f2dd0382b142ff135c97a3d07c9d9e21f61e9e",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        6,
+        44
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/baseline-exp/val_batch2_pred.jpg",
+      "size": 184785,
+      "sha256": "56ed53b0c04849f8c3a8ec220e1edb1a798840cfe4baf6868535d1f5d9d39ed0",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        6,
+        44
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/BoxF1_curve.png",
+      "size": 148709,
+      "sha256": "1c44973bb06efc102f0e3eeb33c291ae358000ce23373801ebe65432798f371a",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/BoxPR_curve.png",
+      "size": 157383,
+      "sha256": "a5487bb3110f5530530aecf0f8d28022cca5d5580a67b9acc5c463a3f85ceeac",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/BoxP_curve.png",
+      "size": 176904,
+      "sha256": "5510f241d4f5ca51328be236f4449aa5db6c743a2da1b5f8fb6fb26fc2d006de",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/BoxR_curve.png",
+      "size": 166500,
+      "sha256": "8408049b5a6fba53d67b774e10a3e533696d0ba970631d7bef9cc5610963b2da",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/confusion_matrix.png",
+      "size": 142739,
+      "sha256": "34812dbb6e4413ee0ac48cdae1c6812674d74dc9f9a334a846875db28b53ecf4",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/confusion_matrix_normalized.png",
+      "size": 138625,
+      "sha256": "4e42c4a5366d303fc77c72bf863cc2ff7228264c2b549d0b4c00b9a4e572c94f",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/paper_data.txt",
+      "size": 515,
+      "sha256": "76defff8cf85031c4fe70885dec6652fcf1bd4d18e8d07d39549bdb303af084f",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        58,
+        2
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/val_batch0_labels.jpg",
+      "size": 158465,
+      "sha256": "3483c721a23a1007d7ddba260ab5d7ebd3fc72f3406926ba6b9e8ccb776970fb",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        56,
+        6
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/val_batch0_pred.jpg",
+      "size": 170453,
+      "sha256": "86f3592dd95006684372c5954cd7e8f2e61b1b0da43533c65f384f36134d7bdc",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        56,
+        6
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/val_batch1_labels.jpg",
+      "size": 161920,
+      "sha256": "1434a664760ac0a015b94f20d1deded30d12f2808e556c5c72fddafe0aeab1ec",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        56,
+        6
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/val_batch1_pred.jpg",
+      "size": 176306,
+      "sha256": "100f64ab13efc0ec975bef3fb51128935e06329a2b621982249761d3c51fb6da",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        56,
+        6
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/val_batch2_labels.jpg",
+      "size": 162725,
+      "sha256": "cde544f0275519244ff4441416f2dd0382b142ff135c97a3d07c9d9e21f61e9e",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        56,
+        6
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/runs/detect/runs/val/exp/val_batch2_pred.jpg",
+      "size": 182058,
+      "sha256": "796839fe77b4ea615abf2ef9cde3c7d92780204a03b0e9a81b42dce7742b67d5",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        56,
+        6
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/scripts/run_fdr_preflight.py",
+      "size": 32953,
+      "sha256": "62835963f86ae6803ff1a366b44668422221f4a9ed90dce6419780331999c090",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/scripts/__pycache__/run_fdr_preflight.cpython-310.pyc",
+      "size": 27018,
+      "sha256": "85ccbcf97d4d07b466dfc5929453ad4f5fafd36580a4f3cd6d7de3d825f65dce",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/bpdd_loss.py",
+      "size": 13820,
+      "sha256": "ffd6a2a42873cdd93f1d62faa8f43784d45d03fb7b3dac2d3db0958910b5f204",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/fdr_head.py",
+      "size": 11800,
+      "sha256": "e289a41e7b2161d5137c14a633306b537cbd09e4b529472218b74d16c6d894bf",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/fdr_loss.py",
+      "size": 13873,
+      "sha256": "9a46e1afdbfeb3c26d56dfec62a67f21ff5ced4b623d3ab011c780acfbc34fc5",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/fdr_math.py",
+      "size": 11191,
+      "sha256": "b4dd7449d879e8e7cf95aa13fcb3c5b2583112d8460f545ea06365fdf697396c",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/fdr_protocol.py",
+      "size": 21012,
+      "sha256": "660df68d3d6272e7cf77e6755acce642f98dc0e9e9edb9d7b76f562af2d8ea9d",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/fdr_runtime_preflight.py",
+      "size": 26053,
+      "sha256": "9ddd2d9a2e0909546c66c17b0336dc712c75bd8f00c88af4e5d95d1675f256f4",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/fia.py",
+      "size": 4263,
+      "sha256": "21973c175426e73b82abb94e8ab11b862fd30eedc484554a930effc70ad829fb",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/frequency_cm.py",
+      "size": 4233,
+      "sha256": "e96eb0c0278698fe3719de7ac13b125f2aa19bbf0e2ea3128c7b232683dde49d",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/lpr_head.py",
+      "size": 6082,
+      "sha256": "63c29432024c8fce1011afe353478bd051eab9a865b1e0259afc80a5730c6c52",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/lpr_protocol.py",
+      "size": 10900,
+      "sha256": "edf279b9955398b6948e9e5a713cfa845e1e3ac8c26c7164cced79f1f6dfd93d",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/pr_fia.py",
+      "size": 13873,
+      "sha256": "0e5be8fc15c5dfc329c1fad43a8cc1ab0f9295049ef04d8b24fc35503dba4195",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/rtdetr_fdr.py",
+      "size": 20165,
+      "sha256": "37475d6dd1884b7d393eb51d0497b264ba8f286fadb2bcbf43081302e0b96a29",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/rtdetr_fdr_bpdd.py",
+      "size": 4407,
+      "sha256": "4ea251782e92a5a019b0f7391e05d6c1aad8390059460e2c11e0e3768395ef23",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/rtdetr_fdr_bpdd_fia.py",
+      "size": 9883,
+      "sha256": "c54f5bacb410291668c6f9839cf1da6d8508a94ba4907f362c2040d4d4b420d8",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/rtdetr_lpr.py",
+      "size": 9640,
+      "sha256": "d2b33473ef2f5f61cff8d35340e6f24fd8f84b21e75fbf5f661bc4b7202bc74c",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/rtdetr_vsf_rmr.py",
+      "size": 6658,
+      "sha256": "21526308a5a90b43010b316b238968685a5ff709856697b5d032b118769aa7c6",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/vsf_rmr.py",
+      "size": 4895,
+      "sha256": "f83d5dcf0ac46b7c41ef58339da7a9612914d1b3fce6d610bcb68ac6c2417703",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/vsf_rmr_loss.py",
+      "size": 5790,
+      "sha256": "57fb3221ad462aab86ad2e719b786f07b41dd0de4522463c82a3451bafd0e2f9",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__init__.py",
+      "size": 61,
+      "sha256": "5a73b9166639e811ed325de5979adcaf49014d7285347d0c50f70f358b4a044a",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        46,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/bpdd_loss.cpython-310.pyc",
+      "size": 9945,
+      "sha256": "12639f14d720a3a00921d9bfd32953bea2349118f0693243e6ad26525e5fe895",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/fdr_head.cpython-310.pyc",
+      "size": 9100,
+      "sha256": "b28923a07229055abc8fd9eea36773438dad96ee5a56b874ca176ee9c0b903fe",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/fdr_loss.cpython-310.pyc",
+      "size": 10045,
+      "sha256": "358a53a9c09b7d48954f2a630056b006aac98d73cbc61701445ff8af6fc0b343",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/fdr_math.cpython-310.pyc",
+      "size": 8941,
+      "sha256": "fcc9442b8e955a8093a2a2840d40554d3cf91625b2370e4d90a49da94ca76bee",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/fdr_protocol.cpython-310.pyc",
+      "size": 17949,
+      "sha256": "bc047c7a199b0a23ed53f075125df20204841bcba16e3a93ac7009f247e071d9",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/fdr_runtime_preflight.cpython-310.pyc",
+      "size": 21720,
+      "sha256": "9c981c3f2196a92c149582dc552c73df38205548628859070d07eb22921946bf",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/fia.cpython-310.pyc",
+      "size": 4297,
+      "sha256": "7b17a45d070b34468cc35530719728e910a4682eb0c329f5a6eb64d7a7cb6d05",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/frequency_cm.cpython-310.pyc",
+      "size": 3860,
+      "sha256": "8d9ff81cb5d1e0684403913623a8a5809a80b9e4e664a07f95d7cf41e1ce20fc",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/lpr_head.cpython-310.pyc",
+      "size": 5262,
+      "sha256": "193a90359a17bbfb28efb5a41d6126a4eb9f3c772e3d7d54774c72f774c42b6c",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/lpr_protocol.cpython-310.pyc",
+      "size": 10586,
+      "sha256": "b579ddd3af99ce2e32641241001f52fc005c0deac19625b8176d21f2d824c9b5",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/pr_fia.cpython-310.pyc",
+      "size": 11853,
+      "sha256": "2763fb5e322343544a52564674df7cde0b81f5bab707cb42acce459da3cce841",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/rtdetr_fdr.cpython-310.pyc",
+      "size": 16776,
+      "sha256": "1df7a0f3ae1f07c2ffac0a4afcc58d0b130e105d291c75605ee44779fa4a8b36",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/rtdetr_fdr_bpdd.cpython-310.pyc",
+      "size": 4010,
+      "sha256": "a2a7e336126f1b2736b3e66de2f4167a07c59c33805fafb1d895d39601be4a83",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/rtdetr_fdr_bpdd_fia.cpython-310.pyc",
+      "size": 8523,
+      "sha256": "fddb6d50e68844defc5272ad3c65b5f31dc20be35e99f9e9a70db64bedd12b29",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/rtdetr_lpr.cpython-310.pyc",
+      "size": 9233,
+      "sha256": "a37a5f960d96c4bf5ce69049f57094b664fe765d5f058683544b5a821462961e",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/rtdetr_vsf_rmr.cpython-310.pyc",
+      "size": 6449,
+      "sha256": "f1c9e5dfc3888cc7cef931bd071323f804adf30846ead46af2568ab9dba72e1c",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/vsf_rmr.cpython-310.pyc",
+      "size": 4797,
+      "sha256": "ca637f42d961d15196baded163facfd853c4e67c1dd3682192d2317d6cb55810",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/vsf_rmr_loss.cpython-310.pyc",
+      "size": 4808,
+      "sha256": "439e8883c665a7886727ceea690a8613dfcf18db665930ee246461585bc7a123",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/src/__pycache__/__init__.cpython-310.pyc",
+      "size": 173,
+      "sha256": "2fdc61fe408b3d3172b9d73acb409290a5cc66860c55e1c40a16469159071000",
+      "zip_time": [
+        2026,
+        9,
+        13,
+        22,
+        58,
+        46
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/train.py",
+      "size": 1710,
+      "sha256": "d918be6d9fa7560638eeeeb56346ba3cb129cedc3b7ac229686aae2b9348410f",
+      "zip_time": [
+        2026,
+        9,
+        14,
+        8,
+        0,
+        14
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/train_uavdt_baseline.py",
+      "size": 1444,
+      "sha256": "3736fcaa176164f08ed628e3a8b2df72d9aa45e44733c447f41371a2215b2d6d",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        22,
+        2,
+        28
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/val.py",
+      "size": 4858,
+      "sha256": "2a6b10105ac0f974f7b83068733ccedacb536f403ea0c2d67c4bb83fdb8e7019",
+      "zip_time": [
+        2026,
+        9,
+        15,
+        7,
+        55,
+        54
+      ]
+    },
+    {
+      "path": "服务器fdr-bdpp-fia-material/val_baseline.py",
+      "size": 4553,
+      "sha256": "2f91369c295be386e6c00f9b40f6d7b93f466a671a61ea1252a6be0239486c0d",
+      "zip_time": [
+        2026,
+        9,
+        17,
+        21,
+        4,
+        40
+      ]
+    }
+  ]
+}

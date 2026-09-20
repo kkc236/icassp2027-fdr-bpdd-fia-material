@@ -1,0 +1,591 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-09-17",
+  "axis": {
+    "x": "parameters_m",
+    "y": "ap50_95_percent",
+    "bubble_area": "gflops_per_image",
+    "optional_y": "ap50_percent"
+  },
+  "policy": {
+    "max_points": 10,
+    "accuracy_split_must_be_confirmed": "validation",
+    "do_not_plot_hold_rows": true,
+    "no_missing_value_imputation": true,
+    "cross_paper_is_context_not_fair_ranking": true,
+    "published_rows_are_not_our_reproductions": true,
+    "external_pretraining_note": "FGHDet and LME/SD/DASSF: not reported. BDNet: explicit none; YOLO11/12/26: same-conditions statement with BDNet."
+  },
+  "sources": {
+    "lme": {
+      "title": "LME-DETR",
+      "pdf": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\downloads\\CVM_Visual_Papers_2025_2026\\01_LME-DETR_CVM2026.pdf",
+      "url": "https://iccvm.org/2026/files/papers/265.pdf",
+      "table": "Table 1",
+      "pdf_pages": [
+        8,
+        9
+      ],
+      "sections": [
+        "4.1",
+        "4.2.1"
+      ],
+      "epochs": 300,
+      "epochs_note": "maximum 300 epochs; early stopping patience 20; actual stopping epoch unspecified",
+      "input_hw": [
+        640,
+        640
+      ],
+      "split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "evaluation_scope": "VisDrone2019; exact split, annotation handling, evaluator, maxDet, checkpoint selection and FLOP counting convention not reported. AP column is not explicitly defined as 0.50:0.95 in Sec. 4.1.",
+      "pdf_sha256": "3c39348271fe29dc4fd8fa77bac238dd246d1bf834d88bd40a95913d09944186"
+    },
+    "sd": {
+      "title": "SD-Net",
+      "pdf": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\downloads\\CVM_Visual_Papers_2025_2026\\02_SD-Net_CVM2026.pdf",
+      "url": "https://iccvm.org/2026/files/papers/691.pdf",
+      "table": "Table 1",
+      "pdf_pages": [
+        7,
+        8,
+        9
+      ],
+      "sections": [
+        "4.1.1",
+        "4.1.2",
+        "4.1.3",
+        "4.2.1"
+      ],
+      "epochs": 200,
+      "epochs_note": "paper-level all-model recipe; no row-level independent recipe verification",
+      "input_hw": [
+        640,
+        640
+      ],
+      "split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "evaluation_scope": "VisDrone2019-DET; mAP.5:.95 explicitly defined. Exact split, annotation handling, evaluator, maxDet, checkpoint selection and FLOP counting convention not reported.",
+      "pdf_sha256": "636f2f2a0d762a320f8661ca745e55fec0b3002bafaf5772a81704f1770aa3e3"
+    },
+    "fgh": {
+      "title": "FGHDet",
+      "pdf": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\downloads\\CVM_Visual_Papers_2025_2026\\03_FGHDet_CVM2025.pdf",
+      "url": "https://iccvm.org/2025/papers/s8p2-368-jcst.pdf",
+      "table": "Accuracy: Tables 2 and 5; cost: Table 6",
+      "pdf_pages": [
+        7,
+        8,
+        9
+      ],
+      "sections": [
+        "5.1",
+        "5.2",
+        "5.3",
+        "5.4",
+        "5.6"
+      ],
+      "epochs": 300,
+      "epochs_note": "300-epoch YOLOv7-based recipe; no row-level independent historical baseline verification",
+      "input_hw": [
+        640,
+        640
+      ],
+      "split": "validation (accuracy only)",
+      "pretraining": "not reported",
+      "evaluation_scope": "Sec. 5.3 and Table 5 explicitly identify validation; Sec. 5.1 defines mAP as ten IoU thresholds 0.50:0.95. Cost is cross-referenced from the identical named 640 architecture in the separate test table; no test accuracy is imported. Evaluator, annotation handling, maxDet, checkpoint selection and exact FLOP convention unspecified.",
+      "pdf_sha256": "7b3a78a7a55db9b280042dcbcd7f4997e64fcbdf2e79dca1960b50fcc47317f0"
+    },
+    "dassf": {
+      "title": "DASSF",
+      "pdf": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\downloads\\CVM_Visual_Papers_2025_2026\\04_DASSF_CVM2025.pdf",
+      "url": "https://iccvm.org/2025/papers/lncs/813.pdf",
+      "table": "Tables 1 and 4",
+      "pdf_pages": [
+        6,
+        7,
+        8
+      ],
+      "sections": [
+        "4.1",
+        "4.2",
+        "4.3.1",
+        "4.4.1"
+      ],
+      "epochs": 200,
+      "epochs_note": "paper-level recipe",
+      "input_hw": null,
+      "split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "evaluation_scope": "VisDrone2019; no parameter or GFLOP column/value found in the paper. Input size and Table 1 split not stated.",
+      "pdf_sha256": "d1e3ec596e988b713c1c7f5063bcb1383a0a17c268c13f91428ebc7304efe00c"
+    },
+    "ours": {
+      "title": "Current manuscript: native validation and measured full-model cost",
+      "source_files": [
+        "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_focused_narrative_20260917\\source\\table_components.tex",
+        "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_focused_narrative_20260917\\source\\body.tex",
+        "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_focused_narrative_20260917\\inputs\\batch8_verified.json"
+      ],
+      "epochs": 100,
+      "input_hw": [
+        640,
+        640
+      ],
+      "split": "validation",
+      "pretraining": "none (scratch)",
+      "evaluation_scope": "548-image converted-label native VisDrone val; validation-selected checkpoints; RTDETRValidator; maxDet 300, confidence 0.001, FP32, no TTA/extra NMS. GFLOPs per image, 2 operations per MAC; complete unfused parameter count. No new model execution in this audit.",
+      "file_sha256": {
+        "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_focused_narrative_20260917\\source\\table_components.tex": "ee3c926d32107b03167ac8b32a8924b3af343b22daff1d899446fa42bbd7122f",
+        "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_focused_narrative_20260917\\source\\body.tex": "6c1b14da4cbe055038bc196737136f1e8d4204c9e89bd97af2d46f956c5c0745",
+        "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_focused_narrative_20260917\\inputs\\batch8_verified.json": "e7060d431172854be141ca73f877b4795be9a6cfcae833baf23ebcd00dffbac1"
+      }
+    },
+    "bdnet": {
+      "title": "BDNet",
+      "pdf": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\external_comparison_candidates_20260915\\sources\\BDNet_CVPR2026.pdf",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/papers/Guan_BDNetBio-Inspired_Dual-Backbone_Small_Object_Detection_Network_CVPR_2026_paper.pdf",
+      "pdf_sha256": "98df28644f522e5cab0004625947d89a9653d3ad1c57f6f75a322103c96f4058",
+      "supplement_pdf": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\external_comparison_candidates_20260915\\sources\\BDNet_CVPR2026_supplement.pdf",
+      "supplement_url": "https://openaccess.thecvf.com/content/CVPR2026/supplemental/Guan_BDNetBio-Inspired_Dual-Backbone_Small_CVPR_2026_supplemental.pdf",
+      "supplement_sha256": "10bf2d6b8c9b8907562e1c5d4e714d4a0e90ad7ae79e4ee5f77b1951b2d057c0",
+      "table": "Main Table 2",
+      "pdf_pages": [
+        6,
+        7
+      ],
+      "printed_pages": [
+        32729,
+        32730
+      ],
+      "supplement_pages": [
+        2,
+        3
+      ],
+      "sections": [
+        "4.1",
+        "4.2",
+        "Supplement B"
+      ],
+      "epochs": 300,
+      "input_hw": [
+        640,
+        640
+      ],
+      "split": "validation",
+      "pretraining": "none for BDNet explicitly; same-conditions retraining stated for YOLO11/12/26",
+      "evaluation_scope": "VisDrone2019 validation; source uses YOLO-format mAP50-95, not the separate AI-TODv2 COCO metrics. 640, batch 8, SGD lr .01, 300 epochs, 3-epoch warmup; Ultralytics 8.3.78, PyTorch 2.7.1, RTX3090Ti. Exact annotation conversion, maxDet, model selection and GFLOPs counting convention not supplied. Three uncited YOLO rows are the BDNet authors' retraining under their same experimental conditions, not our measurements."
+    }
+  },
+  "candidate_points": [
+    {
+      "id": "ours_full",
+      "label": "Full (ours)",
+      "parameters_m": 35.244,
+      "ap50_95_percent": 30.109,
+      "ap50_percent": 49.89,
+      "gflops_per_image": 134.051,
+      "reported_ap_column_percent": 30.109,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation",
+      "pretraining": "none (scratch)",
+      "epochs": 100,
+      "source_id": "ours",
+      "origin": "our archived result",
+      "eligibility_for_val_ap_bubble": "eligible",
+      "eligible_under_strict_no_pretrain_filter": true,
+      "notes": "Only native validation AP; do not substitute common-evaluator/test AP."
+    },
+    {
+      "id": "ours_host",
+      "label": "RT-DETR-L (our host)",
+      "parameters_m": 32.827,
+      "ap50_95_percent": 21.911,
+      "ap50_percent": 38.663,
+      "gflops_per_image": 105.597,
+      "reported_ap_column_percent": 21.911,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation",
+      "pretraining": "none (scratch)",
+      "epochs": 100,
+      "source_id": "ours",
+      "origin": "our archived reproduction",
+      "eligibility_for_val_ap_bubble": "eligible",
+      "eligible_under_strict_no_pretrain_filter": true,
+      "notes": "Our RT-DETR-L run, not the original method paper result."
+    },
+    {
+      "id": "fghdet",
+      "label": "FGHDet [FGHDet paper]",
+      "parameters_m": 43.9,
+      "ap50_95_percent": 32.1,
+      "ap50_percent": 53.8,
+      "gflops_per_image": 238.9,
+      "reported_ap_column_percent": 32.1,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation (accuracy only)",
+      "pretraining": "not reported",
+      "epochs": 300,
+      "source_id": "fgh",
+      "origin": "source paper own method",
+      "eligibility_for_val_ap_bubble": "eligible_with_cross_table_cost_note",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": "AP from Table 2/5 val; GFLOPs from Table 6 same final 640 architecture. Table 2 spells final rows FGFDet; title, text, Table 5 and Table 6 identify FGHDet."
+    },
+    {
+      "id": "yolov7_fgh",
+      "label": "YOLOv7 [FGHDet paper]",
+      "parameters_m": 37.2,
+      "ap50_95_percent": 27.2,
+      "ap50_percent": 48.6,
+      "gflops_per_image": 105.3,
+      "reported_ap_column_percent": 27.2,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation (accuracy only)",
+      "pretraining": "not reported",
+      "epochs": 300,
+      "source_id": "fgh",
+      "origin": "baseline reported by FGHDet paper",
+      "eligibility_for_val_ap_bubble": "eligible_with_cross_table_cost_note",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": "Not our measurement and not taken from original YOLOv7 publication. Val AP from Table 2/5; GFLOPs from Table 6 baseline, 640 input."
+    },
+    {
+      "id": "bdnet",
+      "label": "BDNet [BDNet paper]",
+      "source_label_verbatim": "Ours",
+      "parameters_m": 2.59,
+      "ap50_95_percent": 31.2,
+      "ap50_percent": 50.5,
+      "gflops_per_image": 52.44,
+      "reported_ap_column_percent": 31.2,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation",
+      "pretraining": "none, directly stated",
+      "epochs": 300,
+      "source_id": "bdnet",
+      "origin": "source paper own method",
+      "eligibility_for_val_ap_bubble": "eligible",
+      "eligible_under_strict_no_pretrain_filter": true,
+      "eligible_under_reported_same_conditions_no_pretrain_filter": true,
+      "notes": "Main Table 2 gives all four metrics in one row; Supplement B confirms input and schedule."
+    },
+    {
+      "id": "yolo11_bd",
+      "label": "YOLO11 [BDNet paper]",
+      "source_label_verbatim": "YOLO11-I",
+      "parameters_m": 25.3,
+      "ap50_95_percent": 28.7,
+      "ap50_percent": 46.1,
+      "gflops_per_image": 87.28,
+      "reported_ap_column_percent": 28.7,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation",
+      "pretraining": "none under the authors' stated same experimental conditions (not independently row-wise verified)",
+      "epochs": 300,
+      "source_id": "bdnet",
+      "origin": "retrained by BDNet authors; not our reproduction and not original YOLO paper result",
+      "eligibility_for_val_ap_bubble": "eligible",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "eligible_under_reported_same_conditions_no_pretrain_filter": true,
+      "notes": "Table 2 prints uppercase I, not lowercase l (visual check and PDF character extraction agree). Likely intended large variant is an inference, so graph label omits size suffix and points to exact source row; do not silently claim the original PDF says -l. No-pretraining/300epochs/640 assigned via Sec.4.2 same-conditions statement plus Supplement B."
+    },
+    {
+      "id": "yolo12_bd",
+      "label": "YOLO12 [BDNet paper]",
+      "source_label_verbatim": "YOLO12-I",
+      "parameters_m": 29.2,
+      "ap50_95_percent": 29.3,
+      "ap50_percent": 47.3,
+      "gflops_per_image": 89.4,
+      "reported_ap_column_percent": 29.3,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation",
+      "pretraining": "none under the authors' stated same experimental conditions (not independently row-wise verified)",
+      "epochs": 300,
+      "source_id": "bdnet",
+      "origin": "retrained by BDNet authors; not our reproduction and not original YOLO paper result",
+      "eligibility_for_val_ap_bubble": "eligible",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "eligible_under_reported_same_conditions_no_pretrain_filter": true,
+      "notes": "Table 2 prints uppercase I, not lowercase l (visual check and PDF character extraction agree). Likely intended large variant is an inference, so graph label omits size suffix and points to exact source row; do not silently claim the original PDF says -l. No-pretraining/300epochs/640 assigned via Sec.4.2 same-conditions statement plus Supplement B."
+    },
+    {
+      "id": "yolo26_bd",
+      "label": "YOLO26 [BDNet paper]",
+      "source_label_verbatim": "YOLO26-I",
+      "parameters_m": 26.3,
+      "ap50_95_percent": 27.7,
+      "ap50_percent": 45.2,
+      "gflops_per_image": 93.8,
+      "reported_ap_column_percent": 27.7,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "validation",
+      "pretraining": "none under the authors' stated same experimental conditions (not independently row-wise verified)",
+      "epochs": 300,
+      "source_id": "bdnet",
+      "origin": "retrained by BDNet authors; not our reproduction and not original YOLO paper result",
+      "eligibility_for_val_ap_bubble": "eligible",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "eligible_under_reported_same_conditions_no_pretrain_filter": true,
+      "notes": "Table 2 prints uppercase I, not lowercase l (visual check and PDF character extraction agree). Likely intended large variant is an inference, so graph label omits size suffix and points to exact source row; do not silently claim the original PDF says -l. No-pretraining/300epochs/640 assigned via Sec.4.2 same-conditions statement plus Supplement B."
+    }
+  ],
+  "currently_eligible_ids": [
+    "ours_full",
+    "ours_host",
+    "fghdet",
+    "yolov7_fgh",
+    "bdnet",
+    "yolo11_bd",
+    "yolo12_bd",
+    "yolo26_bd"
+  ],
+  "strict_confirmed_val_640_no_pretraining_ids": [
+    "ours_full",
+    "ours_host",
+    "bdnet"
+  ],
+  "excluded_or_missing": [
+    {
+      "label": "DASSF",
+      "ap50_95_percent": 25.2,
+      "ap50_percent": 42.1,
+      "parameters_m": null,
+      "gflops_per_image": null,
+      "source_id": "dassf",
+      "reason": "Missing both bubble dimensions; split and input unconfirmed. SD-Net Table 1 also uses dashes for DASSF Params/FLOPs."
+    },
+    {
+      "label": "RemDet-L",
+      "parameters_m": 35.3,
+      "ap50_95_percent": 29.3,
+      "ap50_percent": 47.4,
+      "gflops_per_image": null,
+      "reason": "Current manuscript literature table has no GFLOPs. Original PDF outside the requested four was not audited here."
+    }
+  ],
+  "internal_only_alternative": [
+    {
+      "label": "RT-DETR-L (our host)",
+      "parameters_m": 32.827,
+      "ap50_95_percent": 21.911,
+      "ap50_percent": 38.663,
+      "gflops_per_image": 105.597,
+      "source_id": "ours",
+      "scope": "internal configuration alternative only; not external model comparison"
+    },
+    {
+      "label": "GCDL",
+      "parameters_m": 33.157,
+      "ap50_95_percent": 29.62,
+      "ap50_percent": 49.382,
+      "gflops_per_image": 105.804,
+      "source_id": "ours",
+      "scope": "internal configuration alternative only; not external model comparison"
+    },
+    {
+      "label": "GCDL + F",
+      "parameters_m": 33.458,
+      "ap50_95_percent": 29.773,
+      "ap50_percent": 49.548,
+      "gflops_per_image": 109.28,
+      "source_id": "ours",
+      "scope": "internal configuration alternative only; not external model comparison"
+    },
+    {
+      "label": "GCDL + B",
+      "parameters_m": 34.942,
+      "ap50_95_percent": 29.277,
+      "ap50_percent": 48.783,
+      "gflops_per_image": 130.575,
+      "source_id": "ours",
+      "scope": "internal configuration alternative only; not external model comparison"
+    },
+    {
+      "label": "Full (ours)",
+      "parameters_m": 35.244,
+      "ap50_95_percent": 30.109,
+      "ap50_percent": 49.89,
+      "gflops_per_image": 134.051,
+      "source_id": "ours",
+      "scope": "internal configuration alternative only; not external model comparison"
+    }
+  ],
+  "inspected_page_png_sha256": {
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\01_LME-DETR_CVM2026-p8.png": "1d532b1043e466256a62acd5e4d6ba2ec0bdf3a8db15decae63e85436a570879",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\01_LME-DETR_CVM2026-p9.png": "7acd8949683b72851d92a7bd9d27a2c6f0163487a7baba44bb98b211c9c17414",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\02_SD-Net_CVM2026-p7.png": "dcd6c428901154611ba68d7f061c4566342db56f498147fbafeb57f140fa72c2",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\02_SD-Net_CVM2026-p8.png": "0d5b24ff601766ea490efe7e6f7c04239e9741408530606b235e69c650a1613d",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\03_FGHDet_CVM2025-p7.png": "dc6c2e48384a22a6d602486e49bade151c90b3e17f4875480a979a53b1ed9ef2",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\03_FGHDet_CVM2025-p8.png": "5bb223350759ed4df93b08b7e88873e17a88a3e22dd83f7d2bef60bb0d2bfdea",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\03_FGHDet_CVM2025-p9.png": "6dc241fba0b47ce0dcdec43d1343f900e3885f6e05cea603c0be1a3bbc0aad3f",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\04_DASSF_CVM2025-p6.png": "0c9ac45ce0e5179be977fdd1fa26c0e706f2b271a4d66dc67455a97c024c3ef0",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\04_DASSF_CVM2025-p7.png": "1a24d8e55099ab07df1467ba8f7b791712b10f4421c7474e6f9a29412709cc69",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\04_DASSF_CVM2025-p8.png": "c01766adb6518b210857ab661d51984ab9313c162fa6d55077c613cc109428f7",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\BDNet_CVPR2026-p6.png": "6b2eaa3e7e4ffebae534fa3b95df50235506fe725066f3c0c158f4892bd1c5dd",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\BDNet_CVPR2026-p7.png": "8d4ff02579cfe9cfc84c87e6e81ad1b020d4ecd044631651a68b79d8a2ae7227",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\BDNet_CVPR2026_supplement-p2.png": "a031dd79f9c620985ef598004495619868e994a546a52c0fd61dab13234f79e5",
+    "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\output\\cvm_visual_redesign_20260917\\research\\qa_sources\\BDNet_CVPR2026_supplement-p3.png": "0fc8ad9173209d5e3ce6224aa25e27501ff36a25175d7eb650ced9f648725bd8"
+  },
+  "held_candidates_not_for_current_plot": [
+    {
+      "id": "lme",
+      "label": "LME-DETR [LME-DETR paper]",
+      "parameters_m": 14.0,
+      "ap50_95_percent": null,
+      "ap50_percent": 48.6,
+      "gflops_per_image": 46.0,
+      "reported_ap_column_percent": 31.8,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "epochs": 300,
+      "source_id": "lme",
+      "origin": "source paper own method",
+      "eligibility_for_val_ap_bubble": "hold_split_and_ap_definition",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": "Table 1 AP is 31.8, but reviewed experimental definition does not explicitly bind AP to 0.50:0.95; do not silently write that into the figure."
+    },
+    {
+      "id": "sd_n",
+      "label": "SD-Net-n [SD-Net paper]",
+      "parameters_m": 3.96,
+      "ap50_95_percent": 24.4,
+      "ap50_percent": 40.4,
+      "gflops_per_image": 18.5,
+      "reported_ap_column_percent": 24.4,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "epochs": 200,
+      "source_id": "sd",
+      "origin": "source paper own method",
+      "eligibility_for_val_ap_bubble": "hold_split",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": ""
+    },
+    {
+      "id": "sd_s",
+      "label": "SD-Net-s [SD-Net paper]",
+      "parameters_m": 14.2,
+      "ap50_95_percent": 29.3,
+      "ap50_percent": 47.6,
+      "gflops_per_image": 61.2,
+      "reported_ap_column_percent": 29.3,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "epochs": 200,
+      "source_id": "sd",
+      "origin": "source paper own method",
+      "eligibility_for_val_ap_bubble": "hold_split",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": ""
+    },
+    {
+      "id": "yolo11s_sd",
+      "label": "YOLOv11-s [SD-Net paper]",
+      "parameters_m": 9.4,
+      "ap50_95_percent": 22.9,
+      "ap50_percent": 37.9,
+      "gflops_per_image": 21.3,
+      "reported_ap_column_percent": 22.9,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "epochs": 200,
+      "source_id": "sd",
+      "origin": "third-party row as reported by SD-Net paper",
+      "eligibility_for_val_ap_bubble": "hold_split",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": "Not our reproduction; not sourced from original YOLO publication. Paper-level 200-epoch/640 claim has not been independently checked for this row."
+    },
+    {
+      "id": "rtdetr18_sd",
+      "label": "RT-DETR-r18 [SD-Net paper]",
+      "parameters_m": 19.9,
+      "ap50_95_percent": 26.2,
+      "ap50_percent": 44.0,
+      "gflops_per_image": 57.0,
+      "reported_ap_column_percent": 26.2,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "epochs": 200,
+      "source_id": "sd",
+      "origin": "third-party row as reported by SD-Net paper",
+      "eligibility_for_val_ap_bubble": "hold_split",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": "Distinct from our RT-DETR-L host; do not merge the labels or borrow another paper AP/cost."
+    },
+    {
+      "id": "dmr_sd",
+      "label": "DMR-RTDETR [SD-Net paper]",
+      "parameters_m": 14.8,
+      "ap50_95_percent": 27.9,
+      "ap50_percent": 46.0,
+      "gflops_per_image": 77.9,
+      "reported_ap_column_percent": 27.9,
+      "input_hw": [
+        640,
+        640
+      ],
+      "accuracy_split": "unspecified for Table 1",
+      "pretraining": "not reported",
+      "epochs": 200,
+      "source_id": "sd",
+      "origin": "third-party row as reported by SD-Net paper",
+      "eligibility_for_val_ap_bubble": "hold_split",
+      "eligible_under_strict_no_pretrain_filter": false,
+      "notes": "Not our reproduction and not verified against the DMR-RTDETR original publication."
+    }
+  ],
+  "reported_same_conditions_val_640_no_pretraining_ids": [
+    "ours_full",
+    "ours_host",
+    "bdnet",
+    "yolo11_bd",
+    "yolo12_bd",
+    "yolo26_bd"
+  ]
+}

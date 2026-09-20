@@ -1,0 +1,285 @@
+{
+  "format_version": 1,
+  "generated_at": "2026-08-17T23:45:49+08:00",
+  "updated_at": "2026-08-19",
+  "source_repository": "https://github.com/kkc236/uav-detection-baselines",
+  "release_tag": "DFR-BDPP-FIA",
+  "release_tag_scope": "historical_cascading_fia_only_and_fdr_fia_arms_only",
+  "decision": "Use the fresh P3-only FIA-only best.pt evaluation as canonical exact FIA-only evidence. Retain the older cascading FIA-only checkpoint as a superseded audit record; retain the independently evaluated FDR+FIA checkpoint as a separate non-P3-only supplementary result.",
+  "dataset": {
+    "name": "VisDrone",
+    "split": "val",
+    "images": 548,
+    "instances": 38759,
+    "data_yaml_sha256": "6cabb57ba5336c1b8a9e43ef376117f06e90d83f998f1e4fe7d1b8c5b2435a71"
+  },
+  "test_dataset": {
+    "name": "VisDrone",
+    "split": "test",
+    "images": 1610,
+    "instances": 75102,
+    "archive_sha256": "b28a94b06dfd9e36ce77ff8155fb82b9d2c030f198a76105933bd56c6ea6a68d",
+    "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae"
+  },
+  "evaluation_protocol": {
+    "imgsz": 640,
+    "batch": 8,
+    "workers": 8,
+    "conf": 0.001,
+    "max_det": 300,
+    "nms": false,
+    "cache": false,
+    "half": false,
+    "rect": false,
+    "checkpoint_selection": "best.pt"
+  },
+  "environment": {
+    "current_p3_only_server": {
+      "python": "3.10.12",
+      "torch": "2.5.1+cu121",
+      "ultralytics": "8.4.90",
+      "gpu": "NVIDIA GeForce RTX 4090"
+    },
+    "historical_release_independent_evaluation": {
+      "python": "3.12.8",
+      "torch": "2.5.1+cu124",
+      "ultralytics": "8.4.90",
+      "gpu": "NVIDIA GeForce RTX 4090"
+    }
+  },
+  "arms": [
+    {
+      "variant": "fia_only_p3",
+      "method": "RT-DETR-L+FIA",
+      "source_id": "fia_p3_only_best_checkpoint_exact",
+      "source_commit": "118ad631eff93ad806f85ea47819578e6e00bfc5",
+      "checkpoint_sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+      "checkpoint_selection": "best.pt",
+      "result_status": "current",
+      "release_asset": {
+        "name": "fia-p3-only-final-20260819.tar.gz",
+        "asset_id": 520838108,
+        "size_bytes": 62725579,
+        "sha256": "e3576cb58342c278f6e0ee7d5c46979f57d7a0bd95f3596acdf161f991af87b5",
+        "updated_at": "2026-08-19T12:52:19Z",
+        "url": "https://github.com/kkc236/uav-detection-baselines/releases/download/DFR-BDPP-FIA/fia-p3-only-final-20260819.tar.gz"
+      },
+      "raw_artifacts": {
+        "val": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-val.json",
+        "test": "paper_material/evidence/fia_p3_only_20260819/fia-only-p3-test.json",
+        "graph_identity_normalization": "paper_material/evidence/fia_p3_only_20260819/graph-identity-normalization.json",
+        "release_content_manifest": "paper_material/evidence/fia_p3_only_20260819/MANIFEST.sha256"
+      },
+      "graph_identity": {
+        "p3_only": true,
+        "fia_layer": 22,
+        "fia_layer_from": -1,
+        "fia_layer_from_raw": -1,
+        "fia_layer_from_effective": 21,
+        "layer_23_from": 21,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "p3_only_standalone"
+      },
+      "val": {
+        "evidence_level": "best_checkpoint_independent_val_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "images": 548,
+        "instances": 38759,
+        "data_yaml_sha256": "e04ce418942f8efe02ce8b174cbece0004fe3d6be2d07f7e6fbbbab0117cbfe6",
+        "metrics": {
+          "precision": 0.4871962209136635,
+          "recall": 0.42531734343807504,
+          "f1": 0.4509443663180429,
+          "map50": 0.39874518726363956,
+          "map75": 0.2218076018094571,
+          "map": 0.22705639514425527
+        },
+        "delta_reference": "RT-DETR-L",
+        "delta_reference_source_id": "strict_control_val",
+        "delta_map_pp": 0.7946395144255269,
+        "delta_strict_paired": false,
+        "comparison_scope": "same_split_project_baseline_arithmetic",
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.5393788313839029, "recall": 0.44075079149706015, "f1": 0.4851024625710901, "map50": 0.4438810179643528, "map75": 0.13190730835940082, "map": 0.19090022989080252},
+          {"class": "people", "precision": 0.4853382562855667, "recall": 0.3731614170399181, "f1": 0.4219209793235193, "map50": 0.35240798404755297, "map75": 0.06273289617504296, "map": 0.1312308409726593},
+          {"class": "bicycle", "precision": 0.2936405372241281, "recall": 0.1919191919191919, "f1": 0.2321249116692623, "map50": 0.14492278481728915, "map75": 0.038827214058890114, "map": 0.05940832227789135},
+          {"class": "car", "precision": 0.7448067996413542, "recall": 0.815149293175321, "f1": 0.778392083053548, "map50": 0.812689912218368, "map75": 0.6117619404184949, "map": 0.5509212906491647},
+          {"class": "van", "precision": 0.5053601153353752, "recall": 0.519371939205919, "f1": 0.5122702309074373, "map50": 0.48145893864443734, "map75": 0.36940602185625293, "map": 0.32982490682954396},
+          {"class": "truck", "precision": 0.4892130423757679, "recall": 0.332, "f1": 0.3955580870924257, "map50": 0.3299567361172603, "map75": 0.2416379920265706, "map": 0.21567325055336978},
+          {"class": "tricycle", "precision": 0.4018998071110429, "recall": 0.32248803827751193, "f1": 0.35784112393501083, "map50": 0.2622726573681081, "map75": 0.1274488669906482, "map": 0.1361346392611928},
+          {"class": "awning-tricycle", "precision": 0.2738368904335298, "recall": 0.18796992481203006, "f1": 0.2229204853903273, "map50": 0.13072973434618482, "map75": 0.08005749798400288, "map": 0.07701717064280567},
+          {"class": "bus", "precision": 0.597529760498624, "recall": 0.5537848605577689, "f1": 0.5748262534757465, "map50": 0.5414142867961111, "map75": 0.43282953277939495, "map": 0.37820495832468276},
+          {"class": "motor", "precision": 0.5409581688473435, "recall": 0.5165779778960294, "f1": 0.5284870457620615, "map50": 0.48771782031673144, "map75": 0.12146674744587287, "map": 0.20124834204044037}
+        ]
+      },
+      "test": {
+        "evidence_level": "best_checkpoint_independent_test_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "images": 1610,
+        "instances": 75102,
+        "data_yaml_sha256": "f2bf9d335c3306ecc27e4bf7ca86ef35b56a93555cab4397d585fe2dbcb9e4ae",
+        "metrics": {
+          "precision": 0.4482592209945812,
+          "recall": 0.377636033342981,
+          "f1": 0.3954178960043504,
+          "map50": 0.33664177054432,
+          "map75": 0.18201140298044138,
+          "map": 0.18551746406283812
+        },
+        "delta_reference": "RT-DETR-L",
+        "delta_reference_source_id": "strict_control_test_exact",
+        "delta_map_pp": 0.8101032384120604,
+        "delta_strict_paired": false,
+        "comparison_scope": "same_dataset_and_evaluator_protocol_arithmetic",
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.4881419138880031, "recall": 0.29582457281830854, "f1": 0.3683942505178199, "map50": 0.2858952230555769, "map75": 0.05833395359015474, "map": 0.10888741555897838},
+          {"class": "people", "precision": 0.4654571683922623, "recall": 0.19679447841913988, "f1": 0.2766301937374901, "map50": 0.18782814002833506, "map75": 0.024409432585302822, "map": 0.06411197568490334},
+          {"class": "bicycle", "precision": 0.3414184905172627, "recall": 0.1228878648233487, "f1": 0.1807263192858879, "map50": 0.12393386619637435, "map75": 0.023857239403696082, "map": 0.046437166227742195},
+          {"class": "car", "precision": 0.7075512236207134, "recall": 0.7609175749804089, "f1": 0.733264692807594, "map50": 0.747753079606095, "map75": 0.5013633383110879, "map": 0.46017880364486635},
+          {"class": "van", "precision": 0.34376394133807575, "recall": 0.5120429734881303, "f1": 0.41135893541241914, "map50": 0.3902443166240764, "map75": 0.2904308225651072, "map": 0.2543847732966757},
+          {"class": "truck", "precision": 0.4310444196864611, "recall": 0.44979315532154945, "f1": 0.44021925293719744, "map50": 0.39874932036930655, "map75": 0.27082691180202895, "map": 0.24552925842304135},
+          {"class": "tricycle", "precision": 0.28309675963796066, "recall": 0.3113207547169811, "f1": 0.2965386945708155, "map50": 0.19970761713645171, "map75": 0.0847463260189414, "map": 0.09813099389931794},
+          {"class": "awning-tricycle", "precision": 0.36014106878713364, "recall": 0.2003338898163606, "f1": 0.25745471795034863, "map50": 0.16963942088327777, "map75": 0.09361098301563264, "map": 0.09239812402942586},
+          {"class": "bus", "precision": 0.6193918576809399, "recall": 0.5408163265306123, "f1": 0.5774433135577641, "map50": 0.5488537052274489, "map75": 0.4086324437772154, "map": 0.36731132377220715},
+          {"class": "motor", "precision": 0.44258536639699897, "recall": 0.38562874251497004, "f1": 0.4121485892661674, "map50": 0.3138130163162573, "map75": 0.06390257873524645, "map": 0.11780480609122326}
+        ]
+      }
+    },
+    {
+      "variant": "fia_only_cascading_superseded",
+      "method": "RT-DETR-L+FIA",
+      "source_id": "fia_existing_best_independent_val",
+      "release_archive": "fia-seed0-20260815-211156.zip",
+      "release_archive_sha256": "17eb96a577f20a99370f87f6a33374a7f402a9989a4d692f8961dce0fd9aab0a",
+      "checkpoint_sha256": "cf7203733c6d7f66ba8708dfda3b8aa6ac5cd8564bc31b68cde7e8513cf211d9",
+      "checkpoint_selection": "best.pt",
+      "result_status": "superseded",
+      "superseded_by": "fia_p3_only_best_checkpoint_exact",
+      "supersession_reason": "Fresh exact evaluation is bound to the corrected P3-only FIA-only graph; this checkpoint uses the older cascading topology.",
+      "graph_identity": {
+        "p3_only": false,
+        "fia_layer": 22,
+        "fia_layer_raw_from": -1,
+        "fia_layer_resolved_from": 21,
+        "layer_23_from": -1,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "published_cascading_standalone"
+      },
+      "val": {
+        "evidence_level": "best_checkpoint_independent_val_exact",
+        "metrics": {
+          "precision": 0.4794334980185041,
+          "recall": 0.4141938299458384,
+          "f1": 0.44443223821449405,
+          "map50": 0.38567545133764725,
+          "map75": 0.2096736111592438,
+          "map": 0.21679545343355132
+        },
+        "delta_reference": "RT-DETR-L",
+        "delta_reference_source_id": "strict_control_val",
+        "delta_map_pp": -0.23145465664486664,
+        "delta_strict_paired": false,
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.5430196910865436, "recall": 0.40863862505653553, "f1": 0.46634136681230437, "map50": 0.41878262435613683, "map75": 0.11140664038532059, "map": 0.17453889828991068},
+          {"class": "people", "precision": 0.47664337817015557, "recall": 0.37053658536585365, "f1": 0.41168649895884366, "map50": 0.33470344064292856, "map75": 0.059018187420004135, "map": 0.1245329344072759},
+          {"class": "bicycle", "precision": 0.27047758841413627, "recall": 0.18120288229834991, "f1": 0.21701765648816773, "map50": 0.13570951686988898, "map75": 0.028696064786558912, "map": 0.053711624876169},
+          {"class": "car", "precision": 0.7400271318134375, "recall": 0.8138508706748331, "f1": 0.7751853422018076, "map50": 0.8091477087668666, "map75": 0.6038974022504868, "map": 0.543466175243755},
+          {"class": "van", "precision": 0.4935319585680081, "recall": 0.5073417721518987, "f1": 0.5003415931266195, "map50": 0.46565702641220597, "map75": 0.3490521710336012, "map": 0.314844701042436},
+          {"class": "truck", "precision": 0.5178900209431939, "recall": 0.336, "f1": 0.40757725624841033, "map50": 0.33305454822531916, "map75": 0.23218999358259965, "map": 0.21072336357796003},
+          {"class": "tricycle", "precision": 0.4101688878863727, "recall": 0.29282296650717704, "f1": 0.3417020261876291, "map50": 0.25733045256563447, "map75": 0.1214790128382874, "map": 0.13157561752965177},
+          {"class": "awning-tricycle", "precision": 0.2750102726871981, "recall": 0.20676691729323307, "f1": 0.23605528651040125, "map50": 0.13619148232100614, "map75": 0.07957637938278153, "map": 0.07826484321551128},
+          {"class": "bus", "precision": 0.5431461219748182, "recall": 0.5219123505976095, "f1": 0.532317570420672, "map50": 0.49492521465237416, "map75": 0.38844627967444355, "map": 0.3386291799792181},
+          {"class": "motor", "precision": 0.5246293366221032, "recall": 0.502865329512894, "f1": 0.5135168344544189, "map50": 0.4712524985641109, "map75": 0.12429769970047691, "map": 0.19766719652776088}
+        ]
+      },
+      "test": {
+        "evidence_level": "best_checkpoint_independent_test_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "images": 1610,
+        "instances": 75102,
+        "metrics": {"precision": 0.42405399388824083, "recall": 0.3696529891467626, "f1": 0.38186403219771886, "map50": 0.32511085966127234, "map75": 0.17161307417237592, "map": 0.1771764568469921},
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.4670014247690778, "recall": 0.28425928361050895, "f1": 0.3534045876997235, "map50": 0.26515471650128253, "map75": 0.0466187170004662, "map": 0.09629072979430953},
+          {"class": "people", "precision": 0.444502442573744, "recall": 0.18661849071588715, "f1": 0.262873153391568, "map50": 0.17621673085865325, "map75": 0.01870638122244924, "map": 0.05868730628778016},
+          {"class": "bicycle", "precision": 0.266144703030967, "recall": 0.11597542242703533, "f1": 0.16155257105989135, "map50": 0.10128398296424622, "map75": 0.015816315495255705, "map": 0.036937857005430313},
+          {"class": "car", "precision": 0.6942435636366537, "recall": 0.7593859086699437, "f1": 0.7253551052097603, "map50": 0.7423737204659964, "map75": 0.4881618431169146, "map": 0.45140022746847},
+          {"class": "van", "precision": 0.32539534342072424, "recall": 0.5125628140703518, "f1": 0.39807608868797517, "map50": 0.38575718889027527, "map75": 0.27687716432098186, "map": 0.2456067949965827},
+          {"class": "truck", "precision": 0.40604364392155473, "recall": 0.4422715306506205, "f1": 0.42338401879633614, "map50": 0.377043885144163, "map75": 0.24775645010477898, "map": 0.23106724029106385},
+          {"class": "tricycle", "precision": 0.2514493337874161, "recall": 0.2660377358490566, "f1": 0.25853790506707985, "map50": 0.17717262475539913, "map75": 0.0771273420386677, "map": 0.08866444507431523},
+          {"class": "awning-tricycle", "precision": 0.3569328211870383, "recall": 0.21127132676225802, "f1": 0.26543160928811294, "map50": 0.18551853092348886, "map75": 0.08784483273671967, "map": 0.09509291468236984},
+          {"class": "bus", "precision": 0.6037657337443464, "recall": 0.5551020408163265, "f1": 0.5784121335214617, "map50": 0.5457997554865291, "map75": 0.4005747479655568, "map": 0.3579256381765186},
+          {"class": "motor", "precision": 0.4250609288108862, "recall": 0.3630453378956373, "f1": 0.39161314925527985, "map50": 0.29478746062268996, "map75": 0.05664694772196835, "map": 0.11009141469308086}
+        ]
+      }
+    },
+    {
+      "variant": "fdr_fia",
+      "method": "RT-DETR-L+FDR+FIA",
+      "source_id": "fdr_fia_existing_best_independent_val",
+      "release_archive": "fdr-fia-seed0-20260815-211203.zip",
+      "release_archive_sha256": "30fc5c418a4f24b8e8c6ee3a44ddc88d94ba236225f178e689cfe81540afc900",
+      "checkpoint_sha256": "6f624bbc262e840fa6f416486f3813d8ae1c0d9d8daccfb2997f5da6d427d5f1",
+      "checkpoint_selection": "best.pt",
+      "result_status": "current_supplementary",
+      "graph_identity": {
+        "p3_only": false,
+        "fia_layer": 22,
+        "fia_layer_raw_from": -1,
+        "fia_layer_resolved_from": 21,
+        "layer_23_from": -1,
+        "decoder_from": [22, 25, 28],
+        "topology_label": "published_cascading_standalone"
+      },
+      "val": {
+        "evidence_level": "best_checkpoint_independent_val_exact",
+        "metrics": {
+          "precision": 0.5775238641748943,
+          "recall": 0.4908887926435492,
+          "f1": 0.530693811231827,
+          "map50": 0.486314064615312,
+          "map75": 0.29972392008500426,
+          "map": 0.29494032070762063
+        },
+        "delta_reference": "RT-DETR-L+FDR",
+        "delta_reference_source_id": "fdr_val",
+        "delta_map_pp": 0.5280571609979634,
+        "delta_strict_paired": false,
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.6774490123603227, "recall": 0.5323383084577115, "f1": 0.5961908429696373, "map50": 0.5720231952772519, "map75": 0.2266001369457675, "map": 0.2767336755072761},
+          {"class": "people", "precision": 0.6378836540379471, "recall": 0.48917073170731706, "f1": 0.5537159834279821, "map50": 0.500521997087047, "map75": 0.1370676249246483, "map": 0.21130066561337835},
+          {"class": "bicycle", "precision": 0.370144942389756, "recall": 0.26884226884226886, "f1": 0.3114635296712355, "map50": 0.2375048077363959, "map75": 0.08141670230999284, "map": 0.11112064133249175},
+          {"class": "car", "precision": 0.8031158870132681, "recall": 0.8462741751990899, "f1": 0.8241303866713047, "map50": 0.8584659067529091, "map75": 0.6901352071788816, "map": 0.6130558163472049},
+          {"class": "van", "precision": 0.5413698427553874, "recall": 0.5443037974683544, "f1": 0.5428332855711365, "map50": 0.5329159003157549, "map75": 0.430557491575406, "map": 0.38135834792326645},
+          {"class": "truck", "precision": 0.5827968254227551, "recall": 0.38266666666666665, "f1": 0.4619893353932952, "map50": 0.3872143722891699, "map75": 0.2950996757084811, "map": 0.2655288263774456},
+          {"class": "tricycle", "precision": 0.46103886114424053, "recall": 0.42488038277511964, "f1": 0.4422217242523303, "map50": 0.375870294603504, "map75": 0.23107298276155813, "map": 0.21943546319028737},
+          {"class": "awning-tricycle", "precision": 0.376727233779563, "recall": 0.22932330827067668, "f1": 0.2850994416199312, "map50": 0.19335537218515575, "map75": 0.13644759240902845, "map": 0.12127090202009246},
+          {"class": "bus", "precision": 0.6899030470307232, "recall": 0.5697211155378487, "f1": 0.6240787455466122, "map50": 0.592828687670092, "map75": 0.5103445891626328, "map": 0.44020855236325956},
+          {"class": "motor", "precision": 0.634880933581498, "recall": 0.621367171510438, "f1": 0.6280163323283516, "map50": 0.6124401122358396, "map75": 0.2584971978737116, "map": 0.3003023889028512}
+        ]
+      },
+      "test": {
+        "evidence_level": "best_checkpoint_independent_test_exact",
+        "f1_definition": "mean_per_class_result.box.f1",
+        "images": 1610,
+        "instances": 75102,
+        "metrics": {"precision": 0.5189669713045484, "recall": 0.43165506726917735, "f1": 0.46065437704605916, "map50": 0.4074392932750549, "map75": 0.23587873005461435, "map": 0.23464538660213996},
+        "per_class": [
+          {"class": "pedestrian", "precision": 0.589068660476478, "recall": 0.3798363252180019, "f1": 0.46186092258798656, "map50": 0.39099039929623386, "map75": 0.10083775544980875, "map": 0.1589649688609142},
+          {"class": "people", "precision": 0.5966229860133907, "recall": 0.27603513174404015, "f1": 0.37744198144617913, "map50": 0.2872454270746849, "map75": 0.042566086366027774, "map": 0.10074802583645312},
+          {"class": "bicycle", "precision": 0.37196491564460515, "recall": 0.20890937019969277, "f1": 0.26755171698037766, "map50": 0.1859206534983412, "map75": 0.05324132465598261, "map": 0.08150519276277439},
+          {"class": "car", "precision": 0.7603599346779487, "recall": 0.7861722590297072, "f1": 0.7730506871484396, "map50": 0.7936802032961457, "map75": 0.5691756667074842, "map": 0.5124816171401984},
+          {"class": "van", "precision": 0.41200855484155735, "recall": 0.5245191474614451, "f1": 0.4615055708462044, "map50": 0.43703095370858513, "map75": 0.35239369841853174, "map": 0.30172862440503356},
+          {"class": "truck", "precision": 0.4971698322588355, "recall": 0.4885295223768334, "f1": 0.49281180828885207, "map50": 0.45329685550606735, "map75": 0.3317018455737363, "map": 0.29547454976699705},
+          {"class": "tricycle", "precision": 0.3181992812445779, "recall": 0.3622641509433962, "f1": 0.33880495849782166, "map50": 0.2741474595525784, "map75": 0.15740134781452658, "map": 0.1517936939164249},
+          {"class": "awning-tricycle", "precision": 0.4330320620774075, "recall": 0.2387312186978297, "f1": 0.30778184778326007, "map50": 0.22033042727914448, "map75": 0.14609993370667146, "map": 0.13128273472687507},
+          {"class": "bus", "precision": 0.6729984515238141, "recall": 0.5789115646258504, "f1": 0.6224194735028763, "map50": 0.6070925123595844, "map75": 0.48808496481218283, "map": 0.43052426343095657},
+          {"class": "motor", "precision": 0.5382450342868691, "recall": 0.4726419823949764, "f1": 0.5033148033785931, "map50": 0.42465804117918377, "map75": 0.11728467704119117, "map": 0.18195019517477237}
+        ]
+      }
+    }
+  ],
+  "claim_boundary": {
+    "allowed": "Report the fresh FIA-only P3-only best.pt exact val and test metrics. Report its val arithmetic gain of 0.7946395144255269 percentage points over strict_control_val and its protocol-comparable test arithmetic gain of 0.8101032384120604 percentage points over strict_control_test_exact. Retain the older cascading FIA-only and current FDR+FIA evaluations with their explicit topology and lifecycle labels.",
+    "forbidden": "Use the superseded cascading FIA-only checkpoint as the canonical FIA-only result, claim unsupplied per-class metrics, mix val and test comparisons, or claim any arithmetic delta is a strict paired causal gain."
+  }
+}

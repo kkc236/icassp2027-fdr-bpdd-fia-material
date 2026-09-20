@@ -1,0 +1,178 @@
+{
+  "revision": "cvm_hierarchical_architecture_20260918",
+  "reviewed_on": "2026-09-18",
+  "reviewer": "figure_layout_review",
+  "overall_result": "pass",
+  "review_method": "逐一使用 view_image 实际打开 qa/final_pages 的最终 12 页和最终 architecture_dense.png。未使用 qa/rendered 的 13 页草稿，未继承上一版本的通过结论。",
+  "manuscript": {
+    "file": "MANUSCRIPT_CVM.pdf",
+    "sha256": "14b96eaf3e190918e72dc821e27876426853cd8cf474fd81ac4dbbeb2c71680d",
+    "page_count": 12
+  },
+  "opened_manuscript_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "page_reviews": [
+    {
+      "page": 1,
+      "file": "qa/final_pages/page-01.png",
+      "opened": true,
+      "sha256": "8e6d684bd9337e6b93adbdbc2b27e4db292d0e656d6411d4dde9df84fb1c0456",
+      "result": "pass",
+      "observation": "标题、匿名作者栏、摘要及引言完整，无明显遮挡或越界。"
+    },
+    {
+      "page": 2,
+      "file": "qa/final_pages/page-02.png",
+      "opened": true,
+      "sha256": "de668970d24d8225153d215fbd1dd23f5af43a9615fae6840bf994019d3cbd69",
+      "result": "pass",
+      "observation": "图 1 坐标、图例和标签清楚，图注与图同页，正文两栏连续。"
+    },
+    {
+      "page": 3,
+      "file": "qa/final_pages/page-03.png",
+      "opened": true,
+      "sha256": "7673140bc07ed1bc55a84733685a08c2559ef93bc95348fa6b596de2c6f907a0",
+      "result": "pass",
+      "observation": "方法正文明确区分 decoder 保留组件和 G 定位路径；图示编号引用与底部公式完整。"
+    },
+    {
+      "page": 4,
+      "file": "qa/final_pages/page-04.png",
+      "opened": true,
+      "sha256": "dc6e4c9f130be6eb607db90942af8ade8f4d8415a65a8f7975323dd0ee0d576a",
+      "result": "pass",
+      "observation": "图 2 与完整图注同页；中央宿主、上方 F/B 和下方 G 层级可辨。参数标签较小，放大可读；未见碰撞或裁切。"
+    },
+    {
+      "page": 5,
+      "file": "qa/final_pages/page-05.png",
+      "opened": true,
+      "sha256": "e98aa2622b124c5bf338959a970aa8a469732699d255e385d9fc8990555d78ec",
+      "result": "pass",
+      "observation": "几何、LQS 正文及公式无明显溢出，小节标题与正文相连。"
+    },
+    {
+      "page": 6,
+      "file": "qa/final_pages/page-06.png",
+      "opened": true,
+      "sha256": "3a87c5a1e2211ba6143a4d9531f07424082e93acc3cd9a5db714555f688635cd",
+      "result": "pass",
+      "observation": "共享特征、局部专家及迁移部分排版正常；公式、编号与边界均完整。"
+    },
+    {
+      "page": 7,
+      "file": "qa/final_pages/page-07.png",
+      "opened": true,
+      "sha256": "966949cc4f442850684d165eb8c63628b9e177ee32a37aa68b1a680e6124edb0",
+      "result": "pass",
+      "observation": "迁移公式、训练目标及实验起始页正常，没有孤置标题或遮挡。"
+    },
+    {
+      "page": 8,
+      "file": "qa/final_pages/page-08.png",
+      "opened": true,
+      "sha256": "37f8dc20ab6a2ca206da4388ef1bbd47fa2ea6549a83bbb4a9be0a809895d197",
+      "result": "pass",
+      "observation": "表 1 位于页首，与表题相连；全部分组和数据行可读，正文正常续排。"
+    },
+    {
+      "page": 9,
+      "file": "qa/final_pages/page-09.png",
+      "opened": true,
+      "sha256": "d94872b8c0d55e637f2c46ebd40593a9c721dc7124601a602cb443b5eb10a2a2",
+      "result": "pass",
+      "observation": "图 3 与表 2 的图表标题均完整同页；下方正文无碰撞。局部段间留白稍宽但不阻断阅读。"
+    },
+    {
+      "page": 10,
+      "file": "qa/final_pages/page-10.png",
+      "opened": true,
+      "sha256": "44bd16d3cef2c8268f915a39410aa158590198572c150cef9d60b8434cf1e4f4",
+      "result": "pass",
+      "observation": "表 3 与表题完整同页；结论及附录 A 继续正常排版，无越界或标题分离。"
+    },
+    {
+      "page": 11,
+      "file": "qa/final_pages/page-11.png",
+      "opened": true,
+      "sha256": "1a546c616c2fb681f10db85627ce397da10e2c1860e2246a4707182fb50df1b7",
+      "result": "pass",
+      "observation": "图 4、表 4/5 及其标题完整。附录 C 标题和完整段落位于右栏；参考文献在该栏开始。左栏表 4 后及附录 B 标题前后留白偏宽，但没有跨页孤置。"
+    },
+    {
+      "page": 12,
+      "file": "qa/final_pages/page-12.png",
+      "opened": true,
+      "sha256": "6f787ae680765d8615a7d2fded74895d41455be8886c5ea97f71e030401d32a5",
+      "result": "pass",
+      "observation": "参考文献从第 11 页正常续排，条目和链接无明显裁切；末页剩余留白正常。"
+    }
+  ],
+  "architecture_review": {
+    "file": "assets/architecture_dense.png",
+    "opened": true,
+    "png_sha256": "e7debc43ba158b4dbda17258e66d05dac4060f6f76f5b7e37dc59e9a0d60242b",
+    "svg_file": "assets/architecture_dense.svg",
+    "svg_sha256": "267552da6f5352c710413c07fd09f61e619713430b905fbca0efb0ead29edc7e",
+    "svg_visual_inspection": false,
+    "result": "pass",
+    "observations": [
+      "中央 (a) 完整检测器区分特征提取、六层 RT-DETR decoder 与末层后的独立专家 B。G 是 decoder 内定位路径，attention/FFN 与 class head 独立保留。",
+      "父模块为 F(b)、G(c)、B(d)；G.1 分布累计、G.2 几何、G.3 训练监督均在 G 父框内，三级层次清楚。",
+      "F 的两次残差、重复两次、并行门控、v 的乘法输入与原 P3 恒等旁路均可辨。",
+      "B 的当前 query 拼接、重复 attention/FFN、最终 LN、分类与边预测分支以及解码前教师分支可辨；橙色训练区归属清楚。",
+      "G 展开引线已避开共享特征标签；B 教师标签有白底避让，P4/P3 交叉有白底断线。未见实质标签遮挡或箭头误接。",
+      "G.3 底框加深后 Σq′=Σq 与边界之间有可见间距，图形及图例没有裁切。"
+    ],
+    "readability_note": "第 4 页页宽下辅助参数字号较小；独立 PNG 放大后可读，未判为阻断问题。"
+  },
+  "observed_float_locations": {
+    "figure_1": 2,
+    "figure_2": 4,
+    "figure_3": 9,
+    "figure_4": 11,
+    "table_1": 8,
+    "table_2": 9,
+    "table_3": 10,
+    "table_4": 11,
+    "table_5": 11,
+    "appendix_C_heading_and_complete_paragraph": 11,
+    "references_start": 11,
+    "references_end": 12
+  },
+  "blocking_visual_errors": [],
+  "residual_issues": [],
+  "nonblocking_observations": [
+    {
+      "page": 4,
+      "note": "高密度结构图部分配置标签较小，放大可读。"
+    },
+    {
+      "page": 9,
+      "note": "下方正文局部段间留白稍宽，无内容分离或缺失。"
+    },
+    {
+      "page": 11,
+      "note": "左栏表 4 后、附录 B 标题前后留白偏宽；标题与对应段落均在本页，未构成交付阻断。"
+    }
+  ],
+  "scope_limits": [
+    "本记录为实际图像视觉审查，未重新执行数值、训练或模型测试。",
+    "源码级语义与证据一致性由主任务另外审计；本记录仅描述可见结构和排版。",
+    "SVG 仅保存哈希，独立图目视证据为最终 PNG。",
+    "本轮最终审查仅修改 README_ZH.md、VISUAL_REVISION_ZH.md 和本审查 JSON。"
+  ]
+}

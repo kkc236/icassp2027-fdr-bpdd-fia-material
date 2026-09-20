@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{UAVDT results on the local converted-label validation split. AP denotes mAP at IoU 0.50:0.95; metrics are percentages and differences are percentage points. Full is the author-confirmed run; exact configuration parity with VisDrone cannot be verified from the earlier code snapshot and absent checkpoint metadata. Mapping to the official benchmark split is unverified.}
+\label{tab:uavdt}
+\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.1}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrr@{}}
+\toprule
+\multicolumn{4}{@{}l}{\emph{(a) Overall detection accuracy}}\\[2pt]
+Run & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ \\
+\midrule
+RT-DETR-L & 14.12 & 24.21 & 14.97 \\
+Full (ours) & \textbf{16.96} & \textbf{29.16} & \textbf{17.50} \\
+Difference & +2.84 & +4.95 & +2.53 \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{(b) Category AP}}\\[2pt]
+Category & Baseline & Full & $\Delta$ AP \\
+\midrule
+car & 30.38 & \textbf{34.65} & +4.27 \\
+truck & 2.58 & \textbf{4.06} & +1.48 \\
+bus & 9.40 & \textbf{12.19} & +2.79 \\
+\bottomrule
+\end{tabular*}
+\end{table}

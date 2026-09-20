@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/runner.py", line 31, in <module>
+    assert abs(report['metrics']['map']-expected)<1e-9, (size,report['metrics']['map'],expected)
+AssertionError: (640, 0.21916503371229637, 0.21917411394055758)
+Traceback (most recent call last):
+  File "/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/runner.py", line 31, in <module>
+    assert abs(report['metrics']['map']-expected)<1e-9, (size,report['metrics']['map'],expected)
+AssertionError: (640, 0.21916503371229637, 0.21917411394055758)

@@ -1,0 +1,928 @@
+                                        DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                    1
+
+
+
+
+                                                     DN-DETR: Accelerate DETR Training by
+                                                         Introducing Query DeNoising
+                                                     Feng Li∗ , Hao Zhang∗ , Shilong Liu, Jian Guo, Lionel M. Ni, and Lei Zhang, IEEE Fellow
+
+                                             Abstract—We present in this paper a novel denoising training method to speed up DETR (DEtection TRansformer) training and offer a
+                                             deepened understanding of the slow convergence issue of DETR-like methods. We show that the slow convergence results from the
+                                             instability of bipartite graph matching which causes inconsistent optimization goals in early training stages. To address this issue,
+                                             except for the Hungarian loss, our method additionally feeds GT bounding boxes with noises into the Transformer decoder and trains
+                                             the model to reconstruct the original boxes, which effectively reduces the bipartite graph matching difficulty and leads to faster
+                                             convergence. Our method is universal and can be easily plugged into any DETR-like method by adding dozens of lines of code to
+arXiv:2203.01305v3 [cs.CV] 8 Dec 2022
+
+
+
+
+                                             achieve a remarkable improvement. As a result, our DN-DETR results in a remarkable improvement (+1.9AP) under the same setting
+                                             and achieves 46.0 AP and 49.5 AP trained for 12 and 50 epochs with the ResNet-50 backbone. Compared with the baseline under the
+                                             same setting, DN-DETR achieves comparable performance with 50% training epochs. We also demonstrate the effectiveness of
+                                             denoising training in CNN-based detectors (Faster R-CNN), segmentation models (Mask2Former, Mask DINO), and more
+                                             DETR-based models (DETR, Anchor DETR, Deformable DETR). Code is available at https://github.com/IDEA-Research/DN-DETR.
+
+                                             Index Terms—Object Detection, Vision Transformer, DETR, Model Convergence, Denoising Training
+
+                                                                                                                      ✦
+
+                                        1    I NTRODUCTION
+                                            Object detection is a fundamental task in computer vi-
+                                        sion that aims to predict the bounding boxes and classes
+                                        of objects in an image. While having made remarkable
+                                        progress, classical detectors [18], [17] were mainly based
+                                        on convolutional neural networks, until Carion et al. [1]
+                                        recently introduced Transformers [20] into object detection
+                                        and proposed DETR (DEtection TRansformer).
+                                            In contrast to previous detectors, DETR uses learnable
+                                        queries to probe image features from the output of Trans-
+                                        former encoders and bipartite graph matching to perform
+                                        set-based box prediction. Such a design effectively elimi-
+                                        nates hand-designed anchors and non-maximum suppres-
+                                        sion (NMS) and makes object detection end-to-end opti-
+                                        mizable. However, DETR suffers from prohibitively slow
+                                                                                                                          Fig. 1. Convergence curve between our model DN-Deformable-DETR
+                                        training convergence compared with previous detectors. To                         built upon Deformable DETR with denoising training and previous mod-
+                                        obtain a good performance, it usually takes 500 epochs of                         els under ResNet-50 backbone.
+                                        training on the COCO detection dataset, in contrast to 12
+                                        epochs used in the original Faster-RCNN training.
+                                            Much work [21], [15], [25], [19], [14], [6] has tried to iden-                each DETR query with a specific spatial position rather than
+                                        tify the root cause and mitigate the slow convergence issue.                      multiple positions for more efficient feature probing [21],
+                                        Some of them address the problem by improving the model                           [15], [25], [14]. For instance, Conditional DETR [15] decou-
+                                        architecture. For example, Sun et al. [19] attributed the slow                    ples each query into a content part and a positional part,
+                                        convergence issue to the low efficiency of the cross-attention                    enforcing a query to have a clear correspondence with a
+                                        and proposed an encoder-only DETR. Dai et al. [6] designed                        specific spatial position. Deformable DETR [25] and Anchor
+                                        an RoI-based dynamic decoder to help the decoder focus on                         DETR [21] directly treat 2D reference points as queries to
+                                        regions of interest. More recent works propose to associate                       perform cross-attention. DAB-DETR [14] interprets queries
+                                                                                                                          as 4-D anchor boxes and learns to progressively improve
+                                                                                                                          them layer by layer.
+                                        •   Feng Li and Hao Zhang are with the Department of Computer Science
+                                            and Engineering, The Hong Kong University of Science and Technology,              Despite all the progress, few works pay attention to the
+                                            Hong Kong.                                                                    bipartite graph matching part for more efficient training. In
+                                        •   Shilong Liu is with the Department of Computer Science and Engineering,       this study, we find that the slow convergence issue also
+                                            Tsinghua University, Beijing.
+                                        •   Lionel Ni is the president of The Hong Kong University of Science and         results from the discrete bipartite graph matching com-
+                                            Technology (Guangzhou).                                                       ponent, which is unstable especially in the early stages
+                                        •   Jian Guo and Lei Zhang are with IDEA.                                         of training due to the nature of stochastic optimization.
+                                        •   ∗ denotes equal contribution.
+                                                                                                                          As a consequence, for the same image, a query is often
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                2
+
+matched with different objects in different epochs, which                    model, such as noise, label embedding, and atten-
+makes optimization ambiguous and inconstant.                                 tion mask.
+    To address this problem, we propose a novel training
+                                                                   This paper is an extension of our previous paper [10]
+method by introducing a query denoising task to help
+                                                                that was accepted to CVPR’2022 as an oral presentation.
+stabilize bipartite graph matching in the training process.
+                                                                Compared with its conference version, this paper brings
+Since previous works have shown effectiveness in interpret-
+                                                                some new contributions as follows.
+ing queries as reference points [25], [21] or anchor boxes
+[14], which contain positional information, we follow their           1)     We achieve better results and faster convergence by
+viewpoint and use 4D anchor boxes as queries. Our solution                   introducing deformable attention into our decoder
+is to feed noised GT bounding boxes as noised queries                        layer.
+together with learnable anchor queries into Transformer               2)     We further demonstrate the effectiveness of de-
+decoders. Both kinds of queries have the same input format                   noising training by adding it to other DETR-like
+of (x, y, w, h) and can be fed into Transformer decoders                     models without 4D anchor design, including Vanilla
+simultaneously. For noised queries, we perform a denoising                   DETR without explicit anchors and Anchor DETR
+task to reconstruct their corresponding GT boxes. For other                  with only 2D anchors. We also show denoising
+learnable anchor queries, we use the same training loss and                  training can improve segmentation models such as
+bipartite matching as in the vanilla DETR. As the noised                     Mask2Former and Mask DINO.
+bounding boxes do not need to go through the bipartite                3)     We incorporate denoising training to the traditional
+graph matching component, the denoising task can be re-                      CNN detector Faster R-CNN to show its generaliza-
+garded as an easier auxiliary task, helping DETR alleviate                   tion ability.
+the unstable discrete bipartite matching and learn bounding           4)     We provide more experimental results and analysis
+box prediction more quickly. Meanwhile, the denoising task                   to get a better understanding of our method.
+also helps lower the optimization difficulty because the
+added random noise is usually small. To maximize the
+potential of this auxiliary task, we also regard each decoder   2     R ELATED W ORK
+query as a bounding box + a class label embedding so            2.1        Classical CNN Detectors
+that we are able to conduct both box denoising and label        Most modern object detection models are based on convolu-
+denoising.                                                      tional networks, which have achieved significant success in
+    In summary, our method is a denoising training ap-          recent years. Classical CNN-based detectors can be divided
+proach. Our loss function consists of two components. One       into 2 categories, one-stage, and two-stage methods. Two-
+is a reconstruction loss and the other is a Hungarian loss      stage methods like HTC [2] and Fast R-CNN [8] first gen-
+which is the same as in other DETR-like methods. Our            erate some region proposals and then decide whether each
+method can be easily plugged into any existing DETR-            region contains an object and do bounding box regression
+like method. For convenience, we utilize DAB-DETR [14]          to get a refined box. Ren et al. [18] proposed an end-to-end
+to evaluate our method since their decoder queries are          method that utilizes a Region Proposal Network to predict
+explicitly formulated as 4D anchor boxes (x, y, w, h). For      anchor boxes. In contrast to two-stage methods, one-stage
+DETR variants that only support 2D anchor points such as        methods, including YOLO900 [16] and YOLOv3 [17] directly
+anchor DETR [21], we can do denoising on anchor points.         predict the offset of real boxes relative to anchor boxes.
+For those that do not support anchors like the vanilla DETR         Though these methods achieve top performance on
+[1], we can do linear transformation to map 4D anchor boxes     many datasets, they are sensitive to the way how anchors
+to the same latent space as for other learnable queries.        are generated. In addition, they require some hand-crafted
+    To the best of our knowledge, this is the first work to     components like non-maximum suppression (NMS) and
+introduce the denoising principle into detection models. We     label assignment rules. Therefore, they suffer from these
+summarize our contribution as follows:                          drawbacks and can not be end-to-end optimized.
+
+   1)   We design a novel training method to speed up
+        DETR training. Experimental results show that our       2.2        DETR-based Detectors
+        method not only accelerates training convergence        Carion et al. [1] proposed an end-to-end object detector
+        but also leads to a remarkably better training result   based on Transformers [20] named DETR (DEtection TRans-
+        — achieving the best result among all detection         former) without using anchors. While DETR achieves com-
+        algorithms in the 12-epoch setting. Moreover, our       parable results with Faster-RCNN [18], its training suffers
+        method shows a remarkable improvement (+1.9             severely from the slow convergence problem — it needs 500
+        AP) over our baseline DAB-DETR and can be easily        epochs of training to obtain a good performance.
+        integrated into other DETR-like methods.                    Many recent works have attempted to speed up the
+   2)   We analyze the slow convergence of DETR from a          training process of DETR. Some find the cross attention
+        novel viewpoint and give a deeper understanding         of Transformer decoders in DETR inefficient and make
+        of DETR training. We design a metric to evaluate        improvements in different ways. For example, Dai et al. [?]
+        the instability of bipartite matching and verify that   designed a dynamic decoder that can focus on regions of
+        our method can effectively lower the instability.       interest in a coarse-to-fine manner and lower the learning
+   3)   We conduct a series of ablation studies to analyze      difficulty. Sun et al. [19] discarded the Transformer de-
+        the effectiveness of different components of our        coder and proposed an encoder-only DETR. Another series
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                        3
+
+of works make improvements in decoder queries. Zhu et
+al. [25] designed an attention module that only attends to                                   14                                              DN-DETR
+some sampling points around a reference point. Meng et                                       13                                              DAB-DETR
+                                                                                                                                             DETR
+al. [15] decoupled each decoder query into a content part                                    12
+and a position part and only utilized the content-to-content                                 11
+
+
+
+
+                                                                           IS(Instability)
+and position-to-position terms in the cross-attention formu-                                 10
+lation. Yao et al. [22] utilized a Region Proposal Network                                   9
+(RPN) to propose top-K anchor points. DAB-DETR [14]                                          8
+uses 4-D box coordinates as queries and updates boxes layer                                  7
+by layer in a cascade manner.                                                                6
+     Despite all the progress, none of them treats bipartite                                      0       2       4         6       8        10
+graph matching used in the Hungarian loss as the main                                                                  Epoch
+reason for slow convergence. Sun et al. [19] analyzed the
+impact of Hungarian loss by using a pre-trained DETR as          Fig. 2. The IS of DAB-DETR and DN-DETR during training. For each
+                                                                 method, we train 12 epoch on the same setting. We test the change of
+a teacher to provide the GT label assignment for a student       the Hungarian matching between each two epochs on the Validation set
+model and train the student model. They found that the la-       as the IS .
+bel assignment only helps the convergence in the early stage
+of training but does not influence the final performance                         0.15
+significantly. Therefore, they concluded that the Hungarian                                                                                  DAB-DETR
+                                                                                 0.14                                                        DN-DETR
+loss is not the main reason for the slow convergence. In this
+work, we give a different analysis with an effective solution                    0.13
+that leads to a different conclusion.
+                                                                                 0.12
+
+
+
+                                                                   L1 distance
+     We adopt DAB-DETR as the basic detection architecture
+to evaluate our training method, where the label embedding                       0.11
+appended with an indicator is used to replace the decoder                        0.10
+embedding part to support label denoising. The difference
+between our method and other methods is mainly in the                            0.09
+training method. In addition to the Hungarian loss, we add                       0.08
+a denoising loss as an easier auxiliary task that can accel-                                          2       4       6         8       10        12
+erate training and boost performance significantly. Chen et                                                           Epoch
+al. [4] augments their sequence with synthetic noise objects,
+but is totally different from our method. They set the targets   Fig. 3. A comparison of DAB-DETR and DN-DETR on anchor-target
+of noise objects to the ”noise” class (not belonging to any      distance.
+ground-truth classes) so that they can delay the End-of-
+Sentence (EOS) token and improve the recall. In contrast
+to their method, we set the target of noised boxes to the        timal matching result. DETR is the first algorithm that
+original boxes, and the motivation is to bypass bipartite        adopts Hungarian matching in object detection to solve the
+graph matching and directly learn to approximate ground-         matching problem between predicted objects and ground-
+truth boxes.                                                     truth objects. DETR turns ground-truth assignment into a
+     We are pleased to see that many very recent detection       dynamic process, which brings in an instability problem due
+models adopt our proposed denoising training to accelerate       to its discrete bipartite matching and the stochastic train-
+convergence for detection and segmentation models, such          ing process. There are works [7] showing that Hungarian
+as DINO [24], Mask DINO [11], Group DETR [3], and SAM-           matching does not result in stable matching since blocking
+DETR++ [23]. DINO [24] further develops our denoising            pairs exist. A small change in the cost matrix may cause an
+training by feeding hard-negative samples and training the       enormous change in the matching result, which will further
+model to reject them. Therefore, the proposed Contrastive        lead to inconsistent optimization goals for decoder queries.
+Denoising (CDN) further improves the performance. Mask               We view the training process of DETR-like models as
+DINO [11] extends denoising to three image segmentation          two stages, learning “good anchors” and learning relative
+tasks (instance, panoptic, and semantic) by reconstructing       offsets. Decoder queries are responsible for learning anchors
+masks from noised boxes. Group DETR [3] and SAM-                 as shown in previous works [14] and [25]. The inconsistent
+DETR+++[23] also adopt denoising training in their model         update of anchors can make it difficult to learn relative
+to achieve better performance. These models demonstrate          offsets. Therefore, in our method, we leverage a denoising
+the effectiveness and generalization capabilities of our meth-   task as a training shortcut to make relative offset learning
+ods.                                                             easier, as the denoising task bypasses bipartite matching.
+                                                                 Since we interpret each decoder query as a 4-D anchor
+3     W HY D ENOISING ACCELERATES DETR TRAIN -                   box, a noised query can be regarded as a “good anchor”
+                                                                 which has a corresponding ground-truth box nearby. The
+ING ?
+                                                                 denoising training thus has a clear optimization goal - to
+3.1   Stablize Hungarian Mathcing                                predict the original bounding box, which essentially avoids
+Hungarian matching is a popular algorithm in graph match-        the ambiguity brought by Hungarian matching.
+ing. Given a cost matrix, the algorithm outputs an op-               To quantitatively evaluate the instability of the bipar-
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                                                                                                                                           4
+
+                                                                                                                                                                                                          1.0
+                                                              1.0
+
+
+                                                              0.8                                                                                                                                         0.8
+
+
+                                                              0.6                                                                                                                                         0.6
+
+
+
+
+                                                 y
+
+
+
+
+                                                                                                                                                                                                      y
+                                                              0.4                                                                                                                                         0.4
+
+                                                              0.2                                                                                                                                         0.2
+
+                                                              0.0
+                                                                           0.0                            0.2                            0.4                            0.6               0.8   1.0             0.0   0.2   0.4         0.6           0.8           1.0
+                                                                                                                                                         x                                                                         x
+                                                                                                                                                        (a)                                                                       (b)
+
+Fig. 4. (a)(b)Some examples of anchors and targets for DAB-DETR and DN-DETR, respectively. Each arrow starts from an anchor
+and points to a target. The color of each arrow shows its l1 length and cooler colors denote shorter arrows.
+
+tite matching result, we design a metric as follows. For                                                                                                                                              prevents potential prediction conflicts between queries.
+a training image, we denote the      predicted objects   from                                                                                                                                        Fig. 4(b) and (c) are some examples of anchors and targets
+Transformer decoders as Oi = O0i , O1i , ..., ON  i
+                                                    −1 in the                                                                                                                                         in DAB-DETR and DN-DETR. Each arrow starts from an
+i-th epoch, where N is the number of predicted objects,                                                                                                                                               anchor and ends with its matched ground-truth box. We
+and the ground-truth objects as T = {T0 , T1 , T2 , ..., TM −1 }                                                                                                                                      use color to reflect the length of the arrows. The shortened
+where M is the number of ground-truth objects. After                                                                                                                                                  distances between anchors and targets make the training
+bipartite
+ i i matching,          we compute an index vector Vi =                                                                                                                                              process easier and therefore converge faster.
+                  i
+  V0 , V1 , ..., VN −1 to store the matching result of epoch i
+as follows.
+                                                                                                                                                                                                      4         DN-DETR
+             V^i_n=\left \{\begin {array}{ll} m, &\text {if } O^i_n \text { matches } T_m\\ -1, &\text {if } O^i_n \text { matches nothing} \end {array}\right . \label {eq: matching}          (1)   4.1        Overview
+                                                                                                                                                                                                      We base on the architecture of DAB-DETR [14] to im-
+We define the instability of epoch i for one training image as
+                                                                                                                                                                                                      plement our training method. Similar to DAB-DETR, we
+the difference between its V i and V i−1 , which is calculated
+                                                                                                                                                                                                      explicitly formulate the decoder queries as box coordinates.
+as
+                                                                                                                                                                                                      The only difference between our architecture and theirs lies
+                                             IS^i=\sum _{j=0}^{N}\mathbbm {1}(V^i_n\neq V^{i-1}_n) \label {eq: instability}                                                                     (2)   in the decoder embedding, which is specified as class label
+                                                                                                                                                                                                      embedding to support label denoising. Our main contribu-
+                                                                                                                                                                                                      tion is the training method as shown in Fig. 6.
+where 1(·) is the indicator function. 1(x) = 1 if x is true and
+                                                                                                                                                                                                          Similar to DETR, our architecture contains a Transformer
+0 otherwise. The instability of epoch i for the whole data set                                                                                                                                        encoder and a Transformer decoder. On the encoder side,
+is averaged over the instability numbers for all images. We
+                                                                                                                                                                                                      the image features are extracted with a CNN backbone
+omit the index for an image for notation simplicity in Eq. (1)
+                                                                                                                                                                                                      and then fed into the Transformer encoder with positional
+and Eq. (2).
+                                                                                                                                                                                                      encodings to attain refined image features. On the decoder
+    Fig. 3 shows a comparison of IS between our DN-
+                                                                                                                                                                                                      side, queries are fed into the decoder to search for objects
+DETR (DeNoising DETR) and DAB-DETR. We conduct this
+                                                                                                                                                                                                      through cross-attention.
+evaluation on the COCO 2017 validation set [13], which has
+                                                                                                                                                                                                          We denote decoder queries as q = {q0 , q1 , ..., qN −1 }
+7.36 objects per image on average. So the largest possible
+                                                                                                                                                                                                      and the output of the Transformer decoder as o =
+IS is 7.36 × 2 = 14.72. Fig. 3 clearly shows that our method
+                                                                                                                                                                                                      {o0 , o1 , ..., oN −1 }. We also use F and A to denote the re-
+effectively alleviates the instability of matching.
+                                                                                                                                                                                                      fined image features after the Transformer encoder, and the
+                                                                                                                                                                                                      attention mask derived based on the denoising task design.
+3.2   Make Query Search More Locally                                                                                                                                                                  We can formulate our method as follows.
+We also show that DN-DETR can help detection by reducing                                                                                                                                                                              \mathbf {o}=D(\mathbf {q},F|A)      (3)
+the distance between anchors and the corresponding targets.
+DETR [1] shows from the visualization that its positional                                                                                                                                             where D denotes the Transformer decoder.
+queries have several operating modes, which makes a query                                                                                                                                                There are two parts to decoder queries. One is the
+search from a wide region for a predicted box. However,                                                                                                                                               matching part. The inputs of this part are learnable anchors,
+DN-DETR has much smaller mean distances between ini-                                                                                                                                                  which are treated in the same way as in DETR. That is, the
+tial anchors (positional queries) and targets. As shown in                                                                                                                                            matching part adopts bipartite graph matching and learns to
+Fig. 4(a), we compute the mean l1 distance between initial                                                                                                                                            approximate the ground-truth box-label pairs with matched
+anchors and the matched ground-truth boxes in the last                                                                                                                                                decoder outputs. The other is the denoising part. The inputs
+decoder layer for DAB-DETR and our model.                                                                                                                                                             of this part are noised ground-truth (GT) box-label pairs
+    As denoising training trains the model to reconstruct                                                                                                                                             which are called GT objects in the rest of the paper. The
+boxes from the noised ones that are close to the ground                                                                                                                                               outputs of the denoising part aim to reconstruct GT objects.
+truth, the model will search more locally for prediction,                                                                                                                                                In the following, we abuse the notations to denote the
+which makes each query focus on regions nearby and                                                                                                                                                    denoising part as q = {q0 , q1 , ..., qK−1 } and the matching
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                                                                                                  5
+
+
+
+
+                                                                               Cross-Attention                                             Cross-Attention
+
+                                      Image                                                                          Image
+                                     Features                                                                       Features
+                                                              V                 K              Q                                  V          K             Q
+
+
+
+
+                                  Positional                                                                       Positional
+                                 Embdeddings                                                                      Embdeddings
+
+
+                                                                                                                                   Class Label
+                                                                                                          (x, y, w, h)             Embeddings                    (x, y, w, h)
+
+                                                                                Decoder            learnable                                Indicator      learnable
+                                                                               Embeddings           Anchors                                                 Anchors
+                                                       (a) Cross-attention in decoder of DAB-DETR                              (b) Cross-attention in decoder of DN-DETR
+
+
+Fig. 5. Comparison of the cross-attention part DAB-DETR and our DN-DETR (a)DAB-DETR directly uses dynamically updated anchor boxes to
+provide both a reference query point (x, y) and a reference anchor size (w, h) to improve the cross-attention computation. (b) DN-DETR specifies
+the decoder embeddings as label embeddings and adds an indicator to differentiate the denoising task and matching task.
+
+
+                                                                                Denoising part                                        Matching part
+ Transformer Decoder
+                                                             reconstruction loss              reconstruction loss                       Hungarian loss
+                                                                                                                                                                                                   Attention mask
+
+
+
+
+                                                                                                                                                                                group0
+                                                                               Attention mask                  Attention mask
+
+
+
+
+                                                                                                                                                                                group1
+      Transformer Encoder
+
+
+
+
+                                                                                                                                                                                matching part
+                                                                                                   short cut
+
+
+                                                                                    noised boxes
+                                                                                      & labels                                                                                                  group0   group1   matching part
+  image features+positional encoding
+                                                                                                                                      learned anchors
+                                                                denoising group 0              denoising group 1                         + unknown label
+
+
+
+Fig. 6. The overview of our training method. There are two parts of queries, namely the denoising part and the matching part. The denoising part
+contains ≥ 1 denoising groups. The attention masks from the matching part to the denoising part and among denoising groups are set to 1 (block)
+to block information leakage. In the figure, the yellow, brown and green grids in the attention mask represent 0 (unblock) and grey grids represent 1
+(block).
+
+
+part as Q = {Q0 , Q1 , ..., QL−1 }. So the formulation of our                                                       a tuple (∆x, ∆y, ∆w, ∆h) and the anchor is updated to
+method becomes                                                                                                      (x + ∆x, y + ∆y, w + ∆w, h + ∆h).
+                                                                                                                       Note that our proposed method is mainly a training
+                                 \mathbf {o}=D(\mathbf {q},\mathbf {Q},F|A)                              (4)        method that can be integrated into any DETR-like model.
+                                                                                                                    To test on DAB-DETR, we only add minimal modifications:
+To increase the denoising efficiency, we propose to use                                                             specifying the decoder embedding as label embedding, as
+multiple versions of noised GT objects in the denoising                                                             shown in Fig. 5(b).
+part. Furthermore, we utilize an attention mask to prevent
+information leakage from the denoising part to the matching
+part and among different noised versions of the same GT                                                             4.3    Denoising
+object.                                                                                                             For each image, we collect all GT objects and add random
+                                                                                                                    noises to both their bounding boxes and class labels. To
+                                                                                                                    maximize the utility of denoising learning, we use multiple
+4.2   Intro to DAB-DETR
+                                                                                                                    noised versions for each GT object.
+Many recent works associate DETR queries with different                                                                 We consider adding noise to boxes in two ways: center
+positional information. DAB-DETR follows this analysis and                                                          shifting and box scaling. We define λ1 and λ2 as the noise
+explicitly formulates each query as 4D anchor coordinates.                                                          scale of these 2 noises. 1) center shifting: we add a random
+As shown in Fig. 5(a), a query is specified as a tuple                                                              noise (∆x, ∆y), to the box center and make sure that |∆x| <
+                                                                                                                    λ1 w               λ1 h
+(x, y, w, h), where x, y are the center coordinates and w, h                                                          2 and |∆y| < 2 , where λ1 ∈ (0, 1) so that the center
+are the corresponding width and height of each box. In                                                              of the noised box will still lie inside the original bounding
+addition, the anchor coordinates are dynamically updated                                                            box. 2) box scaling: we set a hyper-parameter λ2 ∈ (0, 1).
+layer by layer. The output of each decoder layer contains                                                           The width and height of the box are randomly sampled
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                                                                                                                                                                                                        6
+
+in [(1 − λ2 )w, (1 + λ2 )w] and [(1 − λ2 )h, (1 + λ2 )h], respec-                                                                                                                                                                                                           4.5   Label Embedding
+tively.                                                                                                                                                                                                                                                                     The decoder embedding is specified as label embedding
+    For label noising, we adopt label flipping, which means                                                                                                                                                                                                                 in our model to support both box denoising and label
+we randomly flip some GT labels to other labels. Label flip-                                                                                                                                                                                                                denoising. Except for the 80 classes in COCO 2017 [13],
+ping forces the model to predict the GT labels according to                                                                                                                                                                                                                 we also consider an unknown class embedding that is used
+the noised boxes to better capture the label-box relationship.                                                                                                                                                                                                              in the matching part to be semantically consistent with
+We have a hyper-parameter γ to control the ratio of labels                                                                                                                                                                                                                  the denoising part. We also append an indicator to label
+to flip. The reconstruction losses are l1 loss and GIOU loss                                                                                                                                                                                                                embedding. The indicator is 1 if a query belongs to the
+for boxes and focal loss [12] for class labels as in DAB-                                                                                                                                                                                                                   denoising part and 0 otherwise.
+DETR. We use a function δ(·) to denote the noised GT
+objects. Therefore, each query in the denoising part can be                                                                                                                                                                                                                 4.6   Compatibility with Deformable Attention Design
+represented as qk = δ(tm ) where tm is m-th GT object.
+    Notice that denoising is only considered in training,                                                                                                                                                                                                                   DN-Deformable-DETR: To show the effectiveness of de-
+during inference the denoising part is removed, leaving only                                                                                                                                                                                                                noising training applied in other attention designs, we
+the matching part.                                                                                                                                                                                                                                                          also integrate denoising training into Deformable DETR
+                                                                                                                                                                                                                                                                            as DN-Deformable-DETR. We follow the same setting as
+                                                                                                                                                                                                                                                                            Deformable DETR but specify its query into 4D boxes as in
+4.4   Attention Mask                                                                                                                                                                                                                                                        DAB-DETR to better use denoising training. Note that this
+Attention mask is a component of great importance in our                                                                                                                                                                                                                    is our original deformable model in the conference version,
+model. Without an attention mask, the denoising training                                                                                                                                                                                                                    in which we only add deformable attention to Transformer
+will compromise the performance instead of improving it as                                                                                                                                                                                                                  encoders.
+shown in Table 5.                                                                                                                                                                                                                                                               When comparing in the standard 50 epoch setting, to
+   To introduce an attention mask, we need first to divide                                                                                                                                                                                                                  eliminate any misleading information that the performance
+the noised GT objects into groups. Each group is a noised                                                                                                                                                                                                                   improvement of DN-Deformable-DETR may result from
+version of all GT objects. The denoising part becomes                                                                                                                                                                                                                       the explicit query formulation of anchor boxes, we also
+                                                                                                                                                                                                                                                                            implement a strong baseline DAB-Defromable-DETR for
+                                                                                                                                          \mathbf {q}=\left \{\mathbf {g_0}, \mathbf {g_1}, ..., \mathbf {g_{P-1}}\right \}                                           (5)
+                                                                                                                                                                                                                                                                            comparison. It formulates the queries of Deformable DETR
+where gp is defined as the p-th denoising group. Each                                                                                                                                                                                                                       as anchor boxes without using denoising training, while all
+denoising group contains M queries where M is the number                                                                                                                                                                                                                    the other settings are the same.
+of GT objects in the image. So we have                                                                                                                                                                                                                                      DN-Deformable-DETR++: We further incorporate the de-
+                                                                                                                                                                                                                                                                            formable attention in our decoder and optimize our model
+                                                                                                                                     \mathbf {g_p}=\left \{q^p_0, q^p_1, ..., q^p_{M-1} \right \}                                                                     (6)   to build DN-Deformable-DETR++, which converges much
+where qmp
+           = δ(tm ).                                                                                                                                                                                                                                                        faster and improves the final results. We also follow
+    The purpose of the attention mask is to prevent informa-                                                                                                                                                                                                                DAB-Defromable-DETR to build a strong baseline DAB-
+tion leakage. There are two types of potential information                                                                                                                                                                                                                  Defromable-DETR++ to show our performance improve-
+leakage. One is that the matching part may see the noised                                                                                                                                                                                                                   ment in the ablations.
+GT objects and easily predict GT objects. The other is that
+one noised version of a GT object may see another version.                                                                                                                                                                                                                  4.7 Introducing DN to Other DETR-like models with dif-
+Therefore, our attention mask is to make sure the matching                                                                                                                                                                                                                  ferent anchor formulations
+part cannot see the denoising part and the denoising groups                                                                                                                                                                                                                 In the aforementioned sections, we build DN-DETR upon
+cannot see each other as shown in Fig. 6.                                                                                                                                                                                                                                   DAB-DETR [14] with explicit 4D anchor box formulation.
+    We use A = [aij ]W ×W to denote the attention mask                                                                                                                                                                                                                      As shown in Fig. 6, denoising is only a training method and
+where W = P ×M +N . P and M are the number of groups                                                                                                                                                                                                                        can be plugged into other detection models to accelerate
+and GT objects. N is the number of queries in the matching                                                                                                                                                                                                                  training. In this section, we will extend denoising training
+part. We let the first P × M rows and columns represent the                                                                                                                                                                                                                 to other DETR-like models.
+denoising part and the latter represents the matching part.
+aij = 1 means the i-th query cannot see the j -th query and                                                                                                                                                                                                                 4.7.1 Introducing DN to Anchor DETR with 2D Anchors
+aij = 0 otherwise. We devise the attention mask as follows                                                                                                                                                                                                                  We first demonstrate its effectiveness by adding it to Anchor
+                                                                                                                                                                                                                                                                            DETR [21], which formulates positional queries as 2D an-
+                                                                                                                                                                                                                                                                            chor points. For DN-Anchor-DETR, though it can be easily
+        a_{ij}=\left \{\begin {array}{ll} 1, & \text { if } j<P\times M \text { and } \lfloor \frac {i}{M}\rfloor \neq \lfloor \frac {j}{M}\rfloor ;\\ 1, & \text { if } j<P\times M \text { and } i\geq P\times M;\\ 0, & \text {otherwise.} \end {array}\right .    (7)
+                                                                                                                                                                                                                                                                            modified to 4D anchors to achieve better results, we strictly
+                                                                                                                                                                                                                                                                            follow Anchor DETR to add noise only to 2D anchors. A
+Note that whether the denoising part can see the matching                                                                                                                                                                                                                   2D anchor corresponds to the center point of a box. Hence
+part or not will not influence the performance, since the                                                                                                                                                                                                                   we only use center shifting noise (described in Sec. 4.3). In
+queries of the matching part are learned queries that contain                                                                                                                                                                                                               this way, we plug in the denoising training task for anchor
+no information about the GT objects.                                                                                                                                                                                                                                        points without introducing other modifications.
+    The extra computation introduced by multiple denoising
+groups is negligible—when 5 denoising groups are intro-                                                                                                                                                                                                                     4.7.2 Introducing DN to Vanilla DETR without Explicit An-
+duced, GFLOPs for training are only increased from 94.4 to                                                                                                                                                                                                                  chors
+94.6 for DAB-DETR with a ResNet-50 backbone, and there                                                                                                                                                                                                                      Vanilla DETR [1] differs from DAB-DETR in that its posi-
+is no computation overhead for testing.                                                                                                                                                                                                                                     tional queries are high dimensional vectors without explicit
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                           7
+
+                                                                TABLE 1
+ Results for our DN-DETR and other detection models under the same setting. All DETR-like models except DETR use 300 queries, while DETR
+                                                                uses 100.
+
+
+ Model                                    #epochs         AP        AP50      AP75     APS      APM      APL      GFLOPs       Params
+ DETR-R50 [1]                               500          42.0        62.4     44.2     20.5     45.8     61.1        86         41M
+ Faster RCNN-FPN-R50 [18]                   108          42.0        62.1     45.5     26.6     45.5     53.4        180        42M
+ Anchor DETR-R50 [21]                       50           42.1        63.1     44.9     22.3     46.2     60.0         −         39M
+ Conditional DETR-R50 [15]                  50           40.9        61.8     43.3     20.8     44.6     59.2        90         44M
+ DAB-DETR-R50 [14]                          50           42.2        63.1     44.7     21.5     45.7     60.3        94         44M
+ DN-DETR-R50                                50        44.1(+1.9)     64.4     46.7     22.9     48.0     63.4        94         44M
+ DETR-R101 [1]                              500          43.5        63.8     46.4     21.9     48.0     61.8        152        60M
+ Faster RCNN-FPN-R101 [18]                  108          44.0        63.9     47.8     27.2     48.1     56.0        246        60M
+ Anchor DETR-R101 [21]                      50           43.5        64.3     46.6     23.2     47.7     61.4         −         58M
+ Conditional DETR-R101 [15]                 50           42.8        63.7     46.0     21.7     46.6     60.9        156        63M
+ DAB-DETR-R101 [14]                         50           43.5        63.9     46.6     23.6     47.3     61.5        174        63M
+ DN-DETR-R101                                50       45.2(+1.7)     65.5     48.3     24.1     49.1     65.1        174        63M
+ DETR-DC5-R50 [1]                           500          43.3        63.1     45.9     22.5     47.3     61.1        187        41M
+ Anchor DETR-DC5-R50 [21]                   50           44.2        64.7     47.5     24.7     48.2     60.6        151        39M
+ Conditional DETR-DC5-R50 [15]              50           43.8        64.4     46.7     24.0     47.6     60.7        195        44M
+ DAB-DETR-DC5-R50 [14]                      50           44.5        65.1     47.7     25.3     48.2     62.3        202        44M
+ DN-DETR-DC5-R50                            50        46.3(+1.8)     66.4     49.7     26.7     50.0     64.3        202        44M
+ DETR-DC5-R101 [1]                          500          44.9        64.7     47.7     23.7     49.5     62.3        253        60M
+ Anchor DETR-R101 [21]                      50           45.1        65.7     48.8     25.8     49.4     61.6         −         58M
+ Conditional DETR-DC5-R101 [15]             50           45.0        65.5     48.4     26.1     48.9     62.8        262        63M
+ DAB-DETR-DC5-R101 [14]                     50           45.8        65.9     49.3     27.0     49.8     63.8        282        63M
+ DN-DETR-DC5-R101                           50        47.3(+1.5)     67.5     50.8     28.6     51.5     65.0        282        63M
+
+
+meanings. For DN-Vanilla-DETR, we can simply use lin-                 regression without label assignment in traditional models.
+ear box embedding to embed noised boxes into the same                 Therefore, we add noised boxes to the detection head of
+dimension as DETR queries. The content query part is                  Faster R-CNN in parallel with the original boxes from the
+the same as DAB-DETR, and we use label embedding to                   RPN. These noised boxes will directly regress the GT to
+embed labels into content queries. After obtaining content            improve training. Note that as Faster R-CNN does not have
+and position queries, following Vanilla DETR, we can add              an initial content part, we only use box denoising training.
+the label embedding and box embedding together as DETR
+queries.
+
+
+4.8 Introducing DN to Faster R-CNN for Traditional De-
+tectors                                                               4.9 Introducing DN to Mask2Former for Segmentation
+                                                                      Models
+Apart from accelerating DETR-like models, denoising train-
+ing can also be used to accelerate traditional CNN detec-
+tors. We take Faster R-CNN [18] as an example and add                 We also show the feasibility of adding denoising train-
+denoising training to it. The detection head of Faster R-             ing to segmentation models such as Mask2Former [5].
+CNN works in a similar way as the decoder of DETR-                    Mask2Former adopts a DETR-like architecture and proposes
+based models, where the major differences lie in 1) feature           masked attention to extract features for segmentation tasks.
+extraction: Faster R-CNN uses RoI pooling while DETR uses             More specifically, each decoder layer predicts segmentation
+cross attention to extract features. and 2) label-assignment          masks, which are passed to the subsequent decoder layer
+scheme: Faster R-CNN adopts a one-to-many label assign-               as the attention mask to pool features. Therefore, following
+ment (one GT object can be matched with multiple predicted            the idea of denoising training in detection models, we can
+objects), while DETR adopts a one-to-one label assignment             add noise to the GT masks and feed them to the decoder
+(one GT object can only be matched with one predicted                 as the attention mask. The training objective of these noised
+object). As the denoising part trains in parallel with the            masks is to directly predict the GT mask, which bypasses
+original matching part in detection models and is irrelevant          the bipartite match and serves as a shortcut to directly learn
+to feature extraction schemes, denoising training can be              mask refinement.
+easily applied to these traditional detectors.                           To verify the effectiveness of denoising training on
+    Fundamentally, the idea of denoising training in DETR             masks, we build a simple baseline by adding simple shifting
+is to bypass the unstable label assignment and directly learn         noise to the mask. Without changing the shape or size of the
+bounding box regression. Though Faster R-CNN does not                 mask, we shift the whole GT mask on the x-axis and y-axis
+have bipartite matching, it also has label assignment con-            by a random value, which is the same as the center shifting
+trolled by the IoU threshold. Therefore, denoising training           noise as described in Sec. 4.3. This simple baseline already
+can also serve as a shortcut to help learn bounding box               demonstrates the effectiveness of denoising training.
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                  8
+
+                                                                  TABLE 2
+Results for our DN-DETR and other detection models on the 1x setting. Superscript † indicates that we check with the authors of Dynamic DETR
+              through private communication, their encoder deign makes their single-scale and multi-scale results almost identical.
+
+
+    Model                            MultiScale     #epochs           AP           AP50     AP75     APS     APM     APL     GFLOPs   Params
+    Faster R-CNN-FPN-R50 1x [18]          ✓            12             37.9         58.8     41.1     22.4    41.1    49.1     180      40M
+    DETR-R50 1x [1]                                    12             15.5         29.4     14.5     4.3     15.1    26.7     86       41M
+    DAB-DETR-DC5-R50 [14]                              12             38.0         60.3     39.8     19.2    40.9    55.4     216      44M
+    DN-DETR-DC5-R50                                    12          41.7(+3.7)      61.4     44.1     21.2    45.0    60.2     216      44M
+    Deformable DETR-R50 1x [25]           ✓            12             37.2         55.5     40.5     21.1    40.7    50.5     173      40M
+    Dynamic DETR-R50† 1x
+                                          ✓            12            40.2          58.6     43.4     −−       −       −        −        −
+     w/o dynamic encoder
+    Dynamic DETR-R50† 1x [6]              ✓            12             42.9         61.0     46.3     24.6    44.9    54.4      −        −
+    DN-Deformable-DETR-R50                ✓            12             43.4         61.9     47.2     24.8    46.8    59.4     195      48M
+    DN-Deformable-DETR-R50++              ✓            12             46.0         63.8     49.9     27.7    49.1    62.3      −       47M
+    DAB-DETR-DC5-R101 [14]                             12             40.3         62.6     42.7     22.2    44.0    57.3     282      63M
+    DN-DETR-DC5-R101                                   12          42.8(+2.5)      62.9     45.7     23.3    46.6    61.3     282      63M
+    Faster R101 FPN [18]                  ✓            108            44.0         63.9     47.8     27.2    48.1    56.0     246      60M
+    DN-Deformable-DETR-R101               ✓            12             44.1         62.8     47.9     26.0    47.8    61.3     275      67M
+
+
+                                                                     TABLE 3
+Extending denoisng training to other detection and segmentation models. Superscript ∗ means this result is from the ablation experiments of the
+                                                 original paper that uses our denoising training.
+
+
+    Model                                 MultiScale    #epochs          AP          AP50    AP75     APS    APM     APL     GFLOPs   Params
+         Extending DN to other detection models
+    Anchor-DETR-DC5-R50 [21]                                 12          38.2        58.6     40.6    20.3    41.9    53.1      −      37M
+    DN-Anchor-DETR-DC5-R50                                    12      39.4(+1.2)     59.1     41.8    19.6    43.4    56.0      −      37M
+    Group-DAB-DETR-DC5-R50 [3]                               12          41.9         −        −      23.3    45.6    58.4      −      −M
+    DN-Group-DAB-DETR-DC5-R50∗ [3]                           12       44.5(+2.6)      −        −      25.9    48.2    62.2      −      −M
+    Faster R-CNN-FPN-R50 [21]                ✓               12          37.9        58.8     41.1    22.4    41.1    49.1     180     40M
+    DN-Faster R-CNN-FPN-R50                  ✓               12       38.4(+0.5)     59.1     41.5    22.7    41.6    50.4     180     40M
+    SAM-DETR++-R50 [23]                      ✓               12          43.2        61.5     46.5    25.5    46.5    58.6     203     55M
+    DN-SAM-DETR++-R50∗ [23]                  ✓               12       44.8(+1.6)     62.6     47.9    26.7    48.2    60.9     203     55M
+    DINO-R50 w/o DN [24]                     ✓               12          46.0        64.0     49.9    29.3    49.2    60.5     279     47M
+    DINO-R50 w/ DN∗ [24]                     ✓               12       47.4(+1.4)     64.6     51.3    30.0    50.7    61.8     279     47M
+    Vanilla-DETR-R50 [1]                                     300         40.6        61.6      −      19.9    44.3    60.2     86      41M
+    DN-Vanilla-DETR-R50                                      300      42.6(+2.0)     62.3     44.9    21.6    46.1    61.4     86      37M
+        Extending DN to segmentation models
+    Mask DINO-R50 w/o mask DN [11]        ✓                  12          40.7        62.8     43.7    21.0    43.4    60.6     234     50M
+    Mask DINO-R50 w/ mask DN ∗ [11]       ✓                  12       41.4(+0.7)     62.9     44.6    21.1    44.2    61.4     234     50M
+    Mask2Former-R50 [5]                   ✓                  12          38.7        59.8     41.2    18.2    41.5    59.8     226     44M
+    DN-Mask2Former-R50                    ✓                  12       39.7(+1.0)     60.8     42.3    19.1    42.7    61.2     226     44M
+
+
+
+5     E XPERIMENT                                                               We adopt several ResNet models [9] pre-trained on
+5.1    Setup                                                                ImageNet as our backbones and report our results on 4
+                                                                            ResNet settings: ResNet-50 (R50), ResNet-101 (R101), and
+Dataset: We show the effectiveness of DN-DETR on the chal-                  their 16×-resolution extensions ResNet-50-DC5 (DC5-R50)
+lenging MS-COCO 2017 [13] Detection task. MS-COCO is                        and ResNet-101-DC5 (DC5-R101). For hyperparameters, we
+composed of 160K images with 80 categories. These images                    follow DAB-DETR to use a 6-layer Transformer encoder
+are divided into train2017 with 118K images, val2017                        and a 6-layer Transformer decoder and 256 as the hidden
+with 5K images, and test2017 with 41K images. In all our                    dimension. We add uniform noise on boxes and set the
+experiments, we train the models on train2017 and test                      hyperparameters with respect to noise as λ1 = 0.4, λ2 = 0.4,
+on val2017. Following the common practice, we report the                    and γ = 0.2. For the learning rate scheduler, we use an
+standard mean average precision (AP) result on the COCO                     initial learning rate (lr) 1 × 10−4 and drop lr at the 40-th
+validation dataset under different IoU thresholds and object                epoch by multiplying 0.1 for the 50-epoch setting and at the
+scales.                                                                     11-th epoch by multiplying 0.1 for the 12-epoch setting. We
+Implementation Details: We test the effectiveness of the                    use the AdamW optimizer with weight decay of 1 × 10−4
+denoising training on DAB-DETR, which is composed of                        and train our model on 8 Nvidia A100 GPUs. The batch size
+a CNN backbone, multiple Transformer encoder layers, and                    is 16. Unless otherwise specified, we use 5 denoising groups.
+decoder layers. We also show that denoising training can be
+plugged into other DETR-like models to boost performance.                       We conduct a series of experiments to demonstrate the
+For example, our DN-Deformable-DETR is built upon De-                       performance improvement as shown in Table 1, where we
+formable DETR in a multi-scale setting.                                     follow the basic settings in DAB-DETR without any bells
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                                9
+
+                                                                TABLE 4
+         Best results for our DN-DETR and other detection models with the ResNet-50 backbone. ∗ indicates it is the test-dev result.
+
+
+ Model                              MultiScale      #epochs      AP      AP50        AP75      APS    APM      APL      GFLOPs         Params
+ Deformable DETR-R50 [25]                ✓             50       43.8      62.6       47.7      26.4   47.1     58.0       173           40M
+ SMCA-R50 [8]                            ✓             50       43.7      63.6       47.2      24.2   47.0     60.4       152           40M
+ TSP-RCNN-R50 [19]                       ✓             96       45.0      64.5       49.6      29.7   47.7     58.0       188            −
+ Dynamic DETR-R50∗ [6]                   ✓             50       47.2      65.9       51.1      28.6   49.3     59.1        −             −
+ DAB-Deformable-DETR-R50                 ✓             50       46.9      66.0       50.8      30.1   50.4     62.5       195           48M
+ DN-Deformable-DETR-R50                  ✓             50       48.6      67.4       52.7      31.0   52.0     63.7       195           48M
+ DN-Deformable-DETR-R50++                ✓             50       49.5      67.6       53.8      31.3   52.6     65.4        −            47M
+
+
+and whistles in training. To compare with the state-of-the-             5.3       1× Setting
+art performance in the 12 epoch setting (the so-called 1×
+                                                                        With denoising training, the detection task can be acceler-
+setting in Detectron2) and the standard 50 epoch setting
+                                                                        ated by a large margin. As shown in Table 2, we compare
+(most widely used in DETR-like models) in Table 2 and 4,
+                                                                        our method with both a traditional detector [18] and some
+we follow DAB-DETR to use 3 pattern embeddings as in
+                                                                        DETR-like models, including DETR [1], Dynamic DETR [6],
+Anchor DETR [21]. All our comparisons with DAB-DETR
+                                                                        and Deformable DETR [25]. Note that Dynamic DETR [6]
+and its variants are under exactly the same setting.
+                                                                        adopts a dynamic encoder, for a fair comparison, we also
+DN-Deformable-DETR and DN-Deformable-DETR++:
+                                                                        compare with its version without a dynamic encoder.
+For DN-Deformable-DETR with only deformable encoder,
+                                                                           Under the same setting with the DC5-R50 backbone,
+we use 10 denoising groups. For DN-Deformable-DETR++
+                                                                        DN-DETR can outperform DAB-DETR by +3.7 AP within
+with deformable attention in both encoder and decoder,
+                                                                        12 epochs. Compared with other models, DN-Deformable-
+we use 5 denoising groups. Note that we strictly follow
+                                                                        DETR achieves the best results in the 12 epoch setting. It is
+Deformable DETR to use multi-scale (4 scale) features with-
+                                                                        worth noting that our DN-Deformable-DETR achieves 44.1
+out FPN. Dynamic DETR [6] adds FPN and more scales (5
+                                                                        AP within 12 epochs with the ResNet-101 backbone, which
+scales) which can further boost the performance, but our
+                                                                        surpasses Faster R-CNN ResNet-101 trained for 108 epochs
+performance still exceeds theirs.
+                                                                        (9× faster).
+Faster R-CNN and Anchor DETR: We use 10 and 5
+denoising groups respectively.
+DINO: To test the effectiveness of denoising training in                5.4 Extending DN to Other Detection and Segmentation
+DINO, we only use our proposed DN without its proposed                  Models
+contrastive DN and keep all the other components in DINO.
+We use 5 denoising groups.                                              To further validate the effectiveness of denoising training,
+Mask DINO: Mask DINO incorporates both box denoising                    we extend this method to other detection and segmentation
+and mask denoising. To show performance improvement                     model, as shown in Table 3. The experimental results indi-
+over segmentation tasks, we keep the box denoising part                 cate that denoising training is a universal training method
+and only remove the mask denoising to study its effective-              to boost performance.
+ness. We use 5 denoising groups under this setting.                         For example, we improve the DETR-like detection mod-
+Mask2Former: Mask2Former is only designed for segmen-                   els significantly by 1.2 − 2.6 AP under the 12-epoch setting.
+tation tasks. Therefore, we only add mask denoising training            The results also reveal that
+in our experiments. We use 5 denoising groups under this                      •    Denoising training is compatible with other posi-
+setting.                                                                           tional query formulations, for example, Vallina DETR
+    Our proposed denoising training has been incorporated                          with high dimensional vectors, Anchor DETR with
+into many subsequent works and also implemented in de-                             2D anchor points, and DAB-DETR with 4D anchor
+trex (https://github.com/IDEA-Research/detrex).                                    boxes.
+                                                                              •    Our method is only a training method and also com-
+5.2   Denoising Training Improves Performance                                      patible with other methods, for example, deformable
+To show the absolute performance improvement compared                              attention [25], semantic-alignment [23], and query
+with DAB-DETR and other single-scale DETR models, we                               selection[24], etc.
+conduct a series of experiments using different backbones
+under the basic single-scale settings. The results are sum-
+                                                                        5.5       Compared with State-of-Art Detectors
+marized in Table 1.
+    The results show that we achieve the best results among             We also conduct experiments to compare our method with
+single-scale models with all four commonly used backbones.              multi-scale models. The results is summarized in Table
+For example, compared with our baseline DAB-DETR un-                    4. Our proposed DN-Deformable-DETR achieves the best
+der exactly the same setting, we achieve +1.9 AP absolute               result 48.6 AP with the ResNet-50 backbone. To eliminate
+improvement with ResNet-50. The table also shows that                   the performance improvement from formulating the queries
+denoising training adds negligible parameters and compu-                of deformable DETR as anchor boxes, we further use a
+tation.                                                                 strong baseline DAB-Deformable-DETR without denoising
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                            10
+
+
+
+
+Fig. 7. (a) Convergence curves of DAB-DETR and DN-DETR with ResNet-DC5-50. Before learning rate drop, DN-DETR achieves 40 AP in 20
+epochs, while DAB-DETR needs 40 epochs. (b) Convergence curves of multi-scale models with ResNet-50. With learning rate drop, DN-Deformable-
+DETR achieves 47.8 AP in 30 epochs, which is 0.9 AP higher than the converged DAB-Deformable-DETR.
+
+
+                             TABLE 5                                   Notably, without an attention mask to prevent information
+   Ablation results for DN-DETR. All models are trained with the       leakage, the performance degenerates significantly.
+ResNet-50 backbone using 1 denoising group under the same default
+                             settings.
+                                                                       5.6.2   Effectiveness of using more denoising groups
+  Box Denoising      Label Denoising     Attention Mask       AP
+                                                                       We also analyze the influence of the number of denois-
+         ✓                  ✓                    ✓           43.4
+                                                                       ing groups in our model, as shown in Table 6. The re-
+         ✓                                       ✓           43.0
+                                                                       sults indicate that adding more denoising groups improves
+                                                 ✓           42.2      performance, but the performance improvement becomes
+         ✓                  ✓                                24.0      marginal as the number of denoising groups increases.
+                                                                       Therefore, in our experiment, our default setting uses 5
+                               TABLE 6                                 denoising groups, but more denoising groups can further
+  Ablation results for DN-DETR using different numbers of denoising    boost performance as well as faster convergence.
+groups. All models are trained with the ResNet-50 backbone under the
+                         same default setting.                             In Fig. 8, We explore the influence of noise scale. We
+                                                                       run 20 epochs with batch size 64 and ResNet-50 backbone
+                      No Group       1 Group      5 Groups             without learning rate drop. The results show that both
+                                                                       center shifting and box scaling improve performance. But
+          R50             42.2         43.4          44.1
+                                                                       when the noise is too large, the performance drops.
+        R50-DC5           44.5         45.6          46.3
+          R101            43.5         45.0          45.2
+        R101-DC5          45.8         46.5          47.3
+
+
+training. The results show that we can still yield 1.7 AP ab-
+solute improvement. The performance improvement of DN-
+Deformable-DETR also indicates that denoising training can
+be integrated into other DETR-like models and improve
+their performance. Though it is not a fair comparison with
+Dynamic DETR as it includes a dynamic encoder and more
+scales (5 scales) with FPN, we still yield +1.4 AP improve-
+ment.
+    We also show the convergence curve in both single-
+scale and multi-scale settings in Fig. 7, where we drop the
+                                                                       Fig. 8. DN-DETR in different noise scales. We fix one noise scale to 0.4
+learning rate by 0.1 in multiple epochs in Fig. 7(b).                  and change the other. Noise scale is defined in 4.3
+
+5.6   Ablation Study
+5.6.1 Effectiveness of each component
+                                                                       5.6.3   Acceleration Analysis
+We conduct a series of ablation studies with the ResNet-50
+backbone trained for 50 epochs to verify the effectiveness of          We show how much our method can speed up training ex-
+each component and report the results in Table 5 and Table             actly in Table 1. Our method achieves results comparable to
+6. The results in Table 5 show that each component in de-              the baseline with only half of the training epochs, resulting
+noising training contributes to performance improvement.               in 2x acceleration.
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                            11
+
+                                                                    TABLE 1
+Results of our method trained for 25 epochs and our baseline method trained for 50 epochs under the same settings. The results show we achieve
+                                                     2x acceleration with denoising training.
+
+
+ Model                                 MultiScale     #epochs     AP      AP50      AP75     APS      APM      APL     GFLOPs        Params
+ DAB-DETR-DC5-R50                                       50        44.5     65.1     47.7     25.3     48.2     62.3       202         44M
+ DN-DETR-DC5-R50                                         25       44.4     64.5     47.3     24.4     48.0     63.0       202         44M
+ DAB-Deformable-DETR-R50                    ✓           50        46.9     66.0     50.8     30.1     50.4     62.5       195         48M
+ DN-Deformable-DETR-R50                     ✓            25       46.8     65.5     50.8     28.9     50.2     62.5       195         48M
+ DAB-Deformable-DETR-R50++                  ✓           50        48.7     67.2     53.0     31.4     51.6     63.9        −          47M
+ DN-Deformable-DETR-R50++                   ✓            25       48.4     66.6     52.7     30.0     51.7     64.4        −          47M
+ Vanilla-DETR-R50 [1]                                   500       42.0     62.4     44.2     20.5     45.8     61.1       86          41M
+ DN-Vanilla-DETR-R50                                    250       42.2     61.8     44.6     20.5     46.0     61.3       86          37M
+
+
+
+                             TABLE 2                                     Moreover, our DN-DETR trained with known objects ex-
+We adopted five denoising groups for DN-DAB-DETR. The results are        ceeds DAB-DETR only trained on unknown classes when
+         tested on the same GPUs for a fair comparison.
+                                                                         evaluating without known objects. This means the denois-
+                                                                         ing of extra boxes from extra (known) classes also helps the
+         Model           Total Training time (min)   Training GFLOPs     performance of the unknown objects.
+  DAB-DETR-R50               2555(50 epochs)               94.4
+ DN-DAB-DETR-R50             1443(25 epochs)               94.5                                        TABLE 3
+                                                                         Extra label prediction on COCO. We split the annotation of COCO class
+                                                                           into known/unknown classes, where objects of known classes only
+                                                                           appear in denoising part, and we evaluate the performance on the
+5.6.4    The training wall clock time and GFLOPs                            unknown classes. Cond means the result is evaluated with known
+                                                                                                        objects.
+We tested the training wall clock time and GFLOPs with 8
+NVIDIA A100 GPUs as shown in Table 2. The total training
+time is calculated by multiplying the number of training
+                                                                                 Method             Setting     AP        AP(Cond)
+epochs and the training time for each epoch. The training                        DAB-DETR           0.7/0.3     38.4           -
+time per epoch is 51.1min and 57.7min for DAB-DETR-                              DN-DETR            0.7/0.3     42.1          42.9
+R50 and DN-DAB-DETR-R50, respectively. While denoising
+training introduces a minor training cost increase, it only                      DAB-DETR           0.5/0.5     37.8           -
+needs about half the number of training epochs (25 epochs)                       DN-DETR            0.5/0.5     39.1          40.3
+to achieve the same performance as DAB-DETR-R50. The
+practical training speedup is indeed remarkable.                         Known Label Detection: For each image, we assume we
+                                                                         know all the class labels in the image without box informa-
+                                                                         tion. Since our model has interpreted the query embedding
+5.7     Other tasks and future work
+                                                                         into class label embedding, we can seamlessly utilize these
+5.7.1    Other Tasks                                                     known labels to detect the boxes of each class label. For each
+                                                                         class c in the image, we concatenate its label embedding
+In addition to regular detection, our design of queries as
+                                                                         with the indicator 1, which denotes a known label. We feed
+anchor box + label makes the detection model capable of
+                                                                         the concatenated vector into the decoder and let the decoder
+handling other tasks. For example, known object detection
+                                                                         output all boxes of class c. To compare with methods with-
+and known label detection. Note that the results shown in
+                                                                         out known labels and detect all objects in an image, we
+this section are just a preliminary exploration and not based
+                                                                         concatenate outputs of all classes and evaluate the result
+on our well-trained model with the best hyper-parameters.
+                                                                         as shown in Table 4. By finetuning with known labels, the
+Known Object Detection: Assume we know a part of
+                                                                         detection performance can be improved in only one epoch.
+the objects in an image and want to predict the remaining
+                                                                         Within 10 epochs of finetuning on pre-trained DN-DETR,
+objects. We want the known objects to help predict the
+                                                                         the known label detection performance is improved to 46.6.
+unknown objects through co-occurrence relations. We did
+                                                                         This result demonstrates that given labels can significantly
+some preliminary exploration. We randomly divide the 80
+                                                                         improve the detection performance.
+classes of MS COCO2017 into 2 parts, including known
+classes and unknown classes. We put objects of known
+classes in the denoising part and want the matching part                 5.7.2    Future Work
+to predict the objects of the unknown classes. We do not                 There are three potential future works to be mentioned here.
+use an attention mask so that the matching part can get                  One is zero-shot detection, and the other is progressive
+useful information from the denoising part. Our experi-                  inference.
+mental results are shown in Table 3. Compared with the                   Zero-shot or Open Set Detection: Since we have decoupled
+evaluation without known boxes, the evaluation of the                    decoder queries as anchor boxes and class labels, pre-trained
+known object improves the performance, which indicates                   class label embeddings can be fed into the class label part
+that co-occurrence helps the prediction of unknown boxes.                of the queries. To enable zero-shot detection, one can take
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING                                                                              12
+
+                               TABLE 4                                  an initial step to apply it to object detection. In the future,
+Known label detection results under ResNet-50 with 1 denoising group.   we will explore how to pre-train detectors on weakly labeled
+   1ep and 10ep means finetuned 1 or 10 epochs from pretrained
+                              DN-DETR.                                  data with unsupervised learning techniques and explore
+                                                                        applying other denoising training schemes in detection
+                                                                        models.
+     Method                       Setting                AP
+     DAB-DETR              no knwon labels               42.2
+     DN-DETR               no knwon labels               43.4           R EFERENCES
+     DN-DETR              known label (1ep)              43.8           [1]  Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas
+     DN-DETR              known label (10ep)             46.6                Usunier, Alexander Kirillov, and Sergey Zagoruyko. End-to-end
+                                                                             object detection with transformers. In European Conference on
+                                                                             Computer Vision, pages 213–229. Springer, 2020.
+                                                                        [2] Kai Chen, Jiangmiao Pang, Jiaqi Wang, Yu Xiong, Xiaoxiao Li,
+                                                                             Shuyang Sun, Wansen Feng, Ziwei Liu, Jianping Shi, Wanli
+80 classes of MSCOCO as phrases and collect phrase em-                       Ouyang, et al. Hybrid task cascade for instance segmentation.
+beddings from a pre-trained language model as the class                      In Proceedings of the IEEE/CVF Conference on Computer Vision and
+label embedding. With the pre-trained label embedding,                       Pattern Recognition, pages 4974–4983, 2019.
+                                                                        [3] Qiang Chen, Xiaokang Chen, Gang Zeng, and Jingdong Wang.
+it is possible to train a given class detector that takes a                  Group DETR: Fast Training Convergence with Decoupled One-to-
+class label embedding as input and detects objects of the                    Many Label Assignment. arXiv preprint arXiv:2207.13085, 2022.
+given classes. In inference time, class label embeddings from           [4] Ting Chen, Saurabh Saxena, Lala Li, David J. Fleet, and Geoffrey
+                                                                             Hinton. Pix2seq: A language modeling framework for object
+unseen classes can be fed into the decoder to achieve zero-                  detection, 2021.
+shot detection.                                                         [5] Bowen Cheng, Ishan Misra, Alexander G Schwing, Alexander
+Progressive inference: Based on known object detection, a                    Kirillov, and Rohit Girdhar. Masked-attention mask transformer
+                                                                             for universal image segmentation. In Proceedings of the IEEE/CVF
+progressive inference method can be designed. For example,                   Conference on Computer Vision and Pattern Recognition, pages 1290–
+we can train a DN-DETR capable of doing known object                         1299, 2022.
+detection. In inference time, we let the detector predict               [6] Xiyang Dai, Yinpeng Chen, Jianwei Yang, Pengchuan Zhang,
+                                                                             Lu Yuan, and Lei Zhang. Dynamic DETR: End-to-End Object
+objects, and then, we can choose the objects with the highest
+                                                                             Detection With Dynamic Attention. In Proceedings of the IEEE/CVF
+score and treat them as known objects to do known object                     International Conference on Computer Vision, pages 2988–2997, 2021.
+detection. For each step of prediction, we choose objects               [7] Enrico Maria Fenoaltea, Izat B Baybusinov, Jianyang Zhao, Lei
+with the highest score and add them to the known box set.                    Zhou, and Yi-Cheng Zhang. The Stable Marriage Problem: An
+                                                                             interdisciplinary review from the physicist’s perspective. Physics
+After repeating for many times, we get the final prediction.                 Reports, 2021.
+Classification before detection: As shown in Table 4, given             [8] Peng Gao, Minghang Zheng, Xiaogang Wang, Jifeng Dai, and
+labels can significantly improve the detection performance.                  Hongsheng Li. Fast convergence of DETR with spatially mod-
+                                                                             ulated co-attention. arXiv preprint arXiv:2101.07448, 2021.
+Therefore, one potential future work is to add a muli-label             [9] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep
+classification network to provide labels and feed them to                    residual learning for image recognition. In 2016 IEEE Conference
+DN-DETR, which may help improve detection performance.                       on Computer Vision and Pattern Recognition (CVPR), pages 770–778,
+                                                                             2016.
+                                                                        [10] Feng Li, Hao Zhang, Shilong Liu, Jian Guo, Lionel M Ni, and Lei
+                                                                             Zhang. DN-DETR: Accelerate DETR training by introducing query
+6   C ONCLUSION                                                              denoising. In Proceedings of the IEEE/CVF Conference on Computer
+                                                                             Vision and Pattern Recognition, pages 13619–13627, 2022.
+In this paper, we have analyzed the reason for the slow                 [11] Feng Li, Hao Zhang, Huaizhe xu, Shilong Liu, Lei Zhang, Li-
+convergence of DETR training lying in the unstable bi-                       onel M. Ni, and Heung-Yeung Shum. Mask DINO: Towards A
+partite matching and proposed a novel denoising training                     Unified Transformer-based Framework for Object Detection and
+                                                                             Segmentation, 2022.
+method to address this problem. Based on this analysis,                 [12] Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, and Piotr
+we proposed DN-DETR by integrating denoising training                        Dollár. Focal Loss for Dense Object Detection, 2018.
+into DAB-DETR to test its effectiveness. DN-DETR specifies              [13] Tsung-Yi Lin, Michael Maire, Serge Belongie, James Hays, Pietro
+                                                                             Perona, Deva Ramanan, Piotr Dollár, and C Lawrence Zitnick. Mi-
+the decoder embedding as label embedding and introduces                      crosoft COCO: Common objects in context. In European conference
+denoising training for both boxes and labels. We also added                  on computer vision, pages 740–755. Springer, 2014.
+denoising training to Deformable DETR to show its gener-                [14] Shilong Liu, Feng Li, Hao Zhang, Xiao Yang, Xianbiao Qi, Hang
+                                                                             Su, Jun Zhu, and Lei Zhang. DAB-DETR: Dynamic anchor boxes
+ality. The results show that denoising training significantly                are better queries for DETR. In International Conference on Learning
+accelerates convergence and improves performance, leading                    Representations, 2022.
+to the best results in the 1x (12 epochs) setting with both             [15] Depu Meng, Xiaokang Chen, Zejia Fan, Gang Zeng, Houqiang Li,
+                                                                             Yuhui Yuan, Lei Sun, and Jingdong Wang. Conditional DETR for
+ResNet-50 and ResNet-101 as the backbone. This study                         Fast Training Convergence. arXiv preprint arXiv:2108.06152, 2021.
+shows that denoising training can be easily integrated into             [16] Joseph Redmon and Ali Farhadi. YOLO9000: Better, Faster,
+DETR-like models as a general training method with only                      Stronger, 2016.
+                                                                        [17] Joseph Redmon and Ali Farhadi. YOLOv3: An Incremental Im-
+a small training cost overhead and bring in a remarkable                     provement, 2018.
+improvement in terms of both training convergence and                   [18] Shaoqing Ren, Kaiming He, Ross Girshick, and Jian Sun. Faster
+detection performance.                                                       R-CNN: Towards real-time object detection with region proposal
+                                                                             networks. IEEE Transactions on Pattern Analysis and Machine Intel-
+Limitations: In this work, the added noises are simply                       ligence, 39(6):1137–1149, 2017.
+sampled from a uniform distribution. We have not explored               [19] Zhiqing Sun, Shengcao Cao, Yiming Yang, and Kris Kitani. Re-
+more complex noising schemes and leave these for future                      thinking transformer-based set prediction for object detection.
+                                                                             arXiv preprint arXiv:2011.10881, 2020.
+work. Reconstructing noised data achieves great success in              [20] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit,
+unsupervised learning and diffusion models. This work is                     Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin.
+DN-DETR: ACCELERATE DETR TRAINING BY INTRODUCING QUERY DENOISING       13
+
+     Attention is all you need. In Advances in neural information
+     processing systems, pages 5998–6008, 2017.
+[21] Yingming Wang, Xiangyu Zhang, Tong Yang, and Jian Sun. An-
+     chor DETR: Query design for transformer-based detector. arXiv
+     preprint arXiv:2109.07107, 2021.
+[22] Zhuyu Yao, Jiangbo Ai, Boxun Li, and Chi Zhang. Efficient DETR:
+     Improving End-to-End Object Detector with Dense Prior. arXiv
+     preprint arXiv:2104.01318, 2021.
+[23] Gongjie Zhang, Zhipeng Luo, Yingchen Yu, Jiaxing Huang, Kai-
+     wen Cui, Shijian Lu, and Eric P Xing. Semantic-Aligned Matching
+     for Enhanced DETR Convergence and Multi-Scale Feature Fusion.
+     arXiv preprint arXiv:2207.14172, 2022.
+[24] Hao Zhang, Feng Li, Shilong Liu, Lei Zhang, Hang Su, Jun Zhu,
+     Lionel M. Ni, and Heung-Yeung Shum. DINO: DETR with Im-
+     proved DeNoising Anchor Boxes for End-to-End Object Detection,
+     2022.
+[25] Xizhou Zhu, Weijie Su, Lewei Lu, Bin Li, Xiaogang Wang, and
+     Jifeng Dai. Deformable DETR: Deformable transformers for end-
+     to-end object detection. arXiv preprint arXiv:2010.04159, 2020.
+

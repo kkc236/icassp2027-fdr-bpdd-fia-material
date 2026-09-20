@@ -1,0 +1,692 @@
+% ONE-FILE EDITION: copy this entire file into an empty Overleaf main.tex.
+% Compiler: pdfLaTeX. No external images, .bib file, or shell escape is needed.
+% The official ICIP 2026 spconf style is embedded below and written on compilation.
+% ICIP 2027 final author instructions have not yet been verified.
+\begin{filecontents*}{spconf.sty}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File:     spconf.sty          (LaTeX Document style option "spconf")
+%
+% Usage:    \documentclass{article}
+%           \usepackage{spconf}
+%
+%           Or for LaTeX 2.09:
+% Usage:    \documentstyle[...,spconf,...]{article}
+%
+% Purpose:
+%
+% Style file for Signal Processing Society Conferences (ICASSP, ICIP).
+% Features:
+%    - correct page size (175mm x 226mm)
+%    - twocolumn format
+%    - boldfaced, numbered, and centered section headings
+%    - correct subsection and subsubsection headings
+%    - use \title{xx} for title, will be typeset all uppercase
+%    - use \name{xx} for author name(s) only, will be typeset in italics
+%    - use \address{xx} for one address of all authors
+%    - use \twoauthors{author1}{address1}{author2}{address2}
+%         for two (or more) authors with two separate addresses
+%    - note: no need for \author nor \date
+%    - optional: can use \thanks{xx} within \name or \twoauthors,
+%         asterisk is not printed after name nor in footnote
+%    - optional: can use \sthanks{xx} after each name within \name or
+%         \twoauthors if different thanks for each author,
+%         footnote symbol will appear for each name and footnote
+%    - optional: use \ninept to typeset text in 9 pt; default is 10pt.
+%
+% Example of use for one or more authors at a common address and
+%    common support. For distinct support acknowledgments,
+%    use \sthanks{xx} after each name.
+%
+%                 \documentclass{article}
+%                 \usepackage{spconf}
+%                 \title{Title of the paper}
+%                 \name{George P. Burdell and John Q. Professor
+%                       \thanks{This work was supported by...}}
+%                 \address{Common address, department \\
+%                          City, etc \\
+%                          optional e-mail address}
+%
+%                 \begin{document}
+%  OPTIONAL -->   \ninept            <-- OPTIONAL, for nine pt only
+%                 \maketitle
+%                 \begin{abstract}
+%                 This is the abstract for my paper.
+%                 \end{abstract}
+%                         .
+%                 Insert text of paper
+%                         .
+%                 \end{document}
+%
+% Example of use for two authors at two distinct addresses with only
+%    one support acknowledgment. For distinct support acknowledgments,
+%    use \sthanks{xx} after each name.
+%
+%                 \documentclass{article}
+%                 \usepackage{spconf}
+%                 \title{Title of the paper}
+%                 \twoauthors{John Doe
+%                       \thanks{This work was supported by...}}
+%                            {Doe's address, department \\
+%                             City, etc \\
+%                             optional e-mail address}
+%                            {Judy Smith}
+%                            {Smith's address, department \\
+%                             City, etc \\
+%                             optional e-mail address}
+%
+%                 \begin{document}
+%  OPTIONAL -->   \ninept            <-- OPTIONAL, for nine pt only
+%                 \maketitle
+%                 \begin{abstract}
+%                 This is the abstract for my paper.
+%                 \end{abstract}
+%                         .
+%                 Insert text of paper
+%                         .
+%                 \end{document}
+%
+% Preprint Option (Only for preprints, not for submissions!):
+%    - can create a preprint titlepage footer by using the
+%         "preprint" option with the \usepackage{spconf} command
+%    - use \copyrightnotice{\copyright xx} for copyright information
+%    - use \toappear{To appear in xx} for publication name
+% Example of preprint use:
+%
+%                 \documentclass{article}
+%                 \usepackage[preprint]{spconf}
+%                         .
+%                 \copyrightnotice{\copyright\ IEEE 2000}
+%                 \toappear{To appear in {\it Proc.\ ICASSP2000,
+%                    June 05-09, 2000, Istanbul, Turkey}}
+%
+%
+% PLEASE REPORT ANY BUGS
+%
+% Author:  Stephen Martucci  -- stephen.martucci@ieee.org
+%
+% Date:    3 May 2000
+%
+% Updated: Lance Cotton, Ulf-Dietrich Braumann, 11 May 2006
+% Change:  Added keywords/Index Terms section
+% Change:  Added \emergencystretch=11pt, Lance Cotton, 26-Sept-2007
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% These commands change default text fonts to the scalable PostScript
+% fonts Times, Helvetica, and Courier. However, they do not change
+% the default math fonts. After conversion to PDF, text will look good
+% at any scale but math symbols and equations may not.
+% If instead you use the PostScript Type 1 implementation of the
+% Computer Modern fonts from the American Mathematical Society, which
+% will make all fonts (text and math) scalable, comment out the
+% following three lines. Those fonts use the same metrics as the Knuth
+% Computer Modern fonts and therefore no font redefinition is needed.
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\ttdefault}{pcr}
+
+%\oddsidemargin  -0.31in
+%\evensidemargin -0.31in
+\oddsidemargin  -6.2truemm
+\evensidemargin -6.2truemm
+
+\topmargin 0truept
+\headheight 0truept
+\headsep 0truept
+%\footheight 0truept
+%\footskip 0truept
+\textheight 229truemm
+\textwidth 178truemm
+
+\twocolumn
+\columnsep 6truemm
+\pagestyle{empty}
+
+\emergencystretch=11pt
+
+\def\ninept{\def\baselinestretch{.95}\let\normalsize\small\normalsize}
+
+\def\maketitle{\par
+ \begingroup
+ \def\thefootnote{}
+ \def\@makefnmark{\hbox
+ {$^{\@thefnmark}$\hss}}
+ \if@twocolumn
+ \twocolumn[\@maketitle]
+ \else \newpage
+ \global\@topnum\z@ \@maketitle \fi\@thanks
+ \endgroup
+ \setcounter{footnote}{0}
+ \let\maketitle\relax
+ \let\@maketitle\relax
+ \gdef\thefootnote{\arabic{footnote}}\gdef\@@savethanks{}%
+ \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\thanks\relax}
+
+\def\@maketitle{\newpage
+ \null
+ \vskip 2em \begin{center}
+ {\large \bf \@title \par} \vskip 1.5em {\large \lineskip .5em
+\begin{tabular}[t]{c}\@name \\ \@address
+ \end{tabular}\par} \end{center}
+ \par
+ \vskip 1.5em}
+
+\def\title#1{\gdef\@title{\uppercase{#1}}}
+\def\name#1{\gdef\@name{{\em #1}\\}}
+\def\address#1{\gdef\@address{#1}}
+\gdef\@title{\uppercase{title of paper}}
+\gdef\@name{{\em Name of author}\\}
+\gdef\@address{Address - Line 1 \\
+               Address - Line 2 \\
+               Address - Line 3}
+
+\let\@@savethanks\thanks
+\def\thanks#1{\gdef\thefootnote{}\@@savethanks{#1}}
+\def\sthanks#1{\gdef\thefootnote{\fnsymbol{footnote}}\@@savethanks{#1}}
+
+\def\twoauthors#1#2#3#4{\gdef\@address{}
+   \gdef\@name{\begin{tabular}{@{}c@{}}
+        {\em #1} \\ \\
+        #2\relax
+   \end{tabular}\hskip 1in\begin{tabular}{@{}c@{}}
+        {\em #3} \\ \\
+        #4\relax
+\end{tabular}}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{
+   \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname.\hskip 0.6em}
+       \begingroup \ifnum #2=1\bf\centering
+          {\interlinepenalty \@M
+             \@svsec\uppercase{#8}\par}\else\ifnum #2=2\bf
+          \noindent{\interlinepenalty \@M \@svsec #8\par}\else\it
+          \noindent{\interlinepenalty \@M
+             \@svsec #8\par}\fi\fi\endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\protect\numberline{\csname the#1\endcsname} #7}
+     \@tempskipa #5\relax
+     \@xsect{\@tempskipa}}
+
+\def\abstract{\begin{center}
+{\bf ABSTRACT\vspace{-.5em}\vspace{0pt}}
+\end{center}}
+\def\endabstract{\par}
+
+% Keyword section, added by Lance Cotton, adapted from IEEEtrans, corrected by Ulf-Dietrich Braumann
+\def\keywords{\vspace{.5em}
+{\bfseries\textit{Index Terms}---\,\relax%
+}}
+\def\endkeywords{\par} 
+
+\def\copyrightnotice#1{\gdef\@copyrightnotice{#1}}
+\let\@copyrightnotice\relax
+\def\toappear#1{\gdef\@toappear{#1}}\let\@toappear\relax
+
+\newif\if@preprint\@preprintfalse
+\@namedef{ds@preprint}{\global\@preprinttrue}
+\@options
+\def\ps@preprint{\def\mypage{}\let\@mkboth\@gobbletwo\def\@oddhead{}
+  \def\@oddfoot{\rlap{\@toappear}\hfil\mypage\hfil
+    \llap{\@copyrightnotice}
+    \gdef\mypage{\thepage}\gdef\@toappear{}\gdef\@copyrightnotice{}}}
+
+\if@preprint\ps@preprint
+\else\ps@empty\flushbottom\fi
+
+\def\thebibliography#1{\section{References}\list
+ {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+ \advance\leftmargin\labelsep
+ \usecounter{enumi}}
+ \def\newblock{\hskip .11em plus .33em minus .07em}
+ \sloppy\clubpenalty4000\widowpenalty4000
+ \sfcode`\.=1000\relax}
+\let\endthebibliography=\endlist
+
+\long\def\@makecaption#1#2{
+ \vskip 10pt
+ \setbox\@tempboxa\hbox{#1. #2}
+ \ifdim \wd\@tempboxa >\hsize #1. #2\par \else \hbox
+to\hsize{\hfil\box\@tempboxa\hfil}
+ \fi}
+
+\def\fnum@figure{{\bf Fig.\ \thefigure}}
+\def\fnum@table{{\bf Table \thetable}}
+
+\flushbottom
+
+%%%% EOF
+\end{filecontents*}
+\documentclass[10pt,letterpaper]{article}
+\usepackage{spconf}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage[hidelinks]{hyperref}
+\urlstyle{same}
+\hypersetup{pdftitle={Local Visual Refinement for Distributional UAV Object Detection},pdfauthor={},pdfsubject={}}
+\definecolor{bluegray}{HTML}{344657}
+\definecolor{paleblue}{HTML}{EDF4F9}
+\definecolor{palegreen}{HTML}{ECF5EE}
+\definecolor{palewarm}{HTML}{FBF3E8}
+\definecolor{pointblue}{HTML}{396C94}
+\definecolor{pointorange}{HTML}{BF6C33}
+\newcommand{\sg}{\operatorname{sg}}
+\newcommand{\softmax}{\operatorname{softmax}}
+\newcommand{\tablefont}{\fontsize{9}{11.4}\selectfont}
+\setlength{\tabcolsep}{3pt}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{12pt plus 2pt minus 2pt}
+\renewcommand{\arraystretch}{1.12}
+\title{Local Visual Refinement for Distributional UAV Object Detection}
+% Anonymous review: author block deliberately blank. Replace only for the named version.
+\name{\vphantom{Author Names}}
+\address{\vphantom{Department and Institution}\\\vphantom{City and Country}}
+\begin{document}
+\raggedbottom
+\maketitle
+
+
+\begin{abstract}
+
+Small objects in UAV imagery are sensitive to boundary errors, making local visual evidence important for precise detection. We introduce a local visual expert that revisits predicted box neighborhoods in a distributional RT-DETR detector. Built on the boundary representation of D-FINE, the expert samples multiscale features around each box and predicts residual updates to classification and edge distributions. Its directly supervised predictions also provide localization targets for the decoder, selected through matching, boundary-support, and quality checks. A shared P3 refinement branch supplies features to both prediction paths. On converted-label VisDrone, the complete system achieves 30.109 validation AP and 23.604 test AP, improving test AP over the stock RT-DETR-L baseline by 5.861 points. A matched validation comparison shows a 0.832-point benefit from shared P3 refinement within the expert-equipped detector. Full reaches 74.129 images/s in a fixed-input FP32 benchmark at $640\times640$ on RTX 4090 with batch eight.
+
+
+\end{abstract}
+\begin{keywords}UAV imagery, object detection, boundary distributions, local visual refinement, localization distillation\end{keywords}
+
+\section{Introduction}
+
+Accurately locating a small object requires more than identifying its presence. In UAV imagery, a displacement of only a few pixels can change a box's overlap with the target substantially. VisDrone \cite{zhu2018visdrone} combines this sensitivity with crowded objects, occlusion, and extensive background. Spatial evidence near a predicted boundary is therefore useful for deciding how a localization hypothesis should be refined.
+
+
+Existing aerial detectors introduce additional visual information at different stages. Slicing Aided Hyper Inference (SAHI) \cite{akyon2022sahi} detects objects in resized image patches. LASOD-YOLO \cite{wang2026lasod} combines context modeling with detail-preserving feature fusion, while weather-aware drone-view detection \cite{kim2024weather} uses environmental context. These approaches motivate a complementary question: once a detector has estimated an object's location, how can it revisit that neighborhood to improve the prediction?
+
+
+DETR \cite{carion2020detr} formulates detection as set prediction, and RT-DETR \cite{zhao2024rtdetr} combines efficient feature encoding with query-based decoding. D-FINE \cite{peng2025dfine} extends localization with discrete edge distributions that are refined across decoder layers. An edge distribution represents candidate boundary positions; local visual features provide evidence for choosing among them. We connect these sources of information after base decoding. A visual expert samples features around the predicted box and uses them to update the edge distributions and class logits.
+
+
+The refined prediction has a second role during training: it can supervise the base decoder. That role requires selection. A shared query index need not correspond to the same object at every decoder layer, and a locally refined boundary may still be worse than the student's estimate. We therefore transfer localization targets only after checking matched-object identity, distribution support, edge quality, and the geometry of the proposed edge combination. Ground-truth detection losses directly train the expert; its detached distributions supervise the decoder. Shared P3 refinement supplies a common feature improvement to both paths.
+
+
+Our contribution is the combination of box-conditioned visual refinement with selective distributional supervision inside a detector. We specify how the expert obtains local evidence, produces residual predictions, and returns selected localization information to the decoder. VisDrone experiments evaluate the complete system against the stock RT-DETR-L reference, examine component choices on validation data, and measure the computational cost. A matched expert-equipped comparison provides the most direct evidence for the shared P3 design.
+
+
+\section{Related Work}
+
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,
+  every node/.style={font=\fontsize{9}{11}\selectfont,align=center},
+  box/.style={draw=bluegray,rounded corners=2pt,fill=paleblue,inner sep=4pt},
+  expert/.style={box,fill=palegreen},
+  arr/.style={-{Latex[length=2mm]},draw=bluegray,line width=.65pt},
+  train/.style={arr,dashed}]
+\node[anchor=west,font=\bfseries\fontsize{10}{12}\selectfont] at (0,5.1) {(a) Local visual refinement};
+\node[anchor=west,font=\bfseries\fontsize{10}{12}\selectfont] at (10.6,5.1) {(b) Selective supervision};
+\node[box,minimum width=2.4cm,minimum height=2.25cm] (features) at (1.25,2.7) {\textbf{Feature pyramid}\\P2\\P3 $\to$ shared F\\P4\\P5};
+\node[box,minimum width=2.6cm,minimum height=1.3cm] (decoder) at (4.25,3.5) {\textbf{Base decoder}\\6 layers\\300 queries};
+\node[box,minimum width=2.6cm,minimum height=1.2cm] (sample) at (4.25,1.45) {\textbf{Local sampling}\\41 points per scale\\3 feature scales};
+\node[expert,minimum width=2.65cm,minimum height=1.35cm] (expert) at (7.85,2.35) {\textbf{Visual expert}\\2 attention blocks\\Residual heads};
+\node[expert,minimum width=2.65cm,minimum height=.65cm] (out) at (7.85,.65) {\textbf{Final detections}};
+\draw[arr] (features.east |- decoder.west) -- (decoder.west);
+\node at (3,4.5) {P3(F), P4, P5};
+\draw[arr] (decoder.south) -- node[right] {boxes} (sample.north);
+\draw[arr] (features.east |- sample.west) -- (sample.west);
+\node at (4.25,.48) {P2, P3(F), P4};
+\draw[arr] (sample.east) -- (6.1,1.45) |- (expert.west);
+\draw[arr] (decoder.east) -- (7.85,3.5) -- (expert.north);
+\node at (7.8,4.15) {Query + distributions};
+\draw[arr] (expert.south) -- (out.north);
+\node[align=left,anchor=west] at (0,.65) {F: zero-initialized\\P3 residual refinement};
+\draw[gray!45] (10,0.12) -- (10,4.65);
+\node[expert,minimum width=6.4cm,minimum height=.95cm] (teacher) at (13.95,4.02) {\textbf{Directly supervised expert}\\Detach localization targets};
+\node[box,fill=palewarm,minimum width=6.4cm,minimum height=1.15cm] (select) at (13.95,2.32) {\textbf{Same matched object + valid support}\\Edge advantage + mixed-box IoU};
+\node[box,minimum width=6.4cm,minimum height=.8cm] (kd) at (13.95,.65) {\textbf{Localization KD $\to$ all base layers}};
+\draw[train] (teacher.south) -- (select.north);
+\draw[train] (select.south) -- (kd.north);
+\node[anchor=west] at (0,-.22) {P4 construction bypasses F. Solid arrows: prediction. Dashed arrows: training supervision.};
+\end{tikzpicture}
+\caption{Local visual refinement and supervision. The base decoder receives enhanced P3, P4, and P5. P2, enhanced P3, and P4 supply the expert. P4 construction bypasses P3 refinement. Solid arrows denote prediction; dashed arrows denote training. The expert produces the inference output and also supplies detached localization targets.}
+\label{fig:architecture}
+\end{figure*}
+
+
+\textbf{Visual context for aerial detection.} SAHI \cite{akyon2022sahi} increases the relative size of small objects through image slicing; LASOD-YOLO \cite{wang2026lasod} and weather-aware detection \cite{kim2024weather} introduce feature and environmental context. RemDet \cite{li2025remdet} revisits feature and downsampling design, while NRQO \cite{fang2025nrqo} addresses feature-fusion noise and query quality. Our refinement operates on local samples from the existing feature pyramid after the base decoder has predicted boxes.
+
+
+\textbf{Localization refinement and distillation.} BorderDet \cite{qiu2020borderdet} uses border features for localization, and Cascade-DETR \cite{ye2023cascadedetr} restricts decoder attention using previous box predictions. We build on this broader use of object-local evidence, with an additional expert that predicts residual edge distributions and supplies localization targets. D-FINE \cite{peng2025dfine} provides the adopted distribution representation; localization distillation \cite{zheng2022ld} transfers distributional knowledge. DETRDistill \cite{chang2023detrdistill} explicitly addresses teacher--student prediction correspondence through Hungarian matching. Here, supervision is selected among same-query predictions that share a matched object, then filtered by edge and decoded-box quality. SO-DETR \cite{zhang2025sodetr} and Dome-DETR \cite{hu2025domedetr} further motivate feature and query adaptation for small or tiny objects. Our focus is the connection between local visual refinement and selective supervision within one detector.
+
+
+\section{Method}
+
+\subsection{Distributional detection backbone}
+
+We build on Ultralytics RT-DETR-L with six decoder layers and 300 ordinary queries. For a query, layer l predicts a residual in four edge-distribution logits, with 33 bins per edge. Following D-FINE \cite{peng2025dfine}, the logits accumulate across layers and the distribution expectation gives a continuous edge distance:
+
+
+\begin{equation}\label{eq:distribution}
+\begin{aligned}
+z_l&=\sum_{t=0}^{l}\Delta z_t,\qquad p_{l,k}=\softmax(z_l)_k,\\
+d_l&=\sum_{k=0}^{32}p_{l,k}W_k.
+\end{aligned}\end{equation}
+
+The fixed support uses reg\_max=32, reg\_scale=4, and up=0.5. Let a be the positive fifteenth root of 3; the entries are $[-4,1-a^{15},\ldots,1-a,0,a-1,\ldots,a^{15}-1,4]$. We use the incoming reference boxes rather than additional preliminary-box predictions and disable distribution feedback. The base detector uses P3, P4, and P5; P2 is used only by the local expert. Figure 1 shows the prediction and supervision paths.
+
+
+\subsection{Box conditioned local visual expert}
+
+The expert revisits the final base box instead of introducing another image-level detection pass. Let its decoded center and size be $\hat c_i$ and $\hat v_i$. We define $T=\{-0.5,-0.25,0,0.25,0.5\}$. For each radius $r\in\{0.4,0.6\}$, the normalized offsets are $(-r,t)$, $(r,t)$, $(t,-r)$, and $(t,r)$, for $t\in T$. The union of these two 20-point patterns and one center point gives 41 samples. Figure 2 shows the normalized pattern; the image coordinates are
+
+
+\begin{equation}\label{eq:sampling}
+s_{i,k}=\sg(\hat c_i)+\omega_k\odot\sg(\hat v_i),\quad\omega_k\in\Omega.
+\end{equation}
+
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,every node/.style={font=\fontsize{9}{11}\selectfont}]
+\node[font=\bfseries\fontsize{9}{11}\selectfont] at (1.7,3.9) {Box-relative sampling};
+\draw[dashed,draw=bluegray,fill=paleblue!40] (.5,.75) rectangle (2.9,3.15);
+\fill[pointblue] (0.740,0.750) circle (.035);
+\fill[pointblue] (0.740,1.350) circle (.035);
+\fill[pointblue] (0.740,1.950) circle (.035);
+\fill[pointblue] (0.740,2.550) circle (.035);
+\fill[pointblue] (0.740,3.150) circle (.035);
+\fill[pointblue] (2.660,0.750) circle (.035);
+\fill[pointblue] (2.660,1.350) circle (.035);
+\fill[pointblue] (2.660,1.950) circle (.035);
+\fill[pointblue] (2.660,2.550) circle (.035);
+\fill[pointblue] (2.660,3.150) circle (.035);
+\fill[pointblue] (0.500,0.990) circle (.035);
+\fill[pointblue] (1.100,0.990) circle (.035);
+\fill[pointblue] (1.700,0.990) circle (.035);
+\fill[pointblue] (2.300,0.990) circle (.035);
+\fill[pointblue] (2.900,0.990) circle (.035);
+\fill[pointblue] (0.500,2.910) circle (.035);
+\fill[pointblue] (1.100,2.910) circle (.035);
+\fill[pointblue] (1.700,2.910) circle (.035);
+\fill[pointblue] (2.300,2.910) circle (.035);
+\fill[pointblue] (2.900,2.910) circle (.035);
+\draw[pointorange,line width=.6pt] (0.260,0.796) -- (0.306,0.750) -- (0.260,0.704) -- (0.214,0.750) -- cycle;
+\draw[pointorange,line width=.6pt] (0.260,1.396) -- (0.306,1.350) -- (0.260,1.304) -- (0.214,1.350) -- cycle;
+\draw[pointorange,line width=.6pt] (0.260,1.996) -- (0.306,1.950) -- (0.260,1.904) -- (0.214,1.950) -- cycle;
+\draw[pointorange,line width=.6pt] (0.260,2.596) -- (0.306,2.550) -- (0.260,2.504) -- (0.214,2.550) -- cycle;
+\draw[pointorange,line width=.6pt] (0.260,3.196) -- (0.306,3.150) -- (0.260,3.104) -- (0.214,3.150) -- cycle;
+\draw[pointorange,line width=.6pt] (3.140,0.796) -- (3.186,0.750) -- (3.140,0.704) -- (3.094,0.750) -- cycle;
+\draw[pointorange,line width=.6pt] (3.140,1.396) -- (3.186,1.350) -- (3.140,1.304) -- (3.094,1.350) -- cycle;
+\draw[pointorange,line width=.6pt] (3.140,1.996) -- (3.186,1.950) -- (3.140,1.904) -- (3.094,1.950) -- cycle;
+\draw[pointorange,line width=.6pt] (3.140,2.596) -- (3.186,2.550) -- (3.140,2.504) -- (3.094,2.550) -- cycle;
+\draw[pointorange,line width=.6pt] (3.140,3.196) -- (3.186,3.150) -- (3.140,3.104) -- (3.094,3.150) -- cycle;
+\draw[pointorange,line width=.6pt] (0.500,0.556) -- (0.546,0.510) -- (0.500,0.464) -- (0.454,0.510) -- cycle;
+\draw[pointorange,line width=.6pt] (1.100,0.556) -- (1.146,0.510) -- (1.100,0.464) -- (1.054,0.510) -- cycle;
+\draw[pointorange,line width=.6pt] (1.700,0.556) -- (1.746,0.510) -- (1.700,0.464) -- (1.654,0.510) -- cycle;
+\draw[pointorange,line width=.6pt] (2.300,0.556) -- (2.346,0.510) -- (2.300,0.464) -- (2.254,0.510) -- cycle;
+\draw[pointorange,line width=.6pt] (2.900,0.556) -- (2.946,0.510) -- (2.900,0.464) -- (2.854,0.510) -- cycle;
+\draw[pointorange,line width=.6pt] (0.500,3.436) -- (0.546,3.390) -- (0.500,3.344) -- (0.454,3.390) -- cycle;
+\draw[pointorange,line width=.6pt] (1.100,3.436) -- (1.146,3.390) -- (1.100,3.344) -- (1.054,3.390) -- cycle;
+\draw[pointorange,line width=.6pt] (1.700,3.436) -- (1.746,3.390) -- (1.700,3.344) -- (1.654,3.390) -- cycle;
+\draw[pointorange,line width=.6pt] (2.300,3.436) -- (2.346,3.390) -- (2.300,3.344) -- (2.254,3.390) -- cycle;
+\draw[pointorange,line width=.6pt] (2.900,3.436) -- (2.946,3.390) -- (2.900,3.344) -- (2.854,3.390) -- cycle;
+\draw[bluegray,line width=.8pt] (1.63,1.95)--(1.77,1.95) (1.7,1.88)--(1.7,2.02);
+\node[anchor=west,font=\bfseries\fontsize{9}{11}\selectfont] at (3.7,3.12) {At each feature scale};
+\fill[pointblue] (3.85,2.6) circle (.035); \node[anchor=west] at (4.08,2.6) {20 points at $r=0.4$};
+\draw[pointorange,line width=.6pt] (3.85,2.12)--(3.90,2.07)--(3.85,2.02)--(3.80,2.07)--cycle; \node[anchor=west] at (4.08,2.07) {20 points at $r=0.6$};
+\draw[bluegray,line width=.8pt] (3.78,1.54)--(3.92,1.54) (3.85,1.47)--(3.85,1.61); \node[anchor=west] at (4.08,1.54) {1 center point};
+\draw[gray!35] (3.7,1.1)--(7.55,1.1); \node[anchor=west,font=\bfseries\fontsize{9}{11}\selectfont] at (3.7,.72) {41 samples $\times$ 3 scales};
+\node[anchor=west] at (.15,.24) {Dashed box: base prediction};
+\end{tikzpicture}
+\caption{Normalized sampling pattern around a predicted box. Two 20-point patterns at r=0.4 and r=0.6, together with one center point, yield 41 samples at each of three feature scales.}
+\label{fig:sampling}
+\end{figure}
+
+
+Here sg stops gradients through the sampling coordinates. Bilinear sampling on P2, enhanced P3, and P4 gives 123 local tokens per query. Invalid coordinates are masked. Each scale is projected to 256 channels and receives a position embedding derived from the sample coordinates and scale index.
+
+
+The query is augmented with eight detached distribution statistics: the mean and entropy of each edge. The mean is computed in normalized, equally spaced bin-index coordinates and serves only as an input descriptor; geometric distances still use the nonuniform support in (1). The augmented query interacts with the local tokens through two attention blocks, each with eight heads and a feed-forward width of 1024. One query token is retained in the attention input even when every local sample is invalid.
+
+
+Two zero-initialized output heads predict residuals for the class logits and the 132 boundary logits. Adding these residuals to the final base predictions initially preserves their outputs. The same geometric decoder converts the refined distributions to boxes. During training, expert predictions reuse the final base layer's query-to-ground-truth assignment and receive classification, L1, generalized-IoU, and fine-grained localization (FGL) losses. Ground-truth losses directly optimize the expert, whose detached distributions provide localization targets for the base decoder.
+
+
+\subsection{Selective localization supervision}
+
+Additional local features do not make every expert prediction a suitable target. We first retain only student--teacher pairs sharing the same image, query, and matched ground-truth object. This check is applied to all six base layers, including the last. For each eligible edge, the untruncated target distance must lie within the representable support $[W_0,W_{32}]$.
+
+
+Let $\ell^S$ and $\ell^T$ be the student and expert edge losses obtained by interpolating the ground-truth distance between its two neighboring bins. With margin $m=0.02$ and scale $\tau=0.10$, we compute a detached edge weight:
+
+
+\begin{equation}\label{eq:edgegate}
+\begin{aligned}
+a_e&=\max\bigl(\sg(\ell^S_e-\ell^T_e)-m,0\bigr),\\
+r_e&=\mathbf{1}_{\mathrm{support}}\frac{a_e}{a_e+\tau}.
+\end{aligned}\end{equation}
+
+A second check tests the joint geometry of the candidate edges. We form an effective teacher by replacing only edges with positive $r_e$ and retaining the other student edges. These mixed distributions are decoded with the same geometry function. A query contributes to localization distillation only if the mixed box has strictly higher IoU with the matched target than the student box. Thus, the IoU test evaluates the actual combination of edges proposed for transfer.
+
+
+Let $w_{l,i,e}$ be the surviving weight, $A_l$ the positive-weight edges in layer l, and $\Lambda$ the layers with nonempty $A_l$. The loss averages over active edges and then active layers:
+
+
+\begin{equation}\label{eq:kd}
+\begin{aligned}
+L_{\mathrm{KD}}={}&\frac{1}{|\Lambda|}\sum_{l\in\Lambda}\frac{1}{|A_l|}
+\sum_{(i,e)\in A_l}w_{l,i,e}\\[-2pt]
+&\hspace{12mm}\cdot D_{\mathrm{KL}}\!\left(p^T_{i,e}\Vert p^S_{l,i,e}\right).
+\end{aligned}\end{equation}
+
+An empty active set gives zero loss. The normalization uses the number of active edges, not the sum of their weights. The teacher distributions and all selection calculations are detached; gradients flow through the student distributions.
+
+
+We apply localization distillation with weight 0.15 and no classification distillation. For completed epoch e, $\eta(e)$ is zero through epoch 10, rises linearly to one at epoch 20, remains one through epoch 80, and decreases linearly to zero at epoch 100. With the base detection loss $L_{\mathrm{det}}$, additional base FGL loss $L_{\mathrm{FGL}}$, and directly supervised expert loss $L_{\mathrm{expert}}$, the objective is
+
+
+\begin{equation}\label{eq:5}
+L=L_{\mathrm{det}}+L_{\mathrm{FGL}}+L_{\mathrm{expert}}+0.15\eta(e)L_{\mathrm{KD}}. 
+\end{equation}
+
+The expert's own single-layer FGL has weight 0.15 and remains active throughout training. At inference, matching and distillation are absent, while local sampling and the expert heads remain active.
+
+
+\subsection{Shared features and supporting localization rules}
+
+We refine P3 with two local residual blocks followed by channel and spatial gates. Each block uses pointwise projections, GELU, and a depthwise $3\times3$ convolution; the channel gate uses pooled features and the spatial gate uses a $7\times7$ convolution of channel-mean and channel-maximum maps. Writing the resulting transform as R, the shared feature is
+
+
+\begin{equation}\label{eq:6}
+\widetilde P_3=P_3+\gamma\bigl(R(P_3)-P_3\bigr),\qquad \gamma_{\mathrm{init}}=0. 
+\end{equation}
+
+Both the decoder and expert read this output. The downsampling branch that constructs P4 reads the original P3, so the refinement is confined to the P3 output rather than cascaded through every pyramid stage.
+
+
+For geometric validity, let the reference center and size be c and $(w,h)$, with $u=(w,h)/4$. Let $d^-$ and $d^+$ collect the left/top and right/bottom edge distances, respectively. The decoded center is $\hat c=c+(d^+-d^-)\odot u/2$, and the raw size is $v=(4+d^-+d^+)\odot u$. We constrain the size using $\delta=10^{-3}$ and machine precision $\varepsilon$:
+
+
+\begin{equation}\label{eq:7}
+\begin{aligned}
+f&=\max\{\delta\sg(u),8\epsilon\max(|\sg(\hat c)|,1)\},\\
+\hat v&=\sg(\max(v,f))+v-\sg(v).
+\end{aligned}\end{equation}
+
+The forward size is lower-bounded, while the backward path uses an identity surrogate gradient. Decoding uses at least FP32 with finite inputs and positive reference sizes. The resulting projection maintains usable positive box extents.
+
+
+Base FGL uses detached matching IoU as a quality weight. For eligible matches in the same image and layer, we shrink it toward the group mean: $q'_i=(1-\alpha_l)q_i+\alpha_l\bar q$, with $\alpha_l=0.25(1-l/5)$. Eligibility requires the left interpolation-bin index of all four edges to be strictly between 0 and 31. Singleton groups and ineligible matches retain their weights. The four edge losses are summed, normalized by the layer's matched-object count, and summed across layers with weight 0.15. Standard detection, auxiliary-layer, and original RT-DETR denoising losses are retained; no additional preliminary-box or denoising-FDR supervision is used. These rules define the distributional reference variant used below.
+
+
+\section{Experiments}
+
+\subsection{Experimental setup}
+
+We use VisDrone with 6,471 training, 548 validation, and 1,610 test images covering ten classes. Labels were converted through YOLO format and lack the complete original ignore-region information; the results describe this converted-label protocol. AP averages IoU thresholds from 0.50 to 0.95, while AP50 and AP75 use individual thresholds \cite{lin2014coco}. Values are percentages and differences are percentage points.
+
+
+RT-DETR-L and Full share a nominal recipe: scratch training for 100 epochs at $640\times640$, MuSGD with initial learning rate 0.01, AMP, physical batch eight, nominal batch 64, and seed zero. Baseline resumed its own run, and source revisions differ; this is a system comparison including the adopted distributional backbone. Component analysis uses native validation-selected results.
+
+
+Table 1 uses validation-selected checkpoints, shared converted annotations, and native RTDETRValidator: $640\times640$, FP32, batch eight, confidence 0.001, max\_det=300, without test-time augmentation or extra NMS. Baseline's selected epoch is also its final epoch. These evaluations were available during earlier development; test is not an untouched blind set.
+
+
+External D-FINE-L comparison uses a common pipeline: PIL bilinear stretching to $640\times640$, RGB/255, FP32, batch one, confidence 0.001, at most 300 predictions, and no test-time augmentation or extra NMS. Original-coordinate predictions enter COCOeval 2.0.11 with maxDet=300. Native and common results are reported separately.
+
+
+\subsection{Complete system and literature comparisons}
+
+Against stock RT-DETR-L (Table 1), Full improves AP from 17.743 to 23.604, with gains of 8.987 AP50 and 5.981 AP75. Section 4.3 separately examines components on validation data.
+
+
+\begin{table}[t]
+\caption{Complete-system VisDrone test comparison using the shared native evaluator at 640 and validation-selected checkpoints.}
+\label{tab:1}
+\centering\tablefont
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrr@{}}
+\toprule
+\textbf{Model} & \textbf{AP} & \textbf{AP50} & \textbf{AP75} \\
+\midrule
+RT-DETR-L & 17.743 & 32.254 & 17.565 \\
+\textbf{Full} & 23.604 & 41.241 & 23.546 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+Table 2 compares Full with D-FINE-L under common evaluation. D-FINE-L has 31.146M parameters and uses 100-epoch scratch training with AdamW (learning rate 0.00025), FP32, batch four without accumulation, 480--800 multiscale augmentation, and stage-best checkpoint restoration. These system results reflect different training recipes. Final checkpoints are primary; each model's native validation-selected best is also reported.
+
+
+\begin{table}[t]
+\caption{External VisDrone test comparison using the common evaluator and different training recipes. Final is primary; best is native validation-selected.}
+\label{tab:2}
+\centering\tablefont
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+\textbf{Model / checkpoint} & \textbf{AP} & \textbf{AP50} & \textbf{AP75} & \textbf{APs} \\
+\midrule
+D-FINE-L final & 22.554 & 38.656 & 22.720 & 13.338 \\
+\textbf{Full final} & 24.133 & 41.885 & 24.044 & 14.575 \\
+\midrule
+D-FINE-L best & 22.679 & 38.940 & 22.713 & 13.478 \\
+\textbf{Full best} & 24.229 & 42.009 & 24.208 & 14.618 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+Full exceeds D-FINE-L by 1.579 AP and 1.237 APs at the final endpoint; the advantage also appears at the validation-selected endpoint under these recipes.
+
+
+Table 3 adds published validation context: RemDet-L \cite{li2025remdet} has similar parameter count, while BDNet \cite{guan2026bdnet} reports higher AP with fewer parameters. All rows report 640 input without pretraining; training length, preprocessing, label handling, and model selection differ.
+
+
+\begin{table}[t]
+\caption{Published VisDrone validation results and our native result. Training and evaluation recipes differ across methods.}
+\label{tab:3}
+\centering\tablefont
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+\textbf{Method} & \textbf{Epochs} & \textbf{Params M} & \textbf{AP} & \textbf{AP50} \\
+\midrule
+RemDet-L \cite{li2025remdet} & 300 & 35.3 & 29.3 & 47.4 \\
+BDNet \cite{guan2026bdnet} & 300 & 2.59 & 31.2 & 50.5 \\
+\textbf{Full} & 100 & 35.244 & 30.109 & 49.890 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\subsection{Validation component analysis}
+
+In Table 4, G is the distributional reference with Section 3.4's localization rules; B combines the expert, direct supervision, and selective localization distillation; F is shared P3 refinement. Full is G+B+F. B and its supervision are evaluated jointly.
+
+
+\begin{table*}[t]
+\caption{Native validation and batch-eight inference efficiency at $640\times640$ on RTX 4090 in FP32. Times cover the full predict call; GFLOPs are per image. Amortized time equals batch time/8 and is not single-request latency. Throughput equals 8000/batch median in milliseconds.}
+\label{tab:4}
+\centering\tablefont
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrrr@{}}
+\toprule
+\textbf{Variant} & \textbf{Val AP} & \textbf{AP50} & \textbf{Params M} & \textbf{GFLOPs} & \textbf{\shortstack{Batch time\\(ms)}} & \textbf{\shortstack{Amortized\\(ms/img)}} & \textbf{\shortstack{Throughput\\(img/s)}} \\
+\midrule
+Baseline & 21.911 & 38.663 & 32.827 & 105.597 & 59.559 & 7.445 & 134.321 \\
+G & 29.620 & 49.382 & 33.157 & 105.804 & 66.200 & 8.275 & 120.846 \\
+G+F & 29.773 & 49.548 & 33.458 & 109.280 & 69.044 & 8.630 & 115.868 \\
+G+B & 29.277 & 48.783 & 34.942 & 130.575 & 104.897 & 13.112 & 76.266 \\
+\textbf{Full} & 30.109 & 49.890 & 35.244 & 134.051 & 107.920 & 13.490 & 74.129 \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+Full achieves the highest validation AP, 0.489 points above G. In these configurations, adding B without shared P3 refinement does not improve validation AP: G+B is below G.
+
+
+G+B and Full are the most directly matched pair: recorded training settings, shared source files, and shared initialization tensors agree, with additional state in the zero-initialized F branch. Adding F raises AP from 29.277 to 30.109 (+0.832), supporting shared P3 refinement within the expert-equipped configuration. Other historical configurations have less tightly controlled provenance.
+
+
+\subsection{Computational cost and scope}
+
+Measurements use PyTorch 2.5.1+cu121 and Ultralytics 8.4.90 on RTX 4090, eight CPU threads, with TF32 and cuDNN benchmarking disabled. Each variant uses batch eight with fixed random inputs, 100 warmup batches, and 300 CUDA-synchronized timed predict calls. Timing includes preprocessing, execution, postprocessing, and the lightweight expert-checking hook, but excludes disk I/O. We report the median batch time and its corresponding throughput. GFLOPs count two operations per multiply--accumulate for one image; parameters cover the complete unfused model.
+
+
+Full uses 35.244M parameters and 134.051 GFLOPs. At batch eight, it processes 74.129 images/s with 107.920 ms per batch, or 13.490 ms amortized per image. The amortized value measures batching efficiency, not single-request response latency. These are fixed-input throughput measurements.
+
+
+\newpage
+
+Relative to G, Full adds 2.087M parameters and 28.247 GFLOPs, while batch time rises from 66.200 to 107.920 ms. B adds 24.771 GFLOPs and F adds 3.476; the expert accounts for most added computation.
+
+
+Component-level conclusions are based on validation comparisons. The study uses one dataset and one seed, and evaluates the expert and its distillation jointly, without isolating each selection rule.
+
+
+\section{Conclusion}
+
+We presented a box-conditioned expert that uses local visual evidence to refine edge distributions and selectively supervise a UAV detector. The complete system improves over stock RT-DETR-L under the reported test protocol; matched validation evidence supports shared P3 refinement within the expert-equipped configuration. Local evidence thus informs both distributional prediction and supervision. Full processes 74.129 images/s in the fixed-input FP32 benchmark at batch eight, with expert cost the main opportunity for further efficiency improvements.
+
+
+\clearpage
+\begin{thebibliography}{99}
+\fontsize{9}{11.4}\selectfont\setlength{\itemsep}{2.5pt}\setlength{\parsep}{0pt}
+
+\bibitem{zhu2018visdrone} P. Zhu, L. Wen, X. Bian, H. Ling, and Q. Hu, ``Vision Meets Drones: A Challenge,'' arXiv:1804.07437, 2018.
+
+\bibitem{akyon2022sahi} F. C. Akyon, S. O. Altinuc, and A. Temizel, ``Slicing Aided Hyper Inference and Fine-tuning for Small Object Detection,'' in \emph{ICIP}, 2022, pp. 966--970, doi: \href{https://doi.org/10.1109/ICIP46576.2022.9897990}{\nolinkurl{10.1109/ICIP46576.2022.9897990}}.
+
+\bibitem{wang2026lasod} Z. Wang and J. X. Huang, ``LASOD-YOLO: A Lightweight Global Context Modeling for Aerial Small-Object Detection,'' in \emph{ICIP}, 2026, pp. 1--6, doi: \href{https://doi.org/10.1109/ICIP61757.2026.11630018}{\nolinkurl{10.1109/ICIP61757.2026.11630018}}.
+
+\bibitem{kim2024weather} H. Kim, D. Lee, S. Park, and Y. M. Ro, ``Weather-Aware Drone-View Object Detection via Environmental Context Understanding,'' in \emph{ICIP}, 2024, pp. 549--555, doi: \href{https://doi.org/10.1109/ICIP51287.2024.10647388}{\nolinkurl{10.1109/ICIP51287.2024.10647388}}.
+
+\bibitem{carion2020detr} N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and S. Zagoruyko, ``End-to-End Object Detection with Transformers,'' in \emph{ECCV}, 2020.
+
+\bibitem{zhao2024rtdetr} Y. Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y. Liu, and J. Chen, ``DETRs Beat YOLOs on Real-time Object Detection,'' in \emph{CVPR}, 2024, pp. 16965--16974.
+
+\bibitem{peng2025dfine} Y. Peng, H. Li, P. Wu, Y. Zhang, X. Sun, and F. Wu, ``D-FINE: Redefine Regression Task of DETRs as Fine-grained Distribution Refinement,'' in \emph{ICLR}, 2025.
+
+\bibitem{li2025remdet} C. Li, R. Zhao, Z. Wang, H. Xu, and X. Zhu, ``RemDet: Rethinking Efficient Model Design for UAV Object Detection,'' in \emph{AAAI}, 2025, pp. 4643--4651, doi: \href{https://doi.org/10.1609/aaai.v39i5.32490}{\nolinkurl{10.1609/aaai.v39i5.32490}}.
+
+\newpage
+
+\bibitem{fang2025nrqo} X. Fang, J. Cai, H. Liu, W. Cai, Y. Liu, and B. Chen, ``Revisiting DETR for Small Object Detection via Noise-Resilient Query Optimization,'' in \emph{ICME}, 2025.
+
+\bibitem{qiu2020borderdet} H. Qiu, Y. Ma, Z. Li, S. Liu, and J. Sun, ``BorderDet: Border Feature for Dense Object Detection,'' in \emph{ECCV}, 2020.
+
+\bibitem{ye2023cascadedetr} M. Ye, L. Ke, S. Li, Y.-W. Tai, C.-K. Tang, M. Danelljan, and F. Yu, ``Cascade-DETR: Delving into High-Quality Universal Object Detection,'' in \emph{ICCV}, 2023, pp. 6704--6714.
+
+\bibitem{zheng2022ld} Z. Zheng, R. Ye, P. Wang, D. Ren, W. Zuo, Q. Hou, and M.-M. Cheng, ``Localization Distillation for Dense Object Detection,'' in \emph{CVPR}, 2022, pp. 9407--9416.
+
+\bibitem{chang2023detrdistill} J. Chang, S. Wang, H.-M. Xu, Z. Chen, C. Yang, and F. Zhao, ``DETRDistill: A Universal Knowledge Distillation Framework for DETR-families,'' in \emph{ICCV}, 2023, pp. 6898--6908.
+
+\bibitem{zhang2025sodetr} H. Zhang, H. Zhang, A. Mei, Z. Gan, and G.-N. Zhu, ``SO-DETR: Leveraging Dual-Domain Features and Knowledge Distillation for Small Object Detection,'' in \emph{IJCNN}, 2025, doi: \href{https://doi.org/10.1109/IJCNN64981.2025.11229240}{\nolinkurl{10.1109/IJCNN64981.2025.11229240}}.
+
+\bibitem{hu2025domedetr} Z. Hu, P. Wu, J. Chen, H. Zhu, Y. Wang, Y. Peng, H. Li, and X. Sun, ``Dome-DETR: DETR with Density-Oriented Feature-Query Manipulation for Efficient Tiny Object Detection,'' in \emph{ACM Multimedia}, 2025, doi: \href{https://doi.org/10.1145/3746027.3754861}{\nolinkurl{10.1145/3746027.3754861}}.
+
+\bibitem{lin2014coco} T.-Y. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollar, and C. L. Zitnick, ``Microsoft COCO: Common Objects in Context,'' in \emph{ECCV}, 2014.
+
+\bibitem{guan2026bdnet} W. Guan, C. Lin, S. Huang, X. Wang, and X. Pang, ``BDNet:Bio-Inspired Dual-Backbone Small Object Detection Network,'' in \emph{CVPR}, 2026.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,44 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize,
+box/.style={draw=ink,rounded corners=2pt,align=center,minimum height=.8cm,inner sep=4pt},
+arr/.style={-{Latex[length=2mm]},line width=.65pt,draw=ink}]
+\node[anchor=west,font=\sffamily\bfseries\small] at (0,5.9) {(a) Box-relative sampling};
+\node[anchor=west,font=\sffamily\bfseries\small] at (5.4,5.9) {(b) Local evidence to residual predictions};
+\begin{scope}[shift={(2.1,3.6)},x=2.55cm,y=2.55cm]
+\draw[draw=ink,fill=basefill,line width=.8pt] (-.5,-.5) rectangle (.5,.5);
+\draw[dashed,gray] (-.72,0)--(.72,0);
+\draw[dashed,gray] (0,-.72)--(0,.72);
+% EXACT_SAMPLING_POINTS
+\node[above,font=\sffamily\scriptsize] at (0,.68) {Predicted box};
+\end{scope}
+\node[anchor=west,text=expertcolor,font=\sffamily\footnotesize] at (.2,1.55) {$\bullet$ $r=0.4$: 20 samples};
+\node[anchor=west,text=featurecolor,font=\sffamily\footnotesize] at (.2,1.12) {$\bullet$ $r=0.6$: 20 samples};
+\node[anchor=west,font=\sffamily\footnotesize] at (.2,.69) {$\bullet$ Center: 1 sample};
+\node[anchor=west,font=\sffamily\bfseries\footnotesize] at (.2,.16) {41 per level $\times$ 3 levels = 123 tokens};
+\draw[gray!45] (5.1,-.2)--(5.1,5.55);
+\node[box,fill=expertfill,text width=2.15cm] (tokens) at (6.65,4.6) {Bilinear samples\\$P_2,\widetilde P_3,P_4$\\256 channels};
+\node[box,fill=basefill,text width=2.15cm] (query) at (6.65,2.7) {Base query\\+ 8 detached\\edge statistics};
+\node[box,fill=expertfill,text width=2.15cm,minimum height=1.4cm] (attn) at (10,3.65) {Attention $\times2$\\8 heads\\FFN 1024};
+\node[box,fill=featurefill,text width=2.2cm] (cls) at (13.25,4.6) {Zero-init head\\Class residual};
+\node[box,fill=featurefill,text width=2.2cm] (edge) at (13.25,2.7) {Zero-init head\\132 edge residuals};
+\node[circle,draw=ink,minimum size=.42cm,inner sep=0pt] (pluscls) at (15.15,4.6) {$+$};
+\node[circle,draw=ink,minimum size=.42cm,inner sep=0pt] (plusedge) at (15.15,2.7) {$+$};
+\node[align=center,font=\sffamily\scriptsize] at (15.15,5.45) {Base class\\logits};
+\node[align=center,font=\sffamily\scriptsize] at (15.15,3.55) {Base edge\\logits};
+\node[align=center,font=\sffamily\scriptsize] (cp) at (16.25,4.6) {Refined\\classes};
+\node[align=center,font=\sffamily\scriptsize] (ep) at (16.25,2.7) {Softmax\\+ decode};
+\draw[arr] (tokens.east) -- ++(.35,0) |- (attn.west);
+\draw[arr] (query.east) -- ++(.35,0) |- (attn.west);
+\draw[arr] (attn.east) -- ++(.35,0) |- (cls.west);
+\draw[arr] (attn.east) -- ++(.35,0) |- (edge.west);
+\draw[arr] (cls)--(pluscls);\draw[arr] (edge)--(plusedge);
+\draw[arr] (15.15,5.08)--(pluscls);\draw[arr] (15.15,3.18)--(plusedge);
+\draw[arr] (pluscls)--(cp);\draw[arr] (plusedge)--(ep);
+\node[align=left,anchor=north west,text width=10.6cm] at (5.55,1.4) {\textbf{Prediction:} add residuals to logits, then normalize and decode.\\[3pt]
+\textbf{Direct training:} classification, L1, GIoU, and FGL losses using the final base assignment.\\[3pt]
+\textbf{Teacher role:} detached expert distributions supply the selection process in Fig.~\ref{fig:selection}.};
+\end{tikzpicture}
+\caption{Box-conditioned expert: mechanism schematic. (a) The exact 41-point pattern is repeated on three feature levels, producing 123 local tokens per query. Coordinates use the detached base center and size. (b) Local tokens and a distribution-augmented query produce residual class and boundary logits. The query token is retained even when every local sample is invalid.}
+\label{fig:expert}
+\end{figure*}

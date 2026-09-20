@@ -1,0 +1,531 @@
+
+===PDF PAGE 1===
+BDNet:Bio-Inspired Dual-Backbone Small Object Detection Network
+Supplementary Material
+A. Construction of ESCK
+Cross-orientation suppression (COS) [1, 2] is a key neu-
+ral modulation mechanism in the visual cortex. Its core
+principle is as follows: when a neuron prefers a specific
+orientation (such as vertical), if stimuli of other orienta-
+tions (such as horizontal) appear in its receptive field, in-
+hibitory interneurons reduce the firing rate of that neuron.
+This enhances the response to the target orientation signal
+while suppressing interference from non-preferred orienta-
+tions. This mechanism has been extensively studied and
+confirmed in the primary visual cortex (V1 area) and is one
+of the fundamental bases for achieving orientation selectiv-
+ity and information filtering in V1 neurons.
+To simulate the COS mechanism, we designed eight ES-
+CKs (Enhanced Selective Convolutional Kernels) in dif-
+ferent directions. Inspired by the concept of pixel differ-
+ence convolution [3], ESCK transforms the pixel differ-
+ence in the output into a difference in convolutional kernel
+weights. This enables the convolution operation to achieve a
+response pattern that enhances same-orientation inputs and
+suppresses cross-orientation inputs.
+Suppose the sliding operation of the original3×3con-
+volution kernel in the spatial dimension can be described as:
+y=
+9X
+i=1
+wi ·x i =W·X
+=
+
+
+w1 w2 w3
+w4 w5 w6
+w7 w8 w9
+
+ ·
+
+
+x1 x2 x3
+x4 x5 x6
+x7 x8 x9
+
+
+(1)
+0) To simulate the response characteristics of COS in the
+180◦ direction, i.e., enhancing co-oriented stimuli and sup-
+pressing cross-oriented stimuli, the pixel output is defined
+as:
+y′ =W·X ′ (2)
+X ′ =
+
+
+x1 −x 4 x2 −x 5 0
+x4 +x 1 +x 7 x5 +x 2 +x 8 0
+x7 −x 4 x8 −x 5 0
+
+ (3)
+Based on this, the differential computation form of the
+convolution kernel can be derived inversely as:
+y′ =W ′ ·X(4)
+W ′ =
+
+
+w1 +w 4 w2 +w 5 0
+w4 −w 1 −w 7 w5 −w 2 −w 8 0
+w7 +w 4 w8 +w 5 0
+
+ (5)
+Similarly, we sequentially derived the pixel outputs and
+convolutional kernel difference forms for the135 ◦,90 ◦,
+45◦,0 ◦,−45 ◦,−90 ◦ and−135 ◦ directions. The specific
+process is as follows:
+1) In the135 ◦ direction, theX ′ is:
+
+
+x1 + x2
+2 + x4
+2 x2 − x1
+2 − x5
+2 x3 −x 5
+x4 − x1
+2 − x5
+2 x5 + x2
+2 + x4
+2 +x 3 +x 7 0
+x7 −x 5 0 0
+
+
+(6)
+TheW ′ is:
+
+
+w1 − w2
+2 − w4
+2 w2 + w1
+2 + w5
+2 w3 +w 5
+w4 + w1
+2 + w5
+2 w5 − w2
+2 − w4
+2 −w 3 −w 7 0
+w7 +w 5 0 0
+
+
+(7)
+2) In the90 ◦ direction, theX ′ is:
+
+
+x1 −x 2 x2 +x 1 +x 3 x3 −x 2
+x4 −x 5 x5 +x 4 +x 6 x6 −x 5
+0 0 0
+
+ (8)
+TheW ′ is:
+
+
+w1 +w 2 w2 −w 1 −w 3 w3 +w 2
+w4 +w 5 w5 −w 4 −w 6 w6 +w 5
+0 0 0
+
+ (9)
+3) In the45 ◦ direction, theX ′ is:
+
+
+x1 −x 5 x2 − x3
+2 − x5
+2 x3 + x2
+2 + x6
+2
+0x 5 +x 1 +x 9 + x2
+2 + x6
+2 x6 − x3
+2 − x5
+2
+0 0x 9 −x 5
+
+
+(10)
+TheW ′ is:
+
+
+w1 +w 5 w2 + w3
+2 + w5
+2 w3 − w2
+2 − w6
+2
+0w 5 −w 1 −w 9 − w2
+2 − w6
+2 w6 + w3
+2 + w5
+2
+0 0w 9 +w 5
+
+
+(11)
+4) In the0 ◦ direction, theX ′ is:
+
+
+0x 2 −x 5 x3 −x 6
+0x 5 +x 2 +x 8 x6 +x 3 +x 9
+0x 8 −x 5 x9 −x 6
+
+ (12)
+TheW ′ is:
+
+
+0w 2 +w 5 w3 +w 6
+0w 5 −w 2 −w 8 w6 −w 3 −w 9
+0w 8 +w 5 w9 +w 6
+
+ (13)
+
+===PDF PAGE 2===
+5) In the−45 ◦ direction, theX ′ is:
+
+
+0 0x 3 −x 5
+0x 5 +x 3 +x 7 + x6
+2 + x8
+2 x6 − x5
+2 − x9
+2
+x7 −x 5 x8 − x5
+2 − x9
+2 x9 + x6
+2 + x8
+2
+
+
+(14)
+TheW ′ is:
+
+
+0 0w 3 +w 5
+0w 5 −w 3 −w 7 − w6
+2 − w8
+2 w6 + w5
+2 + w9
+2
+w7 +w 5 w8 + w5
+2 + w9
+2 w9 − w6
+2 − w8
+2
+
+
+(15)
+6) In the−90 ◦ direction, theX ′ is:
+
+
+0 0 0
+x4 −x 5 x5 +x 4 +x 6 x6 −x 5
+x7 −x 8 x8 +x 7 +x 9 x9 −x 8
+
+ (16)
+TheW ′ is:
+
+
+0 0 0
+w4 +w 5 w5 −w 4 −w 6 w6 +w 5
+w7 +w 8 w8 −w 7 −w 9 w9 +w 8
+
+ (17)
+7) In the−135 ◦ direction, theX ′ is:
+
+
+x1 −x 5 0 0
+x4 − x5
+2 − x7
+2 x5 +x 1 +x 9 + x4
+2 + x8
+2 0
+x7 + x4
+2 + x8
+2 x8 − x5
+2 − x7
+2 x9 −x 5
+
+
+(18)
+TheW ′ is:
+
+
+w1 +w 5 0 0
+w4 + w5
+2 + w7
+2 w5 −w 1 −w 9 − w4
+2 − w8
+2 0
+w7 − w4
+2 − w8
+2 w8 + w5
+2 + w7
+2 w9 +w 5
+
+
+(19)
+B. Experimental Support
+Experimental Setup.The baseline model for small ob-
+ject detection constructed in this study is based on the Ul-
+tralytics framework (version 8.3.78), with the optimized
+YOLO12 architecture as its core, as shown in Tab. A.
+It is implemented in a PyTorch 2.7.1 environment. The
+hardware configuration consists of a single NVIDIA RTX
+3090Ti GPU with 24GB VRAM (CUDA 12.4 + cuDNN
+9.5.1). For data augmentation, Mosaic augmentation, HSV
+jitter (hsv h: 0.015; hsv s: 0.7; hsv v: 0.4), horizontal flip-
+ping (p=0.5), and random erasing (p=0.4) were employed
+to suppress overfitting.
+Regarding training parameters, input images were uni-
+formly resized to 640×640, with a batch size of 8. The op-
+timizer used was SGD, with an initial learning rate of 0.01
+and a warm-up phase lasting three epochs. After warm-up,
+the learning rate was adjusted according to the scheduler,
+decreasing by2×10 −5 per epoch. The total number of
+Table A. Optimization details.
+Component YOLO12 Optimization details
+Backbone From P1 to P5 • From P1 to P4
+• P5 (Conv and A2C2f) removed
+Neck P4-P3-P4-P5
+• P3-P2-P3
+• Downsampling (C3k2) removed
+• Conv channels: 512
+• A2C2f channels: [512, 1024, 1024]
+Head P3, P4, P5 P2, P3
+training epochs was 300. Our model did not use any pre-
+trained weights during the entire training process.
+Datasets.The VisDrone2019, NWPU VHR-10, and AI-
+TODv2 datasets selected for this study exhibit significant
+differences in terms of object size, background complexity,
+and shooting perspective, enabling a comprehensive evalu-
+ation of the model’s adaptability and robustness across var-
+ious remote sensing scenarios.
+The VisDrone2019 dataset originates from remote sens-
+ing images captured from a drone perspective, simulating
+real-world drone inspection scenarios. It is characterized by
+typical small objects, dense distributions, and multiple oc-
+clusions. Most object sizes are smaller than32×32pixels,
+and they are noticeably affected by illumination variations
+and perspective distortion. The dataset covers 10 object cat-
+egories, including pedestrians and vehicles. According to
+the official standard, it is divided into 6,471 training im-
+ages, 548 validation images, and 1,610 test images, totaling
+approximately 2.6 million annotated objects. The diversity
+and complexity of this dataset make it an important bench-
+mark for evaluating model performance in complex urban
+scenarios [4].
+The NWPU VHR-10 dataset consists of very high-
+resolution (VHR) satellite imagery. Its main features are
+the large contrast differences between objects and the back-
+ground, as well as color or shape confusion in some cat-
+egories (e.g., storage tanks, tennis courts), thereby testing
+the model’s recognition capability under high-interference
+backgrounds. This dataset contains 10 categories of artifi-
+cial objects, such as airplanes and ships, with a total of 650
+positive sample images containing object annotations and
+150 negative sample images without targets. For the posi-
+tive sample portion, the commonly used academic split ratio
+of 8:1:1 was adopted, resulting in 520 training images, 65
+validation images, and 65 test images [5].
+The AI-TODv2 dataset focuses on aerial tiny object de-
+tection. Its core characteristic is that the average object size
+is only 12.8 pixels, significantly smaller than other remote
+sensing datasets, and it contains a large number of sub-pixel
+objects, making it highly challenging. This dataset covers
+8 object categories, including airplanes and bridges, with a
+uniform image resolution of800×800pixels. According
+
+===PDF PAGE 3===
+to the official split, the trainval set contains 11,214 train-
+ing images and 2,804 validation images, while the test set
+contains 14,018 test images, totaling 700,621 annotated in-
+stances. This dataset provides an ideal testbed for evaluat-
+ing model detection capability in very low-resolution and
+extremely small object scenarios [6].
+Evaluation Metrics.To comprehensively quantify
+model performance, this study adopts general evaluation
+metrics from the object detection field [7]. Following pre-
+vious work, the NWPU VHR-10 dataset primarily uses
+mAP50 (%) (mean Average Precision at an IoU threshold
+of 0.5) as the core metric to highlight the model’s detection
+accuracy for small objects and in high-resolution scenes.
+For the VisDrone2019 dataset, based on mAP 50 (%), the
+comprehensive metric mAP 50−95 (%) (mean Average Pre-
+cision over IoU thresholds from 0.5 to 0.95) is further intro-
+duced to more comprehensively evaluate the model’s detec-
+tion performance in complex urban scenarios. Additionally,
+the number of parameters (Params, M) and computational
+complexity (GFLOPs) are reported to evaluate the model’s
+inference efficiency and lightweight characteristics. The
+evaluation for the AI-TODv2 dataset follows the COCO of-
+ficial evaluation standard [8] to calculate AP (%) (overall
+Average Precision), AP 50 (%) (AP at IoU=0.5), and AP 75
+(%) (AP at IoU=0.75). Furthermore, to analyze the model’s
+performance across different object scales, based on the
+dataset’s scale division criteria, AP vt (%) (Average Preci-
+sion for objects≤8 pixels), AP t (%) (8–16 pixels), AP s
+(%) (16–32 pixels), and APm (%) (32–64 pixels) are further
+calculated to comprehensively reveal the model’s detection
+performance across tiny, very small, small, and medium-
+sized objects.
+C. Supplemental Analysis and Verification
+This section provides visual analysis of feature maps related
+to the core contributions of the main text. It also explores
+the diversity of color spaces, validates the extension to de-
+tection tasks, evaluates key component performance, and
+assesses generalization capabilities and deployment value,
+serving as a robust supplement to the experimental analysis
+in the main text.
+Visual Analysis of Feature Maps.To clearly demon-
+strate the model’s enhancement of key target features, we
+extracted and visualized feature maps before and after pro-
+cessing by CAM, VCHM, OrSM, and FFM, as shown in
+Fig. A. CAM and VCHM significantly improve color con-
+trast, which manifests as strong activations in high-contrast
+regions on the feature maps, while values in low-contrast
+regions change smoothly, exhibiting consistent responses
+across the area. Furthermore, to demonstrate that OrSM
+possesses stronger orientation selectivity, we conducted a
+frequency domain analysis. As shown in Fig. B, in the
+frequency domain, line brightness reflects response inten-
+sity for specific orientations, confirming that OrSM exhibits
+powerful orientation selectivity.
+Pre-CAM
+Post-FFM
+Post-VCHM
+Pre- OrSM Post-OrSM
+Post-CAM
+Pre-VCHM
+Pre-FFM
+From CIP
+From EIP
+Figure A. Feature Map Visualization: Pre- and Post-Processing by
+CAM, VCHM, OrSM, and FFM.
+Pre- OrSM Post-OrSM
+Figure B. Frequency Domain Analysis.
+Exploration of Color Space Diversity.Regarding the
+exploration of color space diversity, we conducted experi-
+ments across different color spaces, including RGB, HSV ,
+Lab, and Opponent (RG/BY). As shown in Tab. B, the re-
+sults demonstrate that our method performs best when pro-
+cessing RGB information directly.
+Table B. Color Space Diversity Exploration on the VisDrone2019
+Dataset.
+Method mAP 50 Params GFLOPs
+HSV 48.7 2.59 52.44
+Lab 49.1 2.59 52.44
+Opponent (RG/BY) 50.2 2.59 52.44
+RGB 50.5 2.59 52.44
+Validation of Extension to Detection Tasks.As shown
+in Tab. C, we compared the detection performance of hori-
+zontal bounding boxes (HBB) and oriented bounding boxes
+(OBB), validating the model’s potential for adaptation to
+rotated objects.
+Performance Evaluation of Key Components.While
+keeping the parameter count consistent, we conducted
+equivalent replacement experiments using standard convo-
+lutions to demonstrate that the color opponency of CAM,
+
+===PDF PAGE 4===
+Table C. Performance comparison of different detection heads
+with the same baseline model on HBB (VisDrone2019) and OBB
+(DOTA-v1.5) datasets.
+Method mAP 50 Params GFLOPs
+HBB 47.8 1.98 45.98
+HBB (Add OrSM) 48.3 (↑0.5) 2.04 47.13
+OBB 43.9 2.35 57.93
+OBB (Add OrSM) 44.8 (↑0.9) 2.41 59.08
+the hue enhancement of VCHM, and the orientation selec-
+tivity of OrSM directly contribute to the accuracy improve-
+ment, as shown in Tab. D. Furthermore, through compara-
+tive experiments with mainstream strategies such as Concat
+Plus 1×1 Conv, Cross-attention, and SE-style cross gating,
+we validated the superiority of the proposed FFM strategy
+in terms of both accuracy and efficiency, as presented in
+Tab. E. For multi-scale fusion methods, we conducted abla-
+tion experiments as shown in Tab. F, and the results demon-
+strate that our multi-scale fusion method is both simple and
+efficient.
+Table D. Replacement Ablation Experiments.
+Method mAP 50 Params GFLOPs
+CAM 48.0 1.98 46.39
+CAM-Replace 47.3 (↓0.7) 1.98 46.51
+VCHM 48.3 2.04 47.15
+VCHM-Replace 47.8(↓0.5) 2.04 47.34
+OrSM 48.3 2.04 47.13
+OrSM-Replace 47.5 (↓0.8) 2.04 47.35
+Table E. Performance Comparison of Fusion Methods.
+Method mAP 50 Params GFLOPs
+Concat Plus 1x1 conv 49.7 2.66 54.53
+Cross-attention 49.8 2.52 52.44
+SE-style cross gating 50.0 2.56 52.43
+FFM 50.5 2.59 52.44
+Table F. Performance Comparison of Multi-Scale Fusion Meth-
+ods.
+Method mAP 50 Params GFLOPs
+FPN 48.2 1.59 32.28
+Enhanced PANet 50.4 2.63 52.86
+Ours 50.5 2.59 52.44
+Generalization Capability.To validate the general-
+ization capability of BDNet, we conducted a cross-dataset
+evaluation by training on the AI-TODv2 dataset and test-
+ing on the VisDrone2019 dataset. The category mapping
+from VisDrone2019 to AI-TODv2 is as follows: pedes-
+trian/people→person; car/van/truck/bus→vehicle; re-
+dundant categories were discarded. The results in Tab. G
+demonstrate that BDNet exhibits strong generalization ca-
+pability.
+Table G. Cross-Dataset Validation.
+Method Vehicle Person mAP 50
+YOLO11 57.0 23.6 40.3
+YOLO12 62.6 35.8 49.2
+Ours64.9 36.3 50.6
+Validation of Deployment Value.Tab. H reports the
+model’s inference speed (FPS) and memory usage across
+different hardware platforms (e.g., GPU and edge de-
+vices). The tests were conducted with an input resolution
+of 640×640 and a batch size of 1. The results demonstrate
+that the model achieves high accuracy while maintaining
+practical deployment value.
+Table H. GPU/Edge Devices Deployment Value.
+Model Peak Memory Usage FPS Device
+YOLO12-I 1191.05MB 18.55 NVIDIA RTX 3090Ti
+BDNet (Ours) 1072.85MB 21.98 NVIDIA RTX 3090Ti
+YOLO12-I 2949.65MB 9.19 Jetson Orin Nano
+BDNet (Ours) 2810.02MB 10.16 Jetson Orin Nano
+References
+[1] Nicholas J. Priebe and David Ferster. Mechanisms un-
+derlying cross-orientation suppression in cat visual cor-
+tex.Nature Neuroscience, 9(4):552–561, 2006. 1
+[2] Gijs Joost Brouwer and David J. Heeger. Cross-
+orientation suppression in human visual cortex.Journal
+of Neurophysiology, 106(5):2108–2119, 2011. 1
+[3] Zhuo Su, Wenzhe Liu, Zitong Yu, Dewen Hu, Qing
+Liao, Qi Tian, Matti Pietik¨ainen, and Li Liu. Pixel dif-
+ference networks for efficient edge detection. InPro-
+ceedings of the IEEE/CVF International Conference on
+Computer Vision, pages 5117–5127, 2021. 1
+[4] Dawei Du, Pengfei Zhu, Longyin Wen, Xiao Bian,
+Haibin Lin, Qinghua Hu, Tao Peng, Jiayu Zheng,
+Xinyao Wang, Yue Zhang, et al. VisDrone-DET2019:
+The vision meets drone object detection in image chal-
+lenge results. InProceedings of the IEEE/CVF Inter-
+national Conference on Computer Vision Workshops,
+pages 0–0, 2019. 2
+[5] Chen Wang, Xiao Bai, Shuai Wang, Jun Zhou, and Peng
+Ren. Multiscale visual attention networks for object
+detection in VHR remote sensing images.IEEE Geo-
+science and Remote Sensing Letters, 16(2):310–314,
+2018. 2
+
+===PDF PAGE 5===
+[6] Chang Xu, Jinwang Wang, Wen Yang, Huai Yu, Lei
+Yu, and Gui-Song Xia. Detecting tiny objects in aerial
+images: A normalized Wasserstein distance and a new
+benchmark.ISPRS Journal of Photogrammetry and Re-
+mote Sensing, 190:79–93, 2022. 3
+[7] Rafael Padilla, Sergio L. Netto, and Eduardo A. B. Da
+Silva. A survey on performance metrics for object-
+detection algorithms. In2020 International Conference
+on Systems, Signals and Image Processing (IWSSIP),
+pages 237–242. IEEE, 2020. 3
+[8] Tsung-Yi Lin, Michael Maire, Serge Belongie, James
+Hays, Pietro Perona, Deva Ramanan, Piotr Doll ´ar, and
+C. Lawrence Zitnick. Microsoft coco: Common ob-
+jects in context. InEuropean Conference on Computer
+Vision, pages 740–755. Springer, 2014. 3

@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "split": "test",
+      "imgsz": 800,
+      "status": "complete"
+    },
+    {
+      "split": "test",
+      "imgsz": 640,
+      "status": "complete"
+    },
+    {
+      "split": "val",
+      "imgsz": 640,
+      "status": "complete"
+    },
+    {
+      "split": "val",
+      "imgsz": 800,
+      "status": "complete"
+    }
+  ]
+}

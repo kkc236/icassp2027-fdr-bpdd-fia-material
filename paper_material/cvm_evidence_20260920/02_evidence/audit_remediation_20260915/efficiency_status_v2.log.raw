@@ -1,0 +1,66 @@
+[?2004l
+CURRENT.json {
+  "status": "measuring",
+  "arm": "G",
+  "completed_arms": 1
+}
+
+FAILED.json {
+  "status": "failed",
+  "error": "KeyError('local_expert_preserve_base')",
+  "completed_arms": 1
+}
+
+initialization_probe.json {
+  "status": "pass",
+  "initial_state_sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B",
+  "compared_tensor_count": 994,
+  "mismatches": [],
+  "extra_keys_fia_only": true,
+  "extra_tensor_count": 19,
+  "fia_residual_scale": 0.0,
+  "kind": "replay_of_original_initialization_not_new_training"
+}
+
+LOG_TAIL Overriding model.yaml nc=80 with nc=10
+WARNING ⚠️ no model scale passed. Assuming scale='l'.
+Overriding model.yaml nc=80 with nc=10
+WARNING ⚠️ no model scale passed. Assuming scale='l'.
+Traceback (most recent call last):
+  File "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v2/measure.py", line 194, in <module>
+    main()
+  File "/root/sj-tmp/evidence/audit-remediation-efficiency-20260915-v2/measure.py", line 142, in main
+    for _ in range(100): detector.predict(**kwargs)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/engine/model.py", line 541, in predict
+    return self.predictor.predict_cli(source=source) if is_cli else self.predictor(source=source, stream=stream)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/engine/predictor.py", line 229, in __call__
+    return list(self.stream_inference(source, model, *args, **kwargs))  # merge list of Results into one
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 36, in generator_context
+    response = gen.send(None)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/engine/predictor.py", line 311, in stream_inference
+    self.model.warmup(
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/nn/autobackend.py", line 314, in warmup
+    self.forward(im)  # warmup model
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/nn/autobackend.py", line 278, in forward
+    y = self.backend.forward(im, **forward_kwargs)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/nn/backends/pytorch.py", line 90, in forward
+    return self.model(im, augment=augment, visualize=visualize, embed=embed, **kwargs)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/nn/tasks.py", line 154, in forward
+    return self.predict(x, *args, **kwargs)
+  File "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/rtdetr_fdr.py", line 382, in predict
+    output = super().predict(
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/nn/tasks.py", line 934, in predict
+    x = head([y[j] for j in head.f], batch)  # head inference
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/src/fdr_head.py", line 204, in forward
+    if not bool(self.fdr_options["local_expert_preserve_base"]):
+KeyError: 'local_expert_preserve_base'
+
+CODEX_DONE_e954b948d6314489b6828fc2ad4029c30

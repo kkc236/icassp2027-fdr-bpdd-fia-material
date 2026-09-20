@@ -1,0 +1,168 @@
+{
+  "status": "complete_under_declared_convention",
+  "date": "2026-09-15",
+  "protocol": {
+    "input": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "classes": 10,
+    "dtype": "float32",
+    "warmup": 2,
+    "model_mode": "eval",
+    "fusion": "native model.fuse; same checkpoint as latency report",
+    "seed": 20260915,
+    "scope": "executed model forward including decoder/expert and in-model decoding; excludes image I/O, external preprocessing/evaluator/NMS, training losses",
+    "convention": "dense_scalar_arithmetic_v1_mac2_transcendental1",
+    "mac_flops": 2,
+    "transcendental_equivalent_ops": 1,
+    "explicitly_excluded": [
+      "comparison/selection/predicates",
+      "integer and index arithmetic",
+      "memory movement/views/casts",
+      "nearest-neighbor copies"
+    ],
+    "dense_nominal_work": true,
+    "hardware_instruction_count": false
+  },
+  "environment": {
+    "python": "3.10.21",
+    "torch": "2.5.1+cu121",
+    "cuda": "12.1",
+    "ultralytics": "8.4.90",
+    "gpu": "NVIDIA GeForce RTX 4090"
+  },
+  "rows": [
+    {
+      "arm": "Baseline",
+      "parameters_unfused": 32826626,
+      "parameters_fused": 32004290,
+      "gflops": 105.5965654,
+      "major_mac_gflops": 105.2921856,
+      "additional_arithmetic_gflops": 0.3043798,
+      "median_ms": 30.592406867071986,
+      "fps": 32.68784977740166,
+      "checkpoint_sha256": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+      "composite_operator_types": 54,
+      "composite_operator_calls": 950,
+      "lowered_operator_types": 50,
+      "unsupported_operator_types": 0
+    },
+    {
+      "arm": "G",
+      "parameters_unfused": 33156614,
+      "parameters_fused": 32334278,
+      "gflops": 105.803983606,
+      "major_mac_gflops": 105.4975632,
+      "additional_arithmetic_gflops": 0.306420406,
+      "median_ms": 42.78777935542166,
+      "fps": 23.3711591268475,
+      "checkpoint_sha256": "DF76A0C8BD5B215D378ACB87EB240D7D1DFB44190167CD8C1E19F86FA18C969D",
+      "composite_operator_types": 70,
+      "composite_operator_calls": 1383,
+      "lowered_operator_types": 66,
+      "unsupported_operator_types": 0
+    },
+    {
+      "arm": "G+F",
+      "parameters_unfused": 33458090,
+      "parameters_fused": 32635754,
+      "gflops": 109.280383606,
+      "major_mac_gflops": 108.913308736,
+      "additional_arithmetic_gflops": 0.36707487,
+      "median_ms": 43.849003966897726,
+      "fps": 22.805535121274705,
+      "checkpoint_sha256": "C7E6E6B72A0C14A60EF27A91F70F7D80B0D9C53B6FE0021A21787546D5466D63",
+      "composite_operator_types": 72,
+      "composite_operator_calls": 1412,
+      "lowered_operator_types": 67,
+      "unsupported_operator_types": 0
+    },
+    {
+      "arm": "G+B",
+      "parameters_unfused": 34942100,
+      "parameters_fused": 34119764,
+      "gflops": 130.574994487,
+      "major_mac_gflops": 129.973956,
+      "additional_arithmetic_gflops": 0.601038487,
+      "median_ms": 85.41500405408442,
+      "fps": 11.707544957403552,
+      "checkpoint_sha256": "661A27E0BE7BD7E7685E7A8AC889D558E0051306FF0BB72ACC8F154C023A377A",
+      "composite_operator_types": 85,
+      "composite_operator_calls": 3087,
+      "lowered_operator_types": 80,
+      "unsupported_operator_types": 0
+    },
+    {
+      "arm": "Full",
+      "parameters_unfused": 35243576,
+      "parameters_fused": 34421240,
+      "gflops": 134.051394487,
+      "major_mac_gflops": 133.389701536,
+      "additional_arithmetic_gflops": 0.661692951,
+      "median_ms": 86.07465052045882,
+      "fps": 11.617822366438922,
+      "checkpoint_sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6",
+      "composite_operator_types": 87,
+      "composite_operator_calls": 3116,
+      "lowered_operator_types": 81,
+      "unsupported_operator_types": 0
+    }
+  ],
+  "verification": {
+    "runtime_receipt": {
+      "status": "pass",
+      "completed_inventory": {
+        "status": "inventory_complete",
+        "arms": 5
+      },
+      "source_sha256": {
+        "src/fdr_head.py": "FAF52C3FFA49F5A1CC94BE49D773CB849817917C65DEBEB09F4C47D376AC23FC",
+        "src/fdr_math.py": "AC60364C008B048D3DFDA619354CE3C1C0E5367B3D8A55DE54C49EE43EBEBB9A",
+        "src/fdr_loss.py": "AC60523868EBFDEAEAF63E906095225813F6C250A833F2BEB1FEEA84585C2ECB",
+        "src/bpdd_capacity.py": "38DF591604AC891219A66AD9E4FF48240880C9711D4B81E1672C80C8EF3B8DB9",
+        "src/bpdd_capacity_loss.py": "DEE01D47AB6BACBE120B21F7F6CD0F82D4131890CAF1E2C7966BF10882E4EEF2",
+        "src/rtdetr_bpdd_capacity.py": "AB1693AC97B1875CBF4A8A5E608B1BBA097FB50B35BFE335B40149B3BCD9FE75",
+        "src/rtdetr_bpdd_capacity_fia.py": "9E40ECF65129AB5BEF05391D0415B229968B5E929B515D71C9670C94F7AD6550",
+        "src/fia.py": "2686C028429CCB2260EA46C6031E1C55DC2E4D43A09D211BE5CA4134585457A1"
+      },
+      "checkpoint_sha256_after": {
+        "Baseline": "9C242711F44B7E68B360AF904AB7C44F64505C7136B7E7F90481092AE3308AF7",
+        "G": "DF76A0C8BD5B215D378ACB87EB240D7D1DFB44190167CD8C1E19F86FA18C969D",
+        "G+F": "C7E6E6B72A0C14A60EF27A91F70F7D80B0D9C53B6FE0021A21787546D5466D63",
+        "G+B": "661A27E0BE7BD7E7685E7A8AC889D558E0051306FF0BB72ACC8F154C023A377A",
+        "Full": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6"
+      },
+      "environment": {
+        "python": "3.10.21",
+        "torch": "2.5.1+cu121",
+        "cuda": "12.1",
+        "ultralytics": "8.4.90",
+        "gpu": "NVIDIA GeForce RTX 4090"
+      },
+      "trace_script_sha256": "35062763FA24EF8A70DEE2F914E878B35212829651984BF7005E6241678BEAFF",
+      "gpu_compute_processes": "",
+      "training_started": false,
+      "checkpoint_files_written": false,
+      "uavdt_in_scope": false
+    },
+    "source_snapshots_sha256": {
+      "counter_source.py": "aa8d08ac5e884f720bb612f87d694b2b39cf6a0ecbff960d3419cfd5ea9488db",
+      "formula_tests.py": "d8731f88e32343d31a8d9592747f67f22a8ae02bb79e003bb7070cb5e4abdebb"
+    },
+    "inventory_sha256": "20d37f3e80c8640a962c71332a21cb89b6a7836efad822ae0254b04ef9d0bd46",
+    "arithmetic_count_sha256": "9aa868aa68897a536f013a6aa2e9803a39a91d5ef60d9058fc9d51879d7bc2de",
+    "all_observed_ops_classified": true,
+    "unknown_arithmetic_treated_as_zero": false,
+    "all_outputs_identical_across_modes": true,
+    "all_major_counts_match_lowered_and_official_registry": true,
+    "all_registered_operator_counts_individually_match": true,
+    "remaining_scalar_difference_fully_explained_by_isfinite_decomposition": true
+  },
+  "whole_module_policy": "Capacity-BPDD is evaluated as a whole; independent KD-only attribution is not claimed",
+  "training_started": false,
+  "uavdt_in_scope": false,
+  "github_pushed": false
+}

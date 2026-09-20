@@ -1,0 +1,344 @@
+{
+  "red.xml": {
+    "suites": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "19",
+        "skipped": "0",
+        "tests": "30",
+        "time": "4.876",
+        "timestamp": "2026-09-06T12:14:10.432666+08:00",
+        "hostname": "kkc"
+      }
+    ],
+    "relevant_cases": [
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype0]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype1]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype2]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype3]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype0]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype1]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype2]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype3]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype0]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype1]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype2]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype3]",
+        "status": "failure",
+        "failure_message": "AssertionError: a separate precision-safe decoder is required\nassert False\n +  where False = callable(None)",
+        "failure_text": "E   AssertionError: a separate precision-safe decoder is required\n    assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_keeps_ordinary_boxes_and_preserves_asymmetric_center",
+        "status": "failure",
+        "failure_message": "assert False\n +  where False = callable(None)",
+        "failure_text": "E   assert False\n     +  where False = callable(None)"
+      },
+      {
+        "classname": "tests.test_fdr_feasible_geometry",
+        "name": "test_decoder_geometry_survives_actual_cpu_bfloat16_autocast",
+        "status": "failure",
+        "failure_message": "assert tensor(False)\n +  where tensor(False) = <built-in method all of type object at 0x00007FFB50C2C2D0>(tensor([[[[0., 0.],\\n          [0., 0.]]],\\n\\n\\n        [[[0., 0.],\\n          [0., 0.]]],\\n\\n\\n        [[[0., 0.],\\n          ...]]],\\n\\n\\n        [[[0., 0.],\\n          [0., 0.]]],\\n\\n\\n        [[[0., 0.],\\n          [0., 0.]]]], grad_fn=<SliceBackward0>) > 0)\n +    where <built-in method all of type object at 0x00007FFB50C2C2D0> = torch.all",
+        "failure_text": "E   assert tensor(False)\n     +  where tensor(False) = <built-in method all of type object at 0x00007FFB50C2C2D0>(tensor([[[[0., 0.],\\n          [0., 0.]]],\\n\\n\\n        [[[0., 0.],\\n          [0., 0.]]],\\n\\n\\n        [[[0., 0.],\\n          ...]]],\\n\\n\\n        [[[0., 0.],\\n          [0., 0.]]],\\n\\n\\n        [[[0., 0.],\\n          [0., 0.]]]], grad_fn=<SliceBackward0>) > 0)\n     +    where <built-in method all of type object at 0x00007FFB50C2C2D0> = torch.all"
+      }
+    ]
+  },
+  "numerical.xml": {
+    "suites": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "42",
+        "time": "4.938",
+        "timestamp": "2026-09-06T12:16:26.908892+08:00",
+        "hostname": "kkc"
+      }
+    ],
+    "relevant_cases": [
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype0]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype1]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype2]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype3]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype0]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype1]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype2]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype3]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype0]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype1]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype2]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype3]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_keeps_ordinary_boxes_and_preserves_asymmetric_center",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_fdr_feasible_geometry",
+        "name": "test_decoder_geometry_survives_actual_cpu_bfloat16_autocast",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      }
+    ]
+  },
+  "regression-final.xml": {
+    "suites": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "1",
+        "tests": "177",
+        "time": "204.673",
+        "timestamp": "2026-09-06T12:46:04.479687+08:00",
+        "hostname": "kkc"
+      }
+    ],
+    "relevant_cases": [
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype0]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype1]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype2]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.1-dtype3]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype0]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype1]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype2]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[1e-08-dtype3]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype0]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype1]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype2]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_retains_positive_xyxy_extent[0.0-dtype3]",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_no_server_correctness",
+        "name": "test_feasible_decode_keeps_ordinary_boxes_and_preserves_asymmetric_center",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      },
+      {
+        "classname": "tests.test_fdr_feasible_geometry",
+        "name": "test_decoder_geometry_survives_actual_cpu_bfloat16_autocast",
+        "status": "passed",
+        "failure_message": null,
+        "failure_text": null
+      }
+    ]
+  }
+}

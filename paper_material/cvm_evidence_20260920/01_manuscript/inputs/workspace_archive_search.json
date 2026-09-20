@@ -1,0 +1,518 @@
+[
+  {
+    "path": ".\\artifacts\\gcmv-ei-67aab316-results.tar.gz",
+    "status": "large_archive_deferred",
+    "bytes": 342947178
+  },
+  {
+    "path": ".\\nwd_patch.tgz",
+    "status": "listed",
+    "files": 6,
+    "candidates": []
+  },
+  {
+    "path": ".\\btdse_refine_detach_config.tgz",
+    "status": "listed",
+    "files": 2,
+    "candidates": []
+  },
+  {
+    "path": ".\\btdse_enhance_warmup_patch.tgz",
+    "status": "listed",
+    "files": 5,
+    "candidates": []
+  },
+  {
+    "path": ".\\nwd_matcher_patch.tgz",
+    "status": "listed",
+    "files": 4,
+    "candidates": []
+  },
+  {
+    "path": ".\\p2_residual_v1_patch.tgz",
+    "status": "listed",
+    "files": 8,
+    "candidates": []
+  },
+  {
+    "path": ".\\p2_fuse_v1_patch.tgz",
+    "status": "listed",
+    "files": 5,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\VisDrone2019-DET-test-dev.zip",
+    "status": "excluded_known_image_dataset"
+  },
+  {
+    "path": ".\\tmp-work\\visdrone-test-images-labels.tar",
+    "status": "excluded_known_image_dataset"
+  },
+  {
+    "path": ".\\btdse_safety_configs.tgz",
+    "status": "listed",
+    "files": 2,
+    "candidates": []
+  },
+  {
+    "path": ".\\btdse_refine_v1_patch.tgz",
+    "status": "listed",
+    "files": 7,
+    "candidates": []
+  },
+  {
+    "path": ".\\ioqc_pretrained_screen_patch.tgz",
+    "status": "listed",
+    "files": 2,
+    "candidates": []
+  },
+  {
+    "path": ".\\docs\\evidence\\rtdetr-100ep-5090-adaptive-results.tar.gz",
+    "status": "listed",
+    "files": 7,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\root-fia-web-audit-20260817\\fia-seed0-20260815-211156.zip",
+    "status": "listed",
+    "files": 25,
+    "candidates": [
+      {
+        "name": "fia-seed0-20260815-211156/val_batch0_pred.jpg",
+        "bytes": 1104427
+      },
+      {
+        "name": "fia-seed0-20260815-211156/val_batch1_pred.jpg",
+        "bytes": 842772
+      },
+      {
+        "name": "fia-seed0-20260815-211156/val_batch2_pred.jpg",
+        "bytes": 1011702
+      }
+    ]
+  },
+  {
+    "path": ".\\tmp-work\\root-fia-web-audit-20260817\\fdr-fia-seed0-20260815-211203.zip",
+    "status": "listed",
+    "files": 25,
+    "candidates": [
+      {
+        "name": "fdr-fia-seed0-20260815-211203/val_batch0_pred.jpg",
+        "bytes": 1103657
+      },
+      {
+        "name": "fdr-fia-seed0-20260815-211203/val_batch1_pred.jpg",
+        "bytes": 851490
+      },
+      {
+        "name": "fdr-fia-seed0-20260815-211203/val_batch2_pred.jpg",
+        "bytes": 1012672
+      }
+    ]
+  },
+  {
+    "path": ".\\docs\\evidence\\release_assets\\rtdetr-100ep-5090-adaptive-results.tar.gz",
+    "status": "listed",
+    "files": 7,
+    "candidates": []
+  },
+  {
+    "path": ".\\docs\\evidence\\release_assets\\btdse-innovation1-complete.zip",
+    "status": "listed",
+    "files": 14,
+    "candidates": [
+      {
+        "name": "btdse-innovation1-complete/val_batch0_pred.jpg",
+        "bytes": 1092512
+      }
+    ]
+  },
+  {
+    "path": ".\\docs\\evidence\\btdse-innovation1-complete.zip",
+    "status": "listed",
+    "files": 14,
+    "candidates": [
+      {
+        "name": "btdse-innovation1-complete/val_batch0_pred.jpg",
+        "bytes": 1092512
+      }
+    ]
+  },
+  {
+    "path": ".\\output\\cvm_lrs_gfdr_revision_20260916\\CVM2027_LRS_GFDR_REVISED.zip",
+    "status": "listed",
+    "files": 53,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\release-dfr-bdpp-fia-20260817\\fia-seed0-20260815-211156.zip",
+    "status": "listed",
+    "files": 25,
+    "candidates": [
+      {
+        "name": "fia-seed0-20260815-211156/val_batch0_pred.jpg",
+        "bytes": 1104427
+      },
+      {
+        "name": "fia-seed0-20260815-211156/val_batch1_pred.jpg",
+        "bytes": 842772
+      },
+      {
+        "name": "fia-seed0-20260815-211156/val_batch2_pred.jpg",
+        "bytes": 1011702
+      }
+    ]
+  },
+  {
+    "path": ".\\tmp-work\\release-dfr-bdpp-fia-20260817\\fdr-fia-seed0-20260815-211203.zip",
+    "status": "listed",
+    "files": 25,
+    "candidates": [
+      {
+        "name": "fdr-fia-seed0-20260815-211203/val_batch0_pred.jpg",
+        "bytes": 1103657
+      },
+      {
+        "name": "fdr-fia-seed0-20260815-211203/val_batch1_pred.jpg",
+        "bytes": 851490
+      },
+      {
+        "name": "fdr-fia-seed0-20260815-211203/val_batch2_pred.jpg",
+        "bytes": 1012672
+      }
+    ]
+  },
+  {
+    "path": ".\\output\\icip_latex_20260916\\ICIP_LATEX_READY.zip",
+    "status": "listed",
+    "files": 13,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\icip_latex_20260916\\ICIP_LATEX_BATCH8_ONLY.zip",
+    "status": "listed",
+    "files": 13,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\icip_latex_20260916\\history\\before_batch8\\ICIP_LATEX_READY.zip",
+    "status": "listed",
+    "files": 13,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\cvm_latex_20260916\\CVM2027_REWRITE_READY.zip",
+    "status": "listed",
+    "files": 36,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\cvm_evidence_staging_20260916\\qualitative\\qualitative_handoff_small.zip",
+    "status": "listed",
+    "files": 6,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\cvm_monitoring_revision_20260916\\CVM2027_MONITORING_REVISED.zip",
+    "status": "listed",
+    "files": 56,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\cvm_evidence_revision_20260916\\CVM2027_EVIDENCE_REVISED.zip",
+    "status": "listed",
+    "files": 84,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\ioqc-sa-source.tar.gz",
+    "status": "listed",
+    "files": 76,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\gcmv-plec-624ba8f6.tar",
+    "status": "listed",
+    "files": 334,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\gcmv-plec-252ac9ed.tar",
+    "status": "listed",
+    "files": 334,
+    "candidates": []
+  },
+  {
+    "path": ".\\output\\cvm_adversarial_revision_20260916\\CVM2027_ADVERSARIAL_REVISED.zip",
+    "status": "listed",
+    "files": 38,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\corrected-upload\\fia-p3-only-final-20260819.tar.gz",
+    "status": "listed",
+    "files": 19,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\candidate.zip",
+    "status": "listed",
+    "files": 8,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\bpdd-fdr-work.zip",
+    "status": "listed",
+    "files": 742,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\bpdd-capacity-v1-dafdbd5.tar.gz",
+    "status": "listed",
+    "files": 645,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\bpdd-capacity-overlay-dafdbd5.tar.gz",
+    "status": "listed",
+    "files": 7,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\dfine_release_20260914\\dfine-l-visdrone-bs4-cross-20260914-evidence.tar.gz",
+    "status": "listed",
+    "files": 7,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\dfine_release_20260914\\dfine-bs4-common-eval-evidence-20260915.tar.gz",
+    "status": "listed",
+    "files": 31,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\dfine-stable-e91f0b1.tar.gz",
+    "status": "listed",
+    "files": 181,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\dfine-source-267a6da.tar.gz",
+    "status": "listed",
+    "files": 150,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\dfine-probe-23cd8c.tar.gz",
+    "status": "listed",
+    "files": 179,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp\\visdrone-yolo.tar.gz",
+    "status": "excluded_known_image_dataset"
+  },
+  {
+    "path": ".\\tmp\\visdrone-yolo.tar",
+    "status": "excluded_known_image_dataset"
+  },
+  {
+    "path": ".\\tmp\\all_experiments_20260915\\capacity_v2_fia_release\\visdrone-lrs-gfdr-capacity-v2-fia-20260911-evidence.tar.gz",
+    "status": "listed",
+    "files": 8,
+    "candidates": [
+      {
+        "name": "./full-runtime.jsonl",
+        "bytes": 75952
+      }
+    ]
+  },
+  {
+    "path": ".\\tmp\\all_experiments_20260915\\server-inventory.tar.gz",
+    "status": "listed",
+    "files": 21,
+    "candidates": []
+  },
+  {
+    "path": ".\\downloads\\rtdetr-100ep-5090-adaptive-20260714\\rtdetr-100ep-5090-adaptive-results.tar.gz",
+    "status": "listed",
+    "files": 7,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\dfine-bs4-eval-tools-20260914.tar.gz",
+    "status": "listed",
+    "files": 8,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\cvm2027_official_template\\template.zip",
+    "status": "listed",
+    "files": 9,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\icip_latex_template\\LaTeX_template.zip",
+    "status": "listed",
+    "files": 8,
+    "candidates": []
+  },
+  {
+    "path": ".\\runs\\detect\\runs\\baselines\\20260709-162555.zip",
+    "status": "listed",
+    "files": 43,
+    "candidates": [
+      {
+        "name": "smoke-rtdetr/val_batch0_pred.jpg",
+        "bytes": 296990
+      },
+      {
+        "name": "smoke-rtdetr/val_batch1_pred.jpg",
+        "bytes": 316217
+      },
+      {
+        "name": "smoke-rtdetr/val_batch2_pred.jpg",
+        "bytes": 305502
+      },
+      {
+        "name": "smoke-yolo-2/val_batch0_pred.jpg",
+        "bytes": 316096
+      },
+      {
+        "name": "smoke-yolo-2/val_batch1_pred.jpg",
+        "bytes": 303067
+      },
+      {
+        "name": "smoke-yolo-2/val_batch2_pred.jpg",
+        "bytes": 346915
+      }
+    ]
+  },
+  {
+    "path": ".\\downloads\\matched-baseline-100ep-results-only.zip",
+    "status": "listed",
+    "files": 21,
+    "candidates": [
+      {
+        "name": "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch0_pred.jpg",
+        "bytes": 1102049
+      },
+      {
+        "name": "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch1_pred.jpg",
+        "bytes": 848236
+      },
+      {
+        "name": "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch2_pred.jpg",
+        "bytes": 1024058
+      }
+    ]
+  },
+  {
+    "path": ".\\p2_residual_v2_patch.tgz",
+    "status": "listed",
+    "files": 5,
+    "candidates": []
+  },
+  {
+    "path": ".\\downloads\\ioqc-sa-code-6ac536d1.zip",
+    "status": "listed",
+    "files": 79,
+    "candidates": []
+  },
+  {
+    "path": ".\\downloads\\ioqc-sa-code-58d2c779.zip",
+    "status": "listed",
+    "files": 79,
+    "candidates": []
+  },
+  {
+    "path": ".\\downloads\\FDR-YAMLs-v1.zip",
+    "status": "listed",
+    "files": 5,
+    "candidates": []
+  },
+  {
+    "path": ".\\downloads\\FDR-YAML-Declarative-v1-overlay.zip",
+    "status": "listed",
+    "files": 32,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\fia-p3-only-final-20260819.corrected.tar.gz",
+    "status": "listed",
+    "files": 19,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\github-matched-baseline-final\\matched-baseline-100ep-results-only.zip",
+    "status": "listed",
+    "files": 21,
+    "candidates": [
+      {
+        "name": "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch0_pred.jpg",
+        "bytes": 1102049
+      },
+      {
+        "name": "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch1_pred.jpg",
+        "bytes": 848236
+      },
+      {
+        "name": "scratch-rtdetr-l-btdse-matched-baseline-100ep/val_batch2_pred.jpg",
+        "bytes": 1024058
+      }
+    ]
+  },
+  {
+    "path": ".\\tmp-work\\fia-p3-only-final-20260819.tar.gz",
+    "status": "listed",
+    "files": 19,
+    "candidates": []
+  },
+  {
+    "path": ".\\downloads\\btdse-innovation1-complete.zip",
+    "status": "listed",
+    "files": 14,
+    "candidates": [
+      {
+        "name": "btdse-innovation1-complete/val_batch0_pred.jpg",
+        "bytes": 1092512
+      }
+    ]
+  },
+  {
+    "path": ".\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\literature\\dfine_uav_sources_2026-08-21.zip",
+    "status": "listed",
+    "files": 12,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\audit_remediation_20260915\\source-a43056af2a843ec9bae109d3420367c13f3bcef6.tar.gz",
+    "status": "listed",
+    "files": 239,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\audit_remediation_20260915\\source-5ef57473e89e3b91aa5236a18066aed99f5afc0f.tar.gz",
+    "status": "listed",
+    "files": 242,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\material-equal-update\\.download\\equal-material-evidence-20260821.tar.gz",
+    "status": "listed",
+    "files": 5,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\material-equal-update\\.download\\equal-seed0-formal100-20260821.tar.gz",
+    "status": "listed",
+    "files": 11,
+    "candidates": []
+  },
+  {
+    "path": ".\\tmp-work\\lrs-fdr-material-freeze\\paper_material\\evidence\\no_server_correctness_v2_20260906\\source.zip",
+    "status": "listed",
+    "files": 602,
+    "candidates": []
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "revision": "cvm_uavdt_revision_20260919",
+  "status": "reviewed_and_packaged",
+  "pages": 13,
+  "tables": 6,
+  "figures": 4,
+  "references": 25,
+  "main_tex_sha256": "9d78076f1ce60d34e29917f65b01d87ca812b6d38e9422b4e3264352125364bf",
+  "pdf_sha256": "978d8eb663bc37bf4815fb8ad2ad055f403695fccec8514d6d36725ca56c4e8e",
+  "zip": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/CVM2027_SUBMISSION_READY.zip",
+  "zip_sha256": "2124f38b121d09efe0261cd02048baf26831db02d17b4b0aceed7f74e7809f36",
+  "zip_entries": 213,
+  "figure_zip": "C:/Users/16946/Documents/OBJECTIVE CHECK PAPER/output/cvm_uavdt_revision_20260919/CVM_FIGURES.zip",
+  "portable_assembly_verified": true,
+  "standalone_compile_verified": true,
+  "visual_review": "passed_all_13_pages",
+  "uavdt": {
+    "numeric_cells_checked": 18,
+    "raw_text_exports_verified": true,
+    "AP_gain": 2.84,
+    "current_full_identity": "author_confirmed_not_checkpoint_verified",
+    "official_split_mapping": "unverified",
+    "new_training": false
+  },
+  "new_training": false,
+  "new_model_evaluation": false,
+  "external_submission_performed": false,
+  "pending_metadata": [
+    "real CVM paper ID",
+    "UAVDT actual checkpoint/configuration record",
+    "UAVDT official split mapping"
+  ]
+}

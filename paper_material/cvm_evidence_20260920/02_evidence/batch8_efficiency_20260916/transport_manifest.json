@@ -1,0 +1,49 @@
+{
+  "transport_sha256": "9fbf1e20f2fa8626712b7afa7c2bb1bf103e01b57439898d79cfd1553d3df090",
+  "files": {
+    "v1/CURRENT.json": {
+      "sha256": "61e2f0bd85c42fa2234679ef0cbf759dba6cbe64d7527bfa85043f6cc059e571",
+      "size": 50
+    },
+    "v1/COMPLETE.json": {
+      "sha256": "7e13d5caa012ec32b045211f36bbfa8fedfc45356eddcfd148093ce48895443b",
+      "size": 211
+    },
+    "v1/deployment.json": {
+      "sha256": "a26c0ff582a5cbc62fa128e1980fab0ba5bc46fb8bd0c9a4c5a17a9d8d37114b",
+      "size": 538
+    },
+    "v1/measurement.log": {
+      "sha256": "ffadf2a7c691b1524ea9fbf9be015bd25c811d02c8902d8c15a2f77093ae2540",
+      "size": 3999
+    },
+    "v1/measure.py": {
+      "sha256": "49bc64aa228c18e3200884ad551ec68fe63a69e12d72e1b17d1072f2fc586136",
+      "size": 10938
+    },
+    "v1/efficiency.json": {
+      "sha256": "ce2dcfb4c31bdc87918a3d6f4334852c167dbaf0914a51c1b4e0217d755fe9dc",
+      "size": 50385
+    },
+    "v1/Baseline.json": {
+      "sha256": "8e06b505760b3df17dd314fefe33b5356a3454482dd2ca54a5154b7319f328cd",
+      "size": 7935
+    },
+    "v1/G.json": {
+      "sha256": "08d577ab2552e910adee6c99ee674262afa434336e14436e2b264f53c4854b8e",
+      "size": 7948
+    },
+    "v1/G_F.json": {
+      "sha256": "3d3b0e88b7c7927b519759b6785b94b590d3a5a9a060b62472c777cd82ee4edd",
+      "size": 7943
+    },
+    "v1/G_B.json": {
+      "sha256": "684eac1ce9c6a628d360306dd96b97778ab7a4536e001bf31d56fb3abf3c8d06",
+      "size": 8142
+    },
+    "v1/Full.json": {
+      "sha256": "cb326e299d58c7fe1981e50074fc2b23afcc3569042589b78abfe0f1d99dc45c",
+      "size": 8139
+    }
+  }
+}

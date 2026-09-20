@@ -1,0 +1,177 @@
+{
+  "bundle_sha256": "da58eaeab16c0f40484c09808cfef3cd05fb74b88c780397f0c14dc7f0f5ad48",
+  "files": [
+    {
+      "path": "files\\ANALYSIS.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/ANALYSIS.json",
+      "sha256": "1313647a62b13b5a7339ece78939cba93ef51941e31da62543604e7c66e234e0"
+    },
+    {
+      "path": "files\\B_anchor800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_anchor800/summary.json",
+      "sha256": "618ceed2ef17fc807f8bbc0e167e05bb58b79051214f222443ca4295521260af"
+    },
+    {
+      "path": "files\\B_boxwh800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_boxwh800/summary.json",
+      "sha256": "f513fa12d45771eb19ab3c6caa7aaa6730273b8e32a97309d82e436d2b9f8a19"
+    },
+    {
+      "path": "files\\B_fp16anchors800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_fp16anchors800/summary.json",
+      "sha256": "9d0e3a62e8fe19babd9a9bbf7b0631dea2f1606352dd984f58baf73aa8a38172"
+    },
+    {
+      "path": "files\\B_fresh640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_fresh640/summary.json",
+      "sha256": "ad02dac78a7dcbe246423df0718c34244e9a320aa4cc851e2f0d7c358bc5ec57"
+    },
+    {
+      "path": "files\\B_fresh800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_fresh800/summary.json",
+      "sha256": "55813884317709452cbbd372e06338b0e5cc0a8530f4ad339a0cf173a780fa5e"
+    },
+    {
+      "path": "files\\B_native640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_native640/summary.json",
+      "sha256": "b30200d0a0a6d8609bced4413922e263544f326fe7c9501cc751896b5ee77105"
+    },
+    {
+      "path": "files\\B_native800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_native800/summary.json",
+      "sha256": "e930253ab2d966f3b0a6d1aee6d685aaec94ee1c6a3c291e8c64a70222f975a6"
+    },
+    {
+      "path": "files\\B_nofuse800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_nofuse800/summary.json",
+      "sha256": "504395c6cc4c358a2b728833e60b2eae62fb59cae3d0204123ffb413829c23c4"
+    },
+    {
+      "path": "files\\COMPLETE.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/COMPLETE.json",
+      "sha256": "e39e300290924d01a37124085986f0881b15702ab89962d5fd857a5a9c555bbc"
+    },
+    {
+      "path": "files\\CURRENT.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/CURRENT.json",
+      "sha256": "34f56043a1e89d049a4398eceb738cf5920b40372d9da5153dc7fbb4b4b7a6ff"
+    },
+    {
+      "path": "files\\G_native640\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/G_native640/summary.json",
+      "sha256": "bd295d88140f797a1c78df19477fcbe3dff7f6d1d8d9cdd9ef1705b14e7bd228"
+    },
+    {
+      "path": "files\\G_native800\\summary.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/G_native800/summary.json",
+      "sha256": "795e58117e401cb763962041fa4607b2d2f0bce9561c3b444166e86363d74739"
+    },
+    {
+      "path": "files\\PRECISION_COMPLETE.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/PRECISION_COMPLETE.json",
+      "sha256": "a31e32f3a27292c2cadf8e837fb596d827523d10057c28f6b91cbdca6d4874b8"
+    },
+    {
+      "path": "files\\PRECISION_STATUS.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/PRECISION_STATUS.json",
+      "sha256": "a31e32f3a27292c2cadf8e837fb596d827523d10057c28f6b91cbdca6d4874b8"
+    },
+    {
+      "path": "files\\STATUS.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/STATUS.json",
+      "sha256": "e39e300290924d01a37124085986f0881b15702ab89962d5fd857a5a9c555bbc"
+    },
+    {
+      "path": "files\\decoder_sources.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/decoder_sources.json",
+      "sha256": "48e84c701da26d4977145ce28651b659b464f9ac4bb396737d1bec1c0eb0763e"
+    },
+    {
+      "path": "files\\diagnose.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/diagnose.py",
+      "sha256": "1832832718f21ea863068ff7b4dec8159c087a94424479294a930954ff1ad814"
+    },
+    {
+      "path": "files\\diagnose_precision.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/diagnose_precision.py",
+      "sha256": "65c64b8fe85f9785ca8edb700ea10a1ea0c9328f7c99db046052784efd3cbc87"
+    },
+    {
+      "path": "files\\precision_runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/precision_runner.log",
+      "sha256": "37eccfc77a27bfbe94546ed001cc2a6c6408953fa12490d06ddbc165ee9728cd"
+    },
+    {
+      "path": "files\\precision_runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/precision_runner.py",
+      "sha256": "890de33be62517400b9d12c3651ca2d869af54010dd19a684574ef6c47f1ce0c"
+    },
+    {
+      "path": "files\\runner.log",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/runner.log",
+      "sha256": "1b3b901fc4b5bfc52cfe8a4f153fab9ec02f24a64fe0f7ffbb476ba01d9a4aba"
+    },
+    {
+      "path": "files\\runner.py",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/runner.py",
+      "sha256": "eeef9147c2357a77d7c1aa0989fcaffa99d8fd9360f5629ae215319c2761a7bb"
+    },
+    {
+      "path": "files\\sources.json",
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/sources.json",
+      "sha256": "2c64d6f5d8a002c3cdf1dc2e28c25bba5b5f8f012a8198543003304cc833dc0c"
+    }
+  ],
+  "remote_raw_predictions": [
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_anchor800/predictions.pt",
+      "sha256": "131f672311e990174d49f0bca66821989cfa383baf0f991480a45a6be4829960",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_boxwh800/predictions.pt",
+      "sha256": "5fd744136716ba6e14f24f50506b576d30c488bd5fdb6b767b4c02574611d91c",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_fp16anchors800/predictions.pt",
+      "sha256": "2dc51b3cbf4003b63b64cce3b0ebaea0d6dbf14f5dbd82c21c27cdaa939580f2",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_fresh640/predictions.pt",
+      "sha256": "0a5b01eb631eedaa1f7c6f1bcc913aabdd5c5a7582d32bb395c78d0ce9721501",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_fresh800/predictions.pt",
+      "sha256": "9365b2e570ababd5343848c14e774b0dd757d8e9467686ce0c58b25c6eaea402",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_native640/predictions.pt",
+      "sha256": "fab3ace274b1300cdbca409a9b60c4b4a44f55c6a0e503efefd3418850ee9dc8",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_native800/predictions.pt",
+      "sha256": "9365b2e570ababd5343848c14e774b0dd757d8e9467686ce0c58b25c6eaea402",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/B_nofuse800/predictions.pt",
+      "sha256": "b11769f92c18682507d4310035026cc1356dc858180414285ac8ba9975440080",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/G_native640/predictions.pt",
+      "sha256": "2d163e99a39dac6d1c5e76f990d33bf66b88ec3716a6579a602086b47ef1e8fe",
+      "bytes": 10475002
+    },
+    {
+      "remote_path": "/root/sj-tmp/evidence/baseline800_diagnosis_20260915/G_native800/predictions.pt",
+      "sha256": "378a32dc901908ce97c6a5572c48b5a90020de0de18b7b68a8c7e5b1b8b70373",
+      "bytes": 10475002
+    }
+  ]
+}

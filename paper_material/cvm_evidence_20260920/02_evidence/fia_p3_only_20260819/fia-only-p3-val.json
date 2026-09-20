@@ -1,0 +1,152 @@
+{
+  "format_version": 1,
+  "generated_at": "2026-08-19T12:16:38.509602+00:00",
+  "variant": "fia_only",
+  "checkpoint": {
+    "path": "/home/ubuntu/p3-only-ablation/source/runs/fia-p3-only-seed0-20260819-095856/weights/best.pt",
+    "sha256": "c00cae89aaeb722854f8c845d14507c3598f75d509c2b12a3222b35a004157a6",
+    "selection": "best.pt"
+  },
+  "dataset": {
+    "name": "VisDrone",
+    "split": "val",
+    "images": 548,
+    "instances": 38759,
+    "data_yaml": "/home/ubuntu/p3-only-ablation/VisDrone-val-as-test.yaml",
+    "data_yaml_sha256": "e04ce418942f8efe02ce8b174cbece0004fe3d6be2d07f7e6fbbbab0117cbfe6"
+  },
+  "protocol": {
+    "imgsz": 640,
+    "batch": 8,
+    "workers": 8,
+    "conf": 0.001,
+    "max_det": 300,
+    "nms": false,
+    "cache": false,
+    "half": false,
+    "rect": false
+  },
+  "graph_identity": {
+    "fia_layer": 22,
+    "fia_layer_from": -1,
+    "layer_23_from": 21,
+    "decoder_from": [
+      22,
+      25,
+      28
+    ]
+  },
+  "metrics": {
+    "precision": 0.4871962209136635,
+    "recall": 0.42531734343807504,
+    "f1": 0.4509443663180429,
+    "map50": 0.39874518726363956,
+    "map75": 0.2218076018094571,
+    "map": 0.22705639514425527
+  },
+  "per_class": [
+    {
+      "class": "pedestrian",
+      "precision": 0.5393788313839029,
+      "recall": 0.44075079149706015,
+      "f1": 0.4851024625710901,
+      "map50": 0.4438810179643528,
+      "map75": 0.13190730835940082,
+      "map": 0.19090022989080252
+    },
+    {
+      "class": "people",
+      "precision": 0.4853382562855667,
+      "recall": 0.3731614170399181,
+      "f1": 0.4219209793235193,
+      "map50": 0.35240798404755297,
+      "map75": 0.06273289617504296,
+      "map": 0.1312308409726593
+    },
+    {
+      "class": "bicycle",
+      "precision": 0.2936405372241281,
+      "recall": 0.1919191919191919,
+      "f1": 0.2321249116692623,
+      "map50": 0.14492278481728915,
+      "map75": 0.038827214058890114,
+      "map": 0.05940832227789135
+    },
+    {
+      "class": "car",
+      "precision": 0.7448067996413542,
+      "recall": 0.815149293175321,
+      "f1": 0.778392083053548,
+      "map50": 0.812689912218368,
+      "map75": 0.6117619404184949,
+      "map": 0.5509212906491647
+    },
+    {
+      "class": "van",
+      "precision": 0.5053601153353752,
+      "recall": 0.519371939205919,
+      "f1": 0.5122702309074373,
+      "map50": 0.48145893864443734,
+      "map75": 0.36940602185625293,
+      "map": 0.32982490682954396
+    },
+    {
+      "class": "truck",
+      "precision": 0.4892130423757679,
+      "recall": 0.332,
+      "f1": 0.3955580870924257,
+      "map50": 0.3299567361172603,
+      "map75": 0.2416379920265706,
+      "map": 0.21567325055336978
+    },
+    {
+      "class": "tricycle",
+      "precision": 0.4018998071110429,
+      "recall": 0.32248803827751193,
+      "f1": 0.35784112393501083,
+      "map50": 0.2622726573681081,
+      "map75": 0.1274488669906482,
+      "map": 0.1361346392611928
+    },
+    {
+      "class": "awning-tricycle",
+      "precision": 0.2738368904335298,
+      "recall": 0.18796992481203006,
+      "f1": 0.2229204853903273,
+      "map50": 0.13072973434618482,
+      "map75": 0.08005749798400288,
+      "map": 0.07701717064280567
+    },
+    {
+      "class": "bus",
+      "precision": 0.597529760498624,
+      "recall": 0.5537848605577689,
+      "f1": 0.5748262534757465,
+      "map50": 0.5414142867961111,
+      "map75": 0.43282953277939495,
+      "map": 0.37820495832468276
+    },
+    {
+      "class": "motor",
+      "precision": 0.5409581688473435,
+      "recall": 0.5165779778960294,
+      "f1": 0.5284870457620615,
+      "map50": 0.48771782031673144,
+      "map75": 0.12146674744587287,
+      "map": 0.20124834204044037
+    }
+  ],
+  "speed_ms_per_image": {
+    "preprocess": 0.38830587043669956,
+    "inference": 6.25791237540849,
+    "loss": 0.0010964252058090302,
+    "postprocess": 0.1589992519847906
+  },
+  "save_dir": "/home/ubuntu/p3-only-ablation/pipeline-20260819-fdr-pair-fia-p3-v2/evidence/runs/fia_only",
+  "evaluation_transport": {
+    "entrypoint_split_argument": "test",
+    "semantic_split": "val",
+    "reason": "The frozen evaluator accepts split=test; its data YAML test key was bound byte-explicitly to VisDrone images/val.",
+    "raw_record": "fia-only-p3-val-raw-transport.json"
+  }
+}

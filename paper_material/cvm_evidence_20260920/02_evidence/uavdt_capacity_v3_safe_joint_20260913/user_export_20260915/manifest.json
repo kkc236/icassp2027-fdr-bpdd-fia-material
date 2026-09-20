@@ -1,0 +1,37 @@
+{
+  "format_version": 1,
+  "source_type": "user_supplied_local_export",
+  "source_directory": "C:/Users/16946/Downloads/exp/exp",
+  "received_at": "2026-09-15",
+  "dataset": "UAVDT",
+  "experiment": "LRS-GFDR + Capacity-BPDD-v3-Safe + FIA",
+  "method_identity": {
+    "status": "author_confirmed_current_joint",
+    "confirmed_at": "2026-09-15",
+    "scope": "The user confirms this export is the current UAVDT joint method. This attestation identifies the method but does not supply a checkpoint or frozen evaluation manifest."
+  },
+  "split": "val",
+  "training_completion": "100 epochs (as reported in server screenshot/context)",
+  "metrics_source": "paper_data.txt",
+  "selection_status": "exact_export_of_existing_H12_run; not a new training arm",
+  "metric_notes": [
+    "The export reports all-class averages at four decimal places.",
+    "The export is retained as the exact four-decimal record for the current joint method.",
+    "No best epoch, seed, dataset manifest, checkpoint, or raw prediction files are present in this local export."
+  ],
+  "files": {
+    "paper_data.txt": {"sha256": "76DEFFF8CF85031C4FE70885DEC6652FCF1BD4D18E8D07D39549BDB303AF084F"},
+    "BoxF1_curve.png": {"sha256": "1C44973BB06EFC102F0E3EEB33C291AE358000CE23373801EBE65432798F371A"},
+    "BoxP_curve.png": {"sha256": "5510F241D4F5CA51328BE236F4449AA5DB6C743A2DA1B5F8FB6FB26FC2D006DE"},
+    "BoxPR_curve.png": {"sha256": "A5487BB3110F5530530AECF0F8D28022CCA5D5580A67B9ACC5C463A3F85CEEAC"},
+    "BoxR_curve.png": {"sha256": "8408049B5A6FBA53D67B774E10A3E533696D0BA970631D7BEF9CC5610963B2DA"},
+    "confusion_matrix.png": {"sha256": "34812DBB6E4413EE0AC48CDAE1C6812674D74DC9F9A334A846875DB28B53ECF4"},
+    "confusion_matrix_normalized.png": {"sha256": "4E42C4A5366D303FC77C72BF863CC2FF7228264C2B549D0B4C00B9A4E572C94F"},
+    "val_batch0_labels.jpg": {"sha256": "3483C721A23A1007D7DDBA260AB5D7EBD3FC72F3406926BA6B9E8CCB776970FB"},
+    "val_batch0_pred.jpg": {"sha256": "86F3592DD95006684372C5954CD7E8F2E61B1B0DA43533C65F384F36134D7BDC"},
+    "val_batch1_labels.jpg": {"sha256": "1434A664760AC0A015B94F20D1DEDED30D12F2808E556C5C72FDDAFE0AEAB1EC"},
+    "val_batch1_pred.jpg": {"sha256": "100F64AB13EFC0EC975BEF3FB51128935E06329A2B621982249761D3C51FB6DA"},
+    "val_batch2_labels.jpg": {"sha256": "CDE544F0275519244FF4441416F2DD0382B142FF135C97A3D07C9D9E21F61E9E"},
+    "val_batch2_pred.jpg": {"sha256": "796839FE77B4EA615ABF2EF9CDE3C7D92780204A03B0E9A81B42DCE7742B67D5"}
+  }
+}

@@ -1,0 +1,857 @@
+      TexHOI: Reconstructing Textures of 3D Unknown Objects in Monocular
+                       Hand-Object Interaction Scenes
+
+                        Alakh Aggarwal                                    Ningna Wang
+                 The University of Texas at Dallas                The University of Texas at Dallas
+                  alakh.aggarwal@utdallas.edu                         ningna.wang@utdallas.edu
+
+                                                  Xiaohu Guo
+                                         The University of Texas at Dallas
+                                                 xguo@utdallas.edu
+
+
+
+                       Abstract                                  in accurately modeling and replicating their texture in vir-
+                                                                 tual environments.
+   Reconstructing 3D models of dynamic, real-world ob-
+jects with high-fidelity textures from monocular frame              In recent years, there has been an increase in the avail-
+sequences has been a challenging problem in recent               ability of standardized datasets designed to capture hand-
+years. This difficulty stems from factors such as shad-          object interactions, such as HO3D [21] and DexYCB [7],
+ows, indirect illumination, and inaccurate object-pose           which are built on YCB-models [56], or Contact-Pose [5]
+estimations due to occluding hand-object interactions.           dataset. These datasets provide crucial insights into how
+To address these challenges, we propose a novel ap-              hands manipulate everyday objects, like sugar boxes and
+proach that predicts the hand’s impact on environ-               snack containers, in dynamic scenarios. However, a ma-
+mental visibility and indirect illumination on the ob-           jor challenge remains in effectively utilizing these datasets
+ject’s surface albedo. Our method first learns the ge-           due to the complex shadowing and reflection effects that
+ometry and low-fidelity texture of the object, hand,             hands cast on object surfaces. Accurately capturing and
+and background through composite rendering of ra-                rendering these effects is critical for a wide range of appli-
+diance fields. Simultaneously, we optimize the hand              cations, from enhancing realism in virtual and augmented
+and object poses to achieve accurate object-pose es-             reality environments to improving robotic manipulation and
+timations. We then refine physics-based rendering                object recognition systems. Several recent works have fo-
+parameters—including roughness, specularity, albedo,             cused on reconstructing hand-object interactions. Methods
+hand visibility, skin color reflections, and environmen-         like BundleSDF [52], DiffHOI [64], and HOLD [17] pri-
+tal illumination—to produce precise albedo, and ac-              marily address geometry reconstruction. However, these
+curate hand illumination and shadow regions. Our                 methods struggle with generating accurate textures under
+approach surpasses state-of-the-art methods in texture           varying environmental illumination conditions. Moreover,
+reconstruction and, to the best of our knowledge, is             shadows and indirect illumination caused by hand move-
+the first to account for hand-object interactions in ob-         ments introduce significant errors in texture prediction. To
+ject texture reconstruction. Please check our work at:           the best of our knowledge, no recent work explicitly ad-
+https://alakhag.github.io/TexHOI-website/                        dresses the influence of shadows cast by dynamic elements
+                                                                 like hands on 3D object reconstruction, particularly texture
+  Keywords: Radiance Field, Differentiable Renderer,             reconstruction. Other works such as PhySG [66], InvRen-
+Spherical Gaussian, Albedo Prediction                            der [68], and RefNeRF [47] focus on modeling the influence
+                                                                 of environmental illumination on object surfaces based on
+1. Introduction                                                  material properties, typically represented as Spherical Har-
+                                                                 monics or Spherical Gaussian. However, these methods do
+   Every day, we interact with common objects like sugar         not account for interacting non-rigid parts like hands, mak-
+boxes, snack containers, and cleaning supplies. Our hands        ing them unable to handle hand-induced shadows and re-
+naturally pick them up, move them, and manipulate them           flections. Additionally, they rely on precise camera pose
+to complete routine tasks. These seemingly simple interac-       estimations based on object-coordinate systems, which can
+tions, however, involve complex hand-object dynamics that        introduce errors akin to motion blur when these assump-
+challenge even the most advanced computer vision systems         tions are violated. Given the above challenges, our primary
+
+
+                                                             1
+research question is: How can we achieve accurate texture              lation of Spherical Gaussian occlusion by the hand,
+and geometry predictions in dynamic hand-object interac-               eliminating the need for time-consuming ray-tracing
+tion scenarios using monocular camera data?                            computations for occlusion computation.
+    In this paper, we present a novel framework to accurately
+predict the object’s true albedo, specular properties, and sur-      • We develop a two-stage framework for 3D object re-
+face geometry, given a sequence of frames captured by a                construction in hand-object interactions. The first
+single camera showing a hand interacting with a rigid ob-              stage uses compositional volumetric rendering to op-
+ject. Our focus is on accounting for the indirect effects of           timize object and hand poses, while the second stage
+hand movements, such as shadows, reflections, and visibil-             uses Spherical Gaussian-based surface rendering to re-
+ity changes, across different frames. Ultimately, we aim to            fine object texture by removing hand occlusions and
+enhance the realism and accuracy of virtual object rendering           lighting effects, ensuring high-fidelity reconstruction.
+in complex hand-object interaction scenarios.
+                                                                  2. Related Works
+    Our approach begins by optimizing both hand and object
+poses using a composite rendering technique that separately           Creating realistic rendered images of a target object, for
+models the hand, object, and background. In this process,         its re-usability in varying virtual environment has been a
+we simultaneously refine hand and object poses while learn-       major focus in the study of computer graphics for much of
+ing neural radiance fields for each entity, ensuring accurate     its history. Inverse rendering of an object from their vi-
+geometric and pose representations. Using these fine-tuned        sual data refers to predicting camera poses and scene de-
+poses, we represent the environmental illumination with           scriptions, including the geometry of the object, the re-
+Spherical Gaussian (SG) representations. This allows us to        flectance of the object surface, which consists of its albedo
+model the interaction between the object’s material prop-         texture and other microfacet surface properties like rough-
+erties — such as specularity and roughness — and the en-          ness, specularity, etc., and environment lighting used to illu-
+vironment. To efficiently compute the shadows and reflec-         minate the scene [33]. Many research works have built the
+tions caused by interacting hands, we introduce a novel rep-      basic framework for upcoming advancements in this area of
+resentation of the hand using 108 parameterizable spheres.        research.
+For each surface point on the object, we calculate the vis-
+ibility and indirect illumination caused by each sphere by        2.1. Traditional Inverse Rendering for 3D Object Recon-
+measuring the fraction of its projection that occludes the              struction
+SG on the object’s surface. This method avoids the need for          Traditional inverse rendering approaches broadly di-
+time-consuming ray-tracing [67] or learning pseudo-ground         vided the research field into three categories - inverse light-
+truth visibility using MLPs [68]. We then combine all the         ing to predict the environment light that illuminates the
+elements in the physics-based rendering (PBR) framework           scene in visual input such as images, inverse reflectom-
+to obtain the final object color, which is compared with the      etry to predict object texture or object BRDF from vi-
+ground truth camera-captured images to optimize all those         sual input, or shape reconstruction to obtain the geom-
+physics-based rendering parameters, i.e., roughness, spec-        etry of the object. Traditional approaches only focus on
+ularity, albedo, hand visibility, skin color reflections, and     solving one of the three mentioned problems. They may
+environmental illumination.                                       solve inverse lighting problem [26] which allows re-lighting
+    Our approach surpasses state-of-the-art methods in tex-       of rendered scenes under different environment illumina-
+ture reconstruction quality, for dynamic hand-object inter-       tion [36, 45]. Some other works solve inverse reflectometry
+action scenarios. We summarize our major contributions as         problems to obtain realistic texture [46, 54] or accurate re-
+follows:                                                          flective model [13, 16] on the object surface. Meanwhile,
+                                                                  other approaches optimize object geometry [37, 42, 24, 53].
+   • To the best of our knowledge, this is the first method
+                                                                  These approaches assume other aspects of the inverse ren-
+     to account for dynamic hand-object interaction in the
+                                                                  dering, except their focus problem, to be known. To our
+     context of texture prediction, for 3D object reconstruc-
+                                                                  knowledge, no traditional approach comprehensively ad-
+     tion from monocular videos.
+                                                                  dresses all aspects of the inverse rendering problem in a sin-
+   • We introduce a novel hand representation where the           gle study. Recent advancements in neural representations
+     canonical hand is simplified as 108 parameterizable          address the comprehensive computation of these different
+     spheres. Skinning weights are allocated to each sphere       aspects.
+     based on the distance to surface points, enabling accu-
+                                                                  2.2. Neural Representation in Inverse Rendering
+     rate pose transformations. The radius of each sphere is
+     recalculated dynamically according to the transformed           In recent years, several recent neural network-based re-
+     surface points. These spheres enable efficient calcu-        search works have sparked a wave of innovative method-
+ologies to solve inverse rendering problems. These include        where, v is any direction on the sphere and G(v) is
+volumetric rendering based approaches like NeRF [34],             the value on the sphere along direction v. The above
+NeuS [50], DVGO [44], TensoRF [8], Instant-NGP [35],              methods either ignore visibility computation [66], perform
+etc., surface rendering based approaches like IDR [63]            computationally-extensive Monte-Carlo ray tracing [67],
+or point-based inverse rendering approaches like 3D-              or estimate pseudo-ground truth visibility using a Multi-
+Gaussian-Splatting [27]. Moreover, these approaches give a        layer Perceptron (MLP) [68]. Monte-Carlo ray-tracing can
+general framework solution for inverse rendering problems         take up to 30 minutes per frame on a single GPU to
+but do not solve complex problems that arise from vary-           train. L-Tracing [10] utilizes sphere-tracing, and the con-
+ing material properties of objects, environment illumination      cavity/convexity of geometry to avoid learning visibility.
+in the scene, or occlusion and visibility handling in multi-      However, both InvRender [68] and L-Tracing [10] work for
+object interactions in the scene. Applying the physics-based      a single static rigid object, and fail to handle multiple dy-
+knowledge, and addressing the composition of multiple-            namic object visibility estimation. NeRF-DS [57] handles
+object interactions in the scene further improves this re-        dynamic objects but does not utilize the PBR equation to
+search area, as will be seen in the next two subsections.         obtain the reflectometry information in the scene. Instead,
+                                                                  the method is only restricted to glossy objects. Moreover,
+2.3. Physics-based Inverse Rendering                              all the above methods assume a single rigid object with ac-
+    The Physics-based Rendering (PBR) equation gives the          curate pose estimations in the scene. These methods do not
+rendered output color c at a surface point x of an object         handle multiple dynamic object interactions in the scene.
+along the view direction ωo , given the illumination on the
+surface L(ωi , x) from incoming direction ωi , BRDF prop-         2.4. Handling Dynamic Elements in Multi-Object Interac-
+erty of the object ϕ(x, ωo , ωi ) and object normal n at x. The         tion
+equation is defined as follows:                                      To handle multiple object interactions, along with back-
+               Z                                                  ground, many recent researches have come up, with
+   c(ωo ; x) =             L(ωi , x)ϕ(x; ωo , ωi )(ωi · n), (1)   compositional-NeRF methods [51, 15, 55, 58]. Hand-
+                ωi ∈Ω+ (n)                                        NeRF [20] extends this compositional-NeRF methodology
+where ωi is a direction in hemi-sphere Ω+ (n), defined with       for multiple interacting hands. Other methods named Hand-
+the up direction as surface normal n. L(ωi , x) is obtained       NeRF [12], BundleSDF [52], HOLD [17], etc. focus on
+by inverse lighting, ϕ(x; ωo , ωi ) is obtained by inverse re-    dynamic hand-object reconstruction. However, their pri-
+flectometry and normal n is obtained by shape reconstruc-         mary focus is geometry reconstruction, and do not focus on
+tion. Occlusions between the illumination source and sur-         high-fidelity texture reconstruction. Hence, they do not fo-
+face point x may break down L(x) term, requiring visibil-         cus on physics-based accuracy in results. Our research pri-
+ity and indirect illumination calculation. Many recent ap-        marily focuses on 3D geometry and high-fidelity texture re-
+proaches have done extensive research on improving the in-        construction of hand-object interactions from single-camera
+verse rendering output by predicting the above terms of the       data capture sequences. We aim to improve the output by
+PBR equation. NeRV [41] assumes known illumination.               resolving the baking of hand effects into the rendered object
+Other methods like NeRD [2], Neural Ray-Tracing [29],             texture, and obtain a high-fidelity object albedo prediction
+NeRFactor [67], Neural-PIL [4], PS-NeRF [59], Neilf [62],         following a two-stage training process. In the first stage, we
+SAMURAI [3], NVDiffRec [22], Neural-PBIR [43], Ten-               fine-tune hand and object poses using a compositional vol-
+soIR [25], TensoSDF [30], MIRReS [14], IRON [65] etc.             umetric rendering approach [17]. In the second stage, we
+use volumetric-rendering based methods to optimize neu-           use a surface rendering approach with Spherical Gaussians
+ral radiance fields, and extract geometry, illumination, tex-     to obtain different elements in the PBR equation, includ-
+ture and reflectance model. NeRO [32], NeP [48], PBIR-            ing hand effects on the object surface. In Sec. 4, we will
+NIE [6] extend these methods to glossy or reflective sur-         describe the above two stages of training in-depth.
+faces. Relightable-3D-Gaussian [18] uses 3D Gaussian
+splats, and methods like IntrinsicAnything [9] learn diffu-       3. Preliminaries
+sion priors to obtain accurate albedo and material proper-        3.1. Volumetric Rendering
+ties. Methods like PhySG [66] and InvRender [68] use
+surface-based rendering approaches and approximate illu-             For each pixel in the image space, the volumetric ren-
+mination and BRDF as Spherical Gaussians (SGs). An SG             dering samples the points uniformly along a ray originating
+comprises of a lobe with its direction ξ, intensity µ and         from the camera pointing in the direction of the pixel. These
+width η, and is defined on a spherical surface as follows:        points are distributed between the near and far bounds of
+                                                                  the camera’s viewing range. Based on the predicted density
+                 G(v; ξ, µ, η) = µeη(v·ξ−1) ,              (2)    values at these uniformly sampled points, an importance
+sampling technique refines the sampling process, drawing           4.1. Stage 1: Compositional Neural Radiance Field for
+points closer to the estimated implicit surface. For each                Pose Refinement
+sampled point, the color is predicted using the view direc-
+                                                                      The input of stage 1 of our system is the frame sequences
+tion and the point’s properties. The predicted colors are then
+                                                                   from a monocular camera, along with an estimated hand and
+aggregated along the ray through an integral, resulting in
+                                                                   object poses and generates low-level geometry and texture
+the final color for that pixel. Formally, along a camera ray
+                                                                   predictions of hand and object.
+r(t) = o + td with camera location o and view direction d,
+                                                                      This stage utilizes three Neural Radiance Fields (NeRF).
+near and far bounds tn and tf , density at a point is estimated
+                                                                   NeRF for hand optimizes the hand pose transformation
+as σ(r(t)) and color at a point is estimated as c(r(t), d).
+                                                                   and generates hand from monocular camera frames in
+The expected final color on the pixel C(r(t)) can thus be
+                                                                   MANO [38] canonical pose. Similarly, a NeRF for the
+expressed as the following integral:
+                                                                   object optimizes the object pose transformation and gener-
+                      Z tf                                         ates the rigid object in its canonical pose, or world origin.
+          C(r(t)) =          T (t)σ(r(t))c(r(t), d)dt,      (3)    Meanwhile, another NeRF learns background image repre-
+                       tn                                          sentation. Finally, the outputs of the three NeRFs are com-
+                                                                   posed to generate a composite rendered image similar to the
+                         Rt
+where T (t) = exp(− tn σ(r(s))ds) represents the accu-             ground-truth image frame. In this section, we will discuss in
+mulated transmittance, which accounts for the occlusion of         detail the above-mentioned NeRFs and their composition.
+light as it passes through the scene. This approach captures          The geometry prediction implicit network, along with
+both the density and color contributions along the entire          the fine-tuned hand and object poses prepare the input of
+ray, resulting in realistic volumetric effects. Methods like       the second stage of our pipeline.
+NeRF [34] use volumetric rendering.
+                                                                   4.1.1   Object NeRF
+3.2. Surface Rendering
+                                                                   Object NeRF uses object pose estimation to calculate neural
+   The surface rendering focuses on identifying the exact          network-based radiance field. The points sampled along the
+intersection point t̂ of the ray r(t̂) = o + t̂d with the im-      camera ray are inverse-transformed to the object coordinate
+plicit surface geometry using the sphere tracing approach.         system using object pose. The density and color are thus
+Once the intersection point is determined, the color at that       predicted in the object coordinate system, or object canoni-
+point is predicted as c(r(t̂), d). After calculating the surface   cal space. Given object pose with rotation R and translation
+color, it is assigned to the corresponding pixel in the image,     t, we get the canonical space point xobj from observation
+forming the final rendered image. Methods like IDR [63],           space point x′ as follows:
+PhySG [66], etc. use surface rendering.                                               xobj = R−1 (x′ − t).                  (4)
+
+4. Methodology                                                        Object NeRF, then, trains on the transformed points in
+                                                                   object canonical space.
+    This section outlines the methodological approach
+adopted to achieve high-fidelity geometry and texture re-          4.1.2   Hand NeRF
+construction of hand-object interaction from monocular
+camera data sequence. We discuss in-depth both the stages          Calculating the radiance field for hand NeRF follows a sim-
+of the two-stage process, called TexHOI, namely volumetric         ilar setup as object NeRF. The points sampled along the
+rendering based compositional NeRF as Stage 1 (Sec. 4.1)           camera ray are inverse-transformed to the hand’s canonical
+to fine-tune object and hand pose and obtain a low-level           pose, i.e., stretched hand, using MANO [38] pose parame-
+of geometry and texture information, and surface rendering         ters. Hence, we again need to perform the inverse transfor-
+based Physics-Based Rendering (PBR) equation, approxi-             mation for hand. Given transformation matrices Ti for ith
+mated with Spherical Gaussians as Stage 2 (Sec. 4.2) to            of njnt joints, with interpolated skinning weight wi (x′ ) on
+generate hand shadows, reflections and environmental illu-         the observation space point x′ , its corresponding canonical
+mination, along with studying the material properties. We          space point xhand is calculated as follows:
+also discuss the data acquisition/processing steps in both                                   n
+                                                                                           jnt
+                                                                                xhand = (Σi=1  (wi (x′ )Ti )−1 x′ .         (5)
+stages, including hand and object pose estimation in stage 1,
+and visibility and reflectance property computation in stage
+                                                                   4.1.3   Compositional NeRF
+2. This two-stage process of computation of different el-
+ements leads to a high-fidelity albedo texture prediction.         To generate a composite rendered image similar to a
+Fig. 1 shows the full pipeline.                                    ground-truth frame, we also learn Background NeRF. Af-
+                                      HOLD
+                                         Hand NeRF
+
+
+                                                                                                     GT                 PBR Output
+                                       hand pose opt.
+                                       Object NeRF
+                                                          Pred. Masks
+
+                                      object pose opt.                        Rendering
+                                                                                MLP          Specular BRDF     Albedo         Environment
+                                   Background NeRF
+                                                         Opt. Obj. Pose
+             Forward Propagation                                             Sec. 4.2.3                            Physics-Based
+             Fine-tune                                                                                            Renderer (PBR)
+                                                         Opt. Hand Pose                      Hand Visibility
+
+                           Stage 1: Compositional Volumetric Rendering            Stage 2: Physics-Based Surface Rendering
+Figure 1. The overall pipeline of our proposed TexHOI method. In the first stage (Sec. 4.1), the hand and object poses are fine-tuned along
+with composite radiance fields of hand, object, and background. Using the predicted object segmentation and object geometry mask, in
+the second stage (Sec. 4.2), the optimized hand and object poses are used to accurately learn material properties on the object surface, i.e.
+albedo, BRDF, and hand occlusions, using physics-based rendering with Spherical Gaussian approximations.
+
+
+ter obtaining color and density predictions from each NeRF,               mask Mobj (r) and background mask Mbg (r) gives us the
+we arrange all the sample points in sorted order from their               predicted segmentation M (r):
+distance. The other information at the sample points, i.e.,
+density and color are also sorted similarly. We then calcu-                  M (r) = arg max{Mhand (r), Mobj (r), Mbg (r)}.                  (9)
+late the aggregate integral and get the expected color at the
+                                                                          For stage 2, we also need visible object mask by following
+pixel corresponding to the ray direction.
+                                                                          similar methodology as Eqs. 7, 8. We can set the color pre-
+    Mathematically, sampling n points for object and inverse
+                                                                          diction of the sample points for object to 1, and color pre-
+transforming the points into object-coordinate system 4.1.1,
+                                                                          dictions for hand as 0. Along a ray r, this allows only the
+and n points for hand and performing linear inverse blend-
+                                                                          rays from the visible object regions to transmit, and stops
+skinning into hand’s canonical coordinate system 4.1.2, we
+                                                                          the transmittance from the object surface points occluded
+obtain the foreground (hand and object) color Cf g and fore-
+                                                                          by hands, giving us visible object mask Mho , as shown in
+ground mask Mf g . The values are calculated by sorting
+                                                                          Fig. 2(c).
+the 2n points, and the predicted density σi and radiance ci
+values of each point. Similarly, using the calculated fore-
+ground mask Mf g and the background color Cbg , we obtain                 4.1.4   Pose Refinement
+final predicted color along a ray r as follows:                           In this stage, we optimize both the hand and object pose
+                                                                          in the camera-coordinate system, leveraging the composite
+         C(r) = Cf g (r) + (1 − Mf g (r)) · Cbg (r),            (6)
+                                                                          rendering methodology. The initial hand and object poses
+                                                                          are estimated. However, to achieve accurate alignment be-
+where the foreground color is the volumetric rendering out-
+                                                                          tween the rendered and observed images, further optimiza-
+put of:
+                                                                          tion is performed to refine these pose estimates. The op-
+                  Cf g (r) = Σ2ni=1 τi ci .             (7)
+                                                                          timization process minimizes the discrepancy between the
+Here τi = exp(−Σj<i σj δj )(1 − exp(−σi δi )) and δi is the               rendered and observed images using a differentiable ren-
+distance between ith and (i + 1)th sample points. Similarly,              derer. Specifically, we iteratively adjust the hand and object
+the foreground mask, is given as:                                         poses, along with training compositional NeRF, by mini-
+                                                                          mizing a loss function. RGB values of the predicted image
+                         Mf g (r) = Σ2n
+                                     i=1 τi .                   (8)       are consistent with the ground truth image through the fol-
+                                                                          lowing loss function:
+Individually, mask for hand along a ray r can be obtained
+using Hand NeRF in Sec. 4.1.2 as Mhand (r). Similarly,                                     Lrgb1 = Σr ||C(r) − Ĉ(r)||,                     (10)
+masks for object (as shown in Fig. 2(b)) along a ray r can
+be obtained using Object NeRF in Sec. 4.1.1 as Mobj (r).                  where C(r) and Ĉ(r) are the predicted and groundtruth
+Whereas, the background mask can be obtained using the                    RGB colors along the ray r. Hand, object, and background
+foreground mask as Mbg (r) = 1− Mf g (r). Finally, along a                masks are ensured consistent with ground truth by calculat-
+ray r, the one-hot encoding of hand mask Mhand (r), object                ing the loss between predicted segmentation one-hot label
+M (r), calculated using Eq. 9, and estimated ground truth          By incorporating specularity and hand visibility, we prevent
+segmentation obtained using SAM-Track [11] M̂ (r), that            environmental factors such as shadows and reflections from
+takes image frames as input, and user input for target object      being baked into the object’s texture, ensuring accurate
+in the image for the first frame, and outputs segmentation         albedo predictions. We will discuss the above-mentioned
+masks tracking the segmented object, following the same            different elements of the Physics-Based Rendering (PBR)
+methodology as HOLD [17]:                                          equation in this section.
+
+                Lseg1 = Σr ||M (r) − M̂ (r)||.              (11)   4.2.1   Environment Illumination
+Eikonal loss Leikonal1 regularizes the canonical geometry,         We implement environmental illumination using a sum of
+and Lhand−sdf 1 calculates the loss between predicted den-         128 Spherical Gaussians (SGs), which approximates the en-
+sity and ground truth MANO model. Finally, a contact loss          vironmental light interacting with the object at any given
+Lcontact1 encourages hand’s fingertip vertices Vtip to be          point. These SGs represent light coming from various di-
+close to object’s vertices Vo , obtained via implicit networks:    rections in the scene. This approximation allows us to ef-
+                                      i                            ficiently simulate how the dynamic object is lit in an envi-
+               Lcontact1 = Σi min ||Vtip − Voj ||.          (12)
+                                j                                  ronment, ensuring that the lighting conditions are captured
+                                                                   accurately in the final render. Each SG models the incident
+The final loss that optimizes all the NeRF parameters, along       light distribution, and we apply these SGs to estimate the
+with object and hand poses is defined as:                          environmental contribution to the light reflected from the
+  Ls1 = Lrgb1 + λseg1 Lseg1 + λeikonal1 Leikonal1 +                object’s surface. This step enhances the realism by simu-
+                                                            (13)   lating how light behaves in real-world settings. Mathemati-
+        λhand−sdf 1 Lhand−sdf 1 + λcontact1 Lcontact1 ,            cally, from Eqs. (1) and (2), the direct illumination can be
+where λseg1 is set to 1.1 and progressively decreased to 0.1       represented as:
+until 30, 000 iterations, λeikonal1 is 1, λhand−sdf 1 is set to                  Ld (ωi ) = Σ128
+                                                                                             j=1 G(ωi ; ψj , µj , ηj ).      (14)
+5.0 and λcontact1 is initially set to 0 and progressively in-
+creased to 1.0 until 30, 000 iterations. For a given frame         Since the captured object is dynamic, in its object coordi-
+                                                                   nate system the environment rotates in the counter direction
+                                                                   of the object’s transformation. Therefore, according to the
+                                                                   input object pose, the lobe directions ψj are rotated in the
+                                                                   counter direction of the object’s pose transform.
+
+                                                                   4.2.2   Bidirectional Radiance Distribution Field
+         (a)                    (b)                   (c)
+Figure 2. After Stage 1, for each (a) input image, predicted (b)   Bidirectional Radiance Distribution Field (BRDF) on the
+object mask Mobj and (c) hand-object mask Mho are calculated.      surface point depends on diffuse albedo and specular effect.
+                                                                   Diffuse BRDF is calculated using a Multi-layer Perceptron
+(Fig. 2 (a)), this stage prepares the object’s implicit net-       (MLP) predicting albedo color at the surface point a(x),
+work, hand and object pose, object mask Mobj (Fig. 2 (b))          which defines the base color of the surface point x. Specular
+and hand-object mask Mho (Fig. 2 (c)) for the second stage         BRDF depends on material surface properties, like MLP-
+of our method.                                                     predicted roughness r(x) and specular reflectance s. The
+                                                                   roughness parameter controls how sharp or spread out the
+4.2. Stage 2: Physics-based Inverse Rendering using
+                                                                   reflections are, and the specular reflectance parameter de-
+     Spherical Gaussians
+                                                                   fines the metallic property of the object. Hence, the BRDF
+   In the second stage, we adopt a surface-based render-           is the sum of diffuse BRDF ϕd and specular BRDF ϕs :
+ing approach to fine-tune the object’s texture. The surface
+                                                                               ϕ(x; ωo , ωi ) = ϕd (x) + ϕs (x; ωo , ωi ).   (15)
+rendering-based approach allows for optimizing surface-
+level material properties like roughness, reflectance, Fres-       The diffuse BRDF depends on predicted albedo color
+nel, shadows, etc., as will be discussed in this section.          a(x). The specular BRDF depends on Fresnel F and self-
+   This stage utilizes the refined masks and poses of the          shadowing g terms, which are dependent on predicted spec-
+hand and object from Stage 1, as well as the original im-          ular reflectance s and roughness r(x).
+age sequences captured from a monocular camera. The out-
+                                                                               a(x)                      F (s, r(x))g(r(x))
+put includes high-fidelity geometry, albedo, specular maps,         ϕd (x) =        , ϕs (x; ωo , ωi ) =                    , (16)
+and hand visibility, in conjunction with environment illu-                      π                         4(ωo · n)(ωi · n)
+mination based on the object’s learned material properties.        where n is the surface normal on the point x.
+4.2.3   Hand Occlusion                                                are collected. Finally, the fractional value of the integral of
+                                                                      the occluded patches gives a measure of the extent to which
+One of the key challenges in rendering hand-object in-
+                                                                      each part of the hand blocks light from reaching the object.
+teractions is handling occlusion caused by the hand. To
+                                                                      For the following integral of a generic Spherical Gaussian
+model this, we represent the hand as a set of 108 param-
+                                                                      (ISG) in polar format [66] with lobe sharpness η,
+eterized spheres similar to power cells [49]. We first place
+all spheres {pi , ri }108
+                      i=1 manually in the canonical MANO
+                                                                                                 Z θZ ϕ
+                                                                                                                   ′
+hand volume Ψ, with pi and ri being their centers and radii.                     S(θ, ϕ, η) =              eη(cos ϕ −1) dϕdθ,            (19)
+                                                                                                  0    0
+                                       Initially, the sphere
+                                       centers         {pi }108
+                                                            i=1       where ϕ′ is angle between the lobe direction of the Spheri-
+                                       are determined on              cal Gaussian, and some direction ωi along the hemisphere.
+                                       the canonical hand             S(θ, ϕ, η) represents the accumulated Spherical Gaussian
+                                       skeleton,     manually         over a patch of the hemisphere, where θ and ϕ are angular
+                                       selected between the           coordinates. This means when θ = π and ϕ = π, it covers
+                                       MANO joints. The               the whole hemisphere. To compute the fractional value for a
+                                       sphere radii {ri }108i=1       given angular region, we normalize by dividing the integral
+                                       requires partitioning          result by S(π, π, η) [23], as shown below:
+Figure 3. Canonical MANO hand          the surface of the hand
+is packed with 108 parameteri-         model into individ-                                                 S(θ, ϕ, η)
+zable spheres for hand-occlusion                                                         Ŝ(θ, ϕ, η) =                .                  (20)
+                                       ual spheres.      These                                             S(π, π, η)
+computation.
+                                       spheres define a power
+                                       diagram that partitions         Iwasaki et. al. [23] call this normalized term as normalized
+the MANO hand volume Ψ into a set of power cells. Each                ISG, and approximate it as follows:
+power cell Ψpow
+              i    consists of the points x that are closest to                                  1                        1
+a particular sphere (ci , ri ):                                        Ŝ(θ, ϕ, η) ≈                                                   , (21)
+                                                                                       1 + e−g(η)(θ−π/2) 1 + e−h(η)(ϕ−π/2)
+ Ψpow
+   i   : {x ∈ Ψ|dpow (x, ci , ri ) ≤ dpow (x, cj , rj ), j ̸= i},     where they define g and h as fourth-degree polynomial
+                                                               (17)   function approximations over η as follows:
+where dpow (x, pi , ri ) = ||x − pi ||2 − ri2 is the power dis-
+tance between the point x and the sphere (pi , ri ). The power        g(η) = g4 (η/100)4 + g3 (η/100)3 + g2 (η/100)2 + g1 (η/100)
+diagram partitions all vertices {vj } of canonical MANO               h(η) = h4 (η/100)4 + h3 (η/100)3 + h2 (η/100)2 + h1 (η/100),
+hand model into each individual set Vi = {vj |vj ∈ Ψpow      i   }.
+                                                                                                                         (22)
+Whenever the MANO hand model is deformed by its pose
+and shape parameters, the center p̂i and radius r̂i of each           where g4 , g3 , g2 , g1 , h4 , h3 , h2 , h1 are constant
+sphere can be updated correspondingly by the following                values −2.6856e−6 , 7e−4 ,−0.0571, 3.9529, 17.6028,
+rule:                                                                 −2.6875e−6 , 7e−4 , −0.0592, 3.9900, 17.5003 respec-
+                      1 X                                             tively. The patches Ω̃ occluded by hand spheres can be seen
+             p̂i =               v̂j ,                                in Fig. 6. The normalized value helps us calculate the pro-
+                    |Vi |
+                          vj ∈Vi                                      portion of the spherical Gaussian that falls within a specific
+                                                               (18)
+                      1 X                                             patch of the sphere. From Eq. 21 and Eq. 22, for a patch
+             r̂i =               ||n̂j · (v̂j − p̂i )||,
+                    |Vi |                                             defined along some direction ωi by the angular coordinates
+                          vj ∈Vi
+                                                                      (θ0 , ϕ0 ), (θ1 , ϕ0 ), (θ0 , ϕ1 ), and (θ1 , ϕ1 ) (See Fig. 5), the
+where v̂j and n̂j are the vertex position and normal associ-          final output is determined by computing the contributions
+ated with vertex vj in its deformed pose and shape. In this           from the patch corners:
+way, the centers and radii of these 108 spheres are parame-
+terized by the MANO hand shape and pose.                                F(x, θ0 , θ1 , ϕ0 , ϕ1 ) = Ŝ(θ1 , ϕ1 , η) − Ŝ(θ1 , ϕ0 , η)
+                                                                                                                                         (23)
+    This granular representation allows us to model how dif-                                    −Ŝ(θ0 , ϕ1 , η) + Ŝ(θ0 , ϕ0 , η).
+ferent parts of the hand obstruct the light and cast shadows
+on the object’s surface. For each surface point on the ob-               The sum over all the occluded patches gives us the frac-
+ject, we divide its lobe of Spherical Gaussian (SG) into a            tional value F(x), and is the fraction of ISG over occluded
+grid of 64x64 patches, each representing a small region of            patches Ω̃. Therefore, we can approximate the integration
+the environment illumination and BRDF. Each one of the                of a partially-occluded Spherical Gaussian G(ωi )O(x, ωi ),
+108 spheres representing MANO hand is projected onto the              with respect to the direction ωi over the hemisphere Ω+ cen-
+SG lobe, and the patches belonging to the occluded regions            tered around the surface point x, using the above integral
+Figure 4. Physics-based rendering calculates an integral over a hemispherical region, centered around the surface normal of a surface point,
+to calculate the final color of the surface point. Based on SG approximation, direct illumination is defined as a sum of 128 SGs, hand
+occlusion is calculated based on the parameterizable spherical representation of MANO hand, indirect illumination from occluding hand
+is a learned parameter, albedo represents the base color of the object without hand shadows or environment reflections, and specularity of
+the object is calculated based on the material properties - roughness, specular reflectance, etc.
+
+
+over the occluded patches Ω̃ and its approximation F(x) as
+follows:
+          Z                          Z
+              G(ωi )O(x, ωi )dωi =      G(ωi )dωi
+           Ω+
+                                   Z Ω̃               (24)
+                       ≈ F(x) ∗         G(ωi )dωi .
+                                          Ω+
+
+
+
+
+                                                                         Figure 6. The parameterizable spheres are updated with hand pose
+                                                                         transformation, and occlude the patches of Spherical Gaussian.
+
+
+                                                                         a constant indirect illumination Li , starting from a generic
+                                                                         skin color (#E0AC69) from an online search. The final
+                                                                         illumination L(ωi , x) from Eq. 1 can thus be substituted as
+                                                                         follows:
+
+                                                                          L(ωi , x) = Ld (ωi ) ∗ (1 − O(x, ωi )) + Li ∗ O(x, ωi ). (25)
+
+                                                                         Note that this equation also denotes a sum of 128 SGs. To
+                                                                         use the cosine term with other SG terms in PBR Eq. (1), we
+                                                                         approximate the cosine term ωi · n, for incident direction ωi
+Figure 5. An SG hemispherical lobe, centered around the Z-axis,
+                                                                         at a surface point x with surface normal n:
+is divided into 64x64 patches. An occluding sphere projected onto
+the SG lobe covers some patches. The occluded patches are calcu-
+                                                                             ωi · n ≈ G(ωi ; 0.0315, 32.7080, n) − 31.7003.            (26)
+lated, and their fractional value is calculated to get hand occlusion.
+                                                                         Combining illumination L(ωi , x) from Eq. (25), BRDF
+                                                                         ϕ(x; ωo , ωi ) from Eq. (15), and cosine term ωi · n from
+                                                                         Eq. (26), we get the final color c(ωo , x) at the surface point
+4.2.4   Final Illumination
+                                                                         x with view direction ωo as the integral equation given in
+We discussed direct illumination Ld (ωi ) from environment,              PBR Eq. (1). To maintain the consistency of object shape,
+as a sum of Spherical Gaussian along direction wi of hemi-               and avoid the hand’s involvement in object geometry and
+sphere in Eq. 14, and integral of SG with hand occlusion                 texture reconstruction, we propose the following loss func-
+in Eq. 24. In the regions of hand occlusion, the hand casts              tions. An RGB loss is calculated on the color cho pre-
+its own indirect illumination, which can be perceived as the             dicted on Nho sampled pixels in the intersection of the pre-
+hand’s reflection on the object’s surface. Hence, we learn               dicted object mask and groundtruth hand-object mask Mho
+(Fig. 2(c)):                                                        • Additionally, an indirect illumination term Li , learned
+                                                                      as an RGB value, accounts for the effects of hand shad-
+                          1 Nho ho                                    ows and reflections on the object.
+               Lrgb2 =      Σ ||c − ĉi ||,               (27)
+                         Nho i=1 i
+                                                                  It is important to note that Stage 2 is dependent on Stage
+where ĉi is groundtruth color of the Nho sampled pixels.         1, as it requires the hand-object pose and segmentation data
+The below mask loss calculates minimum SDF S no on the            obtained in the first stage. Therefore, Stage 2 is not object
+Nno rays corresponding to the sampled pixels outside the          agnostic. However, Stage 1 is object agnostic, enabling the
+intersection of the predicted object mask and ground truth        reconstruction of 3D geometry and texture for objects with
+object mask Mobj (Fig. 2(b)):                                     unknown shapes and textures. Each scenario is trained on
+                                                no
+                                                                  a 12 GB Nvidia GeForce RTX 2080 Ti GPU, and training
+                    1 Nno ln(1 + e−50∗Sj )                        takes approximately 14 hours for each stage.
+          Lmask2 =    Σ                    .              (28)
+                   Nno j=1       50
+                                                                  5. Experiments
+Just like in stage 1, Leikonal2 regularizes object’s geometry.
+The final loss optimized is as follows:                           5.1. Dataset
+
+                                                                     Our data consists of a sequence of the right hand of a
+ Ls2 = Lrgb2 + λmask2 Lmask2 + λeikonal2 Leikonal2 , (29)         subject interacting with a dynamic rigid object. To evaluate
+                                                                  our approach, we use two types of datasets:
+where λmask2 is set to 100.0 and λeikonal2 is 0.1.
+                                                                    • HO3D: The training data of HO3D [21] dataset con-
+4.3. Implementation Details                                           tains 9 objects from YCB [56] models. We use monoc-
+    We utilize monocular camera capture datasets that en-             ular frames of six different objects from the dataset.
+compass all viewpoints around the object, ensuring com-               These six objects were specifically selected based on
+prehensive coverage for high-fidelity texture and geometry            the presence of sufficient texture details, which is es-
+learning. For the first stage, the 3D annotations estimated           sential for evaluating the effectiveness of our texture
+include hand-object pixel-wise segmentation [11, 28, 61,              reconstruction. The six objects (and their subjects)
+60, ?, 19], hand MANO pose estimation [31], and object                are - sugar box (“ShSu”), cracker box (“MC”), bleach
+pose estimation [39, 40] in the camera-coordinate system.             cleanser (“ABF”), meat can (“GPMF”), mustard bottle
+    The first stage of our pipeline involves the composite vol-       (“SM”), and drilling machine (“MDF”). The 3 left ob-
+umetric rendering of the hand, object, and background, fol-           jects in training data - scissors, banana, and mug con-
+lowing a pipeline similar to HOLD [17], using the initial             tain no detailed-texture information for comparison.
+estimates of the hand and object poses, along with segmen-          • In-the-wild: We also use monocular frame sequences
+tation masks. HOLD optimizes hand and object poses, ge-               of three objects captured in real-world settings (“in-
+ometry, and an initial estimate of texture.                           the-wild”) [17]. These objects provide further diver-
+    Using the optimized poses and object geometry from                sity in testing by presenting challenging hand-object
+Stage 1, we derive the object mask and hand-object segmen-            interactions and varied environmental conditions. The
+tation mask. These are then used in the second stage, which           objects are - bottle, kettle, and rubrics cube.
+focuses on physics-based surface rendering of the object,
+following a pipeline inspired by PhySG [66]. A key mod-           5.2. Baselines
+ification in our method is the computation of occlusion to
+                                                                     We use HOLD [17] as our primary baseline for perfor-
+account for hand-object interaction, based on the approach
+                                                                  mance comparison due to its proven effectiveness in dy-
+in Iwasaki et al. [23]. Prior works, such as PhySG, do not
+                                                                  namic hand-object interaction tasks, where it outperforms
+compute occlusion in this way, setting our method apart.
+                                                                  methods such as DiffHOI [64] and BundleSDF [52]. This
+In Stage 2, we optimize the following key parameters at a
+                                                                  makes HOLD an appropriate benchmark for assessing the
+surface point x:
+                                                                  improvements introduced by our method. Our approach,
+   • Roughness r(x) and albedo a(x), predicted using an           however, goes beyond what HOLD achieves by focusing on
+     MLP layer, which contribute to the specular BRDF             texture reconstruction and illumination effects, areas that
+     ϕs (x) and diffuse BRDF ϕd (x) calculations, respec-         HOLD does not fully address. To highlight the improve-
+     tively.                                                      ments, we compare our full pipeline results with HOLD
+                                                                  alone. This comparison demonstrates how our method en-
+   • Spherical Gaussian (SG) parameters related to direct         hances texture accuracy, particularly in capturing the com-
+     illumination Ld (ωi ) are optimized to accurately model      plex interactions between hands and objects, such as shad-
+     light interactions with the object’s surface.                ows, reflections, and visibility changes, which are often
+Figure 7. Qualitative Comparison: TexHOI albedo a(x) predictions avoid baked hand-occlusions and environment-illumination. Hand
+occlusions can be observed in “Hand-Object Interaction” F(x) (0-1 normalized). The final TexHOI RGB c(ωo , x) is calculated using
+Physics-Based Rendering, and is compared with other state-of-the-art approaches, HOLD [17] and InvRender [68].
+
+                                   InvRender                               HOLD                                TexHOI
+  HO3D Object          PSNR ↑        SSIM ↑        LPIPS ↓     PSNR ↑      SSIM ↑     LPIPS ↓      PSNR ↑      SSIM ↑      LPIPS ↓
+    Sugar Box           22.36        0.9501         0.110       22.20      0.9508      0.091        23.55       0.9543      0.067
+ Bleach Cleanser        18.76        0.9344         0.173       19.62      0.9383      0.109        20.78       0.9454      0.105
+ Drilling Machine       14.51        0.9097         0.222       18.12      0.9258      0.152        17.64       0.9259      0.139
+   Cracker Box          17.64        0.8910         0.197       19.52      0.8919      0.095        19.88       0.8972      0.090
+  Mustard Bottle        21.86        0.9476         0.138       22.08      0.9516      0.103        21.93       0.9550      0.110
+     Meat Can           20.26        0.9491         0.085       22.16      0.9543      0.057        22.02       0.9547      0.060
+      Average           19.23        0.9301         0.154       20.61      0.9354      0.101        20.96       0.9387      0.095
+Table 1. Quantitative comparison is performed between our method, TexHOI, and other state-of-the-art approaches that reconstruct geom-
+etry and texture. HOLD bakes hand-occlusions and illumination on its texture prediction, InvRender does not handle dynamic occlusions.
+
+
+overlooked in prior works. Additionally, for comparison               per sequence as our experimental data. We use Mitsuba [1]
+with InvRender [68], we employ the 3D reconstruction from             renderer and render the ground truth 3D models and
+our Stage 1 and modify InvRender to incorporate object seg-           textures to generate ground truth images corresponding to
+mentation masks for computing pixel-wise losses in hand-              the poses of those sampled image frames, to compare our
+object interaction images. We also adapt the approach by              TexHOI’s predicted albedo with other baseline methods.
+introducing Spherical Gaussian (SG) lobe rotations to ef-             The quantitative evaluation metrics used are as follows:
+fectively handle dynamic rigid object rotations, which are
+essential for handling both static and dynamic elements in
+the scene.                                                               • Peak Signal-to-Noise Ratio (PSNR): This metric is
+                                                                           used to evaluate the quality of the reconstructed tex-
+5.3. Evaluation Metrics                                                    ture by measuring how much signal (texture detail) is
+                                                                           present compared to noise (artifacts or blurring).
+   Since the objects manipulated in HO3D [21] dataset
+have their ground truth 3D models and textures in                        • Structural Similarity Index Measure (SSIM): We
+YCB [56], we use them for our quantitative evaluation. For                 use SSIM to assess the visual similarity between our
+each video sequence in HO3D, we subsample one frame                        reconstructed textures and the ground truth. This met-
+out of every 10 frames, resulting in around 200-400 frames                 ric helps to measure the perceptual quality of textures.
+                                     w/o ind-illum                               w/o occ                                full
+  HO3D Object           PSNR ↑          SSIM ↑          LPIPS ↓       PSNR ↑     SSIM ↑      LPIPS ↓      PSNR ↑      SSIM ↑      LPIPS ↓
+    Sugar Box            22.69          0.9548           0.113         23.54     0.9510       0.107        23.55      0.9543       0.067
+ Bleach Cleanser         20.45          0.9416           0.116         20.16     0.9382       0.118        20.78      0.9454       0.105
+ Drilling Machine        17.49          0.9263           0.146         17.58     0.9248       0.145        17.64      0.9259       0.139
+   Cracker Box           20.17          0.8971           0.124         20.22     0.8906       0.123        19.88      0.8972       0.090
+  Mustard Bottle         22.54          0.9544           0.108         21.77     0.9527       0.118        21.93      0.9550       0.110
+     Meat Can            21.91          0.9541           0.067         21.83     0.9538       0.068        22.02      0.9547       0.060
+      Average            20.87          0.9380           0.112         20.85     0.9351       0.113        20.96      0.9387       0.095
+Table 2. Quantitative ablative comparison of our model with the versions without indirect illumination, and without hand occlusions.
+Without illumination, the interacting hand casts a darker texture. Without occlusion handling, artifacts occur in major hand grasp regions.
+
+
+
+
+                                                                        Figure 9. For an object reconstructed using our method, TexHOI,
+                                                                        it can be relighted in different environments, based on different
+                                                                        environment illumination.
+
+
+                                                                        flections directly into the object’s texture. This, in turn,
+                                                                        reduces the model’s ability to generalize across different
+                                                                        lighting environments and hand poses. In contrast, our
+                                                                        method, TexHOI, can disentangle the object’s intrinsic tex-
+                                                                        ture (albedo) from external environmental influences, re-
+                                                                        sulting in a cleaner and more accurate reconstruction of the
+                                                                        object’s surface. This observation is further supported by
+                                                                        the evaluation metrics in Tab. 1. HOLD achieves better per-
+Figure 8. Ablation studies compare our model with the versions          formance on metrics such as RGB similarity because it em-
+trained without indirect illumination, and without any occlusions.      beds hand shadows and environmental reflections into the
+Illumination effects on surface albedo, and hand occlusions on sur-     predicted texture, making them appear closer to the ground
+face can be observed. The scenes are in same order as Fig. 7            truth in terms of pixel-wise accuracy. However, our method
+                                                                        excels in producing albedo textures that are more accurate
+                                                                        representations of the object’s inherent properties, without
+   • Learned Perceptual Image Patch Similarity                          conflating them with transient environmental elements.
+     (LPIPS): LPIPS is used to measure the perceptual dis-
+     tance between the predicted texture and the reference,             5.5. Ablation Studies
+     focusing on perceptual similarity as seen by human                     To evaluate the importance of different components in
+     vision. Lower LPIPS scores indicate higher perceptual              our approach, we conduct ablation studies by removing spe-
+     quality.                                                           cific features, such as indirect illumination and hand occlu-
+                                                                        sion handling. Specifically, we compare the results of our
+5.4. Baseline Comparisons
+                                                                        full methodology against versions without indirect illumi-
+   From Fig. 7, it is evident that while HOLD produces fi-              nation modeling and without explicit hand occlusion con-
+nal images that closely resemble the input image, it achieves           sideration. Our results, from Fig. 8 and Tab. 2 indicate that
+this by baking in the hand shadows and environmental re-                indirect illumination significantly contributes to the realism
+of the reconstructed texture, particularly in complex scenes      the MANO hand model, and calculating the fraction of oc-
+where light bounces off the occluding hand surface. With-         cluded Spherical Gaussians to accurately represent hand
+out this component, the reconstructed textures appear flat-       occlusions. Furthermore, in many state-of-the-art meth-
+ter and lack depth. Similarly, ignoring hand occlusions re-       ods, environmental illumination often reflects on the tex-
+sults in visual artifacts, as the shadowing and occlusion ef-     ture predictions, leading to inconsistencies when the object
+fects caused by interacting hands are not properly accounted      is viewed under different lighting conditions. Our approach
+for, leading to inconsistencies in the texture and geometry.      tackles this problem by incorporating Physics-Based Ren-
+These experiments highlight the necessity of modeling both        dering techniques, approximating illumination effects us-
+indirect illumination and occlusions to achieve high-quality,     ing Spherical Gaussians. This allows us to produce textures
+realistic reconstructions. The few examples where the ver-        that are consistent across varying lighting environments, en-
+sion without indirect illumination surpasses our full model       hancing the robustness of the reconstructed model.
+in Tab. 2 are again because the final prediction bakes the            Despite these advancements, there are several areas for
+hand-environment interactions in the final prediction.            future improvement. One potential direction is incorporat-
+                                                                  ing a more sophisticated model for indirect illumination,
+                                                                  particularly one that accounts for the specific properties of
+                                                                  skin and other materials under different lighting conditions,
+                                                                  could enhance the realism of the reconstructions. Although
+                                                                  the centers of the hand spheres remain outside the object’s
+                                                                  surface, there can be inter-penetrations of the spheres with
+                                                                  object near the fingertips. This causes negligible errors in
+                                                                  the computation of hand occlusion, and can be an area of
+                                                                  improvement in the future. Another promising direction is
+                                                                  exploring temporal consistency across frames in dynamic
+                                                                  sequences, avoiding minor temporal artifacts. By incor-
+                                                                  porating temporal coherence into the reconstruction pro-
+                                                                  cess, we could achieve smoother transitions and more stable
+                                                                  textures in video sequences. 3D Gaussian splat-based in-
+                                                                  verse rendering have not been explored in the area of hand-
+Figure 10. Our method is limited in geometry and texture recon-   object interactions, according to our knowledge, and can be
+struction in cases when the hand is static/fixed w.r.t. object.   a promising direction of progress in the research. In the fu-
+                                                                  ture, the work can also be optimized end-to-end using com-
+                                                                  posite surface-based inverse rendering or a more efficient
+5.6. Limitations
+                                                                  3D Gaussian splat-based inverse rendering, eliminating the
+   From Fig. 10, we observe that while our method is              need for a 2-step process to correct poses and optimize tex-
+effective in generating high-detail geometry and textures,        ture, as all elements can be optimized simultaneously. Fi-
+and successfully reconstructs albedo without baked-in en-         nally, extending our model to handle a broad range of inter-
+vironmental influences, it struggles in scenarios where the       action scenarios, such as multiple hands, or handling inter-
+hand remains static relative to the object. In such cases, if     penetrations of hand and object using collision detection or
+the hand is not dynamic but remains fixed throughout the          physical simulation modules, would make it more applica-
+dataset, the impression of the hand tends to become baked         ble to real-world use cases with complex interactions.
+into the geometry and texture of the object. This occurs be-
+cause the model relies on changes in perspective and move-        References
+ment to distinguish between the object and interacting el-         [1] Mitsuba3 Renderer.        Available online: https://
+ements, and a lack of variability leads to ambiguity in the            mitsuba-renderer.org/ (accessed on ???). 10
+learned representation.                                            [2] M. Boss, R. Braun, V. Jampani, J. T. Barron, C. Liu, and
+                                                                       H. Lensch. NeRD: Neural reflectance decomposition from
+6. Conclusion and Future Work                                          image collections. In Proceedings of the IEEE/CVF In-
+                                                                       ternational Conference on Computer Vision (ICCV), pages
+   In this research, we demonstrate that TexHOI signifi-               12684–12694, 2021. 3
+cantly outperforms existing state-of-the-art methods in re-        [3] M. Boss, A. Engelhardt, A. Kar, Y. Li, D. Sun, J. Barron,
+constructing high-detail albedo textures free from environ-            H. Lensch, and V. Jampani. SAMURAI: Shape and ma-
+mental artifacts, particularly in challenging scenarios in-            terial from unconstrained real-world arbitrary image collec-
+volving hand occlusions and environmental reflections. We              tions. In Advances in Neural Information Processing Systems
+achieve this by parameterizing occluding spheres, fitted into          (NeurIPS), volume 35, pages 26389–26403, 2022. 3
+ [4] M. Boss, V. Jampani, R. Braun, C. Liu, J. Barron, and           [17] Z. Fan, M. Parelli, M. E. Kadoglou, X. Chen, M. Kocabas,
+     H. Lensch. Neural-PIL: Neural pre-integrated lighting for re-        M. J. Black, and O. Hilliges. HOLD: Category-agnostic 3d
+     flectance decomposition. In Advances in Neural Information           reconstruction of interacting hands and objects from video.
+     Processing Systems (NeurIPS), volume 34, pages 10691–                In Proceedings of the IEEE/CVF Conference on Computer
+     10704, 2021. 3                                                       Vision and Pattern Recognition (CVPR), pages 494–504,
+ [5] S. Brahmbhatt, C.-H. Tang, C. D. Twigg, C. C. Kemp, and              2024. 1, 3, 6, 9, 10
+     J. Hays. ContactPose: A dataset of grasps with object con-      [18] J. Gao, C. Gu, Y. Lin, H. Zhu, X. Cao, L. Zhang, and Y. Yao.
+     tact and hand pose. In Proceedings of the European Confer-           Relightable 3D Gaussian: Real-time point cloud relighting
+     ence on Computer Vision (ECCV), pages 361–378. Springer,             with brdf decomposition and ray tracing. arXiv preprint
+     2020. 1                                                              arXiv:2311.16043, 2023. 3
+ [6] G. Cai, F. Luan, M. Hašan, K. Zhang, S. Bi, Z. Xu,             [19] Y. Gong, Y.-A. Chung, and J. Glass. AST: Audio spectro-
+     I. Georgiev, and S. Zhao. PBIR-NIE: Glossy object capture            gram transformer. In Proceedings of Interspeech, pages 571–
+     under non-distant lighting. arXiv preprint arXiv:2408.06878,         575, 2021. 9
+     2024. 3                                                         [20] Z. Guo, W. Zhou, M. Wang, L. Li, and H. Li. HandNeRF:
+ [7] Y.-W. Chao, W. Yang, Y. Xiang, P. Molchanov, A. Handa,               Neural radiance fields for animatable interacting hands. In
+     J. Tremblay, Y. S. Narang, K. Van Wyk, U. Iqbal, S. Birch-           Proceedings of the IEEE/CVF Conference on Computer Vi-
+     field, et al. DexYCB: A benchmark for capturing hand grasp-          sion and Pattern Recognition (CVPR), pages 21078–21087,
+     ing of objects. In Proceedings of the IEEE/CVF Conference            2023. 3
+     on Computer Vision and Pattern Recognition (CVPR), pages        [21] S. Hampali, M. Rad, M. Oberweger, and V. Lepetit. HOnno-
+     9044–9053, 2021. 1                                                   tate: A method for 3d annotation of hand and object poses.
+ [8] A. Chen, Z. Xu, A. Geiger, J. Yu, and H. Su. TensoRF:                In Proceedings of the IEEE/CVF Conference on Computer
+     Tensorial radiance fields. In Proceedings of the European            Vision and Pattern Recognition (CVPR), pages 3196–3206,
+     Conference on Computer Vision (ECCV), pages 333–350.                 2020. 1, 9, 10
+     Springer, 2022. 3                                               [22] J. Hasselgren, N. Hofmann, and J. Munkberg. Shape, light,
+ [9] X. Chen, S. Peng, D. Yang, Y. Liu, B. Pan, C. Lv, and                and material decomposition from images using monte carlo
+     X. Zhou. IntrinsicAnything: Learning diffusion priors for in-        rendering and denoising. Advances in Neural Information
+     verse rendering under unknown illumination. arXiv preprint           Processing Systems (NeurIPS), 35:22856–22869, 2022. 3
+     arXiv:2404.11593, 2024. 3                                       [23] K. Iwasaki, W. Furuya, Y. Dobashi, and T. Nishita. Real-time
+[10] Z. Chen, C. Ding, J. Guo, D. Wang, Y. Li, X. Xiao, W. Wu,            rendering of dynamic scenes under all-frequency lighting us-
+     and L. Song. L-tracing: Fast light visibility estimation on          ing integral spherical gaussian. Computer Graphics Forum,
+     neural surfaces by sphere tracing. In Proceedings of the Eu-         31:727–734, 2012. 7, 9
+     ropean Conference on Computer Vision (ECCV), pages 217–         [24] M. R. James and S. Robson. Straightforward reconstruction
+     233. Springer, 2022. 3                                               of 3d surfaces and topography with a camera: Accuracy and
+[11] Y. Cheng, L. Li, Y. Xu, X. Li, Z. Yang, W. Wang, and                 geoscience application. Journal of Geophysical Research:
+     Y. Yang. Segment and track anything. arXiv preprint                  Earth Surface, 117(F3), 2012. 2
+     arXiv:2305.06558, 2023. 6, 9                                    [25] H. Jin, I.-C. Liu, P. Xu, X. Zhang, S. Han, S. Bi, X. Zhou,
+[12] H. Choi, N. Chavan-Dafle, J. Yuan, V. Isler, and H. w.               Z. Xu, and H. Su. TensoIR: Tensorial inverse rendering. In
+     Park. HandNeRF: Learning to reconstruct hand-object inter-           Proceedings of the IEEE/CVF Conference on Computer Vi-
+     action scene from a single rgb image. In Proceedings of the          sion and Pattern Recognition (CVPR), pages 165–174, 2023.
+     IEEE International Conference on Robotics and Automation             3
+     (ICRA), pages 13940–13946. IEEE, 2024. 3                        [26] J. K. Kawai, J. S. Painter, and M. F. Cohen. Radioptimiza-
+[13] B. Curless and M. Levoy. A volumetric method for building            tion: Goal based rendering. In Proceedings of the 20th
+     complex models from range images. In Proceedings of the              Annual Conference on Computer Graphics and Interactive
+     23rd Annual Conference on Computer Graphics and Inter-               Techniques (SIGGRAPH), pages 147–154, 1993. 2
+     active Techniques (SIGGRAPH), pages 303–312, 1996. 2            [27] B. Kerbl, G. Kopanas, T. Leimkühler, and G. Drettakis.
+[14] Y. Dai, Q. Wang, J. Zhu, D. Xi, Y. Huo, C. Qian, and                 3d gaussian splatting for real-time radiance field rendering.
+     Y. He. MIRReS: Multi-bounce inverse rendering using reser-           ACM Transactions on Graphics (ToG), 42(4):139:1–139:19,
+     voir sampling. arXiv preprint arXiv:2406.16360, 2024. 3              2023. 3
+[15] D. Driess, Z. Huang, Y. Li, R. Tedrake, and M. Toussaint.       [28] A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland,
+     Learning multi-object dynamics with compositional neural             L. Gustafson, T. Xiao, S. Whitehead, A. C. Berg, W.-Y. Lo,
+     radiance fields. In Proceedings of the Conference on Robot           et al. Segment anything. arXiv preprint arXiv:2304.02643,
+     Learning (CoRL), pages 1755–1768. PMLR, 2023. 3                      2023. 9
+[16] M. Eck, T. DeRose, T. Duchamp, H. Hoppe, M. Louns-              [29] J. Knodt, J. Bartusek, S.-H. Baek, and F. Heide. Neural Ray-
+     bery, and W. Stuetzle. Multiresolution analysis of arbi-             Tracing: Learning surfaces and reflectance for relighting and
+     trary meshes. In Proceedings of the 22nd Annual Con-                 view synthesis. arXiv preprint arXiv:2104.13562, 2021. 3
+     ference on Computer Graphics and Interactive Techniques         [30] J. Li, L. Wang, L. Zhang, and B. Wang.                   Ten-
+     (SIGGRAPH), pages 173–182, 1995. 2                                   soSDF: Roughness-aware tensorial representation for ro-
+     bust geometry and material reconstruction. arXiv preprint          [46] G. Turk. Generating textures on arbitrary surfaces using
+     arXiv:2402.02771, 2024. 3                                               reaction-diffusion. In Proceedings of the 18th Annual Con-
+[31] K. Lin, L. Wang, and Z. Liu. End-to-end human pose and                  ference on Computer Graphics and Interactive Techniques
+     mesh reconstruction with transformers. In Proceedings of                (SIGGRAPH), pages 289–298, 1991. 2
+     the IEEE/CVF Conference on Computer Vision and Pattern             [47] D. Verbin, P. Hedman, B. Mildenhall, T. Zickler, J. T. Barron,
+     Recognition (CVPR), pages 1954–1963, 2021. 9                            and P. P. Srinivasan. Ref-NeRF: Structured view-dependent
+[32] Y. Liu, P. Wang, C. Lin, X. Long, J. Wang, L. Liu, T. Ko-               appearance for neural radiance fields. In Proceedings of
+     mura, and W. Wang. NeRO: Neural geometry and brdf recon-                the IEEE/CVF Conference on Computer Vision and Pattern
+     struction of reflective objects from multiview images. ACM              Recognition (CVPR), 2022. 1
+     Transactions on Graphics (ToG), 42(4):1–22, 2023. 3                [48] H. Wang, W. Hu, L. Zhu, and R. W. Lau. Inverse render-
+                                                                             ing of glossy objects via the neural plenoptic function and
+[33] S. R. Marschner. Inverse Rendering for Computer Graphics.
+                                                                             radiance fields. In Proceedings of the IEEE/CVF Conference
+     PhD thesis, Cornell University, 1998. 2
+                                                                             on Computer Vision and Pattern Recognition (CVPR), pages
+[34] B. Mildenhall, P. P. Srinivasan, M. Tancik, J. T. Barron,
+                                                                             19999–20008, 2024. 3
+     R. Ramamoorthi, and R. Ng. NeRF: Representing scenes as
+                                                                        [49] N. Wang, B. Wang, W. Wang, and X. Guo. Computing me-
+     neural radiance fields for view synthesis. Communications
+                                                                             dial axis transform with feature preservation via restricted
+     of the ACM, 65(1):99–106, 2021. 3, 4
+                                                                             power diagram. ACM Transactions on Graphics (TOG),
+[35] T. Müller, A. Evans, C. Schied, and A. Keller. Instant neu-            41(6):1–18, 2022. 7
+     ral graphics primitives with a multiresolution hash encoding.      [50] P. Wang, L. Liu, Y. Liu, C. Theobalt, T. Komura, and
+     ACM Transactions on Graphics (ToG), 41(4):1–15, 2022. 3                 W. Wang. NeuS: Learning neural implicit surfaces by vol-
+[36] J. S. Nimeroff, E. Simoncelli, and J. Dorsey. Efficient re-             ume rendering for multi-view reconstruction. arXiv preprint
+     rendering of naturally illuminated environments. In Pho-                arXiv:2106.10689, 2021. 3
+     torealistic Rendering Techniques, pages 373–388. Springer,         [51] Y. Wang, W. Wu, and D. Xu. Learning unified decomposi-
+     1995. 2                                                                 tional and compositional NeRF for editable novel view syn-
+[37] O. Özyeşil, V. Voroninski, R. Basri, and A. Singer. A sur-            thesis. In Proceedings of the IEEE/CVF Conference on Com-
+     vey of structure from motion*. Acta Numerica, 26:305–364,               puter Vision and Pattern Recognition (CVPR), pages 18247–
+     2017. 2                                                                 18256, 2023. 3
+[38] J. Romero, D. Tzionas, and M. J. Black. Embodied Hands:            [52] B. Wen, J. Tremblay, V. Blukis, S. Tyree, T. Müller,
+     Modeling and capturing hands and bodies together. arXiv                 A. Evans, D. Fox, J. Kautz, and S. Birchfield. BundleSDF:
+     preprint arXiv:2201.02610, 2022. 4                                      Neural 6-dof tracking and 3d reconstruction of unknown ob-
+[39] P.-E. Sarlin, C. Cadena, R. Siegwart, and M. Dymczyk. From              jects. In Proceedings of the IEEE/CVF Conference on Com-
+     coarse to fine: Robust hierarchical localization at large scale.        puter Vision and Pattern Recognition (CVPR), pages 606–
+     In Proceedings of the IEEE/CVF Conference on Computer                   617, 2023. 1, 3, 9
+     Vision and Pattern Recognition (CVPR), 2019. 9                     [53] M. J. Westoby, J. Brasington, N. F. Glasser, M. J. Hambrey,
+[40] P.-E. Sarlin, D. DeTone, T. Malisiewicz, and A. Rabinovich.             and J. M. Reynolds. ‘Structure-from-Motion’ photogramme-
+     SuperGlue: Learning feature matching with graph neural                  try: A low-cost, effective tool for geoscience applications.
+     networks. In Proceedings of the IEEE/CVF Conference on                  Geomorphology, 179:300–314, 2012. 2
+     Computer Vision and Pattern Recognition (CVPR), 2020. 9            [54] A. Witkin and M. Kass. Reaction-diffusion textures. In
+                                                                             Proceedings of the 18th Annual Conference on Computer
+[41] P. P. Srinivasan, B. Deng, X. Zhang, M. Tancik, B. Milden-
+                                                                             Graphics and Interactive Techniques (SIGGRAPH), pages
+     hall, and J. T. Barron. NeRV: Neural reflectance and visibil-
+                                                                             299–308, 1991. 2
+     ity fields for relighting and view synthesis. In Proceedings of
+                                                                        [55] Q. Wu, X. Liu, Y. Chen, K. Li, C. Zheng, J. Cai, and
+     the IEEE/CVF Conference on Computer Vision and Pattern
+                                                                             J. Zheng. Object-compositional neural implicit surfaces. In
+     Recognition (CVPR), pages 7495–7504, 2021. 3
+                                                                             Proceedings of the European Conference on Computer Vi-
+[42] H. Su, Q. Huang, N. J. Mitra, Y. Li, and L. Guibas. Estimat-            sion (ECCV), pages 197–213. Springer, 2022. 3
+     ing image depth using shape collections. ACM Transactions
+                                                                        [56] Y. Xiang, T. Schmidt, V. Narayanan, and D. Fox. PoseCNN:
+     on Graphics (ToG), 33(4):1–11, 2014. 2
+                                                                             A convolutional neural network for 6d object pose estimation
+[43] C. Sun, G. Cai, Z. Li, K. Yan, C. Zhang, C. Marshall, J.-               in cluttered scenes. arXiv preprint arXiv:1711.00199, 2017.
+     B. Huang, S. Zhao, and Z. Dong. Neural-pbir reconstruc-                 1, 9, 10
+     tion of shape, material, and illumination. In Proceedings of       [57] Z. Yan, C. Li, and G. H. Lee. NeRF-DS: Neural radi-
+     the IEEE/CVF International Conference on Computer Vision                ance fields for dynamic specular objects. In Proceedings of
+     (ICCV), pages 18046–18056, 2023. 3                                      the IEEE/CVF Conference on Computer Vision and Pattern
+[44] C. Sun, M. Sun, and H.-T. Chen. Improved direct voxel                   Recognition (CVPR), pages 8285–8295, 2023. 3
+     grid optimization for radiance fields reconstruction. arXiv        [58] B. Yang, Y. Zhang, Y. Xu, Y. Li, H. Zhou, H. Bao, G. Zhang,
+     preprint arXiv:2206.05085, 2022. 3                                      and Z. Cui. Learning object-compositional neural radiance
+[45] P. C. Teo, E. P. Simoncelli, and D. J. Heeger. Efficient linear         field for editable scene rendering. In Proceedings of the
+     re-rendering for interactive lighting design. Technical report,         IEEE/CVF International Conference on Computer Vision
+     CiteSeer, 1997. 2                                                       (ICCV), pages 13779–13788, 2021. 3
+[59] W. Yang, G. Chen, C. Chen, Z. Chen, and K.-Y. K. Wong.
+     PS-NeRF: Neural inverse rendering for multi-view photo-
+     metric stereo. In Proceedings of the European Conference on
+     Computer Vision (ECCV), pages 266–284. Springer, 2022. 3
+[60] Z. Yang, Y. Wei, and Y. Yang. Associating objects with trans-
+     formers for video object segmentation. In Advances in Neu-
+     ral Information Processing Systems (NeurIPS), 2021. 9
+[61] Z. Yang and Y. Yang. Decoupling features in hierarchical
+     propagation for video object segmentation. In Advances in
+     Neural Information Processing Systems (NeurIPS), 2022. 9
+[62] Y. Yao, J. Zhang, J. Liu, Y. Qu, T. Fang, D. McKinnon,
+     Y. Tsin, and L. Quan. NeILF: Neural incident light field for
+     physically-based material estimation. In Proceedings of the
+     European Conference on Computer Vision (ECCV), pages
+     700–716. Springer, 2022. 3
+[63] L. Yariv, Y. Kasten, D. Moran, M. Galun, M. Atzmon, B. Ro-
+     nen, and Y. Lipman. Multiview neural surface reconstruc-
+     tion by disentangling geometry and appearance. In Advances
+     in Neural Information Processing Systems (NeurIPS), vol-
+     ume 33, pages 2492–2502, 2020. 3, 4
+[64] Y. Ye, P. Hebbar, A. Gupta, and S. Tulsiani. Diffusion-
+     guided reconstruction of everyday hand-object interaction.
+     In Proceedings of the IEEE/CVF International Conference
+     on Computer Vision (ICCV), pages 19717–19728, 2023. 1, 9
+[65] K. Zhang, F. Luan, Z. Li, and N. Snavely. IRON: Inverse
+     rendering by optimizing neural sdfs and materials from pho-
+     tometric images. In Proceedings of the IEEE/CVF Confer-
+     ence on Computer Vision and Pattern Recognition (CVPR),
+     pages 5565–5574, 2022. 3
+[66] K. Zhang, F. Luan, Q. Wang, K. Bala, and N. Snavely.
+     PhySG: Inverse rendering with spherical gaussians for
+     physics-based material editing and relighting. In Proceed-
+     ings of the IEEE/CVF Conference on Computer Vision and
+     Pattern Recognition (CVPR), pages 5453–5462, 2021. 1, 3,
+     4, 7, 9
+[67] X. Zhang, P. P. Srinivasan, B. Deng, P. Debevec, W. T. Free-
+     man, and J. T. Barron. NeRFactor: Neural factorization of
+     shape and reflectance under an unknown illumination. ACM
+     Transactions on Graphics (ToG), 40(6):1–18, 2021. 2, 3
+[68] Y. Zhang, J. Sun, X. He, H. Fu, R. Jia, and X. Zhou. Model-
+     ing indirect illumination for inverse rendering. In Proceed-
+     ings of the IEEE/CVF Conference on Computer Vision and
+     Pattern Recognition (CVPR), pages 18643–18652, 2022. 1,
+     2, 3, 10
+

@@ -1,0 +1,749 @@
+
+=== PAGE 1 ===
+SO-DETR: Leveraging Dual-Domain Features and
+Knowledge Distillation for Small Object Detection
+Huaxiang Zhang, Hao Zhang, Aoran Mei, Zhongxue Gan* ,Guo-Niu Zhu*
+Academy for Engineering and Technology, Fudan University, Shanghai 200433, China
+*Corresponding author: ganzhongxue@fudan.edu.cn, guoniu zhu@fudan.edu.cn
+Abstract—Detection Transformer-based methods have
+achieved significant advancements in general object detection.
+However, challenges remain in effectively detecting small objects.
+One key difficulty is that existing encoders struggle to efficiently
+fuse low-level features. Additionally, the query selection strategies
+are not effectively tailored for small objects. To address these
+challenges, this paper proposes an efficient model, Small Object
+Detection Transformer (SO-DETR). The model comprises three
+key components: a dual-domain hybrid encoder, an enhanced
+query selection mechanism, and a knowledge distillation
+strategy. The dual-domain hybrid encoder integrates spatial and
+frequency domains to fuse multi-scale features effectively. This
+approach enhances the representation of high-resolution features
+while maintaining relatively low computational overhead.
+The enhanced query selection mechanism optimizes query
+initialization by dynamically selecting high-scoring anchor
+boxes using expanded IoU, thereby improving the allocation of
+query resources. Furthermore, by incorporating a lightweight
+backbone network and implementing a knowledge distillation
+strategy, we develop an efficient detector for small objects.
+Experimental results on the VisDrone-2019-DET and UA VVaste
+datasets demonstrate that SO-DETR outperforms existing
+methods with similar computational demands. The project page
+is available at https://github.com/ValiantDiligent/SO DETR.
+Index Terms—Small Object Detection, Detection Transformer,
+Knowledge Distillation
+I. I NTRODUCTION
+Object detection is a core task in computer vision that
+focuses on identifying and localizing objects in images [1].
+Despite significant progress in this field, detecting small ob-
+jects remains a challenging problem. Small object detection
+is difficult due to tiny sizes, complex backgrounds, and the
+need to balance performance with low computational costs
+[2]. To address these challenges, research and development
+have increasingly focused on deep learning-based object de-
+tection methods. These methods are broadly categorized into
+Convolutional Neural Network (CNN)-based approaches and
+Transformer-based approaches. Among CNN-based methods,
+the YOLO detector is the most renowned due to its reasonable
+trade-off between speed and accuracy [1]. However, these
+methods often rely on manually designed components, such
+as anchor boxes generated based on human expertise and non-
+maximum suppression (NMS) as a post-processing step [3].
+Detection Transformer (DETR) offers a new object de-
+tection method that does not require traditional steps such
+as anchor boxes and NMS [4]. Nevertheless, DETR is not
+efficient, and its performance in small object detection tasks
+RT-DETR-R18 SO-DETR-EV2 (Ours)
+Fig. 1: Comparison of detection results between RT-DETR-R18 and
+our proposed SO-DETR-EV2. Within the yellow circle, our model
+outputs fewer overlapping bounding boxes.
+remains suboptimal. Deformable-DETR [5] incorporates de-
+formable attention mechanisms. This enhancement improves
+the detection capability for small-sized objects by utilizing
+multi-scale feature maps. DINO [6] further improves the
+model’s detection performance. However, these methods suffer
+from large computational demands and poor real-time perfor-
+mance. RT-DETR [7] achieves a balance between speed and
+accuracy by decoupling encoder. As illustrated in Fig. 1, the
+model is primarily designed for natural images, which presents
+challenges when applied to detecting small objects.
+To balance speed and accuracy in small object detection, we
+enhance our model by integrating low-level features from dual
+domains. Additionally, we optimize query selection specifi-
+cally for small objects. Furthermore, we develop a lightweight
+and efficient small object detector using knowledge distillation
+methods.
+Our main contributions are summarized as follows.
+1) We introduce a dual-domain hybrid encoder that in-
+tegrates spatial and frequency features. This encoder
+enhances high-resolution feature representation while
+maintaining low computational cost.
+
+=== PAGE 2 ===
+Deformable
+AttentionAttention Attention Conv Attention Dual-Domain
+Conv
+Deformable-DETRDETR RT-DETR SO-DETR(Ours)
+Conv Dual-Domain
+Conv
+Fig. 2: Evolution of encoder architectures in DETR-based models and their encoder mechanisms. All models utilize feature layers extracted
+by a backbone network as input.
+2) We propose an improved query selection method that
+dynamically identifies high-scoring anchor boxes as
+queries using expanded IoU.
+3) We design a knowledge distillation strategy tailored for
+DETR-like models and integrate it with a lightweight
+backbone network. This combination results in an effi-
+cient and lightweight detector specifically optimized for
+small object detection.
+II. R ELATED WORK
+A. Detection Transformer
+DETR [4] uses the transformer architecture to create an
+end-to-end object detector. Unlike traditional methods, DETR
+treats object detection as a set prediction problem with bipar-
+tite matching. As shown in Fig. 2, DETR feeds the highest-
+level backbone features into the transformer encoder for self-
+attention computation. However, DETR performs poorly in
+detecting small objects due to limited access to lower-level
+information. Deformable-DETR [5] improves small object
+detection by using deformable attention, which is computa-
+tionally efficient and applies self-attention to four feature maps
+from backbone. For better real-time performance, RT-DETR
+[7] only performs self-attention on the highest-level features
+and uses convolutional structures for cross-scale fusion.
+Many studies have also explored the query selection. Condi-
+tional DETR [8] introduces 256-dimensional learnable vectors
+to define (x, y) reference points and incorporates positional
+information into the transformer decoder. DAB-DETR [9]
+introduces 256-dimensional vectors to represent (x, y, w, h)
+reference points. DN-DETR [10] addresses long training times
+caused by ambiguity in Hungarian matching by introducing
+query denoising. DINO [6] selects top- k features based on
+classification scores from the encoder. RT-DETR enhances
+query selection by considering IoU.
+Our proposed Small Object Detection Transformer (SO-
+DETR) enhances the encoder by adding a dual-domain fusion
+module. This module efficiently fuses feature maps with
+four-times downsampling, which is crucial for small object
+detection while keeping computational costs low. Additionally,
+we incorporate an IoU-aware query selection mechanism using
+Expanded-IoU, which dynamically selects queries that are
+more favorable for small object detection.
+B. Knowledge Distillation
+Knowledge Distillation (KD) is a technique for transferring
+knowledge from a large teacher model to a smaller student
+model [11]. In object detection, KD methods typically involve
+transferring knowledge from the backbone, neck, and detection
+head of the teacher model to the student model [12]. However,
+most existing KD approaches are designed for CNN-based
+architectures and are not directly applicable to Transformer-
+based models like DETR due to architectural differences.
+Recent works [13], [14] have addressed this limitation by in-
+troducing response-based and feature-based distillation specif-
+ically tailored for DETR, as well as specialized object queries
+to decouple detection from distillation tasks. These adaptations
+enable effective knowledge transfer in Transformer-based ob-
+ject detectors.
+Compared to existing methods, our method focuses on
+enhancing small object detection within DETR-like models.
+We concentrate on the outputs of the last decoder layer to
+compute classification and localization distillation losses.
+III. M ETHODOLOGY
+As shown in Fig. 3, this study proposes the SO-DETR
+model, which is built upon the architecture of RT-DETR [7].
+Our approach comprises three key components: a dual-domain
+hybrid encoder, an enhanced query selection mechanism, and
+a knowledge distillation strategy.
+A. Dual-Domain Hybrid Encoder
+High-level features effectively capture the relationships be-
+tween different conceptual entities due to their richer semantic
+information. Lower-level features contribute less effectively
+to attention operations. Therefore, our dual-domain hybrid
+encoder applies self-attention operations exclusively to the
+S5 layer. When performing cross-scale feature fusion, we
+combine the S2 and S3 layers using Dual-Domain Fusion
+module (DDF).
+
+=== PAGE 3 ===
+Multi-Head
+Attention
+ Fusion
+Fusion
+DDF
+Decoder & Head
+S2
+S3
+S4
+S5
+C
+Dual-Domain Hybrid Encoder
+Dual-Domain Hybrid Encoder
+Enhanced Query Selection
+BACKBONE
+Decoder
+Distillation 
+Loss
+Ground Truth
+…….
+Student 
+Loss
+Conv1×1 s1
+BN
+SiLU
+Conv3×3 s2
+BN
+SiLU
+ConvBlock
+Position Embedding
+ConvBlock
+Fusion
+F
+N ×
+C +
+RepBlockDual-Domain 
+Fusion
+Object Query
+BACKBONE
+Fig. 3: Overview of the SO-DETR architecture with knowledge distillation. Multi-scale features from the backbone’s four stages are fed
+into the dual-domain hybrid encoder, which transforms them into a sequence of image features. The enhanced query selection module then
+selects a fixed number of these features as initial object queries for the decoder. The decoder, with auxiliary prediction heads, iteratively
+refines the queries to predict object categories and bounding boxes. During knowledge distillation, the output of the teacher model’s decoder
+is used to compute the distillation loss with respect to the student model’s predictions.
+C
+GELU
+IFFT
+× +
+ReLU
+FFT
+Activation 
+Function
+1 × 1 
+Conv
+X2
+X1
+α
+β
+|Xconv|
+C
+Fusion
+Fig. 4: The Dual-Domain Fusion block in encoder. FFT and IFFT
+denote the Fast Fourier Transform and Inverse Fast Fourier Trans-
+form, respectively.
+Fig. 4 illustrates the architectural of DDF. Given an input
+feature map X ∈ RC×H×W , the module begins with a
+convolutional operation followed by channel-wise splitting:
+[X1, X2] = Split(Conv(X), [C1, C2], dim = 0) (1)
+Here, Conv(·) denotes a convolutional layer that maintains
+the spatial dimensions while adjusting the channel dimensions.
+The split divides the convolved features into two distinct
+branches: X1 with C1 channels and X2 with C2 channels,
+where C1 + C2 = C. This bifurcation allows for specialized
+transformation in subsequent stages. Specifically, C1 is set to
+be one-quarter of the total number of channels.
+The first branch, X1, undergoes further convolution fol-
+lowed by a Gaussian Error Linear Unit (GELU) activation
+to introduce non-linearity:
+Xconv = GELU(Conv(X1)) (2)
+The GELU activation is chosen for its smooth non-linear
+properties. To capture intricate feature dependencies, the con-
+volved features Xconv are processed in the frequency domain
+as follows:
+Xout = α1 · |IFFT (FFT (Conv (|Xconv|))) · Conv (|Xconv|)|
++ Conv (ReLU (X1 + Conv (Xconv) + β1 · |Xconv|))
+(3)
+The coefficients α1 and β1 are learnable parameters that bal-
+ance the contributions from the frequency-enhanced features
+and the spatial residual connections, respectively. The outputs
+from both branches are concatenated and passed through a
+final convolutional layer to integrate the refined features.
+Xfinal = Conv([Xout, X2]) (4)
+This concatenation ensures that both frequency-enhanced
+and original features contribute to the final representation. The
+resulting vectors are subsequently fed into a Fusion block [7].
+B. Enhanced Query Selection
+In SO-DETR, anchor boxes are generated on multi-scale
+feature maps using a fixed grid. They are subsequently refined
+through position transformations and selection in logit space.
+During training, the regression head dynamically adjusts the
+anchor boxes to match the target’s position and scale. To im-
+prove small object detection, a classification head incorporates
+the expanded IoU score to dynamically select the top- k high-
+scoring anchor boxes as queries.
+The predicted bounding box Bp and the ground truth bound-
+ing box Bgt represent the model’s prediction and the actual
+target, respectively. Expanded-IoU is defined as the Intersec-
+tion over Union between the scaled predicted bounding boxB′
+p
+and the scaled ground truth bounding box B′
+gt. Both boxes are
+
+=== PAGE 4 ===
+proportionally scaled by a factor (α2 > 1) while maintaining
+their centers fixed. This scaling operation increases both the
+width and height of the bounding boxes. The scaled bounding
+boxes are defined as B′
+p = ( xp, yp, wp × α2, hp × α2) and
+B′
+gt = ( xgt, ygt, wgt × α2, hgt × α2), where (xp, yp) and
+(xgt, ygt) are the centers, and wp, hp, wgt, hgt represent the
+widths and heights of the predicted and ground truth boxes,
+respectively. The Expanded-IoU is defined as:
+Expanded-IoU(Bp, Bgt) =
+B′
+p ∩ B′
+gt
+ /
+B′
+p ∪ B′
+gt
+ . (5)
+In our framework, we utilize Expanded-IoU to compute both
+the classification loss and the IoU loss, while the SIoU [15] is
+used specifically for calculating the IoU loss. The Expanded-
+SIoU is then defined as:
+Expanded-SIoU = SIoU − IoU + Expanded-IoU. (6)
+C. Knowledge Distillation for Small Object Detection
+We develop a teacher model based on RT-DETR-R50 and
+a lightweight student model derived from RT-DETR-R18
+by replacing the traditional ResNet-18 backbone with Effi-
+cientFormerV2 [16]. Both models incorporate our proposed
+enhanced query selection and dual-domain hybrid encoder
+methods to improve small object detection capabilities. To
+further enhance the student model’s performance, we employ a
+knowledge distillation strategy where the student learns from
+the outputs of the teacher model’s final decoder layer. The
+design of the loss functions used in the distillation process is
+described below.
+We employ Binary Cross-Entropy (BCE) to measure the
+discrepancy between the classification scores of the student
+model and the teacher model. This loss term quantifies the
+deviation between the student’s classification predictions and
+those of the teacher. It encourages the student model to achieve
+more accurate classification.
+Lc = BCE(sc, tc) (7)
+where sc and tc represent the classification score outputs from
+the final decoder layer of the student model and the teacher
+model, respectively.
+We utilize the L1 loss to compute the differences in
+bounding box coordinates, weighted by the object confidence
+scores from the teacher model. This loss ensures the student
+model approximates the teacher’s bounding box predictions,
+especially for high-confidence objects.
+LL1 = L1(sb, tb) × to (8)
+where sb and tb denote the bounding box coordinates predicted
+by the student model and the teacher model, respectively, and
+to represents the object confidence score from the teacher
+model. To enhance small object detection, we apply Expanded-
+SIoU. By introducing Expanded- SIoU, IoU loss helps the
+student model align the bounding boxes of small objects.
+LIoU = (1 − Expanded-SIoU(sb, tb)) (9)
+The total distillation loss is formulated as follows:
+Ltotal = αLc + βLL1 + γLIoU (10)
+where α, β, and γ are constant coefficients that balance the
+contributions of each loss component.
+Finally, we implement a linear decay schedule for the
+distillation loss. This scheme assigns higher weights to the
+distillation loss early in training. As training progresses, the
+weight of the distillation loss is gradually reduced.
+IV. E XPERIMENTS
+A. Experimental Setup
+Datasets: To emphasize the model’s ability to detect small
+targets, we use datasets with a high prevalence of such objects.
+Comprehensive quantitative evaluations are conducted on two
+object detection benchmarks: VisDrone [28] and UA VVaste
+[29].
+The VisDrone-2019-DET dataset contains 6471 training
+images, 548 validation images, and 3190 test images. These
+images were captured by UA Vs operating at different altitudes
+and across various locations. Each image was annotated with
+bounding boxes for ten object categories: pedestrian, person,
+car, van, bus, truck, motorbike, bicycle, awning-tricycle, and
+tricycle. Since the test set is not publicly available, we fol-
+lowed the evaluation setup from previous studies [25], [26].
+For our experiments, we used the training set for model
+training and the validation set for performance evaluation.
+Furthermore, we train the SO-DETR network using the
+UA VVaste dataset to assess the model’s generalization capa-
+bilities across different datasets. UA VVaste is specifically de-
+signed for aerial rubbish detection and comprises 772 images
+with 3716 manually labeled waste annotations in both urban
+and natural environments. The dataset was created to address
+the lack of domain-specific data for waste detection using
+drones or UA Vs. We employ the training subset for training
+and the test subset for evaluating detection performance.
+Implementation Details: All models are trained on
+NVIDIA GeForce RTX 3090. The experimental configuration
+adheres to the default parameters from the official imple-
+mentations, with training conducted until convergence. Our
+approach is implemented and trained for 350 epochs using a
+batch size of 4, incorporating an early stopping mechanism
+with a patience value of 40. For the distillation experiments,
+training is conducted for 600 epochs. We use the same data
+augmentation strategy as [22].
+We report the standard COCO metrics, including AP (av-
+eraged over uniformly sampled IoU thresholds ranging from
+0.50 to 0.95 with a step size of 0.05), and AP 50 (AP at an
+IoU threshold of 0.50). We also report the performance of the
+model across different object sizes using AP small, AP medium,
+and AP large. These metrics specifically focus on the detection
+performance of small, medium, and large objects, respectively.
+Objects are classified as small, medium, or large based on their
+area in the image. Small objects have an area of less than 322
+pixels, medium objects range from 322 to 962 pixels, and large
+objects have an area greater than 962 pixels in area.
+
+=== PAGE 5 ===
+TABLE I: Experimental Results on the VisDrone-2019-DET Dataset
+Model Backbone Publication Input Size Params (M) GFLOPs AP AP 50
+Low Computation
+YOLOv11-S [17] CSPDarknet (C3K2, C2PSA) arXiv2024 640 ×640 9.4 21.3 23.0 38.7
+YOLOv10-S [18] CSPDarknet (SCDown) arXiv2024 640 ×640 8.0 24.5 22.2 37.4
+YOLOv9-S [19] CSPDarknet (GELAN, PGI) ECCV2025 640 ×640 7.2 26.7 22.7 38.3
+YOLOv8-S [20] CSPDarknet (C2F) - 640 ×640 11.1 28.5 22.3 37.6
+HIC-YOLOv5 [21] CSPDarknet ICRA2024 640 ×640 9.4 31.2 20.8 36.1
+SO-DETR (Ours) EfficientFormerV2 - 640 ×640 12.1 33.3 28.2 46.7
+SO-DETR (Distilled) EfficientFormerV2 - 640 ×640 12.1 33.3 28.8 47.5
+Medium Computation
+YOLOv10-M [18] CSPDarknet (SCDown) arXiv2024 640 ×640 15.4 59.1 24.5 40.5
+YOLOv11-M [17] CSPDarknet (C3K2, C2PSA) arXiv2024 640 ×640 20.0 67.7 25.9 43.1
+YOLOv9-M [19] CSPDarknet (GELAN, PGI) ECCV2025 640 ×640 20.1 76.8 25.2 42.0
+YOLOv8-M [20] CSPDarknet (C2F) - 640 ×640 25.9 78.9 24.6 40.7
+UA V-DETR-R18 [22] ResNet18 arXiv2025 640 ×640 20.0 77.0 29.8 48.8
+RT-DETR-R18 [7] ResNet18 CVPR2024 640 ×640 20.0 57.3 26.7 44.6
+SO-DETR (Ours) ResNet18 - 640 ×640 20.5 64.3 29.9 49.0
+High Computation
+YOLOv10-L [18] CSPDarknet (SCDown) arXiv2024 640 ×640 24.4 120.3 26.3 43.1
+PP-YOLOE-P2-Alpha-l [23] CSPRepResNet - 640 ×640 54.1 111.4 30.1 48.9
+YOLOv8-L [20] CSPDarknet (C2F) - 640 ×640 43.7 165.2 26.1 42.7
+DetectoRS w/ RFLA [24] ResNet50 ECCV2022 800 ×800 123.2 160.0 27.4 45.3
+DCFL [25] ResNet50 CVPR2023 1024 ×1024 36.1 157.8 - 32.1
+Deformable DETR [5] ResNet50 ICLR2020 1333 ×800 40.0 173.0 27.1 42.2
+DETR [4] ResNet50 ECCV2020 1333 ×750 60.0 187.0 24.1 40.1
+YOLOv11-X [17] CSPDarknet (C3K2, C2PSA) arXiv2024 640 ×640 56.8 194.5 28.1 45.6
+QueryDet [26] ResNet50 CVPR2022 2400 ×2400 33.9 212.0 28.3 48.1
+ClusDet [27] ResNet50 ICCV2019 1000 ×600 30.2 207.0 26.7 50.6
+UA V-DETR-R50 [22] ResNet50 arXiv2025 640 ×640 42.0 170.0 31.5 51.1
+RT-DETR-R50 [7] ResNet50 CVPR2024 640 ×640 42.0 129.9 28.4 47.0
+SO-DETR (Ours) ResNet50 - 640 ×640 44.4 161.4 31.5 51.5
+TABLE II: Experimental Results on UA VVaste Dataset
+Model Params (M) GFLOPs AP AP 50
+YOLOv11-S [17] 9.4 21.3 27.8 63.0
+HIC-YOLOv5 [21] 9.4 31.2 30.5 65.1
+UA V-DETR-EV2 [22] 13 43 37.1 70.6
+RT-DETR-R18 [7] 20.0 57.3 36.3 72.6
+RT-DETR-R50 [7] 42.0 129.9 37.4 73.5
+SO-DETR-R50 (Ours) 44.4 161.4 37.5 76.4
+SO-DETR-R18 (Ours) 20.5 64.3 35.1 72.1
+SO-DETR-EV2 (Ours) 12.1 33.3 33.7 70.6
+SO-DETR-EV2 (Distilled) 12.1 33.3 36.9 73.6
+B. Comparative Experiments
+As shown in Table I, we evaluate the performance of our
+proposed SO-DETR models against existing object detectors
+and small object detectors using the VisDrone-2019-DET
+dataset. The models are categorized into three groups based on
+their computational complexity: Low Computation for models
+with less than 50 GFLOPs, Medium Computation for models
+with 50 to 100 GFLOPs, and High Computation for models
+with more than 100 GFLOPs.
+Low Computation: In the low computation category, SO-
+DETR-EV2 achieves an AP of 28.2% and an AP 50 of 46.7%,
+outperforming other real-time detectors such as YOLOv11-
+S [17] (23.0% AP, 38.7% AP 50), YOLOv10-S [18] (22.2%
+AP, 37.4% AP50), and HIC-YOLOv5 [21] (20.8% AP, 36.1%
+AP50). The distilled SO-DETR-EV2 variant further enhances
+performance with an AP of 28.8% and an AP 50 of 47.5%.
+Medium Computation : Within the medium computation
+range, SO-DETR-R18 demonstrates superior accuracy with an
+AP of 29.9% and an AP 50 of 49.0%, surpassing YOLOv10-
+M (24.5% AP, 40.5% AP50), YOLOv11-M (25.9% AP, 43.1%
+AP50), RT-DETR-R18 [7] (26.7% AP, 44.6% AP50), and UA V-
+DETR-R18 [22] (29.8% AP, 48.8% AP 50).
+High Computation : SO-DETR-R50 achieves an AP of
+31.5% and an AP 50 of 51.5%, outperforming UA V-DETR-
+R50 [22] (31.5% AP, 51.1% AP 50), YOLOv10-L (26.3% AP,
+43.1% AP50), PP-YOLOE-P2-Alpha-l [23] (30.1% AP, 48.9%
+AP50), YOLOv11-X (28.1% AP, 45.6% AP50), QueryDet [26]
+(28.3% AP, 48.1% AP 50), ClusDet [27] (26.7% AP, 50.6%
+AP50), and RT-DETR-R50 (28.4% AP, 47.0% AP 50).
+As shown in Table I, our SO-DETR models consis-
+tently achieve the highest AP and AP 50 scores across low,
+medium, and high computational complexity categories on the
+VisDrone-2019-DET dataset.
+To further validate our method, we conduct experiments on
+the UA VVaste dataset. As shown in Table II, SO-DETR-R50
+achieves an AP of 37.5% and an AP 50 of 76.4%, compared
+to RT-DETR-R50’s AP of 37.4% and AP 50 of 73.5%. The
+distilled SO-DETR-EV2 variant obtains an AP of 36.9% and
+an AP 50 of 73.6%, compared to the non-distilled SO-DETR-
+EV2’s AP of 33.7% and AP 50 of 70.6%.
+These results demonstrate that SO-DETR effectively en-
+hances small object detection while maintaining competitive
+computational efficiency. Additionally, our SO-DETR models
+exhibit superior performance and robustness across various
+datasets.
+
+=== PAGE 6 ===
+TABLE III: Performance comparison with different configurations.
+Backbone Query Select Encoder Params(M) GFLOPs AP AP 50 APSmall APM edium APLarge
+R50
+42.0 129.9 30.6 49.8 21.7 42.1 53.2
+✓ 42.0 129.9 31.0 50.4 21.9 42.5 49.9
+✓ 44.4 161.4 30.9 50.9 22.3 42.3 49.7
+✓ ✓ 44.4 161.4 31.5 51.5 22.4 43.5 46.7
+R18
+20.0 57.3 27.6 45.8 19.3 37.9 43.4
+✓ 20.0 57.3 27.7 46.3 19.4 38.1 40.9
+✓ 20.5 64.3 28.9 47.4 20.6 39.7 45.4
+✓ ✓ 20.5 64.3 29.9 49.0 21.1 41.2 42.9
+EV2
+11.9 29.8 25.5 43.2 17.1 35.7 42.5
+✓ 11.9 29.8 26.7 45.2 18.6 36.6 44.3
+✓ 12.1 33.3 26.4 44.5 18.5 36.3 41.9
+✓ ✓ 12.1 33.3 28.2 46.7 19.7 38.2 43.1
+TABLE IV: Effect of Combining Different Distillation Strategies
+Model Params(M) GFLOPs AP AP 50 APSmall APM edium APLarge
+SO-DETR-R50(Teacher) 42.0 161.4 31.5 51.5 22.4 43.5 46.7
+SO-DETR-EV2(Student) 12.1 33.3 28.2 46.7 19.7 38.2 43.1
++Constant + GIoU 12.1 33.3 28.3 46.7 19.8 38.7 43.0
++Constant + Expanded-SIoU 12.1 33.3 27.4 45.7 18.9 38.3 41.9
++Cosine + GIoU 12.1 33.3 28.1 46.7 19.5 38.8 40.3
++Cosine + Expanded-SIoU 12.1 33.3 28.0 46.2 19.8 38.4 41.5
++Linear + GIoU 12.1 33.3 28.8 47.2 20.0 39.8 43.2
++Linear + Expanded-SIoU 12 33 28.8 47.5 20.5 39.1 43.2
+C. Ablation Studies
+To further validate the effectiveness of our method, we
+conduct ablation experiments on the VisDrone dataset, as
+presented in Table III. The experiments are performed using
+three different backbone networks: ResNet50 (R50), ResNet18
+(R18), and EfficientFormerV2 (EV2). For each backbone, we
+evaluate the impact of integrating the dual-domain hybrid
+encoder and enhanced query selection modules individually
+and in combination.
+Compared to the R18 backbone, the EV2 backbone signif-
+icantly reduces computational cost, reaching only 52% of the
+original values. This reduction leads to a decrease of 2.1%
+in AP and 2.6% in AP 50. After introducing the enhanced
+query selection, AP improves by 1.2% and AP 50 increases
+by 2.0%. The addition of the dual-domain hybrid encoder
+method further contributes to AP and AP 50 gains of 0.9% and
+1.3%, respectively. When both methods are applied together,
+the model achieves its best performance. The AP increases
+by 2.7% to reach 28.2%, and the AP 50 improves by 3.5%,
+reaching 46.7%.
+Further ablation studies on the R50 and R18 backbones
+reveal similar trends. For the R50 model, the enhanced query
+selection and dual-domain hybrid encoder methods individu-
+ally increase AP by 0.4% and 0.3%, respectively. When both
+methods are combined, AP improves by 0.9%, accompanied
+by gains in AP small of 0.7% and AP medium of 1.4%. In the
+case of the R18 backbone, the enhanced query selection and
+dual-domain hybrid encoder methods result in AP increases of
+0.1% and 1.3%, respectively. When both are used together, AP
+increases by 2.3%, with AP small and APmedium improving by
+1.8% and 3.3%, respectively.
+We conduct ablation experiments on our knowledge dis-
+tillation strategy, comparing three different schemes for the
+decay of the distillation loss weight: a constant distillation
+loss weight, a non-linear oscillation of the distillation loss
+weight based on a cosine function, and a gradual linear decay
+of the distillation loss weight. Additionally, we evaluate the
+performance of GIoU and Expanded-SIoU for calculating the
+IoU loss during the distillation process.
+As shown in Table IV, the best distillation performance is
+achieved when both Expanded-SIoU and the linearly decaying
+distillation loss weight are used during training. Under this
+configuration, the model shows improvements across multiple
+metrics: AP increases by 0.6%, AP 50 rises by 0.8%, AP small
+improves by 0.8%, AP medium goes up by 0.9%, and AP large
+increases by 0.1%.
+D. Visualization
+In Fig. 5, we present heatmaps overlaid with detection
+results for small objects from the VisDrone dataset. Compared
+to the RT-DETR-EV2, the distilled SO-DETR-EV2 model
+exhibits a significant reduction in false positives, especially
+in small object detection. Our method demonstrates superior
+detection accuracy for small objects, highlighting its improved
+performance in challenging scenarios.
+E. Discussion
+From the comparative experimental results, our model
+achieves the best detection performance under similar param-
+eter counts and computational costs. This superiority holds
+true when compared to both general object detectors and
+small object detectors. Specifically, the distilled SO-DETR-
+EV2 reduces computational load by 41.8% relative to the
+default configuration of RT-DETR-R18, while improving AP
+by 2.1% and AP 50 by 2.9%. To understand the underlying
+reasons for this performance gain, we analyze the contributions
+of our proposed components.
+
+=== PAGE 7 ===
+RT-DETR-EV2
+RT-DETR-EV2
+SO-DETR-EV2 (Ours)
+SO-DETR-EV2 (Ours)
+Fig. 5: Qualitative comparison of detection results and attention heatmaps between RT-DETR-EV2 and our proposed SO-DETR-EV2. Images
+are from the VisDrone-2019-DET dataset. The yellow boxes highlight areas where our model outperforms RT-DETR-EV2 by generating
+more precise attention distributions and detecting small and distant objects more effectively.
+A key factor contributing to the enhanced performance is
+the integration of the dual-domain hybrid encoder. Our dual-
+domain operations efficiently acquire fine-grained information
+with low computational overhead. This dual-domain approach
+enables the model to leverage frequency patterns, which tra-
+ditional spatial-only encoders might overlook.
+Furthermore, our enhanced query selection mechanism and
+knowledge distillation strategy improve the model’s accuracy
+without incurring additional computational costs. The en-
+hanced query selection method introduces an enlarged width-
+height IoU loss function, which significantly accelerates the
+convergence of small object detection [30]. The enlarged
+bounding boxes are less sensitive to minor positional shifts,
+which makes IoU calculations more tolerant. This approach
+optimizes query resource allocation by prioritizing medium
+and small objects, enabling the model to detect finer details
+more effectively. By simultaneously using a linear decay
+schedule and enlarged bounding boxes during the distillation
+process, we ensure effective knowledge transfer from the
+teacher model while allowing the student model to undergo
+refined optimization as training progresses. This combination
+of the dual-domain hybrid encoder, enhanced query selection,
+and knowledge distillation methods enables SO-DETR-EV2 to
+maintain competitive detection performance even when using
+a lightweight backbone network.
+Moreover, the combined use of the dual-domain hybrid
+encoder and enhanced query selection methods yields an
+improvement in experimental performance that surpasses the
+sum of their individual contributions. In models with the
+EV2 backbone, the enhanced query selection method alone
+increases AP by 1.2%, and the dual-domain hybrid encoder
+method alone increases AP by 0.9%. When used in combi-
+nation, AP increases by 2.7%. This synergy is consistently
+demonstrated across all three backbone networks tested. We
+consider that the dual-domain hybrid encoder provides richer
+feature representations, while the query selection method
+ensures effective allocation of query resources. Together, they
+substantially enhance the model’s performance in detecting
+medium and small objects.
+However, we observe that using R50 and R18 backbones
+leads to a decrease in AP large. This may be because the en-
+coder’s focus on high-resolution features reduces the model’s
+semantic understanding of larger objects, and the query selec-
+tion method allocates fewer resources to them.
+V. C ONCLUSION
+We present SO-DETR, a Detection Transformer-based
+model tailored for small object detection. By incorporating
+a dual-domain hybrid encoder and an enhanced query selec-
+tion mechanism, SO-DETR effectively combines spatial and
+frequency features to better capture high-resolution details
+and optimize query allocation. Additionally, our knowledge
+distillation approach with a lightweight backbone contributes
+to maintaining computational efficiency. Experiments on the
+VisDrone-2019-DET and UA VVaste datasets demonstrate that
+SO-DETR achieves competitive accuracy compared to existing
+methods. Ablation studies confirm the contributions of each
+component, highlighting the model’s capability to address
+challenges in small object detection within Transformer-based
+frameworks. Future work will address the decrease in AP large
+when using our methods by enhancing the balance between
+high-resolution feature extraction and semantic understanding
+of larger objects.
+
+=== PAGE 8 ===
+REFERENCES
+[1] Z. Zou, K. Chen, Z. Shi, Y . Guo, and J. Ye, “Object detection in 20
+years: A survey,”Proceedings of the IEEE , vol. 111, no. 3, pp. 257–276,
+2023.
+[2] P. Mittal, R. Singh, and A. Sharma, “Deep learning-based object
+detection in low-altitude UA V datasets: A survey,” Image and Vision
+Computing, vol. 104, p. 104046, 2020.
+[3] K. Tong, Y . Wu, and F. Zhou, “Recent advances in small object detection
+based on deep learning: A review,”Image and Vision Computing, vol. 97,
+p. 103910, 2020.
+[4] N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and
+S. Zagoruyko, “End-to-end object detection with transformers,” in
+European conference on computer vision . Springer, 2020, pp. 213–
+229.
+[5] X. Zhu, W. Su, L. Lu, B. Li, X. Wang, and J. Dai, “Deformable
+DETR: Deformable transformers for end-to-end object detection,” in
+International Conference on Learning Representations , 2020.
+[6] H. Zhang, F. Li, S. Liu, L. Zhang, H. Su, J. Zhu, L. Ni, and H.-Y . Shum,
+“DINO: DETR with improved denoising anchor boxes for end-to-end
+object detection,” in The Eleventh International Conference on Learning
+Representations, 2023.
+[7] Y . Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y . Liu, and J. Chen,
+“DETRs beat YOLOs on real-time object detection,” in Proceedings of
+the IEEE/CVF Conference on Computer Vision and Pattern Recognition
+(CVPR), June 2024, pp. 16 965–16 974.
+[8] D. Meng, X. Chen, Z. Fan, G. Zeng, H. Li, Y . Yuan, L. Sun, and J. Wang,
+“Conditional DETR for fast training convergence,” inProceedings of the
+IEEE International Conference on Computer Vision (ICCV) , 2021.
+[9] S. Liu, F. Li, H. Zhang, X. Yang, X. Qi, H. Su, J. Zhu, and L. Zhang,
+“DAB-DETR: Dynamic anchor boxes are better queries for DETR,” in
+International Conference on Learning Representations , 2022. [Online].
+Available: https://openreview.net/forum?id=oMI9PjOb9Jl
+[10] F. Li, H. Zhang, S. Liu, J. Guo, L. M. Ni, and L. Zhang, “DN-
+DETR: Accelerate DETR training by introducing query denoising,” in
+Proceedings of the IEEE/CVF Conference on Computer Vision and
+Pattern Recognition, 2022, pp. 13 619–13 627.
+[11] G. Hinton, “Distilling the knowledge in a neural network,” arXiv preprint
+arXiv:1503.02531, 2015.
+[12] G. Chen, W. Choi, X. Yu, T. Han, and M. Chandraker, “Learning
+efficient object detection models with knowledge distillation,” Advances
+in Neural Information Processing Systems , vol. 30, 2017.
+[13] J. Chang, S. Wang, H.-M. Xu, Z. Chen, C. Yang, and F. Zhao,
+“DETRDistill: A universal knowledge distillation framework for DETR-
+families,” in Proceedings of the IEEE/CVF International Conference on
+Computer Vision, 2023, pp. 6898–6908.
+[14] Y . Wang, X. Li, S. Weng, G. Zhang, H. Yue, H. Feng, J. Han,
+and E. Ding, “KD-DETR: Knowledge distillation for DETECTION
+TRANSFORMER with consistent distillation points sampling,” in Pro-
+ceedings of the IEEE/CVF Conference on Computer Vision and Pattern
+Recognition, 2024, pp. 16 016–16 025.
+[15] Z. Gevorgyan, “Siou loss: More powerful learning for bounding box
+regression,” arXiv preprint arXiv:2205.12740 , 2022.
+[16] Y . Li, J. Hu, Y . Wen, G. Evangelidis, K. Salahi, Y . Wang, S. Tulyakov,
+and J. Ren, “Rethinking vision transformers for mobilenet size and
+speed,” in Proceedings of the IEEE International Conference on Com-
+puter Vision, 2023.
+[17] R. Khanam and M. Hussain, “YOLOv11: An overview of the key
+architectural enhancements,” arXiv preprint arXiv:2410.17725 , 2024.
+[18] A. Wang, H. Chen, L. Liu, K. Chen, Z. Lin, J. Han, and G. Ding,
+“YOLOv10: Real-time end-to-end object detection,” arXiv preprint
+arXiv:2405.14458, 2024.
+[19] C.-Y . Wang, I.-H. Yeh, and H.-Y . Mark Liao, “YOLOv9: Learning
+what you want to learn using programmable gradient information,” in
+European Conference on Computer Vision . Springer, 2025, pp. 1–21.
+[20] G. Jocher, A. Chaurasia, and J. Qiu, “Ultralytics YOLOv8,” 2023.
+[Online]. Available: https://github.com/ultralytics/ultralytics
+[21] S. Tang, S. Zhang, and Y . Fang, “HIC-YOLOv5: Improved YOLOv5
+for small object detection,” in 2024 IEEE International Conference on
+Robotics and Automation (ICRA) . IEEE, 2024, pp. 6614–6619.
+[22] H. Zhang, K. Liu, Z. Gan, and G.-N. Zhu, “UA V-DETR: Efficient end-
+to-end object detection for unmanned aerial vehicle imagery,” arXiv
+preprint arXiv:2501.01855, 2025.
+[23] P. Authors, “Paddledetection, object detection and instance segmenta-
+tion toolkit based on paddlepaddle,” https://github.com/PaddlePaddle/
+PaddleDetection, 2019.
+[24] C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, and G.-S. Xia, “RFLA: Gaussian
+receptive field based label assignment for tiny object detection,” in
+European Conference on Computer Vision . Springer, 2022, pp. 526–
+543.
+[25] C. Xu, J. Ding, J. Wang, W. Yang, H. Yu, L. Yu, and G.-S. Xia,
+“Dynamic coarse-to-fine learning for oriented tiny object detection,”
+in Proceedings of the IEEE/CVF Conference on Computer Vision and
+Pattern Recognition (CVPR) , June 2023, pp. 7318–7328.
+[26] C. Yang, Z. Huang, and N. Wang, “QueryDet: Cascaded sparse query for
+accelerating high-resolution small object detection,” in Proceedings of
+the IEEE/CVF Conference on Computer Vision and Pattern Recognition
+(CVPR), June 2022, pp. 13 668–13 677.
+[27] F. Yang, H. Fan, P. Chu, E. Blasch, and H. Ling, “Clustered object de-
+tection in aerial images,” in Proceedings of the IEEE/CVF International
+Conference on Computer Vision , 2019, pp. 8311–8320.
+[28] P. Zhu, L. Wen, D. Du, X. Bian, H. Fan, Q. Hu, and H. Ling, “Detection
+and tracking meet drones challenge,” IEEE Transactions on Pattern
+Analysis and Machine Intelligence, vol. 44, no. 11, pp. 7380–7399, 2021.
+[29] M. Kraft, M. Piechocki, B. Ptak, and K. Walas, “Autonomous, onboard
+vision-based trash and litter detection in low altitude aerial images
+collected by an Unmanned Aerial Vehicle,” Remote Sensing , vol. 13,
+no. 5, 2021.
+[30] H. Zhang, C. Xu, and S. Zhang, “Inner-IoU: More effective inter-
+section over union loss with auxiliary bounding box,” arXiv preprint
+arXiv:2311.02877, 2023.

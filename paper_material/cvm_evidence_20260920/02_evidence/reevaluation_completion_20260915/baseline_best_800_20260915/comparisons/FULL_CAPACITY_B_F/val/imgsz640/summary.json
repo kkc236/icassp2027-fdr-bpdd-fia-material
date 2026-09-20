@@ -1,0 +1,148 @@
+{
+  "actual_input_shapes": [
+    [
+      4,
+      3,
+      640,
+      640
+    ],
+    [
+      8,
+      3,
+      640,
+      640
+    ]
+  ],
+  "arm": "FULL_CAPACITY_B_F",
+  "checkpoint": {
+    "path": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+    "sha256": "39F006DF9548B4D5DA968B9302FC14678FABAF2009802BC09A68FB23DD146BC6"
+  },
+  "class_details": {
+    "awning-tricycle": {
+      "id": 7,
+      "map": 0.1284998051525629,
+      "map50": 0.20915619712114952,
+      "map75": 0.14273097159717016
+    },
+    "bicycle": {
+      "id": 2,
+      "map": 0.12018245582811515,
+      "map50": 0.25635674216507853,
+      "map75": 0.08832453472274138
+    },
+    "bus": {
+      "id": 8,
+      "map": 0.4767896680762974,
+      "map50": 0.6402270716268187,
+      "map75": 0.557404774461465
+    },
+    "car": {
+      "id": 3,
+      "map": 0.6117613735906846,
+      "map50": 0.8587861672299577,
+      "map75": 0.6881050128550257
+    },
+    "motor": {
+      "id": 9,
+      "map": 0.3022236610338263,
+      "map50": 0.6185245926388818,
+      "map75": 0.25535449892372986
+    },
+    "pedestrian": {
+      "id": 0,
+      "map": 0.27546956152275814,
+      "map50": 0.5656299460528684,
+      "map75": 0.23046480269069117
+    },
+    "people": {
+      "id": 1,
+      "map": 0.21040467410416047,
+      "map50": 0.5036551671673978,
+      "map75": 0.13582410211518997
+    },
+    "tricycle": {
+      "id": 6,
+      "map": 0.22367851862066526,
+      "map50": 0.390347275160268,
+      "map75": 0.23151027493007728
+    },
+    "truck": {
+      "id": 5,
+      "map": 0.2868935655269231,
+      "map50": 0.4184441475939277,
+      "map75": 0.320233047034964
+    },
+    "van": {
+      "id": 4,
+      "map": 0.3743373340452529,
+      "map50": 0.5255682357205285,
+      "map75": 0.4224229143563486
+    }
+  },
+  "classes": {
+    "awning-tricycle": 0.1284998051525629,
+    "bicycle": 0.12018245582811515,
+    "bus": 0.4767896680762974,
+    "car": 0.6117613735906846,
+    "motor": 0.3022236610338263,
+    "pedestrian": 0.27546956152275814,
+    "people": 0.21040467410416047,
+    "tricycle": 0.22367851862066526,
+    "truck": 0.2868935655269231,
+    "van": 0.3743373340452529
+  },
+  "data": {
+    "expected_images": 548,
+    "path": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "sha256": "3CCAF145213879DF0544CBB924A9F5EF8C2D9EB01D964FC18883E18D1197FE63"
+  },
+  "decoder_after_first_pass": {
+    "anchor_state_exposed": false,
+    "eval_idx": 5,
+    "feasible_geometry": true,
+    "module": "model.29.decoder"
+  },
+  "environment": {
+    "cuda": "12.1",
+    "executable": "/root/miniconda3/envs/lrs-v2/bin/python",
+    "python": "3.10.21",
+    "torch": "2.5.1+cu121",
+    "ultralytics": "8.4.90",
+    "ultralytics_file": "/root/miniconda3/envs/lrs-v2/lib/python3.10/site-packages/ultralytics/__init__.py"
+  },
+  "format_version": 1,
+  "kind": "frozen_checkpoint_same_validator_640_control",
+  "metrics": {
+    "f1": 0.5458577919095748,
+    "map": 0.30102406175012464,
+    "map50": 0.49866955424768766,
+    "map75": 0.30723749336874034,
+    "precision": 0.6038414568750002,
+    "recall": 0.49803422903720157
+  },
+  "processed_images": 548,
+  "protocol": {
+    "batch": 8,
+    "cache": false,
+    "conf": 0.001,
+    "data": "/root/sj-tmp/evidence/visdrone_test_authority_20260915.yaml",
+    "device": "0",
+    "imgsz": 640,
+    "max_det": 300,
+    "mode": "val",
+    "model": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/formal-seed0-capacity-v3-safe-fia/weights/best.pt",
+    "nms": false,
+    "plots": false,
+    "quantize": null,
+    "rect": false,
+    "save_json": false,
+    "save_txt": false,
+    "split": "val",
+    "task": "detect",
+    "verbose": true,
+    "workers": 8
+  },
+  "split": "val",
+  "wall_seconds": 10.667264739982784
+}

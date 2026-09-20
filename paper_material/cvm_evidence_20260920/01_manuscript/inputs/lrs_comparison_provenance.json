@@ -1,0 +1,56 @@
+{
+  "clean_reference_commit": "ec4e2a463db7a53f7c4c9c4bc9edabdf5c39f40b",
+  "clean_identity": "Intermediate configuration disabling preliminary reference/supervision and extra DN-FDR supervision; no geometry/LRS",
+  "validation_rows": [
+    {
+      "id": "V02",
+      "name": "Full FDR/FGL transfer (Original FDR)",
+      "AP": "29.078",
+      "AP50": "48.473",
+      "epoch": 92,
+      "evidence": "historical_fdr_results.csv"
+    },
+    {
+      "id": "V03",
+      "name": "Clean-FDR (intermediate)",
+      "AP": "29.696",
+      "AP50": "49.320",
+      "epoch": 88,
+      "evidence": "clean_fdr_results.csv"
+    },
+    {
+      "id": "V04",
+      "name": "Clean-FDR + geometry",
+      "AP": "29.361",
+      "AP50": "49.130",
+      "epoch": 91,
+      "evidence": "geometry_fdr_results.csv"
+    },
+    {
+      "id": "V06",
+      "name": "LRS-GFDR",
+      "AP": "29.620",
+      "AP50": "49.382",
+      "epoch": 92,
+      "evidence": "lrs_gfdr_results.csv"
+    }
+  ],
+  "comparison_scope": "historical validation versions; not a fully verified matched-source and matched-initialization ablation chain",
+  "prior_art": {
+    "dfine_utils.py": "https://github.com/Peterande/D-FINE/blob/7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6/src/zoo/dfine/dfine_utils.py",
+    "dfine_criterion.py": "https://github.com/Peterande/D-FINE/blob/7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6/src/zoo/dfine/dfine_criterion.py",
+    "dfine_decoder.py": "https://github.com/Peterande/D-FINE/blob/7fe2f8889f0b7b817f20c315b40fc15a4fb64ae6/src/zoo/dfine/dfine_decoder.py"
+  },
+  "new_training": false,
+  "new_model_evaluation": false,
+  "primary_reference": "Full FDR/FGL transfer (Original FDR)",
+  "original_reference_commit": "d97e1eb7f98414752a1c1f38287697db3f2a0679",
+  "original_authority": "original_fdr_run.json",
+  "original_identity": "Complete FDR/FGL localization transfer into RT-DETR; includes host integration, preliminary reference and normal/DN FGL/preliminary supervision; not full D-FINE detector",
+  "packaged_raw_csvs": {
+    "historical_fdr_results.csv": "4c0c5e3aa80590915b006b417a4fc323ff8e513b29c83a7aed8c74f716e520fe",
+    "clean_fdr_results.csv": "b096530df1765d751ee06114ddc6964856456db3991706378a81be55f8b21621",
+    "geometry_fdr_results.csv": "6a5b5c162e9f20ae213047fb82070f526969cbeb101b4b1fa49cb40602664efb",
+    "lrs_gfdr_results.csv": "bbb9b948ee1fc5c27f57a577e311fcf6cd6a4092f3f82b9903d52ef54cf0e14f"
+  }
+}

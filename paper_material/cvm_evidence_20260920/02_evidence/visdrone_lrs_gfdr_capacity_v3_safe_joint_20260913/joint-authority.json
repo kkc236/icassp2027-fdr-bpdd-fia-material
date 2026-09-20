@@ -1,0 +1,71 @@
+{
+  "config": {
+    "path": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+    "sha256": "53C1AB74BB73BECB848DA3A713AFE32BB2AAB068997979EB84880EB79BF82061"
+  },
+  "dataset": {
+    "file_count": 14038,
+    "sha256": "FD92E9FF4B3B58FCDD5A32F7E770FC3398E566B627DB0E188CB5FF9F3B7BBDAB"
+  },
+  "format_version": 2,
+  "protocol_authority_id": "visdrone-formal100-lrsv2-seed0-fia-off-on-20260913",
+  "comparison_role": "FIA-on controlled arm (Full)",
+  "initial_state": {
+    "path": "/root/sj-tmp/protocols/lrs-v2-f56b210/initial-state-seed0.pt",
+    "sha256": "935D68428BFC5848DE51F82844658ABBC7EC8C99CBBF6BBF823166D38CB65D5B"
+  },
+  "method": "lrs_gfdr_capacity_v3_safe_bpdd_fia",
+  "method_revision": "v3-safe-loc-kd-decay80-100-no-cls-kd",
+  "settings": {
+    "amp": true,
+    "batch": 8,
+    "cache": false,
+    "close_mosaic": 10,
+    "copy_paste": 0.0,
+    "cos_lr": false,
+    "cutmix": 0.0,
+    "data": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2/authority/data/formal-data.yaml",
+    "degrees": 0.0,
+    "deterministic": true,
+    "device": "0",
+    "epochs": 100,
+    "exist_ok": false,
+    "fliplr": 0.5,
+    "flipud": 0.0,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "imgsz": 640,
+    "lr0": 0.01,
+    "lrf": 0.01,
+    "max_det": 300,
+    "mixup": 0.0,
+    "model": "/root/sj-tmp/lrs-v2/bpdd-capacity-v2-fia-code/configs/rtdetr-l-lrs-gfdr-capacity-v3-safe-bpdd-fia.yaml",
+    "momentum": 0.937,
+    "mosaic": 1.0,
+    "name": "formal-seed0-capacity-v3-safe-fia",
+    "nbs": 64,
+    "nms": false,
+    "optimizer": "MuSGD",
+    "perspective": 0.0,
+    "plots": true,
+    "pretrained": false,
+    "project": "/root/sj-tmp/runs/formal-safe-capacity-fia-20260912-lrsv2",
+    "save": true,
+    "save_period": -1,
+    "scale": 0.5,
+    "seed": 0,
+    "shear": 0.0,
+    "translate": 0.1,
+    "val": true,
+    "warmup_bias_lr": 0.0,
+    "warmup_epochs": 3.0,
+    "warmup_momentum": 0.8,
+    "weight_decay": 0.0005,
+    "workers": 8
+  },
+  "source": {
+    "git_commit": "a43056af2a843ec9bae109d3420367c13f3bcef6",
+    "tree_sha256": "BEB07103E2AC2299AFFF5A29DEF4B71E4E8F0058D57E5762D938CEB1E6DD7A3B"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "operation": "Read saved summaries only; no training/inference/evaluation",
+  "source_files": [
+    {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_test.cap300.json",
+      "copy": "source\\dfine_final_test.cap300.json",
+      "sha256": "f2056f7b8ff0d7e5574e105e9c0129c5c942382f064cb934e0686f12070d3cac"
+    },
+    {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_test.cap300.json",
+      "copy": "source\\joint_final_test.cap300.json",
+      "sha256": "bdbd7b8d8a8131706fb9997dd960685820c0a2d5763d2d84543e0ee31b704283"
+    },
+    {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\dfine_final_test.report.json",
+      "copy": "source\\dfine_final_test.report.json",
+      "sha256": "bebbc1e3109b193c1f2c60505a576d9499374eee4614e6f1849f177e08b2f467"
+    },
+    {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\paper_material\\evidence\\visdrone_dfine_l_external_20260913\\common_evaluation_20260915\\joint_final_test.report.json",
+      "copy": "source\\joint_final_test.report.json",
+      "sha256": "9da9bb00f2be26e7b4afaa86eeff5e671db5c0e6291382ed1a06838b84641acf"
+    },
+    {
+      "source": "C:\\Users\\16946\\Documents\\OBJECTIVE CHECK PAPER\\tmp-work\\icassp2027-fdr-bpdd-fia-material\\configs\\VisDrone.yaml",
+      "copy": "source/VisDrone.yaml",
+      "sha256": "026f60ce5a83c520b326111cc08da63ff40448cdd7cb1a221d8239678ad50679"
+    }
+  ]
+}

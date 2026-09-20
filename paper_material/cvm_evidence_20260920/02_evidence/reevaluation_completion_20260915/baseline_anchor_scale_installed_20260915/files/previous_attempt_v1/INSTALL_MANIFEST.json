@@ -1,0 +1,30 @@
+{
+  "bundle_sha256": "a0cc2de50363a322546295eb792654e575881c3660aae215829b4f497ff3a28e",
+  "installed": [
+    {
+      "path": "/root/sj-tmp/lrs-v2/code/src/inference_anchor_scale.py",
+      "relative_path": "src/inference_anchor_scale.py",
+      "sha256": "92aa5f3a6a2c869ccff66cec16391575fab231bef3d870859290ee291ddf358b"
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/code/scripts/eval_baseline_anchor_scale.py",
+      "relative_path": "scripts/eval_baseline_anchor_scale.py",
+      "sha256": "fe5201a0f2a1885933135c37c08b32ad66c5dccd08aa14896886f1e241127044"
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/code/tests/test_inference_anchor_scale.py",
+      "relative_path": "tests/test_inference_anchor_scale.py",
+      "sha256": "80638f0783d4bc00246031d12a7a4a322fb4f1bf97023da7723fd8857ece19f5"
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/code/tests/test_baseline_anchor_scale_cli.py",
+      "relative_path": "tests/test_baseline_anchor_scale_cli.py",
+      "sha256": "edb1360097cb38b0b5d4a51eeaedce70635a552773eb9b19a9de33408c13b6b9"
+    },
+    {
+      "path": "/root/sj-tmp/lrs-v2/code/docs/BASELINE_ANCHOR_SCALE_ZH.md",
+      "relative_path": "docs/BASELINE_ANCHOR_SCALE_ZH.md",
+      "sha256": "5804c5ae040f80732b33134cac311f1b2d78981c27ad486cf403a15cb14ccdbd"
+    }
+  ]
+}

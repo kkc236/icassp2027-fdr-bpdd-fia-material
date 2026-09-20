@@ -1,0 +1,1 @@
+{"command": ["/root/miniconda3/envs/lrs-v2/bin/python", "-m", "pytest", "tests/test_inference_anchor_scale.py", "tests/test_baseline_anchor_scale_cli.py", "-q", "--junitxml=/root/sj-tmp/evidence/baseline_anchor_scale_installed_20260915_v2/server_tests.xml"], "exit_code": 0}

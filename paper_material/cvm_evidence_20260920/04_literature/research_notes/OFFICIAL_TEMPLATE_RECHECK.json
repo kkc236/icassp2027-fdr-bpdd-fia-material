@@ -1,0 +1,20 @@
+{
+  "cvm.sty": {
+    "official_url": "https://iccvm.org/2027/files/template.zip",
+    "local_sha256": "1130dbfe57b5f97d711277e1d7a5aa16fe75989893a577cac4fda682fc7851a7",
+    "remote_sha256": "1130dbfe57b5f97d711277e1d7a5aa16fe75989893a577cac4fda682fc7851a7",
+    "normalized_identical": true
+  },
+  "cvm_eso.sty": {
+    "official_url": "https://iccvm.org/2027/files/template.zip",
+    "local_sha256": "d198f4c276516b07fcd6200246c0aec3380dca3bd64f872f4b2adf9c74d59183",
+    "remote_sha256": "d198f4c276516b07fcd6200246c0aec3380dca3bd64f872f4b2adf9c74d59183",
+    "normalized_identical": true
+  },
+  "eso-pic.sty": {
+    "official_url": "https://iccvm.org/2027/files/template.zip",
+    "local_sha256": "7458c91867d8a6646118271ca6dbca27fef3fbeabaf83ec90cfc547a5d4106b5",
+    "remote_sha256": "7458c91867d8a6646118271ca6dbca27fef3fbeabaf83ec90cfc547a5d4106b5",
+    "normalized_identical": true
+  }
+}

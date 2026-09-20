@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "records": [
+    {
+      "name": "val_calibrated_640",
+      "status": "complete",
+      "expected_map": 0.21917411394055758,
+      "actual_map": 0.21917411394055758
+    },
+    {
+      "name": "val_calibrated_800",
+      "status": "complete",
+      "expected_map": 0.1910801258687437,
+      "actual_map": 0.1910801258687437
+    }
+  ]
+}

@@ -1,0 +1,1075 @@
+{
+  "schema_version": 1,
+  "source": {
+    "relative_path": "qualitative/gt_reconstructed/instances_val.json.gz",
+    "gzip_sha256": "7959b5a87cfed051303d9234ca192a2ecd61be2e5691187533cfcc90af614abd",
+    "uncompressed_json_sha256": "92d2866fe6e6ff4c3101b82c01b7718eb78b3759399042c4501d893798fc8bfa",
+    "image_count": 548,
+    "annotation_count": 38759,
+    "population": "All boxes in the packaged reconstructed validation GT; no additional filtering."
+  },
+  "input_scale_profile": {
+    "input_width_px": 640,
+    "input_height_px": 640,
+    "resize": "Independent-axis stretch; not aspect-ratio-preserving letterbox.",
+    "equivalent_side_formula": "sqrt((bbox_width * 640 / image_width) * (bbox_height * 640 / image_height))",
+    "interval_convention": "Half-open bins [lower, upper); null upper bound means infinity.",
+    "bins": [
+      {
+        "lower_inclusive_px": 0,
+        "upper_exclusive_px": 8,
+        "label": "[0,8)",
+        "count": 6856,
+        "fraction": 0.17688794860548518,
+        "percentage": 17.68879486054852,
+        "display_percentage": "17.7"
+      },
+      {
+        "lower_inclusive_px": 8,
+        "upper_exclusive_px": 16,
+        "label": "[8,16)",
+        "count": 14011,
+        "fraction": 0.36149023452617457,
+        "percentage": 36.149023452617456,
+        "display_percentage": "36.1"
+      },
+      {
+        "lower_inclusive_px": 16,
+        "upper_exclusive_px": 32,
+        "label": "[16,32)",
+        "count": 12414,
+        "fraction": 0.3202869011068397,
+        "percentage": 32.02869011068397,
+        "display_percentage": "32.0"
+      },
+      {
+        "lower_inclusive_px": 32,
+        "upper_exclusive_px": 64,
+        "label": "[32,64)",
+        "count": 4580,
+        "fraction": 0.11816610335663975,
+        "percentage": 11.816610335663976,
+        "display_percentage": "11.8"
+      },
+      {
+        "lower_inclusive_px": 64,
+        "upper_exclusive_px": null,
+        "label": "[64,infinity)",
+        "count": 898,
+        "fraction": 0.023168812404860805,
+        "percentage": 2.316881240486081,
+        "display_percentage": "2.3"
+      }
+    ],
+    "below_32_px_count": 33281,
+    "below_32_px_fraction": 0.8586650842384994,
+    "below_32_px_percentage": 85.86650842384995,
+    "display_below_32_px_percentage": "85.9",
+    "metric_boundary": "These input-scale bins differ from AP_s, which uses COCO area ranges in original-image coordinates."
+  },
+  "analytic_iou": {
+    "assumptions": "Two equal-size axis-aligned boxes, equal vertical position, horizontal displacement d in [0,4], widths w in {8,16,32} pixels; d < w.",
+    "formula": "IoU = (w - d) / (w + d)",
+    "interpretation": "Analytic geometry illustration, not measured model localization error or a model result.",
+    "curves": [
+      {
+        "box_width_px": 8,
+        "samples": [
+          {
+            "displacement_px": 0.0,
+            "iou": 1.0
+          },
+          {
+            "displacement_px": 0.05,
+            "iou": 0.9875776397515528
+          },
+          {
+            "displacement_px": 0.1,
+            "iou": 0.9753086419753088
+          },
+          {
+            "displacement_px": 0.15,
+            "iou": 0.9631901840490796
+          },
+          {
+            "displacement_px": 0.2,
+            "iou": 0.951219512195122
+          },
+          {
+            "displacement_px": 0.25,
+            "iou": 0.9393939393939394
+          },
+          {
+            "displacement_px": 0.3,
+            "iou": 0.927710843373494
+          },
+          {
+            "displacement_px": 0.35,
+            "iou": 0.9161676646706588
+          },
+          {
+            "displacement_px": 0.4,
+            "iou": 0.9047619047619047
+          },
+          {
+            "displacement_px": 0.45,
+            "iou": 0.893491124260355
+          },
+          {
+            "displacement_px": 0.5,
+            "iou": 0.8823529411764706
+          },
+          {
+            "displacement_px": 0.55,
+            "iou": 0.871345029239766
+          },
+          {
+            "displacement_px": 0.6,
+            "iou": 0.8604651162790699
+          },
+          {
+            "displacement_px": 0.65,
+            "iou": 0.8497109826589595
+          },
+          {
+            "displacement_px": 0.7,
+            "iou": 0.839080459770115
+          },
+          {
+            "displacement_px": 0.75,
+            "iou": 0.8285714285714286
+          },
+          {
+            "displacement_px": 0.8,
+            "iou": 0.8181818181818181
+          },
+          {
+            "displacement_px": 0.85,
+            "iou": 0.8079096045197741
+          },
+          {
+            "displacement_px": 0.9,
+            "iou": 0.797752808988764
+          },
+          {
+            "displacement_px": 0.95,
+            "iou": 0.7877094972067039
+          },
+          {
+            "displacement_px": 1.0,
+            "iou": 0.7777777777777778
+          },
+          {
+            "displacement_px": 1.05,
+            "iou": 0.7679558011049723
+          },
+          {
+            "displacement_px": 1.1,
+            "iou": 0.7582417582417583
+          },
+          {
+            "displacement_px": 1.15,
+            "iou": 0.7486338797814207
+          },
+          {
+            "displacement_px": 1.2,
+            "iou": 0.7391304347826088
+          },
+          {
+            "displacement_px": 1.25,
+            "iou": 0.7297297297297297
+          },
+          {
+            "displacement_px": 1.3,
+            "iou": 0.7204301075268816
+          },
+          {
+            "displacement_px": 1.35,
+            "iou": 0.7112299465240642
+          },
+          {
+            "displacement_px": 1.4,
+            "iou": 0.702127659574468
+          },
+          {
+            "displacement_px": 1.45,
+            "iou": 0.6931216931216931
+          },
+          {
+            "displacement_px": 1.5,
+            "iou": 0.6842105263157895
+          },
+          {
+            "displacement_px": 1.55,
+            "iou": 0.675392670157068
+          },
+          {
+            "displacement_px": 1.6,
+            "iou": 0.6666666666666667
+          },
+          {
+            "displacement_px": 1.65,
+            "iou": 0.6580310880829014
+          },
+          {
+            "displacement_px": 1.7,
+            "iou": 0.6494845360824743
+          },
+          {
+            "displacement_px": 1.75,
+            "iou": 0.6410256410256411
+          },
+          {
+            "displacement_px": 1.8,
+            "iou": 0.6326530612244897
+          },
+          {
+            "displacement_px": 1.85,
+            "iou": 0.6243654822335026
+          },
+          {
+            "displacement_px": 1.9,
+            "iou": 0.6161616161616161
+          },
+          {
+            "displacement_px": 1.95,
+            "iou": 0.6080402010050252
+          },
+          {
+            "displacement_px": 2.0,
+            "iou": 0.6
+          },
+          {
+            "displacement_px": 2.05,
+            "iou": 0.5920398009950248
+          },
+          {
+            "displacement_px": 2.1,
+            "iou": 0.5841584158415842
+          },
+          {
+            "displacement_px": 2.15,
+            "iou": 0.5763546798029556
+          },
+          {
+            "displacement_px": 2.2,
+            "iou": 0.5686274509803921
+          },
+          {
+            "displacement_px": 2.25,
+            "iou": 0.5609756097560976
+          },
+          {
+            "displacement_px": 2.3,
+            "iou": 0.5533980582524272
+          },
+          {
+            "displacement_px": 2.35,
+            "iou": 0.5458937198067634
+          },
+          {
+            "displacement_px": 2.4,
+            "iou": 0.5384615384615384
+          },
+          {
+            "displacement_px": 2.45,
+            "iou": 0.5311004784688995
+          },
+          {
+            "displacement_px": 2.5,
+            "iou": 0.5238095238095238
+          },
+          {
+            "displacement_px": 2.55,
+            "iou": 0.5165876777251185
+          },
+          {
+            "displacement_px": 2.6,
+            "iou": 0.5094339622641509
+          },
+          {
+            "displacement_px": 2.65,
+            "iou": 0.5023474178403755
+          },
+          {
+            "displacement_px": 2.7,
+            "iou": 0.4953271028037383
+          },
+          {
+            "displacement_px": 2.75,
+            "iou": 0.4883720930232558
+          },
+          {
+            "displacement_px": 2.8,
+            "iou": 0.48148148148148145
+          },
+          {
+            "displacement_px": 2.85,
+            "iou": 0.4746543778801844
+          },
+          {
+            "displacement_px": 2.9,
+            "iou": 0.4678899082568807
+          },
+          {
+            "displacement_px": 2.95,
+            "iou": 0.4611872146118722
+          },
+          {
+            "displacement_px": 3.0,
+            "iou": 0.45454545454545453
+          },
+          {
+            "displacement_px": 3.05,
+            "iou": 0.44796380090497734
+          },
+          {
+            "displacement_px": 3.1,
+            "iou": 0.4414414414414415
+          },
+          {
+            "displacement_px": 3.15,
+            "iou": 0.4349775784753363
+          },
+          {
+            "displacement_px": 3.2,
+            "iou": 0.4285714285714286
+          },
+          {
+            "displacement_px": 3.25,
+            "iou": 0.4222222222222222
+          },
+          {
+            "displacement_px": 3.3,
+            "iou": 0.415929203539823
+          },
+          {
+            "displacement_px": 3.35,
+            "iou": 0.40969162995594716
+          },
+          {
+            "displacement_px": 3.4,
+            "iou": 0.40350877192982454
+          },
+          {
+            "displacement_px": 3.45,
+            "iou": 0.39737991266375544
+          },
+          {
+            "displacement_px": 3.5,
+            "iou": 0.391304347826087
+          },
+          {
+            "displacement_px": 3.55,
+            "iou": 0.3852813852813853
+          },
+          {
+            "displacement_px": 3.6,
+            "iou": 0.37931034482758624
+          },
+          {
+            "displacement_px": 3.65,
+            "iou": 0.3733905579399141
+          },
+          {
+            "displacement_px": 3.7,
+            "iou": 0.36752136752136755
+          },
+          {
+            "displacement_px": 3.75,
+            "iou": 0.3617021276595745
+          },
+          {
+            "displacement_px": 3.8,
+            "iou": 0.3559322033898305
+          },
+          {
+            "displacement_px": 3.85,
+            "iou": 0.3502109704641351
+          },
+          {
+            "displacement_px": 3.9,
+            "iou": 0.34453781512605036
+          },
+          {
+            "displacement_px": 3.95,
+            "iou": 0.3389121338912134
+          },
+          {
+            "displacement_px": 4.0,
+            "iou": 0.3333333333333333
+          }
+        ],
+        "iou_at_one_px": 0.7777777777777778
+      },
+      {
+        "box_width_px": 16,
+        "samples": [
+          {
+            "displacement_px": 0.0,
+            "iou": 1.0
+          },
+          {
+            "displacement_px": 0.05,
+            "iou": 0.9937694704049843
+          },
+          {
+            "displacement_px": 0.1,
+            "iou": 0.9875776397515528
+          },
+          {
+            "displacement_px": 0.15,
+            "iou": 0.9814241486068113
+          },
+          {
+            "displacement_px": 0.2,
+            "iou": 0.9753086419753088
+          },
+          {
+            "displacement_px": 0.25,
+            "iou": 0.9692307692307692
+          },
+          {
+            "displacement_px": 0.3,
+            "iou": 0.9631901840490796
+          },
+          {
+            "displacement_px": 0.35,
+            "iou": 0.9571865443425076
+          },
+          {
+            "displacement_px": 0.4,
+            "iou": 0.951219512195122
+          },
+          {
+            "displacement_px": 0.45,
+            "iou": 0.9452887537993921
+          },
+          {
+            "displacement_px": 0.5,
+            "iou": 0.9393939393939394
+          },
+          {
+            "displacement_px": 0.55,
+            "iou": 0.9335347432024168
+          },
+          {
+            "displacement_px": 0.6,
+            "iou": 0.927710843373494
+          },
+          {
+            "displacement_px": 0.65,
+            "iou": 0.921921921921922
+          },
+          {
+            "displacement_px": 0.7,
+            "iou": 0.9161676646706588
+          },
+          {
+            "displacement_px": 0.75,
+            "iou": 0.9104477611940298
+          },
+          {
+            "displacement_px": 0.8,
+            "iou": 0.9047619047619047
+          },
+          {
+            "displacement_px": 0.85,
+            "iou": 0.8991097922848664
+          },
+          {
+            "displacement_px": 0.9,
+            "iou": 0.893491124260355
+          },
+          {
+            "displacement_px": 0.95,
+            "iou": 0.8879056047197641
+          },
+          {
+            "displacement_px": 1.0,
+            "iou": 0.8823529411764706
+          },
+          {
+            "displacement_px": 1.05,
+            "iou": 0.87683284457478
+          },
+          {
+            "displacement_px": 1.1,
+            "iou": 0.871345029239766
+          },
+          {
+            "displacement_px": 1.15,
+            "iou": 0.8658892128279884
+          },
+          {
+            "displacement_px": 1.2,
+            "iou": 0.8604651162790699
+          },
+          {
+            "displacement_px": 1.25,
+            "iou": 0.855072463768116
+          },
+          {
+            "displacement_px": 1.3,
+            "iou": 0.8497109826589595
+          },
+          {
+            "displacement_px": 1.35,
+            "iou": 0.8443804034582132
+          },
+          {
+            "displacement_px": 1.4,
+            "iou": 0.839080459770115
+          },
+          {
+            "displacement_px": 1.45,
+            "iou": 0.8338108882521491
+          },
+          {
+            "displacement_px": 1.5,
+            "iou": 0.8285714285714286
+          },
+          {
+            "displacement_px": 1.55,
+            "iou": 0.8233618233618233
+          },
+          {
+            "displacement_px": 1.6,
+            "iou": 0.8181818181818181
+          },
+          {
+            "displacement_px": 1.65,
+            "iou": 0.8130311614730878
+          },
+          {
+            "displacement_px": 1.7,
+            "iou": 0.8079096045197741
+          },
+          {
+            "displacement_px": 1.75,
+            "iou": 0.8028169014084507
+          },
+          {
+            "displacement_px": 1.8,
+            "iou": 0.797752808988764
+          },
+          {
+            "displacement_px": 1.85,
+            "iou": 0.7927170868347339
+          },
+          {
+            "displacement_px": 1.9,
+            "iou": 0.7877094972067039
+          },
+          {
+            "displacement_px": 1.95,
+            "iou": 0.7827298050139276
+          },
+          {
+            "displacement_px": 2.0,
+            "iou": 0.7777777777777778
+          },
+          {
+            "displacement_px": 2.05,
+            "iou": 0.7728531855955678
+          },
+          {
+            "displacement_px": 2.1,
+            "iou": 0.7679558011049723
+          },
+          {
+            "displacement_px": 2.15,
+            "iou": 0.7630853994490359
+          },
+          {
+            "displacement_px": 2.2,
+            "iou": 0.7582417582417583
+          },
+          {
+            "displacement_px": 2.25,
+            "iou": 0.7534246575342466
+          },
+          {
+            "displacement_px": 2.3,
+            "iou": 0.7486338797814207
+          },
+          {
+            "displacement_px": 2.35,
+            "iou": 0.7438692098092643
+          },
+          {
+            "displacement_px": 2.4,
+            "iou": 0.7391304347826088
+          },
+          {
+            "displacement_px": 2.45,
+            "iou": 0.7344173441734418
+          },
+          {
+            "displacement_px": 2.5,
+            "iou": 0.7297297297297297
+          },
+          {
+            "displacement_px": 2.55,
+            "iou": 0.7250673854447439
+          },
+          {
+            "displacement_px": 2.6,
+            "iou": 0.7204301075268816
+          },
+          {
+            "displacement_px": 2.65,
+            "iou": 0.7158176943699732
+          },
+          {
+            "displacement_px": 2.7,
+            "iou": 0.7112299465240642
+          },
+          {
+            "displacement_px": 2.75,
+            "iou": 0.7066666666666667
+          },
+          {
+            "displacement_px": 2.8,
+            "iou": 0.702127659574468
+          },
+          {
+            "displacement_px": 2.85,
+            "iou": 0.6976127320954907
+          },
+          {
+            "displacement_px": 2.9,
+            "iou": 0.6931216931216931
+          },
+          {
+            "displacement_px": 2.95,
+            "iou": 0.6886543535620053
+          },
+          {
+            "displacement_px": 3.0,
+            "iou": 0.6842105263157895
+          },
+          {
+            "displacement_px": 3.05,
+            "iou": 0.6797900262467191
+          },
+          {
+            "displacement_px": 3.1,
+            "iou": 0.675392670157068
+          },
+          {
+            "displacement_px": 3.15,
+            "iou": 0.6710182767624021
+          },
+          {
+            "displacement_px": 3.2,
+            "iou": 0.6666666666666667
+          },
+          {
+            "displacement_px": 3.25,
+            "iou": 0.6623376623376623
+          },
+          {
+            "displacement_px": 3.3,
+            "iou": 0.6580310880829014
+          },
+          {
+            "displacement_px": 3.35,
+            "iou": 0.6537467700258398
+          },
+          {
+            "displacement_px": 3.4,
+            "iou": 0.6494845360824743
+          },
+          {
+            "displacement_px": 3.45,
+            "iou": 0.6452442159383034
+          },
+          {
+            "displacement_px": 3.5,
+            "iou": 0.6410256410256411
+          },
+          {
+            "displacement_px": 3.55,
+            "iou": 0.6368286445012787
+          },
+          {
+            "displacement_px": 3.6,
+            "iou": 0.6326530612244897
+          },
+          {
+            "displacement_px": 3.65,
+            "iou": 0.628498727735369
+          },
+          {
+            "displacement_px": 3.7,
+            "iou": 0.6243654822335026
+          },
+          {
+            "displacement_px": 3.75,
+            "iou": 0.620253164556962
+          },
+          {
+            "displacement_px": 3.8,
+            "iou": 0.6161616161616161
+          },
+          {
+            "displacement_px": 3.85,
+            "iou": 0.6120906801007556
+          },
+          {
+            "displacement_px": 3.9,
+            "iou": 0.6080402010050252
+          },
+          {
+            "displacement_px": 3.95,
+            "iou": 0.6040100250626567
+          },
+          {
+            "displacement_px": 4.0,
+            "iou": 0.6
+          }
+        ],
+        "iou_at_one_px": 0.8823529411764706
+      },
+      {
+        "box_width_px": 32,
+        "samples": [
+          {
+            "displacement_px": 0.0,
+            "iou": 1.0
+          },
+          {
+            "displacement_px": 0.05,
+            "iou": 0.9968798751950079
+          },
+          {
+            "displacement_px": 0.1,
+            "iou": 0.9937694704049843
+          },
+          {
+            "displacement_px": 0.15,
+            "iou": 0.9906687402799379
+          },
+          {
+            "displacement_px": 0.2,
+            "iou": 0.9875776397515528
+          },
+          {
+            "displacement_px": 0.25,
+            "iou": 0.9844961240310077
+          },
+          {
+            "displacement_px": 0.3,
+            "iou": 0.9814241486068113
+          },
+          {
+            "displacement_px": 0.35,
+            "iou": 0.9783616692426583
+          },
+          {
+            "displacement_px": 0.4,
+            "iou": 0.9753086419753088
+          },
+          {
+            "displacement_px": 0.45,
+            "iou": 0.9722650231124806
+          },
+          {
+            "displacement_px": 0.5,
+            "iou": 0.9692307692307692
+          },
+          {
+            "displacement_px": 0.55,
+            "iou": 0.9662058371735792
+          },
+          {
+            "displacement_px": 0.6,
+            "iou": 0.9631901840490796
+          },
+          {
+            "displacement_px": 0.65,
+            "iou": 0.9601837672281778
+          },
+          {
+            "displacement_px": 0.7,
+            "iou": 0.9571865443425076
+          },
+          {
+            "displacement_px": 0.75,
+            "iou": 0.9541984732824428
+          },
+          {
+            "displacement_px": 0.8,
+            "iou": 0.951219512195122
+          },
+          {
+            "displacement_px": 0.85,
+            "iou": 0.9482496194824961
+          },
+          {
+            "displacement_px": 0.9,
+            "iou": 0.9452887537993921
+          },
+          {
+            "displacement_px": 0.95,
+            "iou": 0.9423368740515933
+          },
+          {
+            "displacement_px": 1.0,
+            "iou": 0.9393939393939394
+          },
+          {
+            "displacement_px": 1.05,
+            "iou": 0.9364599092284418
+          },
+          {
+            "displacement_px": 1.1,
+            "iou": 0.9335347432024168
+          },
+          {
+            "displacement_px": 1.15,
+            "iou": 0.9306184012066366
+          },
+          {
+            "displacement_px": 1.2,
+            "iou": 0.927710843373494
+          },
+          {
+            "displacement_px": 1.25,
+            "iou": 0.924812030075188
+          },
+          {
+            "displacement_px": 1.3,
+            "iou": 0.921921921921922
+          },
+          {
+            "displacement_px": 1.35,
+            "iou": 0.9190404797601198
+          },
+          {
+            "displacement_px": 1.4,
+            "iou": 0.9161676646706588
+          },
+          {
+            "displacement_px": 1.45,
+            "iou": 0.913303437967115
+          },
+          {
+            "displacement_px": 1.5,
+            "iou": 0.9104477611940298
+          },
+          {
+            "displacement_px": 1.55,
+            "iou": 0.9076005961251864
+          },
+          {
+            "displacement_px": 1.6,
+            "iou": 0.9047619047619047
+          },
+          {
+            "displacement_px": 1.65,
+            "iou": 0.9019316493313523
+          },
+          {
+            "displacement_px": 1.7,
+            "iou": 0.8991097922848664
+          },
+          {
+            "displacement_px": 1.75,
+            "iou": 0.8962962962962963
+          },
+          {
+            "displacement_px": 1.8,
+            "iou": 0.893491124260355
+          },
+          {
+            "displacement_px": 1.85,
+            "iou": 0.8906942392909896
+          },
+          {
+            "displacement_px": 1.9,
+            "iou": 0.8879056047197641
+          },
+          {
+            "displacement_px": 1.95,
+            "iou": 0.8851251840942562
+          },
+          {
+            "displacement_px": 2.0,
+            "iou": 0.8823529411764706
+          },
+          {
+            "displacement_px": 2.05,
+            "iou": 0.8795888399412629
+          },
+          {
+            "displacement_px": 2.1,
+            "iou": 0.87683284457478
+          },
+          {
+            "displacement_px": 2.15,
+            "iou": 0.8740849194729137
+          },
+          {
+            "displacement_px": 2.2,
+            "iou": 0.871345029239766
+          },
+          {
+            "displacement_px": 2.25,
+            "iou": 0.8686131386861314
+          },
+          {
+            "displacement_px": 2.3,
+            "iou": 0.8658892128279884
+          },
+          {
+            "displacement_px": 2.35,
+            "iou": 0.8631732168850073
+          },
+          {
+            "displacement_px": 2.4,
+            "iou": 0.8604651162790699
+          },
+          {
+            "displacement_px": 2.45,
+            "iou": 0.8577648766328011
+          },
+          {
+            "displacement_px": 2.5,
+            "iou": 0.855072463768116
+          },
+          {
+            "displacement_px": 2.55,
+            "iou": 0.8523878437047757
+          },
+          {
+            "displacement_px": 2.6,
+            "iou": 0.8497109826589595
+          },
+          {
+            "displacement_px": 2.65,
+            "iou": 0.8470418470418472
+          },
+          {
+            "displacement_px": 2.7,
+            "iou": 0.8443804034582132
+          },
+          {
+            "displacement_px": 2.75,
+            "iou": 0.841726618705036
+          },
+          {
+            "displacement_px": 2.8,
+            "iou": 0.839080459770115
+          },
+          {
+            "displacement_px": 2.85,
+            "iou": 0.8364418938307029
+          },
+          {
+            "displacement_px": 2.9,
+            "iou": 0.8338108882521491
+          },
+          {
+            "displacement_px": 2.95,
+            "iou": 0.8311874105865522
+          },
+          {
+            "displacement_px": 3.0,
+            "iou": 0.8285714285714286
+          },
+          {
+            "displacement_px": 3.05,
+            "iou": 0.8259629101283881
+          },
+          {
+            "displacement_px": 3.1,
+            "iou": 0.8233618233618233
+          },
+          {
+            "displacement_px": 3.15,
+            "iou": 0.8207681365576103
+          },
+          {
+            "displacement_px": 3.2,
+            "iou": 0.8181818181818181
+          },
+          {
+            "displacement_px": 3.25,
+            "iou": 0.8156028368794326
+          },
+          {
+            "displacement_px": 3.3,
+            "iou": 0.8130311614730878
+          },
+          {
+            "displacement_px": 3.35,
+            "iou": 0.8104667609618104
+          },
+          {
+            "displacement_px": 3.4,
+            "iou": 0.8079096045197741
+          },
+          {
+            "displacement_px": 3.45,
+            "iou": 0.8053596614950634
+          },
+          {
+            "displacement_px": 3.5,
+            "iou": 0.8028169014084507
+          },
+          {
+            "displacement_px": 3.55,
+            "iou": 0.8002812939521801
+          },
+          {
+            "displacement_px": 3.6,
+            "iou": 0.797752808988764
+          },
+          {
+            "displacement_px": 3.65,
+            "iou": 0.7952314165497897
+          },
+          {
+            "displacement_px": 3.7,
+            "iou": 0.7927170868347339
+          },
+          {
+            "displacement_px": 3.75,
+            "iou": 0.7902097902097902
+          },
+          {
+            "displacement_px": 3.8,
+            "iou": 0.7877094972067039
+          },
+          {
+            "displacement_px": 3.85,
+            "iou": 0.7852161785216177
+          },
+          {
+            "displacement_px": 3.9,
+            "iou": 0.7827298050139276
+          },
+          {
+            "displacement_px": 3.95,
+            "iou": 0.780250347705146
+          },
+          {
+            "displacement_px": 4.0,
+            "iou": 0.7777777777777778
+          }
+        ],
+        "iou_at_one_px": 0.9393939393939394
+      }
+    ]
+  },
+  "figure": {
+    "relative_path": "figures/motivation.tikz",
+    "label": "fig:motivation",
+    "drawing_width_cm": 16.8,
+    "drawing_height_cm": 5.0,
+    "caption_outside_drawing": true,
+    "dependencies": "Existing TikZ and xcolor only; no pgfplots."
+  }
+}

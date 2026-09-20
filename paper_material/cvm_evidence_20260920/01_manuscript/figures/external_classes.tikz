@@ -1,0 +1,107 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
+\definecolor{classink}{HTML}{273449}
+\definecolor{classgain}{HTML}{127A79}
+\definecolor{classwash}{HTML}{F2F6F8}
+\path[use as bounding box] (0,-0.16) rectangle (16.8,5.10);
+\node[anchor=west,font=\sffamily\bfseries\small,text=classink] at (0,4.90) {Final checkpoints: complete-system class profile};
+\node[anchor=east,font=\sffamily\footnotesize,text=classink] at (16.8,4.90) {Overall AP: 22.55 $\rightarrow$ 24.13\quad ($+1.58$)};
+\begin{scope}[shift={(0,0)}]
+\node[anchor=west,font=\sffamily\bfseries\scriptsize,text=classink] at (0,4.33) {Category};
+\node[font=\sffamily\bfseries\scriptsize,text=classink] at (2.38,4.33) {D-FINE-L$^\dagger$};
+\node[font=\sffamily\bfseries\scriptsize,text=classink] at (3.57,4.33) {Full};
+\node[font=\sffamily\bfseries\scriptsize,text=classink] at (6.23,4.33) {$\Delta$AP (percentage points)};
+\draw[classink!35,line width=.45pt] (0,4.10) -- (8.15,4.10);
+\draw[classink!12,line width=.4pt] (4.530,.76) -- (4.530,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (4.530,.65) {0};
+\draw[classink!12,line width=.4pt] (5.120,.76) -- (5.120,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (5.120,.65) {1};
+\draw[classink!12,line width=.4pt] (5.710,.76) -- (5.710,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (5.710,.65) {2};
+\draw[classink!12,line width=.4pt] (6.300,.76) -- (6.300,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (6.300,.65) {3};
+\draw[classink!12,line width=.4pt] (6.890,.76) -- (6.890,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (6.890,.65) {4};
+\draw[classink!40,line width=.45pt] (4.53,.76) -- (7.185,.76);
+\fill[classwash] (0,3.470) rectangle (4.10,3.970);
+\node[anchor=west,text=classink] at (.05,3.720) {pedestrian};
+\node[text=classink] at (2.38,3.720) {15.13};
+\node[text=classink] at (3.57,3.720) {16.49};
+\fill[classgain] (4.53,3.620) rectangle (5.330267,3.820);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,3.720) {+1.36};
+\node[anchor=west,text=classink] at (.05,3.100) {people};
+\node[text=classink] at (2.38,3.100) {9.82};
+\node[text=classink] at (3.57,3.100) {10.29};
+\fill[classgain] (4.53,3.000) rectangle (4.804446,3.200);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,3.100) {+0.47};
+\fill[classwash] (0,2.230) rectangle (4.10,2.730);
+\node[anchor=west,text=classink] at (.05,2.480) {bicycle};
+\node[text=classink] at (2.38,2.480) {7.04};
+\node[text=classink] at (3.57,2.480) {8.66};
+\fill[classgain] (4.53,2.380) rectangle (5.486938,2.580);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,2.480) {+1.62};
+\node[anchor=west,text=classink] at (.05,1.860) {car};
+\node[text=classink] at (2.38,1.860) {50.66};
+\node[text=classink] at (3.57,1.860) {51.57};
+\fill[classgain] (4.53,1.760) rectangle (5.069460,1.960);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,1.860) {+0.91};
+\fill[classwash] (0,0.990) rectangle (4.10,1.490);
+\node[anchor=west,text=classink] at (.05,1.240) {van};
+\node[text=classink] at (2.38,1.240) {29.78};
+\node[text=classink] at (3.57,1.240) {30.98};
+\fill[classgain] (4.53,1.140) rectangle (5.243436,1.340);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,1.240) {+1.21};
+\end{scope}
+\begin{scope}[shift={(8.65,0)}]
+\node[anchor=west,font=\sffamily\bfseries\scriptsize,text=classink] at (0,4.33) {Category};
+\node[font=\sffamily\bfseries\scriptsize,text=classink] at (2.38,4.33) {D-FINE-L$^\dagger$};
+\node[font=\sffamily\bfseries\scriptsize,text=classink] at (3.57,4.33) {Full};
+\node[font=\sffamily\bfseries\scriptsize,text=classink] at (6.23,4.33) {$\Delta$AP (percentage points)};
+\draw[classink!35,line width=.45pt] (0,4.10) -- (8.15,4.10);
+\draw[classink!12,line width=.4pt] (4.530,.76) -- (4.530,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (4.530,.65) {0};
+\draw[classink!12,line width=.4pt] (5.120,.76) -- (5.120,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (5.120,.65) {1};
+\draw[classink!12,line width=.4pt] (5.710,.76) -- (5.710,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (5.710,.65) {2};
+\draw[classink!12,line width=.4pt] (6.300,.76) -- (6.300,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (6.300,.65) {3};
+\draw[classink!12,line width=.4pt] (6.890,.76) -- (6.890,3.98);
+\node[anchor=north,font=\sffamily\scriptsize,text=classink!75] at (6.890,.65) {4};
+\draw[classink!40,line width=.45pt] (4.53,.76) -- (7.185,.76);
+\fill[classwash] (0,3.470) rectangle (4.10,3.970);
+\node[anchor=west,text=classink] at (.05,3.720) {truck};
+\node[text=classink] at (2.38,3.720) {27.51};
+\node[text=classink] at (3.57,3.720) {29.64};
+\fill[classgain] (4.53,3.620) rectangle (5.784093,3.820);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,3.720) {+2.13};
+\node[anchor=west,text=classink] at (.05,3.100) {tricycle};
+\node[text=classink] at (2.38,3.100) {12.63};
+\node[text=classink] at (3.57,3.100) {16.77};
+\fill[classgain] (4.53,3.000) rectangle (6.967027,3.200);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,3.100) {+4.13};
+\fill[classwash] (0,2.230) rectangle (4.10,2.730);
+\node[anchor=west,text=classink] at (.05,2.480) {\shortstack[l]{awning-\\tricycle}};
+\node[text=classink] at (2.38,2.480) {12.72};
+\node[text=classink] at (3.57,2.480) {14.42};
+\fill[classgain] (4.53,2.380) rectangle (5.532210,2.580);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,2.480) {+1.70};
+\node[anchor=west,text=classink] at (.05,1.860) {bus};
+\node[text=classink] at (2.38,1.860) {43.60};
+\node[text=classink] at (3.57,1.860) {44.15};
+\fill[classgain] (4.53,1.760) rectangle (4.859195,1.960);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,1.860) {+0.56};
+\fill[classwash] (0,0.990) rectangle (4.10,1.490);
+\node[anchor=west,text=classink] at (.05,1.240) {motor};
+\node[text=classink] at (2.38,1.240) {16.66};
+\node[text=classink] at (3.57,1.240) {18.37};
+\fill[classgain] (4.53,1.140) rectangle (5.539853,1.340);
+\node[anchor=east,text=classgain,font=\sffamily\bfseries\footnotesize] at (8.10,1.240) {+1.71};
+\end{scope}
+\draw[classink!18] (8.40,.76) -- (8.40,4.33);
+\node[anchor=west,font=\sffamily\scriptsize,text=classink!85] at (0,.04) {$^\dagger$Our scratch-adapted reproduction. All ten classes; identical evaluation protocol, different training recipes.};
+\end{tikzpicture}
+\caption{Class AP of final checkpoints on the 1,610-image VisDrone test split under the common converted-label protocol (IoU 0.50:0.95; maxDets=300). Classes follow dataset order; bars start at zero and show Full minus our scratch-adapted D-FINE-L reproduction. Displayed values are rounded; differences use unrounded AP. All ten category differences are positive. This complete-system profile uses different training recipes and does not isolate individual module effects.}
+\label{fig:externalclasses}
+\end{figure*}

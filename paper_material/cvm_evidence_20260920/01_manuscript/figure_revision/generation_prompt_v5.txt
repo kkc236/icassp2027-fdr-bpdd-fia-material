@@ -1,0 +1,11 @@
+Edit this scientific figure only to fix the small fixed-reference connector in panel (b), and improve the teacher label fit. Preserve the exact same layout, colors, all math, and all other correctly drawn paths, especially the NEW Final query bypass in (a). The image is the edit target.
+
+IMPORTANT precise correction inside G.2:
+- Currently "Fixed decoding reference r_0 (all six layers)" has a left/down arrow ending above the title AND a separate short orphan arrow below the title. Delete BOTH these incomplete segments.
+- Move the heading "G.2 Center-preserving geometry" horizontally to the RIGHT, occupying the top-right space of that SAME G.2 panel (approximately x=855 to 1400, y=385 in this 1448x1086 reference). It must remain above the Center/Box assembly nodes. This frees a vertical connector lane at x=775.
+- Draw ONE UNBROKEN blue connector from the LEFT edge of the fixed-reference badge (about x=820,y=340), horizontally left to x=775, then vertically down to the TOP of "Reference + offsets" at x=775,y=425, with exactly one arrowhead at that module's top boundary. The line runs in the newly vacant lane LEFT of the relocated heading and must not touch any title text. No arrowhead pointing at the title, no orphan line.
+- Leave the two ordinary blue outgoing branches of Reference + offsets to Center / Raw extent intact.
+
+Teacher label in (d) may be wrapped into two centered lines within a slightly taller box, maintaining the teacher->Masked KL line: first line "sg(base edge logits", second line "+ edge residual)". Keep it readable without a tiny condensed font. All other nodes stay intact.
+
+Render as a clean publication bitmap. Request output canvas 2896 x 2172 pixels (2x the reference) with re-rendered sharp lettering, same 4:3 composition. Do NOT add extra content or change formula notation. Keep the new Final query path and merger dot unchanged.
