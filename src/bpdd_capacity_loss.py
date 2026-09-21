@@ -32,8 +32,11 @@ class CapacityBPDDOptions:
     warmup_end: int = 20
     decay_start: int | None = None
     decay_end: int | None = None
+    mixed_box_gate: bool = True
 
     def __post_init__(self) -> None:
+        if not isinstance(self.mixed_box_gate, bool):
+            raise ValueError("mixed_box_gate must be a bool")
         numeric = (
             self.loc_weight,
             self.cls_weight,
@@ -270,6 +273,9 @@ def quality_gated_capacity_distillation(
     representable_edges = 0
     active_edges = 0
     active_classes = 0
+    edge_candidates = 0
+    mixed_rejected_edges = 0
+    reliability_sum = 0.0
     loc_advantages: list[Tensor] = []
     cls_advantages: list[Tensor] = []
     loc_active_layers = 0
@@ -315,6 +321,7 @@ def quality_gated_capacity_distillation(
         )
         loc_reliability = torch.where(representable, loc_reliability, torch.zeros_like(loc_reliability))
         loc_active = loc_reliability > 0
+        edge_candidates += int(loc_active.sum())
         keep, _iou_gain = decoded_teacher_iou_gate(
             source_log,
             teacher_log,
@@ -323,8 +330,11 @@ def quality_gated_capacity_distillation(
             loc_active,
             margin=0.0,
         )
-        loc_reliability = loc_reliability * keep.unsqueeze(-1)
+        mixed_rejected_edges += int((loc_active & ~keep.unsqueeze(-1)).sum())
+        if options.mixed_box_gate:
+            loc_reliability = loc_reliability * keep.unsqueeze(-1)
         loc_active = loc_reliability > 0
+        reliability_sum += float(loc_reliability.detach().sum())
         active_edges += int(loc_active.sum())
         loc_advantages.append((source_error.detach() - teacher_error.detach()).clamp_min(0))
         loc_kl = teacher_log.exp() * (teacher_log - source_log)
@@ -384,6 +394,14 @@ def quality_gated_capacity_distillation(
     scalar_zero = graph_zero.detach()
     candidate_edges = candidate_matches * 4
     statistics = {
+        # Candidate/selected edges exist even in no-KD or zero-schedule epochs.
+        "edge_candidates_before_iou": scalar_zero.new_tensor(edge_candidates),
+        "mixed_rejected_edges": scalar_zero.new_tensor(mixed_rejected_edges),
+        "selected_weight_sum": scalar_zero.new_tensor(reliability_sum),
+        "applied_edges": scalar_zero.new_tensor(
+            active_edges if enabled_scale > 0 and options.loc_weight > 0 else 0
+        ),
+        "unscaled_localization_loss": loc_mean.detach(),
         "warmup": scalar_zero.new_tensor(warmup if options.enabled else 0.0),
         "schedule_scale": scalar_zero.new_tensor(enabled_scale),
         "identity_consistent_ratio": scalar_zero.new_tensor(
